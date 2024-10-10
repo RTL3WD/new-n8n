@@ -1,0 +1,464 @@
+{
+  "active": true,
+  "connections": {
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Format Date Time",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Format Date Time",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Email Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Email Data": {
+      "main": [
+        [
+          {
+            "node": "If No Previous Email Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If No Previous Email Data": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Format Date Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Date Time": {
+      "main": [
+        [
+          {
+            "node": "Add Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Email": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-09-20T19:42:16.317Z",
+  "id": "mNKqNXeXR72GaB7I",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Gmail to Supabase",
+  "nodes": [
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"date\": \"2024-09-20T20:25:55+00:00\"\n}"
+      },
+      "id": "fc972567-585d-4fba-9f4a-03c7751f03fb",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        2220,
+        780
+      ]
+    },
+    {
+      "parameters": {
+        "model": "llama3-70b-8192",
+        "options": {}
+      },
+      "id": "e879657a-d27a-45bb-8cd7-7f959a62d29d",
+      "name": "Groq Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        2000,
+        780
+      ],
+      "credentials": {
+        "groqApi": {
+          "id": "Sky8svfm6OEcYSKn",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "email_data",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "gmail_id",
+              "fieldValue": "={{ $('Gmail Trigger').item.json.id }}"
+            },
+            {
+              "fieldId": "thread_id",
+              "fieldValue": "={{ $('Gmail Trigger').item.json.threadId }}"
+            },
+            {
+              "fieldId": "subject",
+              "fieldValue": "={{ $('Gmail Trigger').item.json.subject }}"
+            },
+            {
+              "fieldId": "snippet",
+              "fieldValue": "={{ $('Gmail Trigger').item.json.headers.subject }}"
+            },
+            {
+              "fieldId": "content",
+              "fieldValue": "={{ $('Gmail Trigger').item.json.text }}"
+            },
+            {
+              "fieldId": "body_html",
+              "fieldValue": "={{ $('Gmail Trigger').item.json.textAsHtml }}"
+            },
+            {
+              "fieldId": "from_address",
+              "fieldValue": "={{ $('Gmail Trigger').item.json.from.value[0].address }}"
+            },
+            {
+              "fieldId": "from_name",
+              "fieldValue": "={{ $('Gmail Trigger').item.json.from.value[0].name }}"
+            },
+            {
+              "fieldId": "to_address",
+              "fieldValue": "={{ $('Gmail Trigger').item.json.to.value[0].address }}"
+            },
+            {
+              "fieldId": "to_name",
+              "fieldValue": "={{ $('Gmail Trigger').item.json.to.value[0].name }}"
+            },
+            {
+              "fieldId": "cc_addresses",
+              "fieldValue": "={{ [$('Gmail Trigger').item.json.headers.cc] }}"
+            },
+            {
+              "fieldId": "bcc_addresses",
+              "fieldValue": "={{ [$('Gmail Trigger').item.json.headers.bcc] }}"
+            },
+            {
+              "fieldId": "labels",
+              "fieldValue": "={{ $('Gmail Trigger').item.json.labelIds }}"
+            },
+            {
+              "fieldId": "size_estimate",
+              "fieldValue": "={{ $('Gmail Trigger').item.json.sizeEstimate }}"
+            },
+            {
+              "fieldId": "headers",
+              "fieldValue": "={{ $('Gmail Trigger').item.json.headers }}"
+            },
+            {
+              "fieldId": "date",
+              "fieldValue": "={{ $json.output.date }}"
+            }
+          ]
+        }
+      },
+      "id": "a9c9d21c-afa1-4b24-9627-6c600d3adca3",
+      "name": "Add Email",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2420,
+        600
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "dt1dMrxjzCx0PjDa",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "readStatus": "unread"
+        },
+        "options": {}
+      },
+      "id": "5c53000d-246b-4f15-904f-e05f0d1b0fa7",
+      "name": "Gmail Trigger",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        1340,
+        500
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "email_data",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "gmail_id",
+              "keyValue": "={{ $json.id }}"
+            }
+          ]
+        }
+      },
+      "id": "d66fd352-dd45-4842-9abf-80a276df4fd8",
+      "name": "Get Email Data",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1560,
+        500
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "dt1dMrxjzCx0PjDa",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "803adb8c-ad1a-4a61-9f85-d6f1523c76dc",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "92d43095-1c35-4802-ab78-35e5f482aadd",
+      "name": "If No Previous Email Data",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1760,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={\"chatInput\": {{ $('Gmail Trigger').item.json.date }}}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Your job is to convert the chat input, convert the date string to timestamptz format"
+            }
+          ]
+        }
+      },
+      "id": "47570147-b15d-481c-8c74-32aa1fd58616",
+      "name": "Format Date Time",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        2020,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-small",
+        "options": {}
+      },
+      "id": "2ef923f0-caf6-40cc-9581-41df227740b8",
+      "name": "Embeddings OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1,
+      "position": [
+        2620,
+        780
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "thread_id",
+                "value": "={{ $json.thread_id }}"
+              },
+              {
+                "name": "email_id",
+                "value": "={{ $json.id }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "c9535c8b-d836-498a-be27-ea6f477ff2a0",
+      "name": "Default Data Loader",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        2760,
+        780
+      ]
+    },
+    {
+      "parameters": {
+        "chunkOverlap": 200,
+        "options": {}
+      },
+      "id": "084fbb1d-cd96-4ea7-9e31-99a622f1c6f5",
+      "name": "Recursive Character Text Splitter",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        2720,
+        960
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "chatgpt_embeddings",
+          "mode": "list",
+          "cachedResultName": "chatgpt_embeddings"
+        },
+        "options": {}
+      },
+      "id": "9981e3b9-27e2-441b-97ee-cf35f5e9d8b1",
+      "name": "Supabase Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        2740,
+        580
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "dt1dMrxjzCx0PjDa",
+          "name": "Supabase account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Gmail Trigger": {
+      "Gmail Trigger": {
+        "lastTimeChecked": 1728570835,
+        "possibleDuplicates": [
+          "19276d9d1198c6f4"
+        ]
+      }
+    }
+  },
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2024-09-29T12:23:46.000Z",
+  "versionId": "6b48fbd1-86a2-4956-bc16-73af244930c7"
+}
