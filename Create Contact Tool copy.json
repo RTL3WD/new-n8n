@@ -1,0 +1,99 @@
+{
+  "active": false,
+  "connections": {
+    "n8n Form Trigger": {
+      "main": [
+        [
+          {
+            "node": "Execute Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-09-30T18:14:24.665Z",
+  "id": "51k4D5xkVMLKYeaj",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Create Contact Tool copy",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "40cb094a-31b3-48cd-9a4f-63f5981e27ce",
+        "formTitle": "Add Your Info",
+        "formDescription": "Add your info to Robert Lord's contacts",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "First Name",
+              "placeholder": "Ex: Robert",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Last Name",
+              "placeholder": "Ex: Lord",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Company Name",
+              "placeholder": "Ex: Automate St Pete",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Company Website",
+              "placeholder": "Ex: Automatestpete.com"
+            },
+            {
+              "fieldLabel": "Company Position",
+              "placeholder": "Ex: Owner",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Phone",
+              "placeholder": "Ex: 7272918100"
+            },
+            {
+              "fieldLabel": "Email",
+              "placeholder": "ex: Automatestpete@gmail.com"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "33798fed-edc2-4926-92ca-7a69c34a12a9",
+      "name": "n8n Form Trigger",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.1,
+      "position": [
+        640,
+        280
+      ],
+      "webhookId": "40cb094a-31b3-48cd-9a4f-63f5981e27ce"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "1dbd484e-8d3e-4d47-96ba-fd597642eeec",
+      "name": "Execute Workflow",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [
+        940,
+        280
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-09-30T18:19:28.000Z",
+  "versionId": "c8efe91b-7fa0-44d2-9a9b-aa7593684c04"
+}
