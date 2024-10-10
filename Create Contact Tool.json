@@ -1,0 +1,126 @@
+{
+  "active": false,
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Google Contacts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Contacts": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-09-28T11:18:07.216Z",
+  "id": "317eA5FQ421igZg9",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Create Contact Tool",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "8af772ab-8060-4a4b-9234-9d938455137d",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        1080,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "familyName": "={{ $json.query['Last Name'] }}",
+        "givenName": "={{ $json.query['First Name'] }}",
+        "additionalFields": {
+          "companyUi": {
+            "companyValues": [
+              {
+                "current": true,
+                "domain": "={{ $json.query['Company Website'] != \"N/A\" ? $json.query['Company Website'] : \"\"}}",
+                "name": "={{ $json.query['Company Name'] }}",
+                "title": "={{ $json.query['Company Position'] != \"N/A\" ? $json.query['Company Position'] : \"\" }}"
+              }
+            ]
+          },
+          "emailsUi": {
+            "emailsValues": [
+              {
+                "type": "work",
+                "value": "={{ $json.query.Email }}"
+              }
+            ]
+          },
+          "phoneUi": {
+            "phoneValues": [
+              {
+                "type": "main",
+                "value": "={{ $json.query.Phone != \"N/A\" ? $json.query.Phone : \"\" }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "0656c567-a30a-4aac-adab-ae5f673d6215",
+      "name": "Google Contacts",
+      "type": "n8n-nodes-base.googleContacts",
+      "typeVersion": 1,
+      "position": [
+        1340,
+        380
+      ],
+      "credentials": {
+        "googleContactsOAuth2Api": {
+          "id": "DKVoZOnw9DfwkAXs",
+          "name": "Google Contacts account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "75eefacd-13da-4f10-b172-648ca764e6a7",
+              "name": "response",
+              "value": "={{ $json }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "df793bf0-c9b3-402d-95f7-b0a6ed8ce162",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1560,
+        380
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-09-30T18:18:11.000Z",
+  "versionId": "63ff54d3-e7ed-4c08-816b-0f2940b9b0dc"
+}
