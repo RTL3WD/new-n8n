@@ -1,0 +1,246 @@
+{
+  "active": false,
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Gmail1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-09-27T22:45:40.888Z",
+  "id": "6Pf1uKb8e3irZQ84",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Create Email Tool",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "c1f0e72f-d392-433d-b32a-e173f598ad67",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        840,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"operation\": \"create\",\n  \"name\": \"Robert Lord\",\n  \"email\": \"rtl3wd@gmail.com\",\n  \"purpose\": \"Send message\",\n  \"message text\": \"happy birthday\",\n  \"type\": \"email\"\n}"
+      },
+      "id": "0c0f741b-127b-497a-bcfe-ccd44c11d936",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1140,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {}
+      },
+      "id": "70f15afc-73a5-4833-a181-91134e9521fb",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        600
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Basic LLM Chain').item.json.output.email }}",
+        "subject": "={{ $json.message.content.subject }}",
+        "emailType": "text",
+        "message": "={{ $json.message.content.message }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "8eaeaa63-c88f-40a0-9b60-4b344dd8882e",
+      "name": "Gmail1",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1840,
+        440
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "79c8c66f-bea6-4f7f-903d-ec7e46feb684",
+              "name": "response",
+              "value": "={{ $json }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "73b849cd-56b2-4ecd-8bf6-58a8501c0fed",
+      "name": "Edit Fields1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2060,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a helpful email assistant designed to draft emails on behalf of Robert Lord. Your purpose is to take a JSON string input, extract the data, and compose a professional email based on the contents of the JSON object. If a recipient name is not provided, default to a friendly greeting, such as \"Hey\" or \"Hope all is well.\" Always format your response as a JSON object with two key-value pairs:\n\n\"subject\": A brief and relevant subject line for the email. This must be included. If there is No Subject included, generate one based around the message content.\n\"message\": The body of the email composed using the provided details. Be sure to include just the body of the message. \n\nIf any fields are missing or not applicable, use appropriate placeholders to maintain a natural flow. Be sure to always include a subject and message with each response.",
+              "role": "system"
+            },
+            {
+              "content": "=JSON STRING INPUT: {{ JSON.stringify($json.output) }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "id": "1abcf940-1c2b-439f-9e3f-13a301a70355",
+      "name": "OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.5,
+      "position": [
+        1420,
+        440
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=**Instructions for Extracting Information to Send an Email:**\n\n---\n\n**Objective:**\n\nExtract relevant information from an input string to generate a structured JSON output for sending an email. Focus on identifying and extracting the recipient’s name, email address, subject, and message body.\n\n---\n\n### 1. **Process the Input String:**\n\n- Only use information provided in the input string.\n- Do not include data or fields that aren’t explicitly mentioned in the input.\n\n### 2. **Identify and Extract Information:**\n\n1. **Recipient’s Name and Email:**\n   - Look for an email address using a standard format (e.g., `user@example.com`).\n   - If a name is provided alongside the email, extract it as the `\"name\"` field.\n     - Example: `\"To: John Doe <john.doe@example.com>\"` should extract `\"name\": \"John Doe\"` and `\"email\": \"john.doe@example.com\"`.\n   - If no name is provided, set `\"name\"` to an empty string (`\"\"`).\n\n2. **Email Subject:**\n   - Identify the `\"Subject:\"` keyword followed by text (e.g., `\"Subject: Meeting Request\"`).\n   - If a subject is not present, set `\"subject\"` to `\"No Subject\"`.\n\n3. **Email Message Body:**\n   - Extract the main content or message body of the email if available.\n   - The message body should follow the `\"Subject:\"` line or be clearly separated.\n   - If no message body is present, set `\"body\"` to an empty string (`\"\"`).\n\n### 3. **Construct the JSON Output:**\n\nCreate a structured JSON object with the extracted information:\n\n```json\n{\n  \"operation\": \"SEND\",\n  \"name\": \"<recipient's name>\",\n  \"email\": \"<recipient's email>\",\n  \"subject\": \"<email subject>\",\n  \"body\": \"<email message body>\"\n}\n```\n\n### 4. **Default Values for Missing Information:**\n\n- If any required information is missing from the input string:\n  - Set `\"name\"` to an empty string `\"\"`.\n  - Set `\"subject\"` to `\"No Subject\"`.\n  - Set `\"body\"` to an empty string `\"\"`.\n\n### 5. **Final Output:**\n\nThe output JSON should include all necessary fields for sending an email. For example:\n\n```json\n{\n  \"operation\": \"SEND\",\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"subject\": \"Meeting Request\",\n  \"body\": \"Hello John, I would like to schedule a meeting for next week.\"\n}\n```\n\nIf any fields are missing from the input string, ensure the JSON output still maintains its structure with default values.\n\nINPUT STRING: \"{{ JSON.stringify($json.query) }}\"",
+        "hasOutputParser": true
+      },
+      "id": "276fc581-9d8b-48fb-9ea1-b77638bb4bc2",
+      "name": "Basic LLM Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        1040,
+        440
+      ]
+    }
+  ],
+  "pinData": {
+    "Execute Workflow Trigger": [
+      {
+        "json": {
+          "query": {
+            "operation": "SEND",
+            "name": "Robert",
+            "email": "rtl3wd@gmail.com",
+            "subject": "Congratulations on Your New Job!",
+            "message text": "Dear Robert,\n\nI am absolutely thrilled to hear about your new job! 🎉\n\nYour hard work and dedication have truly paid off, and this new opportunity is just the beginning of an exciting new chapter in your career. I have no doubt that you'll bring your unique talents and energy to your new role and make a fantastic impact!\n\nCelebrate this achievement and all the wonderful things to come!\n\nBest wishes,\n\n[Your Name]"
+          }
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-09-28T02:13:54.000Z",
+  "versionId": "4603d504-e5b5-4ef7-a6a3-4ff494003b71"
+}
