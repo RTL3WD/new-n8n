@@ -1,0 +1,177 @@
+{
+  "active": false,
+  "connections": {
+    "Get workflows": {
+      "main": [
+        [
+          {
+            "node": "transform",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get workflow data": {
+      "main": [
+        [
+          {
+            "node": "Create file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "transform": {
+      "main": [
+        [
+          {
+            "node": "Get workflow data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily at 23:59": {
+      "main": [
+        [
+          {
+            "node": "Get workflows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-10-04T00:20:46.292Z",
+  "id": "6ckJmUT3tPIE9LdO",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Backup to github",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "url": "https://n8n.aspworkplace.com/api/v1/workflows",
+        "options": {}
+      },
+      "name": "Get workflows",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        560,
+        480
+      ],
+      "typeVersion": 1,
+      "id": "25e4fc39-74d6-40b2-b2b7-bb99060dbd49",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "YlxyZNkYpzvxHzPD",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "url": "=https://n8n.aspworkplace.com/api/v1/workflows/{{$json[\"id\"]}}",
+        "options": {}
+      },
+      "name": "Get workflow data",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1000,
+        480
+      ],
+      "typeVersion": 1,
+      "id": "5da7dca8-c8ce-4b46-b001-8b1b0d7b9288",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "YlxyZNkYpzvxHzPD",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "const newItems = [];\nfor (item of items[0].json.data) {\n  newItems.push({json: item});\n}\nreturn newItems;"
+      },
+      "name": "transform",
+      "type": "n8n-nodes-base.function",
+      "position": [
+        780,
+        480
+      ],
+      "typeVersion": 1,
+      "id": "76f01162-eb2a-4635-bd1f-c550240d5121"
+    },
+    {
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "hour": 23,
+              "minute": 59
+            }
+          ]
+        }
+      },
+      "name": "Daily at 23:59",
+      "type": "n8n-nodes-base.cron",
+      "position": [
+        340,
+        480
+      ],
+      "typeVersion": 1,
+      "id": "ace2adec-6fec-4fd6-a5fb-08b6a7b18ef9"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "owner": {
+          "__rl": true,
+          "value": "RTL3WD",
+          "mode": ""
+        },
+        "repository": {
+          "__rl": true,
+          "value": "new-n8n",
+          "mode": "list",
+          "cachedResultName": "new-n8n",
+          "cachedResultUrl": "https://github.com/RTL3WD/new-n8n"
+        },
+        "filePath": "=N8n-Workflow-{{ $json.name }}.json",
+        "fileContent": "={{JSON.stringify( $json )}}",
+        "commitMessage": "=[N8N Backup] N8n-Workflow-{{ $json.name }}.json ({{new Date(Date.now()).toLocaleDateString()}}) N8n Automated Backup"
+      },
+      "name": "Create file",
+      "type": "n8n-nodes-base.github",
+      "position": [
+        1220,
+        480
+      ],
+      "typeVersion": 1,
+      "id": "cf22f010-6136-47ab-8ab5-fb7c2a910b8c",
+      "retryOnFail": false,
+      "credentials": {
+        "githubApi": {
+          "id": "TkCEaQwvjowxtgSx",
+          "name": "GitHub account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-10-04T00:25:43.000Z",
+  "versionId": "d8da0d50-0b4b-4726-8bef-130213bb4d77"
+}
