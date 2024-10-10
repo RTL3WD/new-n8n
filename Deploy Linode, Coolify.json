@@ -1,0 +1,578 @@
+{
+  "active": true,
+  "connections": {
+    "n8n Form Trigger": {
+      "main": [
+        [
+          {
+            "node": "Format backups and tags",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Install Coolify": {
+      "main": [
+        [
+          {
+            "node": "Browserless Cooilfy Registration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Linode": {
+      "main": [
+        [
+          {
+            "node": "Wait 90 Seconds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format backups and tags": {
+      "main": [
+        [
+          {
+            "node": "Create Linode",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Browserless Cooilfy Registration": {
+      "main": [
+        [
+          {
+            "node": "Wait 30 Seconds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Coolify Onboarding": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 30 Seconds": {
+      "main": [
+        [
+          {
+            "node": "Coolify Onboarding",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 90 Seconds": {
+      "main": [
+        [
+          {
+            "node": "Install Coolify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Create Coolify API Key",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Coolify API Key": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-09-21T14:19:37.149Z",
+  "id": "xLQLCt9C1FblN6D3",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Deploy Linode, Coolify",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "932d2dc2-d777-461d-b656-40750e62b242",
+        "formTitle": "Create Linode Instance",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Customer VPS Label",
+              "placeholder": "my-customer-label",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Linode Password",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Select Region",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "ap-west (Mumbai, IN)"
+                  },
+                  {
+                    "option": "ca-central (Toronto, CA)"
+                  },
+                  {
+                    "option": "ap-southeast (Sydney, AU)"
+                  },
+                  {
+                    "option": "us-iad (Washington, DC)"
+                  },
+                  {
+                    "option": "us-ord (Chicago, IL)"
+                  },
+                  {
+                    "option": "fr-par (Paris, FR)"
+                  },
+                  {
+                    "option": "us-sea (Seattle, WA)"
+                  },
+                  {
+                    "option": "br-gru (Sao Paulo, BR)"
+                  },
+                  {
+                    "option": "nl-ams (Amsterdam, NL)"
+                  },
+                  {
+                    "option": "se-sto (Stockholm, SE)"
+                  },
+                  {
+                    "option": "es-mad (Madrid, ES)"
+                  },
+                  {
+                    "option": "in-maa (Chennai, IN)"
+                  },
+                  {
+                    "option": "jp-osa (Osaka, JP)"
+                  },
+                  {
+                    "option": "it-mil (Milan, IT)"
+                  },
+                  {
+                    "option": "us-mia (Miami, FL)"
+                  },
+                  {
+                    "option": "id-cgk (Jakarta, ID)"
+                  },
+                  {
+                    "option": "us-lax (Los Angeles, CA)"
+                  },
+                  {
+                    "option": "gb-lon (London 2, UK)"
+                  },
+                  {
+                    "option": "au-mel (Melbourne, AU)"
+                  },
+                  {
+                    "option": "us-central (Dallas, TX)"
+                  },
+                  {
+                    "option": "us-west (Fremont, CA)"
+                  },
+                  {
+                    "option": "us-southeast (Atlanta, GA)"
+                  },
+                  {
+                    "option": "us-east (Newark, NJ)"
+                  },
+                  {
+                    "option": "eu-west (London, UK)"
+                  },
+                  {
+                    "option": "ap-south (Singapore, SG)"
+                  },
+                  {
+                    "option": "eu-central (Frankfurt, DE)"
+                  },
+                  {
+                    "option": "ap-northeast (Tokyo 2, JP)"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Linode Type",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "g6-standard-2 (Linode 4GB) - Hourly: $0.036, Monthly: $24.0"
+                  },
+                  {
+                    "option": "g6-standard-4 (Linode 8GB) - Hourly: $0.072, Monthly: $48.0"
+                  },
+                  {
+                    "option": "g6-standard-6 (Linode 16GB) - Hourly: $0.144, Monthly: $96.0"
+                  },
+                  {
+                    "option": "g6-dedicated-2 (Dedicated 4GB) - Hourly: $0.054, Monthly: $36.0"
+                  },
+                  {
+                    "option": "g6-dedicated-4 (Dedicated 8GB) - Hourly: $0.108, Monthly: $72.0"
+                  },
+                  {
+                    "option": "g6-dedicated-8 (Dedicated 16GB) - Hourly: $0.216, Monthly: $144.0"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Backups",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "No"
+                  },
+                  {
+                    "option": "Yes"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Tags",
+              "fieldType": "textarea",
+              "placeholder": "Enter tags with commas between them. Ex: Tag, Tag1, Tag2"
+            },
+            {
+              "fieldLabel": "Coolify Project Name"
+            }
+          ]
+        },
+        "responseMode": "lastNode",
+        "options": {
+          "appendAttribution": false,
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "Linode has been created."
+            }
+          }
+        }
+      },
+      "id": "283310fd-8810-4747-9ac9-60f10173c034",
+      "name": "n8n Form Trigger",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.1,
+      "position": [
+        840,
+        440
+      ],
+      "webhookId": "932d2dc2-d777-461d-b656-40750e62b242"
+    },
+    {
+      "parameters": {
+        "command": "=curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash"
+      },
+      "id": "2eeb61fa-3c50-47f9-932a-83f6f6d6b3f9",
+      "name": "Install Coolify",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        1620,
+        440
+      ],
+      "credentials": {
+        "sshPassword": {
+          "id": "69nwTz1TEIw5jqu9",
+          "name": "SSH Password account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.linode.com/v4/linode/instances",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer b560dc82a1223cafd26069497254aa59084d110793968ab4f7523876e440ccfc"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"region\": \"{{ $('n8n Form Trigger').all()[0].json['Select Region'].split(' ')[0] }}\",\n  \"type\": \"{{ $('n8n Form Trigger').all()[0].json['Linode Type'].split(' ')[0] }}\",\n  \"image\": \"linode/ubuntu20.04\",\n  \"root_pass\": \"{{ $('n8n Form Trigger').item.json['Linode Password'] }}\",\n  \"label\": \"{{ $('n8n Form Trigger').all()[0].json['Customer VPS Label'] }}\",\n  \"backups_enabled\": {{ $('Format backups and tags').item.json.backups }},\n\"tags\": [{{ $('Format backups and tags').item.json.tags }}]}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "id": "dc3c8f20-f013-4fd5-b43e-a767d3de6e24",
+      "name": "Create Linode",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1240,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "let backups;\nlet tags;\nif ($('n8n Form Trigger').all()[0].json.backups == \"Yes\") {\n  backups = true;\n}\nelse\n{\n  backups = false;\n}\n\nif ($('n8n Form Trigger').all()[0].json.Tags) {\n tags = $('n8n Form Trigger').all()[0].json.Tags.split(',')\n            .map(item => `\"${item.trim()}\"`) // Wrap each item in quotes\n            .join(', '); // Join them back as a string with commas\n}\nelse\n{\n  tags = \"\";\n}\n\nreturn [{\"backups\": backups, \"tags\": tags}]"
+      },
+      "id": "2c9ddb29-1ac2-46f9-8407-3c3ed24b33f7",
+      "name": "Format backups and tags",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1040,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://browserless.aspworkplace.com/function",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "31a645e3-8903-4aae-8e9e-7854174259de"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"code\": \"async function run({ page, context }) {\\n  // Navigate to the specified URL\\n  await page.goto(context.url);\\n\\n  // Extract the token from the form\\n  const token = await page.evaluate(() => {\\n    const tokenInput = document.querySelector('form input[type=hidden]');\\n    return tokenInput ? tokenInput.value : null;\\n  });\\n\\n  if (!token) {\\n    throw new Error('Token not found in the form');\\n  }\\n\\n  // Fill out the form with dynamic data\\n  await page.type('input[name=\\\"name\\\"]', context.name);\\n  await page.type('input[name=\\\"email\\\"]', context.email);\\n  await page.type('input[name=\\\"password\\\"]', context.password);\\n  await page.type('input[name=\\\"password_confirmation\\\"]', context.password);\\n\\n  // Set the extracted token\\n  await page.evaluate((token) => {\\n    const tokenInput = document.querySelector('form input[type=hidden]');\\n    if (tokenInput) tokenInput.value = token;\\n  }, token);\\n\\n  // Submit the form\\n  await Promise.all([\\n    page.waitForNavigation(), // Wait for navigation to complete\\n    page.click('form button[type=\\\"submit\\\"]') // Click the submit button\\n  ]);\\n\\n  // You can add additional logic here to check if the submission was successful\\n\\n  return {\\n    data: {\\n      message: 'Form submitted successfully',\\n      token: token\\n    },\\n    type: 'application/json'\\n  };\\n}\\n\\nmodule.exports = run;\",\n  \"context\": {\n    \"url\": \"http://{{ $('Create Linode').all()[0].json.ipv4[0] }}:8000/register\",\n    \"name\": \"Robert Lord\",\n    \"email\": \"automatestpete@gmail.com\",\n    \"password\": \"{{ $('n8n Form Trigger').all()[0].json['Linode Password'] }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "058b978d-0c5c-4988-96a9-57bdf7b16ac1",
+      "name": "Browserless Cooilfy Registration",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1840,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://browserless.aspworkplace.com/function",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "31a645e3-8903-4aae-8e9e-7854174259de"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/javascript",
+        "body": "=async function run({page}){await page.setViewport({width:1920,height:953,deviceScaleFactor:1,isMobile:false,hasTouch:false,isLandscape:false});await page.goto(\"http://{{ $('Create Linode').item.json.ipv4[0] }}:8000/login\");await page.waitForSelector(\"input[type=\\\"email\\\"]\");await page.click(\"input[type=\\\"email\\\"]\");await page.type(\"input[type=\\\"email\\\"]\",\"automatestpete@gmail.com\");await page.waitForSelector(\"input[type=\\\"password\\\"]\");await page.click(\"input[type=\\\"password\\\"]\");await page.type(\"input[type=\\\"password\\\"]\",\"{{ $('n8n Form Trigger').item.json['Linode Password'] }}\");await Promise.all([page.waitForNavigation(),page.keyboard.press(\"Enter\")]);await page.waitForTimeout(3e3);const a=await page.waitForFunction(()=>document.title.includes(\"Dashboard\"),{timeout:1e4}).catch(()=>false);let b={};if(a){await page.goto(\"http://{{ $('Create Linode').item.json.ipv4[0] }}:8000/security/api-tokens\");await page.waitForSelector(\"main form\",{timeout:1e4});await page.waitForTimeout(3e3);await page.click(\"div.items-end input\");await page.type(\"div.items-end input\",\"description\");await page.click(\"div.w-64 > div:nth-of-type(1) > input\");await page.click(\"div:nth-of-type(2) > input\");await page.waitForTimeout(1e3);const c=await page.waitForSelector(\"body > div.mx-auto > main > div > div > form > div.flex.items-end.gap-2 > button\");if(c){await c.click();await page.waitForSelector(\"body > div.mx-auto > main > div > div > div.py-4.font-bold.dark\\\\:text-warning\",{timeout:1e4});const d=await page.evaluate(e=>{const f=document.querySelector(e);return f?f.textContent.trim():null},\"body > div.mx-auto > main > div > div > div.pb-4.font-bold.dark\\\\:text-white\");if(d){b.apiKey=d;b.success=true}else{b.success=false;b.error=\"Failed to extract API Key\"}}else{b.success=false;b.error=\"Create New Token button not found\"}}else{b.success=false;b.error=\"Login verification failed\"}return{data:b,type:\"application/json\"}} module.exports = run;",
+        "options": {}
+      },
+      "id": "2311bdfe-fc42-4db7-90e3-d1e4b31a941a",
+      "name": "Create Coolify API Key",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2720,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://browserless.aspworkplace.com/function",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "31a645e3-8903-4aae-8e9e-7854174259de"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/javascript",
+        "body": "=async function run({page}){await page.setViewport({width:1920,height:953,deviceScaleFactor:1,isMobile:false,hasTouch:false,isLandscape:false});await page.goto(\"http://{{ $('Create Linode').item.json.ipv4[0] }}:8000/login\");await page.waitForSelector(\"input[type=\\\"email\\\"]\");await page.click(\"input[type=\\\"email\\\"]\");await page.type(\"input[type=\\\"email\\\"]\",\"automatestpete@gmail.com\");await page.waitForSelector(\"input[type=\\\"password\\\"]\");await page.click(\"input[type=\\\"password\\\"]\");await page.type(\"input[type=\\\"password\\\"]\",\"{{ $('n8n Form Trigger').item.json['Linode Password'] }}\");await Promise.all([page.waitForNavigation(),page.keyboard.press(\"Enter\")]);try{await Promise.all([page.waitForNavigation({timeout:5000}),page.click(\"div.gap-4 > div.flex > div:nth-of-type(1)\")])}catch(error){console.log(\"Skip button not found or not clickable. Continuing...\");}try{await page.click(\"span:nth-of-type(2) button\")}catch(error){console.log(\"Disable This Popup button not found or not clickable. Continuing...\");}return{data:{success:true,message:\"Login and navigation completed successfully\"},type:\"application/json\"}} module.exports=run;",
+        "options": {}
+      },
+      "id": "6cba085f-a282-4905-9445-eb4d012d23c0",
+      "name": "Coolify Onboarding",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2280,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "id": "9b2480f6-db8b-45ff-b76f-d05034d7b903",
+      "name": "Wait 30 Seconds",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2060,
+        440
+      ],
+      "webhookId": "12826684-ad2e-4eda-88ba-a425a46283f2"
+    },
+    {
+      "parameters": {
+        "amount": 90
+      },
+      "id": "a1b8e9f1-d2e7-410d-b8d0-2cbc827ce0f7",
+      "name": "Wait 90 Seconds",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1440,
+        440
+      ],
+      "webhookId": "5d7d3d05-6ee6-46da-a759-aa97511d4631"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "id": "b2084743-cac6-4446-ad33-086f6a9f5a83",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2500,
+        440
+      ],
+      "webhookId": "3ef0419a-edfd-4482-90f4-35b0b93d7c25"
+    },
+    {
+      "parameters": {
+        "url": "http://172.233.175.8:8000/api/v1/projects",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer WPO74vYDMjgBHr7gpVxZxMAveA1Ji36MOfd2sL3w9915beba"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "id": "710af56f-70d7-458c-af91-61e2305f55e6",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3220,
+        440
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "id": "21f40120-7a5d-45ec-9355-134cb5be2ddc",
+      "name": "Wait1",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3000,
+        440
+      ],
+      "webhookId": "6cfbc968-a88c-4343-bafd-2e3e659f0137",
+      "disabled": true
+    }
+  ],
+  "pinData": {
+    "n8n Form Trigger": [
+      {
+        "json": {
+          "Customer VPS Label": "ron-demo",
+          "Linode Password": "##RonPswd702..",
+          "Select Region": "us-mia (Miami, FL)",
+          "Linode Type": "g6-standard-2 (Linode 4GB) - Hourly: $0.036, Monthly: $24.0",
+          "Backups": "No",
+          "Tags": "rons-demo",
+          "Coolify Project Name": "Name",
+          "submittedAt": "2024-09-25T18:31:42.032+02:00",
+          "formMode": "test"
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 2,
+  "updatedAt": "2024-09-25T16:33:58.000Z",
+  "versionId": "2c9c60d6-bc23-4066-82b8-0589efc62d2e"
+}
