@@ -1,0 +1,224 @@
+{
+  "active": false,
+  "connections": {
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Wordpress",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-09-30T16:02:04.811Z",
+  "id": "P1XD2tXT6rdKlgJu",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "afdsafdsafda"
+      },
+      "id": "7c13d9b6-0c7f-474e-af4c-6c6ac8573188",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        840,
+        660
+      ]
+    },
+    {
+      "parameters": {
+        "title": "={{ $json.output.title }}",
+        "additionalFields": {
+          "content": "Content",
+          "slug": "test-slug",
+          "status": "publish",
+          "commentStatus": "closed",
+          "pingStatus": "open",
+          "categories": [],
+          "tags": []
+        }
+      },
+      "id": "68c88723-935b-4426-8ebd-7646b5533222",
+      "name": "Wordpress",
+      "type": "n8n-nodes-base.wordpress",
+      "typeVersion": 1,
+      "position": [
+        1700,
+        420
+      ],
+      "credentials": {
+        "wordpressApi": {
+          "id": "Xikd26BdacQVX1dR",
+          "name": "Wordpress account - ASP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "assistant",
+        "assistantId": {
+          "__rl": true,
+          "value": "asst_wAvnsHaB4T0B5MLEjP6yD0sp",
+          "mode": "list",
+          "cachedResultName": "N8n Workflow Blogger"
+        },
+        "prompt": "define",
+        "text": "{\n  \"meta\": {\n    \"templateId\": \"2271\",\n    \"instanceId\": \"9544d0ac90b29f13851ab159d40ccaf49803a1e466c8d8935e4db4d0dce4abe5\"\n  },\n  \"nodes\": [\n    {\n      \"parameters\": {\n        \"conditions\": {\n          \"options\": {\n            \"leftValue\": \"\",\n            \"caseSensitive\": true,\n            \"typeValidation\": \"strict\"\n          },\n          \"combinator\": \"and\",\n          \"conditions\": [\n            {\n              \"id\": \"53849246-ad32-4845-9976-9f9688f5a6f2\",\n              \"operator\": {\n                \"type\": \"boolean\",\n                \"operation\": \"true\",\n                \"singleValue\": true\n              },\n              \"leftValue\": \"={{ $json.needsReply }}\",\n              \"rightValue\": \"true\"\n            }\n          ]\n        },\n        \"options\": {}\n      },\n      \"id\": \"3ef14615-0045-404f-a21b-2c65a52f4be8\",\n      \"name\": \"If Needs Reply\",\n      \"type\": \"n8n-nodes-base.if\",\n      \"position\": [\n        1140,\n        480\n      ],\n      \"typeVersion\": 2\n    },\n    {\n      \"parameters\": {\n        \"jsonSchema\": \"{\\n  \\\"type\\\": \\\"object\\\",\\n  \\\"properties\\\": {\\n    \\\"needsReply\\\": {\\n      \\\"type\\\": \\\"boolean\\\"\\n      }\\n  },\\n  \\\"required\\\": [\\\"needsReply\\\"]\\n}\\n\"\n      },\n      \"id\": \"36968dd5-8d51-4184-a05a-587b6c95aa82\",\n      \"name\": \"JSON Parser\",\n      \"type\": \"@n8n/n8n-nodes-langchain.outputParserStructured\",\n      \"position\": [\n        983,\n        635\n      ],\n      \"typeVersion\": 1\n    },\n    {\n      \"parameters\": {\n        \"model\": \"gpt-4o-2024-05-13\",\n        \"options\": {\n          \"responseFormat\": \"json_object\",\n          \"temperature\": 0\n        }\n      },\n      \"id\": \"2a64dce8-e2f0-475e-a366-a02084293aad\",\n      \"name\": \"OpenAI Chat\",\n      \"type\": \"@n8n/n8n-nodes-langchain.lmChatOpenAi\",\n      \"position\": [\n        823,\n        635\n      ],\n      \"typeVersion\": 1,\n      \"credentials\": {\n        \"openAiApi\": {\n          \"id\": \"G4zIUdneHOxiMJtn\",\n          \"name\": \"OpenAi account\"\n        }\n      }\n    },\n    {\n      \"parameters\": {\n        \"content\": \"## When I receive an Email\\n\",\n        \"height\": 619.7495413344259,\n        \"width\": 304.10628068244364\n      },\n      \"id\": \"be892ff8-0981-4b34-9c93-7674ddd90360\",\n      \"name\": \"Sticky Note\",\n      \"type\": \"n8n-nodes-base.stickyNote\",\n      \"position\": [\n        -180,\n        160\n      ],\n      \"typeVersion\": 1\n    },\n    {\n      \"parameters\": {\n        \"content\": \"## ... that Needs a Reply\\n\",\n        \"height\": 397,\n        \"width\": 556\n      },\n      \"id\": \"9d92839a-9ff2-436c-8abb-2f43e07c1ace\",\n      \"name\": \"Sticky Note1\",\n      \"type\": \"n8n-nodes-base.stickyNote\",\n      \"position\": [\n        760,\n        380\n      ],\n      \"typeVersion\": 1\n    },\n    {\n      \"parameters\": {\n        \"content\": \"## Generate a Reply\",\n        \"height\": 400.08454375343996,\n        \"width\": 333.19082443588354\n      },\n      \"id\": \"3cd77609-684c-44e2-9cdc-9479cfd836bd\",\n      \"name\": \"Sticky Note2\",\n      \"type\": \"n8n-nodes-base.stickyNote\",\n      \"position\": [\n        1333,\n        380\n      ],\n      \"typeVersion\": 1\n    },\n    {\n      \"parameters\": {\n        \"content\": \"## ...as a Draft in the conversation\",\n        \"height\": 395,\n        \"width\": 326\n      },\n      \"id\": \"b123cf31-767d-48bb-a0ba-79a69f6da585\",\n      \"name\": \"Sticky Note3\",\n      \"type\": \"n8n-nodes-base.stickyNote\",\n      \"position\": [\n        1680,\n        380\n      ],\n      \"typeVersion\": 1\n    },\n    {\n      \"parameters\": {\n        \"model\": \"gpt-4o-2024-05-13\",\n        \"options\": {}\n      },\n      \"id\": \"1a87c416-6b1c-4526-a2b6-20468c95ea0e\",\n      \"name\": \"OpenAI Chat Model\",\n      \"type\": \"@n8n/n8n-nodes-langchain.lmChatOpenAi\",\n      \"position\": [\n        1380,\n        640\n      ],\n      \"typeVersion\": 1,\n      \"credentials\": {\n        \"openAiApi\": {\n          \"id\": \"G4zIUdneHOxiMJtn\",\n          \"name\": \"OpenAi account\"\n        }\n      }\n    },\n    {\n      \"parameters\": {\n        \"resource\": \"draft\",\n        \"subject\": \"=Re: {{ $('Gmail is Received').item.json.headers.subject }}\",\n        \"emailType\": \"html\",\n        \"message\": \"={{ $json.text.replace(/\\\\n/g, \\\"<br />\\\\n\\\") }}\",\n        \"options\": {\n          \"threadId\": \"={{ $('Gmail is Received').item.json.threadId }}\",\n          \"sendTo\": \"={{ $('Gmail is Received').item.json.headers.from }}\"\n        }\n      },\n      \"id\": \"84b4d516-252e-444e-b998-2d4aa0f89653\",\n      \"name\": \"Gmail - Create Draft\",\n      \"type\": \"n8n-nodes-base.gmail\",\n      \"position\": [\n        1780,\n        500\n      ],\n      \"typeVersion\": 2.1,\n      \"credentials\": {\n        \"gmailOAuth2\": {\n          \"id\": \"sMeDT1JPqiCJbPLY\",\n          \"name\": \"Gmail account - ASP\"\n        }\n      }\n    },\n    {\n      \"parameters\": {\n        \"conditions\": {\n          \"options\": {\n            \"caseSensitive\": true,\n            \"leftValue\": \"\",\n            \"typeValidation\": \"strict\"\n          },\n          \"conditions\": [\n            {\n              \"id\": \"5095db80-0a0a-4fbf-8327-da2732dab12a\",\n              \"leftValue\": \"={{ $json.textAsHtml }}\",\n              \"rightValue\": \"Unsubscribe\",\n              \"operator\": {\n                \"type\": \"string\",\n                \"operation\": \"contains\"\n              }\n            },\n            {\n              \"id\": \"04c56a74-279e-4c98-ba15-bf5bea6d406a\",\n              \"leftValue\": \"={{ $json.textAsHtml }}\",\n              \"rightValue\": \"unsubscribe\",\n              \"operator\": {\n                \"type\": \"string\",\n                \"operation\": \"contains\"\n              }\n            },\n            {\n              \"id\": \"a55fbb90-8865-4a50-82a5-6d1ae3769d72\",\n              \"leftValue\": \"={{ $json.from.value[0].address }}\",\n              \"rightValue\": \"noreply\",\n              \"operator\": {\n                \"type\": \"string\",\n                \"operation\": \"contains\"\n              }\n            },\n            {\n              \"id\": \"6ac827b9-0354-4847-a6f4-88b9a37d2e43\",\n              \"leftValue\": \"={{ $json.from.value[0].address }}\",\n              \"rightValue\": \"no-reply\",\n              \"operator\": {\n                \"type\": \"string\",\n                \"operation\": \"contains\"\n              }\n            },\n            {\n              \"id\": \"b34a718e-32dc-41cc-be60-c92a3bc01547\",\n              \"leftValue\": \"={{ $json.from.value[0].address }}\",\n              \"rightValue\": \"dmarcreport@microsoft.com\",\n              \"operator\": {\n                \"type\": \"string\",\n                \"operation\": \"contains\"\n              }\n            },\n            {\n              \"id\": \"d87f91e6-9cb3-48c2-9cbd-35e90d693f66\",\n              \"leftValue\": \"={{ $json.from.value[0].address }}\",\n              \"rightValue\": \"@itex.net\",\n              \"operator\": {\n                \"type\": \"string\",\n                \"operation\": \"contains\"\n              }\n            },\n            {\n              \"id\": \"78c58338-7f00-428d-b8e5-bdc2902e10b9\",\n              \"leftValue\": \"={{ $json.from.value[0].address }}\",\n              \"rightValue\": \"@cohatch.com\",\n              \"operator\": {\n                \"type\": \"string\",\n                \"operation\": \"contains\"\n              }\n            }\n          ],\n          \"combinator\": \"or\"\n        },\n        \"options\": {}\n      },\n      \"id\": \"82ae463f-599f-4ce8-a5b6-a5e6bea902a4\",\n      \"name\": \"If\",\n      \"type\": \"n8n-nodes-base.if\",\n      \"typeVersion\": 2,\n      \"position\": [\n        200,\n        380\n      ]\n    },\n    {\n      \"parameters\": {\n        \"content\": \"## ... If the email content contains Unsubscribe or noreply in email address\",\n        \"height\": 615.8483784322938\n      },\n      \"id\": \"5123920a-20c1-40e8-acda-fd2f0eac8dee\",\n      \"name\": \"Sticky Note4\",\n      \"type\": \"n8n-nodes-base.stickyNote\",\n      \"typeVersion\": 1,\n      \"position\": [\n        140,\n        160\n      ]\n    },\n    {\n      \"parameters\": {\n        \"content\": \"## Email Contains Unsubscribe & Not Apart of Exceptions List\\n### Label Email as Promotional and Remove Inbox Label\",\n        \"height\": 340.5006044295807,\n        \"width\": 777.4108310562551\n      },\n      \"id\": \"72cb69dc-3791-4d2e-a420-741b44c6fa7d\",\n      \"name\": \"Sticky Note5\",\n      \"type\": \"n8n-nodes-base.stickyNote\",\n      \"typeVersion\": 1,\n      \"position\": [\n        760,\n        20\n      ]\n    },\n    {\n      \"parameters\": {\n        \"pollTimes\": {\n          \"item\": [\n            {\n              \"mode\": \"everyX\",\n              \"value\": 1\n            }\n          ]\n        },\n        \"simple\": false,\n        \"filters\": {\n          \"q\": \"-from:me\",\n          \"readStatus\": \"unread\"\n        },\n        \"options\": {}\n      },\n      \"id\": \"2a9ff08f-919a-41a8-980b-8c2bca3059e4\",\n      \"name\": \"Gmail is Received\",\n      \"type\": \"n8n-nodes-base.gmailTrigger\",\n      \"position\": [\n        -80,\n        380\n      ],\n      \"typeVersion\": 1,\n      \"credentials\": {\n        \"gmailOAuth2\": {\n          \"id\": \"sMeDT1JPqiCJbPLY\",\n          \"name\": \"Gmail account - ASP\"\n        }\n      }\n    },\n    {\n      \"parameters\": {\n        \"content\": \"## Send Received Email To Phone as Text\",\n        \"height\": 395.8220930232559,\n        \"width\": 500.85348837209295\n      },\n      \"id\": \"c0baf3ed-6cb3-4199-bda1-24d32d54af87\",\n      \"name\": \"Sticky Note6\",\n      \"type\": \"n8n-nodes-base.stickyNote\",\n      \"typeVersion\": 1,\n      \"position\": [\n        2020,\n        380\n      ]\n    },\n    {\n      \"parameters\": {\n        \"sendTo\": \"7029084316@vzwpix.com\",\n        \"subject\": \"Email That Requires a Response Was Received\",\n        \"emailType\": \"text\",\n        \"message\": \"={{ $('Gmail is Received').item.json.text }}\",\n        \"options\": {}\n      },\n      \"id\": \"8430e40b-0b5f-45d5-9625-285b27bd8555\",\n      \"name\": \"Text Email\",\n      \"type\": \"n8n-nodes-base.gmail\",\n      \"typeVersion\": 2.1,\n      \"position\": [\n        2180,\n        500\n      ],\n      \"credentials\": {\n        \"gmailOAuth2\": {\n          \"id\": \"sMeDT1JPqiCJbPLY\",\n          \"name\": \"Gmail account - ASP\"\n        }\n      }\n    },\n    {\n      \"parameters\": {\n        \"operation\": \"markAsRead\",\n        \"messageId\": \"={{ $('Gmail is Received').item.json.id }}\"\n      },\n      \"id\": \"c0f3badc-b735-4a90-8667-1cea4d42b0aa\",\n      \"name\": \"Mark Email As Read\",\n      \"type\": \"n8n-nodes-base.gmail\",\n      \"typeVersion\": 2.1,\n      \"position\": [\n        1380,\n        900\n      ],\n      \"credentials\": {\n        \"gmailOAuth2\": {\n          \"id\": \"sMeDT1JPqiCJbPLY\",\n          \"name\": \"Gmail account - ASP\"\n        }\n      }\n    },\n    {\n      \"parameters\": {\n        \"content\": \"## Mark As Read\",\n        \"height\": 326.09712547322874,\n        \"width\": 207.6798146665771\n      },\n      \"id\": \"b527e600-ba6f-4106-ae0e-d20a04839256\",\n      \"name\": \"Sticky Note7\",\n      \"type\": \"n8n-nodes-base.stickyNote\",\n      \"typeVersion\": 1,\n      \"position\": [\n        1332,\n        800\n      ]\n    },\n    {\n      \"parameters\": {\n        \"conditions\": {\n          \"options\": {\n            \"caseSensitive\": true,\n            \"leftValue\": \"\",\n            \"typeValidation\": \"strict\"\n          },\n          \"conditions\": [\n            {\n              \"id\": \"b11068ec-9d66-4ab8-9c33-54cf57205ddd\",\n              \"leftValue\": \"={{ $json.from.value[0].address }}\",\n              \"rightValue\": \"upwork.com\",\n              \"operator\": {\n                \"type\": \"string\",\n                \"operation\": \"contains\"\n              }\n            },\n            {\n              \"id\": \"6316af34-13b0-4aa5-9cb6-0d86b4b4a312\",\n              \"leftValue\": \"={{ $json.from.value[0].address }}\",\n              \"rightValue\": \"stpete.com\",\n              \"operator\": {\n                \"type\": \"string\",\n                \"operation\": \"contains\"\n              }\n            }\n          ],\n          \"combinator\": \"or\"\n        },\n        \"options\": {}\n      },\n      \"id\": \"ede479d5-9a7b-49a6-a61f-ab7fff856cb1\",\n      \"name\": \"If1\",\n      \"type\": \"n8n-nodes-base.if\",\n      \"typeVersion\": 2,\n      \"position\": [\n        540,\n        140\n      ]\n    },\n    {\n      \"parameters\": {\n        \"content\": \"## Email Exception List\\n### Emails I want to receive\\n\\n1. Upwork.com\\n2. Stpete.com\",\n        \"height\": 499.22741194637877,\n        \"width\": 337.64932390001724\n      },\n      \"id\": \"a992407b-0166-4024-ada7-da42a8998640\",\n      \"name\": \"Sticky Note8\",\n      \"type\": \"n8n-nodes-base.stickyNote\",\n      \"typeVersion\": 1,\n      \"position\": [\n        400,\n        -140\n      ]\n    },\n    {\n      \"parameters\": {\n        \"content\": \"# Basic Email Management Automation\\n1. Check every half hr for emails received\\n\\n2. If the email contains unsubscribe as apart of the message contents or no reply is apart of the from email address\\nA. If Yes to #2, Mark as promo email and remove from inbox. Upload the pdf file to the assistant\\nB. If No to #2, Continue to #3.\\n\\n3. Assess if message needs a reply\\nA. If Yes to #3, Write response\\nB. If No to #3, Mark as Read\\n\\n4. If Write Response, afterward put response in drafts\\n\\n5. Send original email via email to cell phone number to receive text notification\\n\\nREQUIREMENTS:\\n- Google CLoud Platform Gmail OAuth\\n- OpenAi Key\\n- List of desired email filters\",\n        \"height\": 619.3126984597945,\n        \"width\": 438.43317466301903\n      },\n      \"id\": \"446e8177-8908-4a36-b381-7ebf64a1d527\",\n      \"name\": \"Sticky Note9\",\n      \"type\": \"n8n-nodes-base.stickyNote\",\n      \"typeVersion\": 1,\n      \"position\": [\n        -640,\n        160\n      ]\n    },\n    {\n      \"parameters\": {\n        \"resource\": \"thread\",\n        \"operation\": \"addLabels\",\n        \"threadId\": \"={{ $json.id }}\",\n        \"labelIds\": [\n          \"CATEGORY_PROMOTIONS\"\n        ]\n      },\n      \"id\": \"8ac472d7-1f4e-4702-886e-edcffdc9ad29\",\n      \"name\": \"Mark As Promo\",\n      \"type\": \"n8n-nodes-base.gmail\",\n      \"typeVersion\": 2.1,\n      \"position\": [\n        820,\n        160\n      ],\n      \"credentials\": {\n        \"gmailOAuth2\": {\n          \"id\": \"sMeDT1JPqiCJbPLY\",\n          \"name\": \"Gmail account - ASP\"\n        }\n      }\n    },\n    {\n      \"parameters\": {\n        \"resource\": \"thread\",\n        \"operation\": \"removeLabels\",\n        \"threadId\": \"={{ $json.id }}\",\n        \"labelIds\": [\n          \"INBOX\"\n        ]\n      },\n      \"id\": \"75600bb4-f1ac-42db-908e-f7eed04ae291\",\n      \"name\": \"Remove from Inbox\",\n      \"type\": \"n8n-nodes-base.gmail\",\n      \"typeVersion\": 2.1,\n      \"position\": [\n        1080,\n        160\n      ],\n      \"credentials\": {\n        \"gmailOAuth2\": {\n          \"id\": \"sMeDT1JPqiCJbPLY\",\n          \"name\": \"Gmail account - ASP\"\n        }\n      }\n    },\n    {\n      \"parameters\": {\n        \"promptType\": \"define\",\n        \"text\": \"=Subject: {{ $('Gmail is Received').item.json.subject }}\\nMessage: {{ $('Gmail is Received').item.json.textAsHtml }}\",\n        \"messages\": {\n          \"messageValues\": [\n            {\n              \"message\": \"You are a helpful personal assistant to Robert Lord, the driving force behind Automate St. Pete, LLC, and a seasoned IT innovator based in St. Petersburg, Florida. Your task is to draft replies on Robert's behalf to his incoming emails. Whenever Robert provides some text from an email, return an appropriate draft reply for him and nothing else. Ensure that the reply is suitable for a professional email setting and addresses the topic in a clear, structured, and detailed manner. Do not make things up.\\n\\nDetailed instructions:\\n- Be concise and maintain a business casual tone.\\n- Start with \\\"Hello,\\\", and end with \\\"Best,\\\"\\n- When writing responses, draft 2 messages: one affirmative and one negative separated by \\\" - - - - - - - OR - - - - - - - \\\"\\n- If you don't know an answer, you can leave placeholders like \\\"[YOUR_ANSWER_HERE]\\\".\\n- Don't use any special formatting, only plain text.\\n- Reply in the same language as the inbound email.\\n\\nRobert Lord is dedicated to bridging the gap between technology and business for small and medium-sized enterprises. His expertise includes designing custom databases, automating workflows, and making technology accessible and manageable for all stakeholders. He operates on Eastern Standard Time with a standard hourly rate of $150, and his business hours are from 10 AM to 6 PM, Monday through Friday, though he is flexible for weekend projects when necessary.\\n\\n---\\n\\n**Example Email Response:**\\n\\n### Incoming Email Example:\\n*Subject: Admin Access for Google Workspace*\\n\\nHi Robert,\\n\\nI hope this email finds you well. To proceed with setting up the automations for your business, I need admin access to your Google Workspace. This access is crucial for configuring the necessary integrations with Google Cloud Platform, which will enable the automations to connect seamlessly with your Gmail account and other services.\\n\\nHere are two helpful guides:\\n\\n[How to Add a User to Google Workspace](https://support.google.com/a/answer/33310?hl=en)\\n[How to Grant Admin Access in Google Workspace](https://support.google.com/a/answer/33325?hl=en)\\n\\nPlease follow these instructions to provide the required permissions.\\n\\nThank you for your cooperation.\\n\\nBest regards,\\nRobert\\n\\n---\\n\\n### Draft Reply:\\n\\n**Affirmative:**\\n\\nHello Elias,\\n\\nThank you for reaching out. I appreciate the detailed instructions. I will follow the guides to grant the necessary admin access to Google Workspace. Please expect to receive the permissions shortly.\\n\\nBest,\\nRobert\\n\\n- - - - - - - OR - - - - - - -\\n\\n**Negative:**\\n\\nHello Elias,\\n\\nThank you for reaching out. Unfortunately, I am unable to provide admin access to Google Workspace at this time due to internal policy restrictions. Could we discuss alternative ways to achieve the required configurations?\\n\\nBest,\\nRobert\"\n            }\n          ]\n        }\n      },\n      \"id\": \"cab1e7e5-93dc-4850-a471-e285cdbe2058\",\n      \"name\": \"Generate email reply\",\n      \"type\": \"@n8n/n8n-nodes-langchain.chainLlm\",\n      \"position\": [\n        1360,\n        480\n      ],\n      \"typeVersion\": 1.4\n    },\n    {\n      \"parameters\": {\n        \"conditions\": {\n          \"options\": {\n            \"caseSensitive\": true,\n            \"leftValue\": \"\",\n            \"typeValidation\": \"strict\"\n          },\n          \"conditions\": [\n            {\n              \"id\": \"fe4b58e6-a053-45a9-bd27-13205a841d5e\",\n              \"leftValue\": \"={{ $json.subject }}\",\n              \"rightValue\": \"Invitation\",\n              \"operator\": {\n                \"type\": \"string\",\n                \"operation\": \"contains\"\n              }\n            }\n          ],\n          \"combinator\": \"and\"\n        },\n        \"options\": {}\n      },\n      \"id\": \"6aada302-1e3b-4513-93f4-f0afdb8b04f3\",\n      \"name\": \"If2\",\n      \"type\": \"n8n-nodes-base.if\",\n      \"typeVersion\": 2,\n      \"position\": [\n        500,\n        500\n      ]\n    },\n    {\n      \"parameters\": {\n        \"height\": 395.97033175200016,\n        \"width\": 333.1857361058855\n      },\n      \"id\": \"f570986d-3529-4663-9fd5-565897c5f665\",\n      \"name\": \"Sticky Note10\",\n      \"type\": \"n8n-nodes-base.stickyNote\",\n      \"typeVersion\": 1,\n      \"position\": [\n        400,\n        380\n      ]\n    },\n    {\n      \"parameters\": {\n        \"prompt\": \"=Subject: {{ $json.subject }}\\nMessage:\\n{{ $json.textAsHtml }} \",\n        \"messages\": {\n          \"messageValues\": [\n            {\n              \"message\": \"Your task is to assess if the message requires a response. Return in JSON format true if it does, false otherwise.\\nMarketing emails don't require a response.\"\n            }\n          ]\n        }\n      },\n      \"id\": \"86017ff4-9c57-4b2a-9cd9-f62571a05ffd\",\n      \"name\": \"Assess if message needs a reply\",\n      \"type\": \"@n8n/n8n-nodes-langchain.chainLlm\",\n      \"position\": [\n        820,\n        480\n      ],\n      \"typeVersion\": 1.3\n    },\n    {\n      \"parameters\": {\n        \"operation\": \"markAsRead\",\n        \"messageId\": \"={{ $json.id }}\"\n      },\n      \"id\": \"3406cdb9-5129-4ce3-8937-27618ba4c73d\",\n      \"name\": \"Gmail\",\n      \"type\": \"n8n-nodes-base.gmail\",\n      \"typeVersion\": 2.1,\n      \"position\": [\n        1340,\n        160\n      ],\n      \"credentials\": {\n        \"gmailOAuth2\": {\n          \"id\": \"sMeDT1JPqiCJbPLY\",\n          \"name\": \"Gmail account - ASP\"\n        }\n      }\n    }\n  ],\n  \"connections\": {\n    \"If Needs Reply\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"Generate email reply\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ],\n        [\n          {\n            \"node\": \"Mark Email As Read\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"JSON Parser\": {\n      \"ai_outputParser\": [\n        [\n          {\n            \"node\": \"Assess if message needs a reply\",\n            \"type\": \"ai_outputParser\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"OpenAI Chat\": {\n      \"ai_languageModel\": [\n        [\n          {\n            \"node\": \"Assess if message needs a reply\",\n            \"type\": \"ai_languageModel\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"OpenAI Chat Model\": {\n      \"ai_languageModel\": [\n        [\n          {\n            \"node\": \"Generate email reply\",\n            \"type\": \"ai_languageModel\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"Gmail - Create Draft\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"Text Email\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"If\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"If1\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ],\n        [\n          {\n            \"node\": \"If2\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"Gmail is Received\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"If\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"If1\": {\n      \"main\": [\n        null,\n        [\n          {\n            \"node\": \"Mark As Promo\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"Mark As Promo\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"Remove from Inbox\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"Remove from Inbox\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"Gmail\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"Generate email reply\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"Gmail - Create Draft\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"If2\": {\n      \"main\": [\n        null,\n        [\n          {\n            \"node\": \"Assess if message needs a reply\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"Assess if message needs a reply\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"If Needs Reply\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    }\n  },\n  \"pinData\": {}\n}",
+        "options": {}
+      },
+      "id": "63c60d86-449c-4e64-9856-41c8b6225f31",
+      "name": "OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.5,
+      "position": [
+        840,
+        420
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {}
+      },
+      "id": "0f534c40-840e-4f92-9a58-c65cf7c0238c",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1160,
+        620
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"title\": \"Blog Title\",\n\t\"content\": \"Blog Content\",\n  \"slug\": \"/slug-here/\",\n  \"category\": \"Business Automation\"\n}"
+      },
+      "id": "c2acb3bf-f4b5-4dd1-91d1-25803288642a",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1400,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Review the input. Then separate the content into title and content. Afterward, generate a category and slug for the article."
+            }
+          ]
+        }
+      },
+      "id": "d561bb1d-d282-4ff2-a905-5de3035b904a",
+      "name": "Basic LLM Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        1300,
+        420
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "95e34b94-15b1-45df-a028-d48c92c44451",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        640,
+        420
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-09-30T18:13:42.000Z",
+  "versionId": "6bcb6404-7dfc-41c2-810f-b6c8b7584901"
+}
