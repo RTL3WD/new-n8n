@@ -1,0 +1,186 @@
+{
+  "active": true,
+  "connections": {
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-09-27T12:07:58.277Z",
+  "id": "TcPq1BMOYm2wtqde",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Business Card Extraction",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "d40c4a0a-3c29-43cd-9a18-05a32b7b3f80",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        1080,
+        680
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cbee6234-bd55-433d-ab2c-894943a468bf",
+              "leftValue": "={{ $('When chat message received').item.binary }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b9ab4840-7bec-4350-ae22-e2c062926d7e",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        780,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "binaryPropertyName": "data0",
+        "options": {
+          "purpose": "assistants"
+        }
+      },
+      "id": "2da53ae0-c3a6-456d-9222-493f514efc59",
+      "name": "OpenAI1",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.5,
+      "position": [
+        1000,
+        320
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "public": true,
+        "options": {
+          "allowFileUploads": true
+        }
+      },
+      "id": "fb84603a-ebcd-4e4f-a09c-22422a460645",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        440
+      ],
+      "webhookId": "5eeb7b6d-738c-4d52-ad5d-3bb17ac3b477"
+    },
+    {
+      "parameters": {
+        "resource": "assistant",
+        "assistantId": {
+          "__rl": true,
+          "value": "asst_TA06zDaO2x8z04noNeLnjlBP",
+          "mode": "list",
+          "cachedResultName": "Business Card Assistant"
+        },
+        "prompt": "define",
+        "text": "Instructions for Extracting and Communicating Information from Business Cards\nPreparing for Extraction:\nImage Upload Request: Begin by asking the user to upload images of the business cards they need information from.\nExtracting Information:\nImage Analysis:\nUpon receiving an image, carefully examine the contents.\nIdentify key information such as name, company, address, phone number, email, website, and any additional details provided.\nCommunicating the Extracted Information:\nRelaying Information:\nClearly and concisely relay the extracted information back to the user in text format.\nEnsure that the information is organized by category (e.g., Name, Company, Address, etc.).\nRepeating the Process:\nIterative Process for Multiple Cards:\nIf the user uploads multiple images of business cards, repeat steps 2 and 3 for each image.\nMaintain the order of the cards as presented by the user to avoid confusion.\nEnsuring Privacy:\nPrivacy Consideration:\nDo not store or share any personal information from the business cards.\nRespect the privacy of individuals by not using the information for any other purpose than what the user has requested.\nClosing the Interaction:\nFinal Check:\nAsk the user if they need any further assistance with the business cards.\nProvide any additional services or answer any questions the user may have related to the process.\nInstructions for the User:\nFor Future Requests:\nInform the user that they can follow this process anytime they need information extracted from business cards.\nEncourage the user to provide clear images for better accuracy in information extraction.\nTechnical Notes (for AI or Assistant Usage):\nError Handling:\n\nIf the text in the image is not clear or the card is not legible, ask the user to re-upload a clearer image.\nIf the card contains a language that requires translation, use the appropriate tools to provide an accurate translation.\nAI Limitations:\n\nBe transparent about the AI's limitations, including the cutoff date for its knowledge base and any restrictions on internet access or external API calls.\nUser Privacy:\n\nEnsure the user is aware that their privacy is respected and that the AI does not retain any personal information after the session ends.\nThese instructions can be adapted to fit the specific context or requirements of different chat sessions or platforms.",
+        "options": {}
+      },
+      "id": "a3582156-f85e-467e-9b57-a8d93a77770b",
+      "name": "OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.5,
+      "position": [
+        1220,
+        460
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 2,
+  "updatedAt": "2024-09-27T12:23:51.000Z",
+  "versionId": "32f78a46-c8b8-4826-a3e3-104fbd2685e6"
+}
