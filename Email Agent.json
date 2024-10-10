@@ -1,0 +1,366 @@
+{
+  "active": false,
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Contact Email Address": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date Time Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Google Contact": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-09-27T15:27:24.980Z",
+  "id": "tHKD3rsg6G4Yc3p1",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Email Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {}
+      },
+      "id": "0387d03d-c1b0-4c83-b2c2-325284a8970c",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        860,
+        680
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "id": "65defcab-2f15-4e93-b711-32139878c9a7",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        1000,
+        680
+      ]
+    },
+    {
+      "parameters": {
+        "name": "Get_Email",
+        "description": "Use this tool to retrieve emails when instructed to do so.",
+        "workflowId": {
+          "__rl": true,
+          "value": "kfeEcBwONXHoKhB5",
+          "mode": "list",
+          "cachedResultName": "Read Email Tool"
+        }
+      },
+      "id": "e85b7814-0f65-4596-a5dc-850cde228730",
+      "name": "Get Email",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1720,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "name": "Send_Email",
+        "description": "=Use this tool when directed to send an email. When passing data to this tool, include the following fields:\n\n{\n  \"operation\": \"SEND\",\n  \"name\": \"Recipient's name (optional)\",\n  \"email\": \"Recipient's email address (required)\",\n  \"subject\": \"Subject of the email\",\n  \"message_text\": \"{{ $json.chatInput }}\"\n}\n\nMake sure to include all the required fields and ensure the values are formatted correctly before sending.\n\n\n\n\n\n\n",
+        "workflowId": {
+          "__rl": true,
+          "value": "6Pf1uKb8e3irZQ84",
+          "mode": "list",
+          "cachedResultName": "Create Email Tool"
+        },
+        "specifyInputSchema": true,
+        "jsonSchemaExample": "{\n\"operation\":\"SEND\",\n\"name\":\"Name of the person who the email is being sent to if applicable\",\n\"email\":\"email address, required\",\n\"subject\": \"Something related to the message\",\n\"message text\": \"{{ $json.chatInput }}\"\n}"
+      },
+      "id": "7db854ac-9542-40aa-8fd0-8da260a05787",
+      "name": "Send Email",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1840,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "71f55727-7986-4508-a7e8-6ca81df6b50b",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        840,
+        440
+      ],
+      "webhookId": "3a08c5fe-d9bf-448f-8d21-68722bb54555"
+    },
+    {
+      "parameters": {
+        "name": "Get_Contact_Email",
+        "description": "=Use this tool when given a name and told to retrieve their email address. Pass a person's name to attempt to get an email. If there is no email, respond back with no email found for the person.",
+        "workflowId": {
+          "__rl": true,
+          "value": "In21UP7C33NeP3Ag",
+          "mode": "list",
+          "cachedResultName": "Get Google Contact Email Tool"
+        }
+      },
+      "id": "3ebe5dfe-9f55-4f5e-af1f-c79d96d5fdd3",
+      "name": "Get Contact Email Address",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1600,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "name": "Get_Date_Time",
+        "description": "Use this tool any time someone mentions date or time. This tool will return back the current date and time to the assistant. ",
+        "jsCode": "function getNewYorkDateTime() {\n  // Create a date object and format it for New York timezone\n  const options = {\n    timeZone: 'America/New_York',\n    year: 'numeric',\n    month: '2-digit',\n    day: '2-digit',\n    hour: '2-digit',\n    minute: '2-digit',\n    second: '2-digit',\n    hour12: false // Use 24-hour format\n  };\n  \n  const newYorkDateTime = new Date().toLocaleString('en-US', options);\n  \n  // Format to YYYY-MM-DD HH:MM:SS\n  const formattedDateTime = newYorkDateTime.replace(',', '');\n  const [date, time] = formattedDateTime.split(' ');\n  const [month, day, year] = date.split('/');\n  \n  return `${year}-${month}-${day} ${time}`;\n}\n\nconsole.log(getNewYorkDateTime()); // Example Output: 2024-09-28 14:35:12\n\nreturn getNewYorkDateTime();"
+      },
+      "id": "987ed77c-cf55-4400-a118-6c7109ca8b66",
+      "name": "Date Time Tool",
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [
+        900,
+        1040
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "bb4f900d-1df6-459e-a207-de127490bc86",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        1060,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "name": "Create_Contact",
+        "description": "=Use this tool when told specifically to create a new contact. When passing data send the following information. If any data is not provided, leave it as a blank string.\n\nEXAMPLE INPUT SCHEMA:\n{\n    \"First Name\": \"Robert\", REQUIRED\n    \"Last Name\": \"Lord\",\n    \"Company Name\": \"Automate St Pete\",\n    \"Company Website\": \"automatestpete.com\",\n    \"Company Position\": \"Owner\",\n    \"Phone\": \"7272918100\",\n    \"Email\": \"automatestpete@gmail.com\" REQUIRED\n}",
+        "workflowId": {
+          "__rl": true,
+          "value": "317eA5FQ421igZg9",
+          "mode": "list",
+          "cachedResultName": "Create Contact Tool"
+        },
+        "specifyInputSchema": true,
+        "jsonSchemaExample": "{\n    \"First Name\": \"Robert\",\n    \"Last Name\": \"Lord\",\n    \"Company Name\": \"Automate St Pete\",\n    \"Company Website\": \"automatestpete.com\",\n    \"Company Position\": \"Owner\",\n    \"Phone\": \"7272918100\",\n    \"Email\": \"automatestpete@gmail.com\",\n    \"submittedAt\": \"2024-09-28T13:28:26.326+02:00\",\n    \"formMode\": \"test\"\n}"
+      },
+      "id": "756e2f6a-6cfd-4554-b298-e9264ca50dfd",
+      "name": "Create Google Contact",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1480,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "74a836d5-a398-4d47-9b1f-e18ab970cd82",
+      "name": "SerpAPI",
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        1040
+      ],
+      "credentials": {
+        "serpApi": {
+          "id": "TrHqZUgKGIHkC3cl",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "ffa1a3b9-3a2d-4103-8b38-13dda71790a3",
+      "name": "Calculator",
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        1020,
+        1040
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Google Suite Tools",
+        "height": 308.19819819819827,
+        "width": 720.5855855855848
+      },
+      "id": "ca3f112f-9374-4d03-a425-8f4aa476ed2d",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Util Tools",
+        "height": 287.0270270270271,
+        "width": 486.2767371271366
+      },
+      "id": "53430585-e25a-4cae-8af4-f2d40d182934",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        860,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Database Tools",
+        "height": 262.27492928130033,
+        "width": 722.3506799888357
+      },
+      "id": "60a8bc53-c4e6-48e2-93e9-f05f997335ae",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        900
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-09-29T23:45:16.000Z",
+  "versionId": "dd06579b-0e87-4bb2-9894-9df0fc9d0be2"
+}
