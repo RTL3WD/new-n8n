@@ -1,0 +1,1509 @@
+{
+  "active": false,
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Supabase1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Contains Location": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Supabase2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase2": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Supabase3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "Supabase4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase4": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Supabase5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase5": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields6": {
+      "main": [
+        [
+          {
+            "node": "Supabase6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase6": {
+      "main": [
+        [
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items3": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields7",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Supabase7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase7": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If page number": {
+      "main": [
+        [
+          {
+            "node": "If Contains Location",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If location contains near me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If location contains near me": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "If page number",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-09-29T23:53:04.213Z",
+  "id": "eRSNyy839R0b2fqp",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Google Maps Tool",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "c15bc604-f708-442c-9a3c-e5d10d8f3add",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        280,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://serpapi.com/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "engine",
+              "value": "google_maps"
+            },
+            {
+              "name": "q",
+              "value": "={{ String($json.output['search query']).concat(\" near \", $json.output['location'] ) }}"
+            },
+            {
+              "name": "ll",
+              "value": "@27.7676008,-82.6402915,14z"
+            },
+            {
+              "name": "type",
+              "value": "search"
+            },
+            {
+              "name": "api_key",
+              "value": "31a79151ca2100ab14bbba481aa326a5db514e1f22b93b0c4b921311f135675c"
+            },
+            {
+              "name": "start",
+              "value": "={{ $json.output.page }}"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "id": "9677f3cb-301d-4573-94a6-f611283bb4fb",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1440,
+        -500
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "65290e47-6dec-4869-ac42-0a820a31ae5c",
+              "name": "Search Engine",
+              "value": "={{ String($json.search_parameters.engine).replace(\"_\",\" \") }}",
+              "type": "string"
+            },
+            {
+              "id": "94b27e8d-34e3-4f3c-9341-6580817f2302",
+              "name": "Query",
+              "value": "={{ $json.search_parameters.q }}",
+              "type": "string"
+            },
+            {
+              "id": "469fa962-cd5f-4c80-b374-313489bb25ef",
+              "name": "Results",
+              "value": "={{ $json.local_results }}",
+              "type": "array"
+            },
+            {
+              "id": "de8f287c-68c6-43d7-ab99-0d6563eba8a3",
+              "name": "Pagination",
+              "value": "={{ $json.serpapi_pagination.next }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2b685960-9b63-4b6a-bff0-1a43d2f685ed",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1660,
+        -500
+      ]
+    },
+    {
+      "parameters": {
+        "tableId": "serpapi_map_results",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "search_engine",
+              "fieldValue": "={{ $json['Search Engine'] }}"
+            },
+            {
+              "fieldId": "query",
+              "fieldValue": "={{ $json.Query }}"
+            },
+            {
+              "fieldId": "results",
+              "fieldValue": "={{ $json.Results }}"
+            },
+            {
+              "fieldId": "pagination",
+              "fieldValue": "={{ $json.Pagination }}"
+            }
+          ]
+        }
+      },
+      "id": "88daeb30-7dd3-4e72-851b-66040b806ecd",
+      "name": "Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1880,
+        -500
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "dt1dMrxjzCx0PjDa",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "50f75c6d-47b3-47c6-9e95-73bc96b24ade",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2340,
+        -500
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "let finalResultsLIst = [];\nlet resultsListString = $('Supabase').all()[0].json.results;\nlet resultsList = JSON.parse(resultsListString)\n\nfor (let result of resultsList) {\n  let finalResult = {\n  \"Name\": result['title'],\n    \"Type\": result['type'],\n    \"Website\": result['website'],\n    \"Phone\": result['phone'],\n    \"Address\": result['address'],\n    \"Position\": result['position'],\n    \"Rating\": result['rating'],\n    \"Reviews\": result['reviews'],\n    \"Hours\": result['operating_hours']\n  };\n  finalResultsLIst.push(finalResult);\n}\n\n\nreturn finalResultsLIst;"
+      },
+      "id": "cee392aa-abb4-4757-a169-829ca5e8b9c6",
+      "name": "Code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2100,
+        -500
+      ]
+    },
+    {
+      "parameters": {
+        "tableId": "serpapi_local_results",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "name",
+              "fieldValue": "={{ $json.Name }}"
+            },
+            {
+              "fieldId": "type",
+              "fieldValue": "={{ $json.Type }}"
+            },
+            {
+              "fieldId": "phone",
+              "fieldValue": "={{ $json.Phone || \"\" }}"
+            },
+            {
+              "fieldId": "address",
+              "fieldValue": "={{ $json.Address || \"No Address\" }}"
+            },
+            {
+              "fieldId": "position",
+              "fieldValue": "={{ $json.Position }}"
+            },
+            {
+              "fieldId": "rating",
+              "fieldValue": "={{ $json.Rating || 0 }}"
+            },
+            {
+              "fieldId": "reviews",
+              "fieldValue": "={{ $json.Reviews || 0 }}"
+            },
+            {
+              "fieldId": "hours",
+              "fieldValue": "={{ $json.Hours || {\"No Hours\":\"No Hours Available\"} }}"
+            },
+            {
+              "fieldId": "website",
+              "fieldValue": "={{ $json.Website || \"No Website Fou d\" }}"
+            }
+          ]
+        }
+      },
+      "id": "a292e0b4-5560-4bbf-8d56-d3449f416c7c",
+      "name": "Supabase1",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2680,
+        -320
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "dt1dMrxjzCx0PjDa",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "527a0875-33eb-44ad-8339-23b91091cb2e",
+              "name": "response",
+              "value": "=Added new data. Local Results Below:\n{{ $('HTTP Request').item.json.local_results }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9a2d7a1b-c383-4866-b5cb-2d47f8c19837",
+      "name": "Edit Fields1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2600,
+        -560
+      ]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {}
+      },
+      "id": "fc407384-0c5d-40ef-b64f-71724a76f100",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        420,
+        640
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"search query\": \"Computer repair\",\n\t\"location\": \"St Pete, Fl\",\n  \"page\": 20\n}"
+      },
+      "id": "8c0d29f9-400b-41da-9036-efde0d9998cf",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        600,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "33d43f9c-8345-4725-ae69-17769e5ed1fe",
+              "leftValue": "={{ $json.output.location }}",
+              "rightValue": "near me",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "3373d6a3-8b28-4bb5-9575-d09a52fe746e",
+      "name": "If Contains Location",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1160,
+        -220
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://serpapi.com/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "engine",
+              "value": "google_maps"
+            },
+            {
+              "name": "q",
+              "value": "={{ String($json.output['search query']).concat(\" near me\") }}"
+            },
+            {
+              "name": "ll",
+              "value": "@27.7676008,-82.6402915,14z"
+            },
+            {
+              "name": "type",
+              "value": "search"
+            },
+            {
+              "name": "api_key",
+              "value": "31a79151ca2100ab14bbba481aa326a5db514e1f22b93b0c4b921311f135675c"
+            },
+            {
+              "name": "start",
+              "value": "={{ $json.output.page }}"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "id": "568f2097-307c-4da9-8dbe-85bcb301db0b",
+      "name": "HTTP Request1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1440,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "65290e47-6dec-4869-ac42-0a820a31ae5c",
+              "name": "Search Engine",
+              "value": "={{ String($json.search_parameters.engine).replace(\"_\",\" \") }}",
+              "type": "string"
+            },
+            {
+              "id": "94b27e8d-34e3-4f3c-9341-6580817f2302",
+              "name": "Query",
+              "value": "={{ $json.search_parameters.q }}",
+              "type": "string"
+            },
+            {
+              "id": "469fa962-cd5f-4c80-b374-313489bb25ef",
+              "name": "Results",
+              "value": "={{ $json.local_results }}",
+              "type": "array"
+            },
+            {
+              "id": "de8f287c-68c6-43d7-ab99-0d6563eba8a3",
+              "name": "Pagination",
+              "value": "={{ $json.serpapi_pagination.next }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "92e9140e-b138-49a5-b54c-ca7cc1c8c628",
+      "name": "Edit Fields2",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1660,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "tableId": "serpapi_map_results",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "search_engine",
+              "fieldValue": "={{ $json['Search Engine'] }}"
+            },
+            {
+              "fieldId": "query",
+              "fieldValue": "={{ $json.Query }}"
+            },
+            {
+              "fieldId": "results",
+              "fieldValue": "={{ $json.Results }}"
+            },
+            {
+              "fieldId": "pagination",
+              "fieldValue": "={{ $json.Pagination }}"
+            }
+          ]
+        }
+      },
+      "id": "e58a788f-9343-4b95-9bf6-e980b4c52d57",
+      "name": "Supabase2",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1880,
+        0
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "dt1dMrxjzCx0PjDa",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "19a56913-9459-48d9-a5d4-1290e4cd1b0f",
+      "name": "Loop Over Items1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2340,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "let finalResultsLIst = [];\nlet resultsListString = $('Supabase2').all()[0].json.results;\nlet resultsList = JSON.parse(resultsListString)\n\nfor (let result of resultsList) {\n  let finalResult = {\n  \"Name\": result['title'],\n    \"Type\": result['type'],\n    \"Website\": result['website'],\n    \"Phone\": result['phone'],\n    \"Address\": result['address'],\n    \"Position\": result['position'],\n    \"Rating\": result['rating'],\n    \"Reviews\": result['reviews'],\n    \"Hours\": result['operating_hours']\n  };\n  finalResultsLIst.push(finalResult);\n}\n\n\nreturn finalResultsLIst;"
+      },
+      "id": "1b38fd3c-ad65-47a4-a34a-ef77c077a51d",
+      "name": "Code1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2100,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "tableId": "serpapi_local_results",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "name",
+              "fieldValue": "={{ $json.Name }}"
+            },
+            {
+              "fieldId": "type",
+              "fieldValue": "={{ $json.Type }}"
+            },
+            {
+              "fieldId": "phone",
+              "fieldValue": "={{ $json.Phone || \"\" }}"
+            },
+            {
+              "fieldId": "address",
+              "fieldValue": "={{ $json.Address || \"No Address\" }}"
+            },
+            {
+              "fieldId": "position",
+              "fieldValue": "={{ $json.Position }}"
+            },
+            {
+              "fieldId": "rating",
+              "fieldValue": "={{ $json.Rating || 0 }}"
+            },
+            {
+              "fieldId": "reviews",
+              "fieldValue": "={{ $json.Reviews || 0 }}"
+            },
+            {
+              "fieldId": "hours",
+              "fieldValue": "={{ $json.Hours || {\"No Hours\":\"No Hours Available\"} }}"
+            },
+            {
+              "fieldId": "website",
+              "fieldValue": "={{ $json.Website }}"
+            }
+          ]
+        }
+      },
+      "id": "6a1bdfee-13df-4617-ada9-3dc9a1e074a0",
+      "name": "Supabase3",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2680,
+        180
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "dt1dMrxjzCx0PjDa",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "527a0875-33eb-44ad-8339-23b91091cb2e",
+              "name": "response",
+              "value": "=Added new data. Local Results Below:\n{{ $('HTTP Request1').item.json.local_results }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1f726bba-4387-48c1-bd3e-a245e5a8b65f",
+      "name": "Edit Fields3",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2600,
+        -60
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://serpapi.com/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "engine",
+              "value": "google_maps"
+            },
+            {
+              "name": "q",
+              "value": "={{ String($json.output['search query']).concat(\" near \", $json.output['location'] ) }}"
+            },
+            {
+              "name": "type",
+              "value": "search"
+            },
+            {
+              "name": "api_key",
+              "value": "31a79151ca2100ab14bbba481aa326a5db514e1f22b93b0c4b921311f135675c"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "id": "155faf00-78a7-43be-9731-1020fea565d8",
+      "name": "HTTP Request2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1460,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "65290e47-6dec-4869-ac42-0a820a31ae5c",
+              "name": "Search Engine",
+              "value": "={{ String($json.search_parameters.engine).replace(\"_\",\" \") }}",
+              "type": "string"
+            },
+            {
+              "id": "94b27e8d-34e3-4f3c-9341-6580817f2302",
+              "name": "Query",
+              "value": "={{ $json.search_parameters.q }}",
+              "type": "string"
+            },
+            {
+              "id": "469fa962-cd5f-4c80-b374-313489bb25ef",
+              "name": "Results",
+              "value": "={{ $json.local_results }}",
+              "type": "array"
+            },
+            {
+              "id": "de8f287c-68c6-43d7-ab99-0d6563eba8a3",
+              "name": "Pagination",
+              "value": "={{ $json.serpapi_pagination.next }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7668126f-c005-452b-9288-54739798e140",
+      "name": "Edit Fields4",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1680,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "tableId": "serpapi_map_results",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "search_engine",
+              "fieldValue": "={{ $json['Search Engine'] }}"
+            },
+            {
+              "fieldId": "query",
+              "fieldValue": "={{ $json.Query }}"
+            },
+            {
+              "fieldId": "results",
+              "fieldValue": "={{ $json.Results }}"
+            },
+            {
+              "fieldId": "pagination",
+              "fieldValue": "={{ $json.Pagination }}"
+            }
+          ]
+        }
+      },
+      "id": "f9032da0-1695-4f81-8bea-f5012b46734f",
+      "name": "Supabase4",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1900,
+        620
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "dt1dMrxjzCx0PjDa",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "c346c340-79a8-457f-83f8-b573274bed98",
+      "name": "Loop Over Items2",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2360,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "let finalResultsLIst = [];\nlet resultsListString = $('Supabase4').all()[0].json.results;\nlet resultsList = JSON.parse(resultsListString)\n\nfor (let result of resultsList) {\n  let finalResult = {\n  \"Name\": result['title'],\n    \"Type\": result['type'],\n    \"Website\": result['website'],\n    \"Phone\": result['phone'],\n    \"Address\": result['address'],\n    \"Position\": result['position'],\n    \"Rating\": result['rating'],\n    \"Reviews\": result['reviews'],\n    \"Hours\": result['operating_hours']\n  };\n  finalResultsLIst.push(finalResult);\n}\n\n\nreturn finalResultsLIst;"
+      },
+      "id": "f0704c7d-c02a-47c3-beb1-cf679b9780d7",
+      "name": "Code2",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2120,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "tableId": "serpapi_local_results",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "name",
+              "fieldValue": "={{ $json.Name }}"
+            },
+            {
+              "fieldId": "type",
+              "fieldValue": "={{ $json.Type }}"
+            },
+            {
+              "fieldId": "phone",
+              "fieldValue": "={{ $json.Phone || \"\" }}"
+            },
+            {
+              "fieldId": "address",
+              "fieldValue": "={{ $json.Address || \"No Address\" }}"
+            },
+            {
+              "fieldId": "position",
+              "fieldValue": "={{ $json.Position }}"
+            },
+            {
+              "fieldId": "rating",
+              "fieldValue": "={{ $json.Rating || 0 }}"
+            },
+            {
+              "fieldId": "reviews",
+              "fieldValue": "={{ $json.Reviews || 0 }}"
+            },
+            {
+              "fieldId": "hours",
+              "fieldValue": "={{ $json.Hours || {\"No Hours\":\"No Hours Available\"} }}"
+            },
+            {
+              "fieldId": "website",
+              "fieldValue": "={{ $json.Website }}"
+            }
+          ]
+        }
+      },
+      "id": "db71125c-b653-4543-8bd9-d12c73e42c5a",
+      "name": "Supabase5",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2700,
+        800
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "dt1dMrxjzCx0PjDa",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "527a0875-33eb-44ad-8339-23b91091cb2e",
+              "name": "response",
+              "value": "=Added new data. Local Results Below:\n{{ $('HTTP Request2').item.json.local_results }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "921dba81-33ea-41c1-a6cd-feed38162a11",
+      "name": "Edit Fields5",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2620,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://serpapi.com/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "engine",
+              "value": "google_maps"
+            },
+            {
+              "name": "q",
+              "value": "={{ String($json.output['search query']).concat(\" \",$json.output.location) }}"
+            },
+            {
+              "name": "type",
+              "value": "search"
+            },
+            {
+              "name": "api_key",
+              "value": "31a79151ca2100ab14bbba481aa326a5db514e1f22b93b0c4b921311f135675c"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "id": "b3054e10-a163-44ff-891a-ee5164112f75",
+      "name": "HTTP Request3",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1460,
+        1120
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "65290e47-6dec-4869-ac42-0a820a31ae5c",
+              "name": "Search Engine",
+              "value": "={{ String($json.search_parameters.engine).replace(\"_\",\" \") }}",
+              "type": "string"
+            },
+            {
+              "id": "94b27e8d-34e3-4f3c-9341-6580817f2302",
+              "name": "Query",
+              "value": "={{ $json.search_parameters.q }}",
+              "type": "string"
+            },
+            {
+              "id": "469fa962-cd5f-4c80-b374-313489bb25ef",
+              "name": "Results",
+              "value": "={{ $json.local_results }}",
+              "type": "array"
+            },
+            {
+              "id": "de8f287c-68c6-43d7-ab99-0d6563eba8a3",
+              "name": "Pagination",
+              "value": "={{ $json.serpapi_pagination.next }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4db062ff-289a-417c-90f0-8bb7d0a15ad8",
+      "name": "Edit Fields6",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1680,
+        1120
+      ]
+    },
+    {
+      "parameters": {
+        "tableId": "serpapi_map_results",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "search_engine",
+              "fieldValue": "={{ $json['Search Engine'] }}"
+            },
+            {
+              "fieldId": "query",
+              "fieldValue": "={{ $json.Query }}"
+            },
+            {
+              "fieldId": "results",
+              "fieldValue": "={{ $json.Results }}"
+            },
+            {
+              "fieldId": "pagination",
+              "fieldValue": "={{ $json.Pagination }}"
+            }
+          ]
+        }
+      },
+      "id": "35c4620d-282d-46d3-9db2-f422a10444b1",
+      "name": "Supabase6",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1900,
+        1120
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "dt1dMrxjzCx0PjDa",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "768bb4a8-c4fe-49b2-b9bc-ccd34167e91e",
+      "name": "Loop Over Items3",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2360,
+        1120
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "let finalResultsLIst = [];\nlet resultsListString = $('Supabase6').all()[0].json.results;\nlet resultsList = JSON.parse(resultsListString)\n\nfor (let result of resultsList) {\n  let finalResult = {\n  \"Name\": result['title'],\n    \"Type\": result['type'],\n    \"Website\": result['website'],\n    \"Phone\": result['phone'],\n    \"Address\": result['address'],\n    \"Position\": result['position'],\n    \"Rating\": result['rating'],\n    \"Reviews\": result['reviews'],\n    \"Hours\": result['operating_hours']\n  };\n  finalResultsLIst.push(finalResult);\n}\n\n\nreturn finalResultsLIst;"
+      },
+      "id": "027debcf-6676-410a-a292-05a1e17cde97",
+      "name": "Code3",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2120,
+        1120
+      ]
+    },
+    {
+      "parameters": {
+        "tableId": "serpapi_local_results",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "name",
+              "fieldValue": "={{ $json.Name }}"
+            },
+            {
+              "fieldId": "type",
+              "fieldValue": "={{ $json.Type }}"
+            },
+            {
+              "fieldId": "phone",
+              "fieldValue": "={{ $json.Phone || \"\" }}"
+            },
+            {
+              "fieldId": "address",
+              "fieldValue": "={{ $json.Address || \"No Address\" }}"
+            },
+            {
+              "fieldId": "position",
+              "fieldValue": "={{ $json.Position }}"
+            },
+            {
+              "fieldId": "rating",
+              "fieldValue": "={{ $json.Rating || 0 }}"
+            },
+            {
+              "fieldId": "reviews",
+              "fieldValue": "={{ $json.Reviews || 0 }}"
+            },
+            {
+              "fieldId": "hours",
+              "fieldValue": "={{ $json.Hours || {\"No Hours\":\"No Hours Available\"} }}"
+            },
+            {
+              "fieldId": "website",
+              "fieldValue": "={{ $json.Website }}"
+            }
+          ]
+        }
+      },
+      "id": "cfd3362c-02ad-426e-926a-cbeb50dd5113",
+      "name": "Supabase7",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2700,
+        1300
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "dt1dMrxjzCx0PjDa",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "527a0875-33eb-44ad-8339-23b91091cb2e",
+              "name": "response",
+              "value": "=Added new data. Local Results Below:\n{{ $('HTTP Request3').item.json.local_results }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5f4a47a8-22c2-4854-b0a8-90ede618e119",
+      "name": "Edit Fields7",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2620,
+        1060
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "71ea0f49-2a5e-49f6-9513-ad3af0016128",
+              "leftValue": "={{ $json.output.page }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a9a93857-9551-4fe6-8225-014b37e8508b",
+      "name": "If page number",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        880,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "33d43f9c-8345-4725-ae69-17769e5ed1fe",
+              "leftValue": "={{ $json.output.location }}",
+              "rightValue": "near me",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "8374b537-888d-4613-a495-dd1ecd96576e",
+      "name": "If location contains near me",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1180,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Your goal is to help determine the input keyword search term and if the input contains a location, the location, or if not, then near me. If the input contains the key phrase \"Page\", not case sensitive, followed by a number then output the number times 20, if there is no page number the default is 0."
+            }
+          ]
+        }
+      },
+      "id": "1f6601c8-fc34-4157-a3ce-c558926100e3",
+      "name": "Basic LLM Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        500,
+        440
+      ]
+    }
+  ],
+  "pinData": {
+    "Execute Workflow Trigger": [
+      {
+        "json": {
+          "query": "computer repair in St Pete, Fl page 1"
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-09-30T02:25:46.000Z",
+  "versionId": "90170fe6-379e-493c-853c-bbed8315d444"
+}
