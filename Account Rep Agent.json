@@ -1,0 +1,287 @@
+{
+  "active": true,
+  "connections": {
+    "If": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-10-13T11:56:39.537Z",
+  "id": "R184UW5s1wRKDOEH",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Account Rep Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ff15e636-0650-4f2f-bf0e-2dc182b5902c",
+              "leftValue": "={{ $json.body.user_name }}",
+              "rightValue": "rocket.cat",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "c08c9278-ddd9-4453-805c-610cab355108",
+              "leftValue": "={{ $json.body.token }}",
+              "rightValue": "##MyRocketChatKey727..",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c81efab3-5bd4-4d74-bf01-594175101683",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.body.message_id }}"
+      },
+      "id": "32798e1c-4b68-4018-9762-382a233ad120",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        840
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "04bc81ff-5c91-4e0e-b9fd-4e27bf2fdbf6",
+              "name": "text",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1b531881-88ce-4f63-94d7-65c937568830",
+      "name": "Edit Fields1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1960,
+        440
+      ],
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "2b0a9d8f-04f0-4069-a156-1f00e55f99d4",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2160,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "be59ec5f-f458-4b8d-a3a8-7a3a75be903d",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "9fcfedce-7012-4cca-9517-6acc935dd14c",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        900,
+        440
+      ],
+      "webhookId": "be59ec5f-f458-4b8d-a3a8-7a3a75be903d"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "1058641e-7ed4-4a8d-9eae-09761142f3be",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        700
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"Project Manager Response\": \"California\",\n\t\"Account Representative Response\": \"Response\"\n}"
+      },
+      "id": "18fd3adc-3631-4b5f-bea8-9f980488ea92",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1660,
+        660
+      ]
+    },
+    {
+      "parameters": {
+        "agent": "conversationalAgent",
+        "promptType": "define",
+        "text": "={{ $json.body.text }}",
+        "options": {
+          "systemMessage": "You are an Account Representative handling communications with clients. Your task is to review client messages and extract key details relevant to their project. Based on the message, provide two outputs:\n\n1. **For the Project Manager:** Summarize the key information that needs to be passed on, formatted clearly for the project manager to take action.\n    - **Client Name:** Identify the client's name or company.\n    - **Project Details:** Summarize the specific requests, tasks, or updates related to the project.\n    - **Deadlines or Timelines:** Note any mentioned or implied deadlines.\n    - **Requirements or Concerns:** Capture any expectations, concerns, or scope changes from the client.\n    - **Next Steps:** Identify any actionable next steps for the project team.\n    - **Contact Info:** Include any new or updated contact information.\n\n2. **For the Client:** Generate a polite and professional response acknowledging their message, outlining the next steps or asking for clarification if needed.\n    - Confirm receipt of their message.\n    - Reassure the client that their request or update is being handled.\n    - Provide an estimated timeframe for follow-up or completion if applicable.\n    - Request any missing information or further clarification if needed.\n\n**Example Outputs:**\n\n**For Project Manager:**\n- **Client Name:** [Client Name]\n- **Project Details:** [Description of task/request]\n- **Deadline:** [If specified]\n- **Requirements/Concerns:** [Summarized issues/expectations]\n- **Next Steps:** [Actions to be taken]\n- **Contact Info:** [New/updated info, if applicable]\n\n**For Client Response:**\n- \"Hi [Client Name], thank you for your message! We’ve noted your [request/update] and are working on it. We’ll [outline next steps] and follow up by [estimated date]. If there’s anything else you’d like to add, please let us know! Best regards, [Your Name]\""
+        }
+      },
+      "id": "bcf8dfcf-1614-42dd-999a-1bef5193ea02",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        1360,
+        440
+      ]
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n.aspworkplace.com",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.0 Safari/537.36",
+            "content-length": "304",
+            "accept": "*/*",
+            "accept-encoding": "gzip,deflate",
+            "content-type": "application/json",
+            "x-forwarded-for": "192.168.176.1",
+            "x-forwarded-host": "n8n.aspworkplace.com",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "713be61c884b",
+            "x-real-ip": "192.168.176.1"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "token": "##MyRocketChatKey727..",
+            "bot": {
+              "i": "670c0f693e2606894d473756"
+            },
+            "channel_id": "GENERAL",
+            "channel_name": "general",
+            "message_id": "DKRn3TngnSWoihaeB",
+            "timestamp": "2024-10-13T18:31:39.765Z",
+            "user_id": "rocket.cat",
+            "user_name": "Rob",
+            "text": "We need to create an ERP system for my business.",
+            "siteUrl": "https://rocketchat.aspworkplace.com"
+          },
+          "webhookUrl": "https://n8n.aspworkplace.com/webhook/be59ec5f-f458-4b8d-a3a8-7a3a75be903d",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2024-10-13T19:09:27.000Z",
+  "versionId": "3611dc10-a1f5-45a7-bbc9-0f8d0bb71c63"
+}
