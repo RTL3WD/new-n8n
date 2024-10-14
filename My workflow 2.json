@@ -1,0 +1,468 @@
+{
+  "active": false,
+  "connections": {
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Reddit Feed URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Reddit Feed URL": {
+      "main": [
+        [
+          {
+            "node": "Extract Feed Name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Feed Name": {
+      "main": [
+        [
+          {
+            "node": "Get Feed Posts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Feed Posts": {
+      "main": [
+        [
+          {
+            "node": "Check if Post is in SB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if Post is in SB": {
+      "main": [
+        [
+          {
+            "node": "If SB returns empty response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If SB returns empty response": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain1": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "createdAt": "2024-10-14T19:26:51.701Z",
+  "id": "qr4Wwp6qdNNofPtO",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "283a1ca8-97d4-4fc1-807e-c48f381f6b1d",
+      "name": "Groq Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        2100,
+        340
+      ],
+      "credentials": {
+        "groqApi": {
+          "id": "Sky8svfm6OEcYSKn",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "id": "9652c9f0-5bf1-4f2c-a7a1-24d32e69c885",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        500,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "reddit_feeds",
+        "returnAll": true
+      },
+      "id": "ac1dd4f8-3318-4b83-ab78-c900115440ba",
+      "name": "Get Reddit Feed URL",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        700,
+        320
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "dt1dMrxjzCx0PjDa",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "let feed = $input.all()[0].json.feed_url;\nconst regex = /\\/r\\/([^\\/]+)\\.rss?/;\nlet subreddit = feed.match(regex);\nsubreddit = subreddit[1]\n\nconsole.log(subreddit)\n\nreturn [{\"Feed\":subreddit}]"
+      },
+      "id": "793e6e3e-f949-46b7-8c9c-998e97811ad0",
+      "name": "Extract Feed Name",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        920,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "subreddit": "={{ $json.Feed }}",
+        "limit": 10,
+        "filters": {}
+      },
+      "id": "1287c5eb-e1a2-4ec2-8d2a-b47d28204d40",
+      "name": "Get Feed Posts",
+      "type": "n8n-nodes-base.reddit",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        320
+      ],
+      "credentials": {
+        "redditOAuth2Api": {
+          "id": "WVC3DM8Zcrjq29Aw",
+          "name": "Reddit account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "reddit_posts",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $json.subreddit_id }}"
+            }
+          ]
+        }
+      },
+      "id": "ccca8f19-d637-4b6a-98fc-d16dfbe94f8a",
+      "name": "Check if Post is in SB",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1340,
+        320
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "dt1dMrxjzCx0PjDa",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ddb4cdbc-f68c-49f9-8b40-6187b4bc2353",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "2ec09c8c-5ce8-424a-882f-85b3d2c64a06",
+      "name": "If SB returns empty response",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1560,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "let unixDateTime = $('Get Feed Posts').all()[0].json.created\n\nlet isoDate = new Date(unixDateTime * 1000).toISOString();\n\n\nreturn [{\"ISO Date Time\": isoDate}]"
+      },
+      "id": "1f5c8e12-caf0-4f68-8f74-866c35f8aaea",
+      "name": "Code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1780,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "tableId": "reddit_posts",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "title",
+              "fieldValue": "={{ $('Get Feed Posts').all()[0].json.title }}"
+            },
+            {
+              "fieldId": "text",
+              "fieldValue": "={{ $('Get Feed Posts').all()[0].json.selftext }}"
+            },
+            {
+              "fieldId": "texthtml",
+              "fieldValue": "={{ $('Get Feed Posts').all()[0].json.selftext_html }}"
+            },
+            {
+              "fieldId": "url",
+              "fieldValue": "={{ $('Get Feed Posts').all()[0].json.url }}"
+            },
+            {
+              "fieldId": "subreddit_id",
+              "fieldValue": "={{ $('Get Feed Posts').all()[0].json.subreddit_id }}"
+            },
+            {
+              "fieldId": "created_at",
+              "fieldValue": "={{ $json['ISO Date Time'] }}"
+            }
+          ]
+        }
+      },
+      "id": "f5d56e88-8b06-497c-9437-315eae40f2b0",
+      "name": "Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2000,
+        120
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "dt1dMrxjzCx0PjDa",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3f3792de-1111-4c06-9a8f-3d92e92e3445",
+              "leftValue": "={{ $json.text.toLowerCase() }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "6b201c1e-217a-414b-87d8-c797033329fb",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2580,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Review the input and decide if it needs a response. Return with true or false only. No other comments or explanations."
+            }
+          ]
+        }
+      },
+      "id": "a5853be8-8a80-4ff0-b49a-f208a2d892f2",
+      "name": "Basic LLM Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        2200,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "d645670e-4997-42ef-ae21-30cfc34fce98",
+      "name": "Groq Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        2860,
+        140
+      ],
+      "credentials": {
+        "groqApi": {
+          "id": "Sky8svfm6OEcYSKn",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Get Feed Posts').all()[0].json.selftext }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Write a response to the input. Make sure not to be rude. Your goal is to provide helpful relevant information as a part of your response. Make your response no more than 3 to 4 sentences."
+            }
+          ]
+        }
+      },
+      "id": "4affcfd1-da83-44e1-ac0b-457d7ad6bda0",
+      "name": "Basic LLM Chain1",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        2880,
+        -60
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-10-14T22:05:54.000Z",
+  "versionId": "9d416505-1a8c-4ea7-a09c-21e65918cb9a"
+}
