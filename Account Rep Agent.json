@@ -34,23 +34,23 @@
         ]
       ]
     },
-    "Webhook": {
-      "main": [
-        [
-          {
-            "node": "If",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "OpenAI Chat Model": {
       "ai_languageModel": [
         [
           {
             "node": "AI Agent",
             "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
             "index": 0
           }
         ]
@@ -113,7 +113,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1120,
+        740,
         440
       ]
     },
@@ -128,7 +128,7 @@
       "typeVersion": 1.2,
       "position": [
         1120,
-        840
+        460
       ]
     },
     {
@@ -150,8 +150,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1960,
-        440
+        1400,
+        420
       ],
       "executeOnce": true
     },
@@ -164,9 +164,28 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        2160,
-        440
+        1600,
+        420
       ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "1058641e-7ed4-4a8d-9eae-09761142f3be",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        460
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
     },
     {
       "parameters": {
@@ -180,42 +199,10 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        900,
+        520,
         440
       ],
       "webhookId": "be59ec5f-f458-4b8d-a3a8-7a3a75be903d"
-    },
-    {
-      "parameters": {
-        "options": {}
-      },
-      "id": "1058641e-7ed4-4a8d-9eae-09761142f3be",
-      "name": "OpenAI Chat Model",
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "typeVersion": 1,
-      "position": [
-        1000,
-        700
-      ],
-      "credentials": {
-        "openAiApi": {
-          "id": "sTmNKjvehSYtW09j",
-          "name": "OpenAi account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsonSchemaExample": "{\n\t\"Project Manager Response\": \"California\",\n\t\"Account Representative Response\": \"Response\"\n}"
-      },
-      "id": "18fd3adc-3631-4b5f-bea8-9f980488ea92",
-      "name": "Structured Output Parser",
-      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
-      "typeVersion": 1.2,
-      "position": [
-        1660,
-        660
-      ]
     },
     {
       "parameters": {
@@ -223,7 +210,7 @@
         "promptType": "define",
         "text": "={{ $json.body.text }}",
         "options": {
-          "systemMessage": "You are an Account Representative handling communications with clients. Your task is to review client messages and extract key details relevant to their project. Based on the message, provide two outputs:\n\n1. **For the Project Manager:** Summarize the key information that needs to be passed on, formatted clearly for the project manager to take action.\n    - **Client Name:** Identify the client's name or company.\n    - **Project Details:** Summarize the specific requests, tasks, or updates related to the project.\n    - **Deadlines or Timelines:** Note any mentioned or implied deadlines.\n    - **Requirements or Concerns:** Capture any expectations, concerns, or scope changes from the client.\n    - **Next Steps:** Identify any actionable next steps for the project team.\n    - **Contact Info:** Include any new or updated contact information.\n\n2. **For the Client:** Generate a polite and professional response acknowledging their message, outlining the next steps or asking for clarification if needed.\n    - Confirm receipt of their message.\n    - Reassure the client that their request or update is being handled.\n    - Provide an estimated timeframe for follow-up or completion if applicable.\n    - Request any missing information or further clarification if needed.\n\n**Example Outputs:**\n\n**For Project Manager:**\n- **Client Name:** [Client Name]\n- **Project Details:** [Description of task/request]\n- **Deadline:** [If specified]\n- **Requirements/Concerns:** [Summarized issues/expectations]\n- **Next Steps:** [Actions to be taken]\n- **Contact Info:** [New/updated info, if applicable]\n\n**For Client Response:**\n- \"Hi [Client Name], thank you for your message! We’ve noted your [request/update] and are working on it. We’ll [outline next steps] and follow up by [estimated date]. If there’s anything else you’d like to add, please let us know! Best regards, [Your Name]\""
+          "systemMessage": "=You are an Account Representative handling communications with clients. Your task is to review client messages and extract key details relevant to their project. Based on the message, provide two outputs:\n\n1. **For the Project Manager:** Summarize the key information that needs to be passed on, formatted clearly for the project manager to take action.\n    - **Client Name:** Identify the client's name or company.\n    - **Project Details:** Summarize the specific requests, tasks, or updates related to the project.\n    - **Deadlines or Timelines:** Note any mentioned or implied deadlines.\n    - **Requirements or Concerns:** Capture any expectations, concerns, or scope changes from the client.\n    - **Next Steps:** Identify any actionable next steps for the project team.\n    - **Contact Info:** Include any new or updated contact information.\n\n2. **For the Client:** Generate a polite and professional response acknowledging their message, outlining the next steps or asking for clarification if needed.\n    - Confirm receipt of their message.\n    - Reassure the client that their request or update is being handled.\n    - Provide an estimated timeframe for follow-up or completion if applicable.\n    - Request any missing information or further clarification if needed.\n\n**Example Outputs:**\n\n**For Project Manager:**\n- **Client Name:** [Client Name]\n- **Project Details:** [Description of task/request]\n- **Deadline:** [If specified]\n- **Requirements/Concerns:** [Summarized issues/expectations]\n- **Next Steps:** [Actions to be taken]\n- **Contact Info:** [New/updated info, if applicable]\n\n**For Client Response:**\n- \"Hi [Client Name], thank you for your message! We’ve noted your [request/update] and are working on it. We’ll [outline next steps] and follow up by [estimated date]. If there’s anything else you’d like to add, please let us know! Best regards, [Your Name]\""
         }
       },
       "id": "bcf8dfcf-1614-42dd-999a-1bef5193ea02",
@@ -231,8 +218,8 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.6,
       "position": [
-        1360,
-        440
+        1000,
+        240
       ]
     }
   ],
@@ -282,6 +269,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-10-13T19:09:27.000Z",
-  "versionId": "3611dc10-a1f5-45a7-bbc9-0f8d0bb71c63"
+  "updatedAt": "2024-10-13T23:57:03.000Z",
+  "versionId": "008465ce-c69e-489a-907e-4c2a579aac40"
 }
