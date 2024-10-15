@@ -1,0 +1,137 @@
+{
+  "active": false,
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call n8n Workflow Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-10-15T22:29:37.283Z",
+  "id": "joy0BYm5df5Cmys2",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Coolify Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "4d5c060a-31d6-4df0-863d-1a24ee4d6685",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        820,
+        420
+      ],
+      "webhookId": "0e8735f4-61a3-4386-80b6-6de6c71f6a27"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "31a5b216-7a1a-4db1-8f99-0a65f6b9a14c",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        1040,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {}
+      },
+      "id": "87e41381-4796-4af6-ab74-b756565b69d7",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        920,
+        660
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "id": "bac8717a-ab39-449e-804c-15644c25151a",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        1060,
+        640
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "b064c4e9-df88-4f6e-8f78-2083a34dd92f",
+      "name": "Call n8n Workflow Tool",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1240,
+        640
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-10-15T22:29:45.000Z",
+  "versionId": "5ae54cf7-dbde-4a31-af5f-d9c9fd68bc31"
+}
