@@ -1,0 +1,212 @@
+{
+  "active": false,
+  "connections": {
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-10-15T11:46:46.812Z",
+  "id": "3LdZucmHVilZQVaq",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Upsert to Pinecone",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1UPgDcbWNyEvEbqoN1Aeb0GQPTLCSCxaQ",
+          "mode": "list",
+          "cachedResultName": "Coolify Documentation",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1UPgDcbWNyEvEbqoN1Aeb0GQPTLCSCxaQ"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "id": "09163ed2-80d7-4cd2-ad30-79542d933c01",
+      "name": "Google Drive Trigger",
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        460
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Zw8jmPeh7kB7F9lh",
+          "name": "Google Drive account - ASP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "8893cb9d-b7f5-444d-a94a-da540f4d55e5",
+      "name": "Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1740,
+        460
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Zw8jmPeh7kB7F9lh",
+          "name": "Google Drive account - ASP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "master-index",
+          "mode": "list",
+          "cachedResultName": "master-index"
+        },
+        "options": {
+          "pineconeNamespace": "coolify"
+        }
+      },
+      "id": "83079b6b-0c5b-4ded-9319-bd5af66e7e3b",
+      "name": "Pinecone Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        1960,
+        460
+      ],
+      "credentials": {
+        "pineconeApi": {
+          "id": "aV5CYt2sdcbb6VWx",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-small",
+        "options": {}
+      },
+      "id": "6722a7ce-9d4a-46ad-b73b-161c6c874607",
+      "name": "Embeddings OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1880,
+        640
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "eb1410c2-1b75-4d45-99cb-d0840781307a",
+      "name": "Default Data Loader",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        2060,
+        680
+      ]
+    },
+    {
+      "parameters": {
+        "chunkOverlap": 200,
+        "options": {}
+      },
+      "id": "c2f57696-9d88-42a2-8602-78f64b2eee5b",
+      "name": "Recursive Character Text Splitter",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        1960,
+        800
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-10-15T22:28:06.000Z",
+  "versionId": "3300221f-6f40-4ed5-81c9-1284ef51fb82"
+}
