@@ -34,12 +34,45 @@
         ]
       ]
     },
-    "Call n8n Workflow Tool": {
+    "Vector Store Tool": {
       "ai_tool": [
         [
           {
             "node": "AI Agent",
             "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Vector Store Tool",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Vector Store Tool",
+            "type": "ai_languageModel",
             "index": 0
           }
         ]
@@ -69,19 +102,6 @@
     },
     {
       "parameters": {
-        "options": {}
-      },
-      "id": "31a5b216-7a1a-4db1-8f99-0a65f6b9a14c",
-      "name": "AI Agent",
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 1.6,
-      "position": [
-        1040,
-        420
-      ]
-    },
-    {
-      "parameters": {
         "model": "gpt-4o-mini",
         "options": {}
       },
@@ -90,7 +110,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1,
       "position": [
-        920,
+        800,
         660
       ],
       "credentials": {
@@ -109,20 +129,105 @@
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.2,
       "position": [
-        1060,
-        640
+        940,
+        660
       ]
     },
     {
-      "parameters": {},
-      "id": "b064c4e9-df88-4f6e-8f78-2083a34dd92f",
-      "name": "Call n8n Workflow Tool",
-      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
-      "typeVersion": 1.2,
+      "parameters": {
+        "options": {
+          "systemMessage": "Your a helpful assistant. Your tone should be friendly and helpful.\nWhen asked questions about coolify, use the provided context.\nIf you don't know the answer, then simply respond with \"I don't know.\""
+        }
+      },
+      "id": "31a5b216-7a1a-4db1-8f99-0a65f6b9a14c",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
       "position": [
-        1240,
-        640
+        1040,
+        420
       ]
+    },
+    {
+      "parameters": {
+        "name": "coolify_docs",
+        "description": "The most recent documentation from Coolify."
+      },
+      "id": "6a1aadac-7902-43d7-8b24-9be6bef060a7",
+      "name": "Vector Store Tool",
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        660
+      ]
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-small",
+        "options": {}
+      },
+      "id": "6845985f-aafb-49e6-b5d0-12f923376734",
+      "name": "Embeddings OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1,
+      "position": [
+        800,
+        980
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "master-index",
+          "mode": "list",
+          "cachedResultName": "master-index"
+        },
+        "options": {
+          "pineconeNamespace": "coolify"
+        }
+      },
+      "id": "cb2e7cec-dff2-4527-99a2-6866ddd953bb",
+      "name": "Pinecone Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        920,
+        860
+      ],
+      "credentials": {
+        "pineconeApi": {
+          "id": "aV5CYt2sdcbb6VWx",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {}
+      },
+      "id": "a6d41564-5273-4d23-a24e-8446fcc04492",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1160,
+        860
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -132,6 +237,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-10-15T22:29:45.000Z",
-  "versionId": "5ae54cf7-dbde-4a31-af5f-d9c9fd68bc31"
+  "updatedAt": "2024-10-16T15:00:16.000Z",
+  "versionId": "ebf28b9d-3a25-4c5e-a6f8-2c6219596d5f"
 }
