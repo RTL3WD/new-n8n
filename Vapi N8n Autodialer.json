@@ -1,11 +1,55 @@
 {
-  "active": false,
+  "active": true,
   "connections": {
-    "When clicking ‘Test workflow’": {
+    "Code": {
       "main": [
         [
           {
-            "node": "HTTP Request",
+            "node": "Make Phone Call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make Phone Call": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get Call Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Call Results": {
+      "main": [
+        [
+          {
+            "node": "NocoDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
             "type": "main",
             "index": 0
           }
@@ -21,15 +65,17 @@
   "name": "Vapi N8n Autodialer",
   "nodes": [
     {
-      "parameters": {},
-      "id": "53f716de-24c2-42df-bc5d-a05a63aea618",
-      "name": "When clicking ‘Test workflow’",
-      "type": "n8n-nodes-base.manualTrigger",
+      "parameters": {
+        "jsCode": "function formatPhoneNumber(phoneNumber) {\n   // Remove all non-digit characters\n   let cleaned = phoneNumber.replace(/\\D/g, '');\n   \n   // Handle cases where numbers might have extra digits\n   if (cleaned.length > 10) {\n       cleaned = cleaned.slice(0, 10);\n   }\n   \n   // Return empty array if not exactly 10 digits\n   if (cleaned.length !== 10) {\n       return [];\n   }\n   \n   // Return array with object containing formatted number\n   return [{\n       \"Cleaned Phone\": '+1' + cleaned\n   }];\n}\n\n// Get just the formatted number from the result:\nconst result = formatPhoneNumber($('Webhook').all()[0].json.body.data.rows[0].Phone);\nif (result.length > 0) {\n   return [{\"Cleaned Number\": result[0][\"Cleaned Phone\"]}] ;\n}"
+      },
+      "id": "3cf3c145-fa75-41a3-80e1-37799f084c80",
+      "name": "Code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [
-        820,
-        380
-      ],
-      "typeVersion": 1
+        900,
+        340
+      ]
     },
     {
       "parameters": {
@@ -46,17 +92,128 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "{\n  \"assistantId\": \"f25fd123-47cd-41cb-abb8-4fd5f4005408\",\n  \"phoneNumberId\": \"c385d18a-3eb8-477b-bfa5-5c3a6e7c3f31\",\n  \"customer\": {\n    \"number\": \"+17029084316\"\n  }\n}",
+        "jsonBody": "={\n  \"assistantId\": \"f25fd123-47cd-41cb-abb8-4fd5f4005408\",\n  \"phoneNumberId\": \"c385d18a-3eb8-477b-bfa5-5c3a6e7c3f31\",\n  \"customer\": {\n    \"number\": \"{{ $json[\"Cleaned Number\"] }}\"\n  }\n}",
         "options": {}
       },
-      "id": "97ed4ec1-dcca-485e-a98f-9a5e50acae51",
-      "name": "HTTP Request",
+      "id": "f47aa3b1-1798-4a67-8ab6-951d8bb6a4ac",
+      "name": "Make Phone Call",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1000,
-        380
+        1100,
+        340
       ]
+    },
+    {
+      "parameters": {
+        "unit": "minutes"
+      },
+      "id": "1bc1b113-6b53-44cf-b066-13d9ade2351d",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1320,
+        340
+      ],
+      "webhookId": "8519a4f8-edfa-4220-8573-e4cd3e2aaed5"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.vapi.ai/call/{{ $json.id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 3097c5d8-ad92-4f60-904a-b641d0fb0323"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2f9dd870-38ec-4ddb-9b60-e07148905616",
+      "name": "Get Call Results",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1540,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "p396c1l7rjkrr41",
+        "table": "mwsufn0rwpc5q6e",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "=Id",
+              "fieldValue": "={{ $('Webhook').item.json.body.data.rows[0].Id }}"
+            },
+            {
+              "fieldName": "Call Success Evaluation",
+              "fieldValue": "={{ $json.analysis.successEvaluation }}"
+            },
+            {
+              "fieldName": "Call Summary",
+              "fieldValue": "={{ $json.summary }}"
+            },
+            {
+              "fieldName": "Transcript",
+              "fieldValue": "={{ $json.transcript }}"
+            },
+            {
+              "fieldName": "Recording",
+              "fieldValue": "={{ $json.recordingUrl }}"
+            },
+            {
+              "fieldName": "Call Cost",
+              "fieldValue": "={{ $json.cost }}"
+            },
+            {
+              "fieldName": "Messages JSON",
+              "fieldValue": "={{ $json.messages }}"
+            },
+            {
+              "fieldName": "Vapi Call ID",
+              "fieldValue": "={{ $json.id }}"
+            }
+          ]
+        }
+      },
+      "id": "90cbb589-a2e5-4a82-a7be-848752ae831b",
+      "name": "NocoDB",
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1760,
+        340
+      ],
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "mZ1bN8fBGJ1SO75T",
+          "name": "New NocoDB Token Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "7e797dde-6227-421b-ae5a-e4facf7e3576",
+        "options": {}
+      },
+      "id": "eb29e70d-e49c-472d-b6c2-0adacb25e8f4",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        700,
+        340
+      ],
+      "webhookId": "7e797dde-6227-421b-ae5a-e4facf7e3576"
     }
   ],
   "pinData": {},
@@ -65,7 +222,7 @@
   },
   "staticData": null,
   "tags": [],
-  "triggerCount": 0,
-  "updatedAt": "2024-10-22T21:54:38.000Z",
-  "versionId": "13d94492-6576-4f7d-a2c5-c9c5f296383d"
+  "triggerCount": 1,
+  "updatedAt": "2024-10-23T03:07:03.000Z",
+  "versionId": "d6bbfa0e-16b4-4143-a16c-22663a35fe36"
 }
