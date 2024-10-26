@@ -1,0 +1,62 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-10-26T14:14:50.547Z",
+  "id": "cc4r8jIYg2c960E2",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "NTFY Template FLow",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "265ca803-129a-4f0d-bc1a-6938e1a0031b",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        820,
+        380
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://ntfy.aspworkplace.com/myN8nWorkflows",
+        "sendBody": true,
+        "contentType": "raw",
+        "body": "Hello from N8n",
+        "options": {}
+      },
+      "id": "bfe75f0a-8a1a-42b7-abff-61a647a4099b",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1020,
+        380
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-10-26T14:18:58.000Z",
+  "versionId": "582a7681-890b-410d-bd56-6c5e01125265"
+}
