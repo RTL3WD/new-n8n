@@ -1,0 +1,450 @@
+{
+  "active": false,
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Search NocoDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Create NoCoDB Row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Extract Text",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NocoDB1": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Text": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search NocoDB": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create NoCoDB Row": {
+      "main": [
+        [
+          {
+            "node": "Extract Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "NocoDB1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-10-26T11:51:16.467Z",
+  "id": "ejYorzsPRCYhEzPb",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Reddit Autoresponder",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://www.reddit.com/r/n8n.rss",
+        "options": {}
+      },
+      "id": "07816d5f-cae3-4bfb-b813-07877e16e888",
+      "name": "RSS Read",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        820,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "id": "283bccc0-5d18-4370-8126-37ffcf988d1e",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        620,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "9adf8190-2e0d-4f75-8867-20822ec957de",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1040,
+        220
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "9da7d9ac-4d68-4efe-b247-b07fa6e9ed97",
+      "name": "Replace Me",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        3340,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6d30ec57-8bfe-4847-84a8-b084adb8440a",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "786402bb-d962-4d3a-be1d-4e0f1f50f0a1",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1520,
+        280
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "unit": "minutes"
+      },
+      "id": "38e72c2d-ded0-4e74-bc5d-b3af67083aa2",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3140,
+        260
+      ],
+      "webhookId": "8e50dc2f-adb1-4150-b37b-a5b6c1d7d275"
+    },
+    {
+      "parameters": {
+        "model": "llama3-70b-8192",
+        "options": {}
+      },
+      "id": "7de54d44-3b99-47da-9913-b37a10988c0c",
+      "name": "Groq Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        2320,
+        480
+      ],
+      "credentials": {
+        "groqApi": {
+          "id": "Sky8svfm6OEcYSKn",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "prrqr4u3c2ssgmr",
+        "table": "mpjtnhwm3ulkzy9",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Create NoCoDB Row').item.json.Id }}"
+            },
+            {
+              "fieldName": "groqResponse",
+              "fieldValue": "={{ $json.text }}"
+            }
+          ]
+        }
+      },
+      "id": "ba3951a6-3ac7-44a6-886a-f030c10aa0bc",
+      "name": "NocoDB1",
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        2840,
+        260
+      ],
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "mZ1bN8fBGJ1SO75T",
+          "name": "New NocoDB Token Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Loop Over Items').item.json.content }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "extract the text from the html. Do not return any additional commentary"
+            }
+          ]
+        }
+      },
+      "id": "fee2f229-ffb7-45d5-bac1-29bace5a9d19",
+      "name": "Extract Text",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        2080,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "prrqr4u3c2ssgmr",
+        "table": "mpjtnhwm3ulkzy9",
+        "limit": 10,
+        "options": {
+          "where": "=(redditId,eq,{{ $json.id }})"
+        }
+      },
+      "id": "90c68e04-1ec3-4e22-8249-50b08199b5c5",
+      "name": "Search NocoDB",
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1280,
+        280
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "mZ1bN8fBGJ1SO75T",
+          "name": "New NocoDB Token Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "prrqr4u3c2ssgmr",
+        "table": "mpjtnhwm3ulkzy9",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "title",
+              "fieldValue": "={{ $('Loop Over Items').item.json.title }}"
+            },
+            {
+              "fieldName": "url",
+              "fieldValue": "={{ $('Loop Over Items').item.json.link }}"
+            },
+            {
+              "fieldName": "publishDate",
+              "fieldValue": "={{ $('Loop Over Items').item.json.pubDate }}"
+            },
+            {
+              "fieldName": "author",
+              "fieldValue": "={{ $('Loop Over Items').item.json.author }}"
+            },
+            {
+              "fieldName": "content",
+              "fieldValue": "={{ $('Loop Over Items').item.json.content }}"
+            },
+            {
+              "fieldName": "redditId",
+              "fieldValue": "={{ $('Loop Over Items').item.json.id }}"
+            },
+            {
+              "fieldName": "isoDate",
+              "fieldValue": "={{ $('Loop Over Items').item.json.isoDate }}"
+            }
+          ]
+        }
+      },
+      "id": "c2f5c6a1-9b6d-4f07-9b48-ae037544d270",
+      "name": "Create NoCoDB Row",
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1840,
+        260
+      ],
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "mZ1bN8fBGJ1SO75T",
+          "name": "New NocoDB Token Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Analyze the content to determine if it needs a response. If it needs a response, write a response, otherwise respond only with \"No Response Needed\""
+            }
+          ]
+        }
+      },
+      "id": "b5930a88-218a-4424-a61c-a5d47fd88e28",
+      "name": "Basic LLM Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        2460,
+        260
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-10-26T14:14:36.000Z",
+  "versionId": "d2b629ec-d4ec-4a75-b303-0d65654768ca"
+}
