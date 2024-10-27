@@ -45,6 +45,17 @@
         ]
       ]
     },
+    "NocoDB": {
+      "main": [
+        [
+          {
+            "node": "Send NTFY Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "Webhook": {
       "main": [
         [
@@ -201,8 +212,28 @@
     },
     {
       "parameters": {
+        "method": "POST",
+        "url": "https://ntfy.aspworkplace.com/n8nAutodialerResults",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "text/plain",
+        "body": "=Business: {{ $('Webhook').item.json.body.data.rows[0].Business }}\n\nPhone: {{ $('Webhook').item.json.body.data.previous_rows[0].Phone }}\n\nSuccess Eval: {{ $json['Call Success Evaluation'] }}\n\nCall Summary: {{ $json['Call Summary'] }}\n",
+        "options": {}
+      },
+      "id": "cfcae217-a4dc-4d7f-8112-ad35640b2242",
+      "name": "Send NTFY Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2000,
+        340
+      ]
+    },
+    {
+      "parameters": {
         "httpMethod": "POST",
         "path": "7e797dde-6227-421b-ae5a-e4facf7e3576",
+        "responseMode": "lastNode",
         "options": {}
       },
       "id": "eb29e70d-e49c-472d-b6c2-0adacb25e8f4",
@@ -223,6 +254,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-10-23T03:07:03.000Z",
-  "versionId": "d6bbfa0e-16b4-4143-a16c-22663a35fe36"
+  "updatedAt": "2024-10-27T23:00:52.000Z",
+  "versionId": "a7894a72-3718-4fe0-8f22-1e2fa6f3a5aa"
 }
