@@ -1,5 +1,5 @@
 {
-  "active": false,
+  "active": true,
   "connections": {
     "n8n Form Trigger": {
       "main": [
@@ -550,29 +550,13 @@
       "disabled": true
     }
   ],
-  "pinData": {
-    "n8n Form Trigger": [
-      {
-        "json": {
-          "Customer VPS Label": "ron-demo",
-          "Linode Password": "##RonPswd702..",
-          "Select Region": "us-mia (Miami, FL)",
-          "Linode Type": "g6-standard-2 (Linode 4GB) - Hourly: $0.036, Monthly: $24.0",
-          "Backups": "No",
-          "Tags": "rons-demo",
-          "Coolify Project Name": "Name",
-          "submittedAt": "2024-09-25T18:31:42.032+02:00",
-          "formMode": "test"
-        }
-      }
-    ]
-  },
+  "pinData": {},
   "settings": {
     "executionOrder": "v1"
   },
   "staticData": null,
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2024-10-17T00:19:25.000Z",
-  "versionId": "2c9c60d6-bc23-4066-82b8-0589efc62d2e"
+  "updatedAt": "2024-10-29T14:48:08.000Z",
+  "versionId": "c19d1897-24af-428e-a02c-d09edbfe3acd"
 }
