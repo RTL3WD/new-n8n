@@ -1,0 +1,275 @@
+{
+  "active": false,
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read": {
+      "main": [
+        [
+          {
+            "node": "Search NocoDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Create NoCoDB Row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update NoCoDB Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search NocoDB": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-10-29T01:35:41.694Z",
+  "id": "0GBsMXPDEqbloEbY",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Reddit Feed to NoCoDB",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://www.reddit.com/r/foss.rss",
+        "options": {}
+      },
+      "id": "fd91e123-b724-477d-98bd-6de4d3a3e5ea",
+      "name": "RSS Read",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        820,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "id": "f3f29009-e8b7-4891-bb83-6b9728f836ab",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        620,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6d30ec57-8bfe-4847-84a8-b084adb8440a",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "dec5cba0-c191-47b0-a634-dada41795d67",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1300,
+        220
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "prrqr4u3c2ssgmr",
+        "table": "m7ly82u26bmiw0y",
+        "options": {
+          "where": "=(redditId,eq,{{ $json.id }})"
+        }
+      },
+      "id": "1a5b8125-5df7-4566-acf1-4830c4100349",
+      "name": "Search NocoDB",
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1060,
+        220
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "mZ1bN8fBGJ1SO75T",
+          "name": "New NocoDB Token Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "prrqr4u3c2ssgmr",
+        "table": "m7ly82u26bmiw0y",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "title",
+              "fieldValue": "={{ $('RSS Read').item.json.title }}"
+            },
+            {
+              "fieldName": "url",
+              "fieldValue": "={{ $('RSS Read').item.json.link }}"
+            },
+            {
+              "fieldName": "publishDate",
+              "fieldValue": "={{ $('RSS Read').item.json.pubDate }}"
+            },
+            {
+              "fieldName": "author",
+              "fieldValue": "={{ $('RSS Read').item.json.author }}"
+            },
+            {
+              "fieldName": "content",
+              "fieldValue": "={{ $('RSS Read').item.json.content }}"
+            },
+            {
+              "fieldName": "redditId",
+              "fieldValue": "={{ $('Loop Over Items').item.json.id }}"
+            },
+            {
+              "fieldName": "isoDate",
+              "fieldValue": "={{ $('Loop Over Items').item.json.isoDate }}"
+            }
+          ]
+        }
+      },
+      "id": "e58e0788-6357-445a-af4c-43370b0dc996",
+      "name": "Create NoCoDB Row",
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1560,
+        100
+      ],
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "mZ1bN8fBGJ1SO75T",
+          "name": "New NocoDB Token Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "prrqr4u3c2ssgmr",
+        "table": "m7ly82u26bmiw0y",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "title",
+              "fieldValue": "={{ $json.title }}"
+            },
+            {
+              "fieldName": "url",
+              "fieldValue": "={{ $json.url }}"
+            },
+            {
+              "fieldName": "author",
+              "fieldValue": "={{ $json.author }}"
+            },
+            {
+              "fieldName": "content",
+              "fieldValue": "={{ $json.content }}"
+            },
+            {
+              "fieldName": "redditId",
+              "fieldValue": "={{ $json.redditId }}"
+            },
+            {
+              "fieldName": "isoDate",
+              "fieldValue": "={{ $json.isoDate }}"
+            },
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Search NocoDB').all()[0].json.Id }}"
+            }
+          ]
+        }
+      },
+      "id": "429758b1-137e-4ffe-9cfe-7bbdad428602",
+      "name": "Update NoCoDB Row",
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1560,
+        340
+      ],
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "mZ1bN8fBGJ1SO75T",
+          "name": "New NocoDB Token Account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-10-29T02:31:23.000Z",
+  "versionId": "e7744545-f9cd-480f-adaa-9d570b87e21f"
+}
