@@ -1,0 +1,874 @@
+{
+  "active": false,
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Sheets3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets2": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-10-30T20:41:10.385Z",
+  "id": "41tt3M0FLdCdQzz8",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "WPT Nextdoor Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://nextdoor.com/api/gql/PersonalizedFeed",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "*/*"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9,es;q=0.8"
+            },
+            {
+              "name": "cache-control",
+              "value": "no-cache"
+            },
+            {
+              "name": "cookie",
+              "value": "WE=33ae61ee-48b2-40c7-a0f8-a0a8935ca3f3240403; FPID=FPID2.2.N%2FMVlXrNVsJqoPOwxqTEwPIr%2FUzn4cZvLgEAQyyyM0s%3D.1712142117; DAID=a1885cbe-be0d-4b2a-8b3b-bca6bc44e016240518; fbm_114611681929998=base_domain=.nextdoor.com; _iidt=Gmi9xywmO4+MVHy93PCfMW34Ks9Z1eNwMVbDOdvNXxxHUTeHXYZaVuYOgl7++38ra7V/bM/zGEiRVw==; csrftoken=QQ7h1CYLwqkibWUQkG91SmXp6fabtv8bUegld7KIh358tEUIkV25HdYMRH1DTK74; WE3P=33ae61ee-48b2-40c7-a0f8-a0a8935ca3f3240403; _gcl_au=1.1.1878069.1727349675; ndp_session_id=f81cefb9-d5d9-402d-9669-dc992a5175b7; _ga=GA1.1.2130607857.1727349676; FPLC=AgnGUIw2K6HHhUeZ5MDvVsSMemdpW1L8WKuJFkhioov5Mlo1f6cn65hF6njaU4xP1KWj4KaDjl5aL1N5hSLiSPpne%2BrIAg8s8dksurAaIvx39Kaj5qxSQKOVBOxRDA%3D%3D; _fbp=fb.1.1727349676133.81590688017814490; seen-tour-in-past-day=true; ndbr_at=G3vi_84gFAVKrez933h_naGyMiaEcMiyh_VUcbbik28; ndbr_idt=eyJhbGciOiJSUzI1NiIsImtpZCI6IjM5YTgzNGIzLWEzMjAtNDEwZC1hNDEwLWIyYmU0ZTI5NDM5ZSIsInR5cCI6IkpXVCJ9.eyJhdF9oYXNoIjoiZVZ1MVZYSmYyU0F1RWQ5NDhpOHJnZyIsImF1ZCI6WyJuZXh0ZG9vci1kamFuZ28iLCJuZXh0ZG9vciJdLCJleHAiOjE3Mjc0NTQxOTgsImlhdCI6MTcyNzM2Nzc5OCwiaXNzIjoiaHR0cHM6Ly9hdXRoLm5leHRkb29yLmNvbSIsIm5kX3ByYyI6W3siY291bnRyeSI6IlVTIiwicGlkIjoiOTc0MTYzMTUiLCJ1cmwiOiJodHRwczovL3VzZXIubmV4dGRvb3IuY29tL3YxL3Byb2ZpbGUvOTc0MTYzMTUifSx7ImNvdW50cnkiOiJVUyIsInBpZCI6Ijk4NDMwODIxIiwidXJsIjoiaHR0cHM6Ly91c2VyLm5leHRkb29yLmNvbS92MS9wcm9maWxlLzk4NDMwODIxIn0seyJjb3VudHJ5IjoiVVMiLCJwaWQiOiJlYWIyNWQxMC01Mjg5LTQ5NDYtODYwMy1lODVhNmQ5NDk3NDQiLCJ1cmwiOiJodHRwczovL2Fkcy5uZXh0ZG9vci5jb20vc2VsZi1zZXJ2ZS9wcm9maWxlL3YxL2VhYjI1ZDEwLTUyODktNDk0Ni04NjAzLWU4NWE2ZDk0OTc0NCJ9XSwic3ViIjoiZjVkNWYwMzgtNzZiNi00ZjFjLTkzZjMtMmY0MjgwM2E1NWI1In0.SDg4Z4s60lHbxK-s5sfbynnswYD04OJypDkl6ilZlOxjtaiu_8RgHtDmgJYtqppbc9raE3_iC4snpB1chgdCHWF94jSFqjqUAue4r-fZZSPPfu5Tkxl2ziMdehZOEeQ3L2QBtxXyvWHMfovemy2_eISuLVOYc5IKcZGiy9xlQEKHLfHirqyFklZ07Xna0FbxueUVnAzIrIBp0h-PsQvre3Ke3KuTRhzxulb-ktmeEbuJ2LDbZO5v4WjnEjhte2go01pjoGo97LXNKxbWVAIUMQd-gFjwBmXpAZYxJ5fEstd2UowAnu9tglDOkwLbvflOUJbh23LB-ZUEPn1bugCMsg"
+            },
+            {
+              "name": "enable-alphafeed",
+              "value": "false"
+            },
+            {
+              "name": "origin",
+              "value": "https://nextdoor.com"
+            },
+            {
+              "name": "pragma",
+              "value": "no-cache"
+            },
+            {
+              "name": "priority",
+              "value": "u=1, i"
+            },
+            {
+              "name": "referer",
+              "value": "https://nextdoor.com/news_feed/"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Google Chrome\";v=\"129\", \"Not=A?Brand\";v=\"8\", \"Chromium\";v=\"129\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "empty"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "cors"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
+            },
+            {
+              "name": "x-csrftoken",
+              "value": "QQ7h1CYLwqkibWUQkG91SmXp6fabtv8bUegld7KIh358tEUIkV25HdYMRH1DTK74"
+            },
+            {
+              "name": "x-nd-activity-id",
+              "value": "01C3CD2D-9BC3-4D90-8901-255FD7E00C66"
+            },
+            {
+              "name": "x-nd-activity-source",
+              "value": "no-referrer"
+            },
+            {
+              "name": "x-nd-cts",
+              "value": "1727368046250"
+            },
+            {
+              "name": "x-nd-ecp"
+            },
+            {
+              "name": "x-nd-eid"
+            },
+            {
+              "name": "x-nd-lop"
+            },
+            {
+              "name": "x-nd-lox",
+              "value": "false"
+            },
+            {
+              "name": "x-nd-lsuid"
+            },
+            {
+              "name": "x-nd-ndas-trigger",
+              "value": "start"
+            },
+            {
+              "name": "x-nd-request-locale",
+              "value": "US"
+            },
+            {
+              "name": "x-nd-train",
+              "value": "train-22854-466f37ca7c049b10"
+            },
+            {
+              "name": "x-nd-uti",
+              "value": "BF98011F-B4ED-473E-8CC9-80C67FD94E03"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"operationName\": \"PersonalizedFeed\",\n  \"variables\": {\n    \"pagedCommentsMode\": \"FEED\",\n    \"includeModerationInfo\": false,\n    \"mainFeedArgs\": {\n      \"pageSize\": 10,\n      \"nextPage\": null,\n      \"supportedFeatures\": {\n        \"rollupTypes\": [\n          \"CAROUSEL\",\n          \"LIST\",\n          \"GRID\"\n        ],\n        \"rollupItemTypes\": [\n          \"IMAGE_CARD\",\n          \"LIST_CARD\",\n          \"POST\"\n        ]\n      },\n      \"sortOrder\": \"FOR_YOU\",\n      \"feedRequestId\": \"C0A5E25C-8429-4F83-B2C4-C14D9B342F84\"\n    },\n    \"timeZone\": \"America/New_York\"\n  },\n  \"extensions\": {\n    \"persistedQuery\": {\n      \"version\": 1,\n      \"sha256Hash\": \"b7c66ef5091914fc29ee8a4dad16c52dd0d89ea34450e78f4cc3dc2d9e69a455\"\n    }\n  }\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "id": "554b8cce-e512-42be-8544-f38c50b49979",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1020,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "let outputData = [];\ntry {\n    // Parse JSON response from HTTP request\n    let jsonObjs = JSON.parse($('HTTP Request').all()[0].json.data);\n\n    // Safely access feed items\n    let feed = jsonObjs?.data?.me?.personalizedFeed?.feedItems;\n\n    if (!feed) {\n        throw new Error(\"Feed data is missing or malformed.\");\n    }\n\n    // Loop through each feed item\n    for (let feedItem of feed) {\n        // Check if the feed item has a post and a body\n        if (feedItem?.post && feedItem.post?.body) {\n            // Log the post ID for debugging\n            console.log(`Processing Post ID: ${feedItem.post.id}`);\n\n            // Build the finalFeedItem with safety checks using optional chaining and fallback defaults\n            let finalFeedItem = {\n                \"Feed Item Type\": feedItem?.feedItemType || \"Unknown Type\",\n                \"Display Name\": feedItem?.post?.author?.displayName || \"Anonymous\",\n                \"Display Location\": feedItem?.post?.author?.originationNeighborhood?.displayLocation || \"Unknown Location\",\n                \"Display City\": feedItem?.post?.author?.originationNeighborhood?.city || \"Unknown City\",\n                \"Display State\": feedItem?.post?.author?.originationNeighborhood?.state || \"Unknown State\",\n                \"Post Body\": feedItem.post?.body || \"No Content\",\n                \"Created At\": feedItem?.post?.createdAt?.asDateTime?.relativeTime || \"Unknown Time\",\n                \"Post Link\": feedItem?.post?.detailLink?.href ? `https://nextdoor.com${feedItem.post.detailLink.href}` : \"No Link Available\"\n            };\n\n            // Push the processed item to the output array\n            outputData.push(finalFeedItem);\n        } else {\n            // Log a warning if a feed item is missing a post or body\n            console.warn(`Skipping feed item due to missing post or body:`, feedItem);\n        }\n    }\n} catch (error) {\n    // Log any errors encountered during execution\n    console.error(\"An error occurred:\", error.message);\n}\n\n// Return the output data array\nreturn outputData;\n"
+      },
+      "id": "ba76c0e1-daa0-4ad7-a19b-56316ee9deda",
+      "name": "Code1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1280,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "125gyneNggMMH3srXRaQmE92uhnYec4F7kOeC9Xj_tdM",
+          "mode": "list",
+          "cachedResultName": "Nextdoor Feed Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/125gyneNggMMH3srXRaQmE92uhnYec4F7kOeC9Xj_tdM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/125gyneNggMMH3srXRaQmE92uhnYec4F7kOeC9Xj_tdM/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Feed Item Type": "={{ $json['Feed Item Type'] }}",
+            "Display Name": "={{ $json['Display Name'] }}",
+            "Display Location": "={{ $json['Display Location'] }}",
+            "Display City": "={{ $json['Display City'] }}",
+            "Display State": "={{ $json['Display State'] }}",
+            "Post Body": "={{ $json['Post Body'] }}",
+            "Created At": "={{ $json['Created At'] }}",
+            "Post Link": "={{ $json['Post Link'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Feed Item Type",
+              "displayName": "Feed Item Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Display Name",
+              "displayName": "Display Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Display Location",
+              "displayName": "Display Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Display City",
+              "displayName": "Display City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Display State",
+              "displayName": "Display State",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Post Body",
+              "displayName": "Post Body",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Created At",
+              "displayName": "Created At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Post Link",
+              "displayName": "Post Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "80b59cb3-770f-46fb-9a58-15d20b3f8825",
+      "name": "Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1500,
+        360
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sKITsW661Itsg15I",
+          "name": "Google Sheets account - ASP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"serviceProRequest\": false,\n  \"serviceProType\": \"handyman\",\n\t\"body\": \"post body content\"\n}"
+      },
+      "id": "35aec36e-6936-4e0b-a91d-3fc978f41bbe",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1840,
+        580
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1173785c-2e16-47d0-bfa3-bdfaacbdaba9",
+              "leftValue": "={{ $json.output.serviceProRequest }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "3381dad3-3995-4d83-97c4-85812511c4af",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2120,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "125gyneNggMMH3srXRaQmE92uhnYec4F7kOeC9Xj_tdM",
+          "mode": "list",
+          "cachedResultName": "Nextdoor Feed Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/125gyneNggMMH3srXRaQmE92uhnYec4F7kOeC9Xj_tdM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/125gyneNggMMH3srXRaQmE92uhnYec4F7kOeC9Xj_tdM/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Post Link": "={{ $('Google Sheets').item.json['Post Link'] }}",
+            "Looking for Service Pro?": "={{ $('Basic LLM Chain').item.json.output.serviceProRequest }}",
+            "Type of Service Pro": "={{ $('Basic LLM Chain').item.json.output.serviceProType }}"
+          },
+          "matchingColumns": [
+            "Post Link"
+          ],
+          "schema": [
+            {
+              "id": "Feed Item Type",
+              "displayName": "Feed Item Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Display Name",
+              "displayName": "Display Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Display Location",
+              "displayName": "Display Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Display City",
+              "displayName": "Display City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Display State",
+              "displayName": "Display State",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Post Body",
+              "displayName": "Post Body",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Created At",
+              "displayName": "Created At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Post Link",
+              "displayName": "Post Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Looking for Service Pro?",
+              "displayName": "Looking for Service Pro?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Type of Service Pro",
+              "displayName": "Type of Service Pro",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3112cd85-0a78-4549-a88a-6e310d804e4f",
+      "name": "Google Sheets1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2340,
+        240
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sKITsW661Itsg15I",
+          "name": "Google Sheets account - ASP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "125gyneNggMMH3srXRaQmE92uhnYec4F7kOeC9Xj_tdM",
+          "mode": "list",
+          "cachedResultName": "Nextdoor Feed Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/125gyneNggMMH3srXRaQmE92uhnYec4F7kOeC9Xj_tdM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1573855679,
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/125gyneNggMMH3srXRaQmE92uhnYec4F7kOeC9Xj_tdM/edit#gid=1573855679"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "categories",
+              "lookupValue": "={{ $json['Type of Service Pro'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "750867c8-4e61-4700-a128-b595492353ae",
+      "name": "Google Sheets2",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2560,
+        240
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sKITsW661Itsg15I",
+          "name": "Google Sheets account - ASP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "Nextdoor Lead Found For You!",
+        "message": "=Hey {{ $json.Name }},\n\nI found a lead for you on Nextdoor. Reply quick to get in front of their face before anyone else.\n\nHere's the link below:\n{{ $('Code1').all()[0].json['Post Link'] }}",
+        "options": {
+          "sendTo": "={{ $json.Email }}"
+        }
+      },
+      "id": "285a17be-1c27-4bca-9291-3de8ed06b20d",
+      "name": "Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2780,
+        240
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {}
+      },
+      "id": "591e7a78-30be-4050-93b7-fa56ec02583a",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        540
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "125gyneNggMMH3srXRaQmE92uhnYec4F7kOeC9Xj_tdM",
+          "mode": "list",
+          "cachedResultName": "Nextdoor Feed Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/125gyneNggMMH3srXRaQmE92uhnYec4F7kOeC9Xj_tdM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/125gyneNggMMH3srXRaQmE92uhnYec4F7kOeC9Xj_tdM/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Post Link": "={{ $('Google Sheets').item.json['Post Link'] }}",
+            "Looking for Service Pro?": "={{ $('Basic LLM Chain').item.json.output.serviceProRequest }}",
+            "Type of Service Pro": "=No Service Pro Requested"
+          },
+          "matchingColumns": [
+            "Post Link"
+          ],
+          "schema": [
+            {
+              "id": "Feed Item Type",
+              "displayName": "Feed Item Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Display Name",
+              "displayName": "Display Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Display Location",
+              "displayName": "Display Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Display City",
+              "displayName": "Display City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Display State",
+              "displayName": "Display State",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Post Body",
+              "displayName": "Post Body",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Created At",
+              "displayName": "Created At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Post Link",
+              "displayName": "Post Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Looking for Service Pro?",
+              "displayName": "Looking for Service Pro?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Type of Service Pro",
+              "displayName": "Type of Service Pro",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7d49e5d6-cba4-49b4-bc28-97ba7216e9d4",
+      "name": "Google Sheets3",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2340,
+        480
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sKITsW661Itsg15I",
+          "name": "Google Sheets account - ASP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Does the content below indicate that the content is requesting the help of a service professional? Examples of service professionals are listed below. when returning your response be sure to use the exact same terminology as what is given in the service professionals list. \n\nSERVICE PROFESSIONALS LIST:\n3D Printing\nAccounting & Tax Services\nAdvertising Agencies & Consultants\nAirports\nApartments/Condominium/Townhomes\nArchitect- Commercial\nArchitect- Residential\nArchitects & Architectural Planners\nArts & Entertainment\nArtists & Galleries\nAssisted/Independent Living & Nursing Homes\nAttractions & Experiences\nAttorneys\nAttorneys- Employment Law\nAttorneys- Estate Planning\nAttorneys- Family Law\nAttorneys- Litigation\nAttorneys- Personal Injury\nAttorneys- Property/Real Estate\nAwards & Trophies\nBakeries & Desserts\nBanks & Credit Unions\nBeverage Suppliers\nB2B\nBoat Rentals/Charters/Instruction\nBrand Management\nBreweries/Pubs/Bars\nBusiness Associations\nBusiness Brokers\nCarpenters\nCaterers\nCell Phone Companies & Service\nChildren & Family Services\nChiropractic\nChiropractors\nCoffee & Tea Shops\nCommunications\nCommunity Services\nComputer - Consultants/Networking\nComputer - IT Services\nComputer - Software Technology\nConcrete Services\nContractor- Carpentry\nContractor- Commercial Services\nContractor- Concrete\nContractor- Drywall\nContractor- Electrical\nContractor- Fencing\nContractor- Fire/Water Restoration\nContractor- Flooring\nContractor- General\nContractor- Handyman\nContractor- Heating & Air-Conditioning\nContractor- Home Improvement\nContractor- Insulation\nContractor- Landscaping\nContractor- Lighting\nContractor- Mold Remediation\nContractor- Painting\nContractor- Pest Control\nContractor- Plumbing\nContractor- Pool Services\nContractor- Residential Builder\nContractor- Roofing\nContractor- Siding\nContractor- Solar Energy\nCounseling & Therapy Services\nDentists\nDesign - Build Firm\nDigital Marketing\nDrywall Services\nElectrical Contractors\nEmployment Agencies & Consultants\nEntertainment\nEsthetician\nEvent & Meeting Planners\nEvent & Multi-Purpose Facilities\nFamily, Community, & Non-Profit\nFestivals\nFinancial Advisors & Services\nFire/Water Restoration\nFitness & Recreation Centers\nFlooring Contractors\nFuneral Homes & Cremation Services\nGraphic Design\nHandyman Services\nHealth & Wellness\nHome Improvement\nHospitals & Surgery Centers\nHotels/Motels/Resorts\nImmigration Lawyers\nInsurance Providers\nInsurance- Auto\nInsurance- Health\nInsurance- Home\nInsurance- Life\nInterior Design Services\nInvestment Management\nIT Services\nJunk Removal & Haulers\nLandscape Architect\nLawyers\nMarketing\nMassage Therapy\nMedia\nMedical\nMerchant Processing Services\nMortgage Lenders\nMoving & Storage\nNon-Profit Organizations\nOffice & Mailroom Equipment\nOptical Care\nPayroll Services\nPest Control\nPet Services & Supplies\nPhysical Therapy\nPhysicians & Surgeons\nPlumbers\nPool Services\nPrinting & Publishers\nProperty Inspections & Testing\nProperty Management\nPublic Relations\nPublishing\nReal Estate Agents\nReal Estate & Construction\nReal Estate- Appraisers\nReal Estate- Commercial\nReal Estate- Inspections\nReal Estate- Property Management\nReal Estate- Residential\nReal Estate- Services\nRecycling\nReligious Organizations\nRestoration- Fire/Water/Sinkhole/Mold\nRestaurants\nSecurity\nSenior Centers & Support Programs\nSignage\nSolar Energy\nSpas & Salons\nSporting Events\nStorage\nTechnology Development\nTelevision & Radio\nTile Installation\nTitle Insurance\nTraining & Personal Development\nTravel Agencies\nUtility\nVeterinarians\nVideo & Audio Production\n\nEXAMPLES OF REQUESTS FOR A SERVICE PROFESSIONAL:\n\n\"\"\"\nIs anyone available to cut a lawn in N St Pete today. My lawnmower isn't starting? Front yard only. No grass in back\n\"\"\"\n\nEXAMPLE RESPONSE:\n{\n\t\"serviceProRequest\": true,\n  \"serviceProType\": \"Landscape Architect\",\n\t\"body\": \"Is anyone available to cut a lawn in N St Pete today. My lawnmower isn't starting? Front yard only. No grass in back\"\n}\n\n\nNOT EXAMPLES OF REQUESTS FOR A SERVICE PROFESSIONAL:\n\"\"\"\nThis has happened 12 times now, and each time it happens the transformer across from us pops really loud and sparks. Just curious what it's doing? I've never had our power do this before.\n\"\"\"\n\"\"\"\nWhere are people parking their cars to keep them safe from flood?\n\"\"\"\n\nEXAMPLE RESPONSE:\n{\n\t\"serviceProRequest\": false,\n  \"serviceProType\": \"none\",\n\t\"body\": \"This has happened 12 times now, and each time it happens the transformer across from us pops really loud and sparks. Just curious what it's doing? I've never had our power do this before.\"\n}\n\nCONTENT: \"{{ $('Code1').item.json['Post Body'] }}\"",
+        "hasOutputParser": true
+      },
+      "id": "6591a8c2-a5f0-4aa7-8a1b-5f014283ed94",
+      "name": "Basic LLM Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        1740,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 10
+            }
+          ]
+        }
+      },
+      "id": "c932dd0e-9a7f-4c96-8475-0d84db6ac128",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        800,
+        360
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2024-10-30T20:41:29.000Z",
+  "versionId": "7fe17417-fc20-4f37-b71b-26b1a8704b8f"
+}
