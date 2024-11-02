@@ -1,5 +1,5 @@
 {
-  "active": false,
+  "active": true,
   "connections": {
     "Schedule Trigger": {
       "main": [
@@ -16,7 +16,7 @@
       "main": [
         [
           {
-            "node": "Search NocoDB",
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
@@ -51,6 +51,40 @@
           }
         ]
       ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Search NocoDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create NoCoDB Row": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update NoCoDB Row": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-10-29T01:35:41.694Z",
@@ -79,7 +113,8 @@
         "rule": {
           "interval": [
             {
-              "field": "hours"
+              "field": "minutes",
+              "minutesInterval": 10
             }
           ]
         }
@@ -123,8 +158,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1300,
-        220
+        1520,
+        300
       ],
       "onError": "continueRegularOutput"
     },
@@ -133,7 +168,7 @@
         "authentication": "nocoDbApiToken",
         "operation": "getAll",
         "projectId": "prrqr4u3c2ssgmr",
-        "table": "m7ly82u26bmiw0y",
+        "table": "mxv1sbggpeec3a8",
         "options": {
           "where": "=(redditId,eq,{{ $json.id }})"
         }
@@ -143,8 +178,8 @@
       "type": "n8n-nodes-base.nocoDb",
       "typeVersion": 3,
       "position": [
-        1060,
-        220
+        1280,
+        300
       ],
       "alwaysOutputData": true,
       "credentials": {
@@ -159,28 +194,28 @@
         "authentication": "nocoDbApiToken",
         "operation": "create",
         "projectId": "prrqr4u3c2ssgmr",
-        "table": "m7ly82u26bmiw0y",
+        "table": "mxv1sbggpeec3a8",
         "fieldsUi": {
           "fieldValues": [
             {
               "fieldName": "title",
-              "fieldValue": "={{ $('RSS Read').item.json.title }}"
+              "fieldValue": "={{ $('Loop Over Items').item.json.title }}"
             },
             {
               "fieldName": "url",
-              "fieldValue": "={{ $('RSS Read').item.json.link }}"
+              "fieldValue": "={{ $('Loop Over Items').item.json.link }}"
             },
             {
               "fieldName": "publishDate",
-              "fieldValue": "={{ $('RSS Read').item.json.pubDate }}"
+              "fieldValue": "={{ $('Loop Over Items').item.json.pubDate }}"
             },
             {
               "fieldName": "author",
-              "fieldValue": "={{ $('RSS Read').item.json.author }}"
+              "fieldValue": "={{ $('Loop Over Items').item.json.author }}"
             },
             {
               "fieldName": "content",
-              "fieldValue": "={{ $('RSS Read').item.json.content }}"
+              "fieldValue": "={{ $('Loop Over Items').item.json.contentSnippet }}"
             },
             {
               "fieldName": "redditId",
@@ -198,8 +233,8 @@
       "type": "n8n-nodes-base.nocoDb",
       "typeVersion": 3,
       "position": [
-        1560,
-        100
+        1780,
+        320
       ],
       "credentials": {
         "nocoDbApiToken": {
@@ -210,50 +245,67 @@
     },
     {
       "parameters": {
+        "options": {}
+      },
+      "id": "bdc37ee7-2f1e-40d2-bf25-7abdeeac0d98",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1040,
+        220
+      ]
+    },
+    {
+      "parameters": {
         "authentication": "nocoDbApiToken",
         "operation": "update",
         "projectId": "prrqr4u3c2ssgmr",
-        "table": "m7ly82u26bmiw0y",
+        "table": "mxv1sbggpeec3a8",
         "fieldsUi": {
           "fieldValues": [
             {
               "fieldName": "title",
-              "fieldValue": "={{ $json.title }}"
+              "fieldValue": "={{ $('Loop Over Items').item.json.title }}"
             },
             {
               "fieldName": "url",
-              "fieldValue": "={{ $json.url }}"
+              "fieldValue": "={{ $('Loop Over Items').item.json.link }}"
+            },
+            {
+              "fieldName": "publishDate",
+              "fieldValue": "={{ $('Loop Over Items').item.json.pubDate }}"
             },
             {
               "fieldName": "author",
-              "fieldValue": "={{ $json.author }}"
+              "fieldValue": "={{ $('Loop Over Items').item.json.author }}"
             },
             {
               "fieldName": "content",
-              "fieldValue": "={{ $json.content }}"
+              "fieldValue": "={{ $('Loop Over Items').item.json.contentSnippet }}"
             },
             {
               "fieldName": "redditId",
-              "fieldValue": "={{ $json.redditId }}"
+              "fieldValue": "={{ $('Loop Over Items').item.json.id }}"
             },
             {
               "fieldName": "isoDate",
-              "fieldValue": "={{ $json.isoDate }}"
+              "fieldValue": "={{ $('Loop Over Items').item.json.isoDate }}"
             },
             {
               "fieldName": "Id",
-              "fieldValue": "={{ $('Search NocoDB').all()[0].json.Id }}"
+              "fieldValue": "={{ $json.Id }}"
             }
           ]
         }
       },
-      "id": "429758b1-137e-4ffe-9cfe-7bbdad428602",
+      "id": "9dae9d25-0d6d-4490-b88e-15c40af9cb4d",
       "name": "Update NoCoDB Row",
       "type": "n8n-nodes-base.nocoDb",
       "typeVersion": 3,
       "position": [
-        1560,
-        340
+        1780,
+        540
       ],
       "credentials": {
         "nocoDbApiToken": {
@@ -267,9 +319,13 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "staticData": null,
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
   "tags": [],
-  "triggerCount": 0,
-  "updatedAt": "2024-10-29T02:31:23.000Z",
-  "versionId": "e7744545-f9cd-480f-adaa-9d570b87e21f"
+  "triggerCount": 1,
+  "updatedAt": "2024-11-02T19:20:46.000Z",
+  "versionId": "48bbaf45-1170-44e4-812b-11e0553b1c9a"
 }
