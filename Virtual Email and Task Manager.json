@@ -192,6 +192,17 @@
       "main": [
         [
           {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
             "node": "Calendar Agent",
             "type": "main",
             "index": 0
@@ -673,10 +684,24 @@
     },
     {
       "parameters": {
+        "jsCode": "return [{\"sessionId\": JSON.parse($('Email Agent').all()[0].json.output)['sessionId'], \"content\": JSON.parse($('Email Agent').all()[0].json.output)}]"
+      },
+      "id": "25419d03-70a1-432e-b32d-89e32b4d760a",
+      "name": "Code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1640,
+        380
+      ]
+    },
+    {
+      "parameters": {
         "promptType": "define",
-        "text": "={{ $json.output }}",
+        "text": "={{ JSON.stringify($json.content) }}",
         "options": {
-          "systemMessage": "=You are a Calendar Agent responsible for managing and scheduling events in Google Calendar. When you receive a request from the Email Agent, follow these steps:\n\nVerify Event Time: Check if the time slot specified in calendarDetails is available.\nIf there’s a conflict, set availability to \"conflict\" and include suggested alternative times.\nIf the time slot is available, set availability to \"available\" and proceed to schedule the event.\nRespond to the Email Agent: Provide a JSON response confirming whether the event was scheduled or if alternative times were suggested.\n\nExample Input:\n{\n  \"sessionId\": \"3b1uyedon1m31hgd9t\",\n  \"from\": \"ian@icookafterschool.com\",\n  \"subject\": \"Invitation: Robert x iCook @ Mon Nov 4, 2024 12pm - 12:30pm (EST)\",\n  \"summary\": \"Invitation for a meeting with iCook on November 4, 2024, from 12:00 PM to 12:30 PM EST.\",\n  \"actions\": {\n    \"needCalAgent\": true,\n    \"needDocsAgent\": false\n  },\n  \"calendarDetails\": {\n    \"eventTitle\": \"Robert x iCook Meeting\",\n    \"startTime\": \"2024-11-04T12:00:00-05:00\",\n    \"endTime\": \"2024-11-04T12:30:00-05:00\",\n    \"timezone\": \"EST\",\n    \"attendees\": [\n      {\n        \"name\": \"Ian Corse\",\n        \"email\": \"ian@icookafterschool.com\",\n        \"role\": \"Organizer\"\n      },\n      {\n        \"name\": \"Olga Davis\",\n        \"email\": \"automatestpete@gmail.com\"\n      }\n    ]\n  },\n  \"response\": {\n    \"draftMessage\": \"Dear Ian,\\n\\nThank you for your invitation to the Robert x iCook meeting. I will check my schedule for the proposed time on November 4 and I will confirm my attendance shortly.\\n\\nBest,\\n[Your Name]\",\n    \"status\": \"pendingCalendarCheck\"\n  },\n  \"metadata\": {\n    \"timestamp\": \"2024-11-01T17:22:27Z\",\n    \"processedBy\": \"Email Agent\",\n    \"status\": \"processed\"\n  }\n}\n\nExample Response for Calendar Agent\nIf the time slot is available:\n{\n  \"sessionId\": \"3b1uyedon1m31hgd9t\",\n  \"availability\": \"available\",\n  \"confirmationStatus\": \"Event scheduled\",\n  \"scheduledEventDetails\": {\n    \"eventTitle\": \"Robert x iCook Meeting\",\n    \"startTime\": \"2024-11-04T12:00:00-05:00\",\n    \"endTime\": \"2024-11-04T12:30:00-05:00\",\n    \"timezone\": \"EST\",\n    \"attendees\": [\n      {\n        \"name\": \"Ian Corse\",\n        \"email\": \"ian@icookafterschool.com\",\n        \"role\": \"Organizer\"\n      },\n      {\n        \"name\": \"Olga Davis\",\n        \"email\": \"automatestpete@gmail.com\"\n      }\n    ]\n  },\n  \"response\": {\n    \"draftMessage\": \"Dear Ian,\\n\\nI have confirmed availability for the Robert x iCook meeting on November 4, 2024, from 12:00 PM to 12:30 PM EST. The event has been scheduled.\\n\\nBest,\\n[Your Name]\",\n    \"status\": \"scheduled\"\n  },\n  \"metadata\": {\n    \"processedBy\": \"Calendar Agent\",\n    \"timestamp\": \"2024-11-01T17:30:00Z\"\n  }\n}\nIf there’s a conflict:\n{\n  \"sessionId\": \"3b1uyedon1m31hgd9t\",\n  \"availability\": \"conflict\",\n  \"confirmationStatus\": \"Conflict detected\",\n  \"alternativeTimes\": [\n    {\n      \"startTime\": \"2024-11-04T13:00:00-05:00\",\n      \"endTime\": \"2024-11-04T13:30:00-05:00\"\n    },\n    {\n      \"startTime\": \"2024-11-05T12:00:00-05:00\",\n      \"endTime\": \"2024-11-05T12:30:00-05:00\"\n    }\n  ],\n  \"response\": {\n    \"draftMessage\": \"Dear Ian,\\n\\nThank you for your invitation to the Robert x iCook meeting. Unfortunately, I am unavailable at the proposed time on November 4, 2024, from 12:00 PM to 12:30 PM EST. Could we reschedule for one of the following times?\\n- November 4, 2024, from 1:00 PM to 1:30 PM EST\\n- November 5, 2024, from 12:00 PM to 12:30 PM EST\\n\\nPlease let me know if either of these options works.\\n\\nBest,\\n[Your Name]\",\n    \"status\": \"conflict\"\n  },\n  \"metadata\": {\n    \"processedBy\": \"Calendar Agent\",\n    \"timestamp\": \"2024-11-01T17:30:00Z\"\n  }\n}\n"
+          "systemMessage": "=You are a Calendar Agent responsible for managing and scheduling events in Google Calendar. When you receive an input, follow these steps:\n\nVerify Event Time: Check if the time slot specified in calendarDetails is available.\nIf there’s a conflict, set availability to \"conflict\" and include suggested alternative times.\nIf the time slot is available, set availability to \"available\" and proceed to schedule the event.\nRespond to the Email Agent: Provide a JSON response confirming whether the event was scheduled or if alternative times were suggested.\n\nExample JSON String Input:\n\"{\\n  \\\"sessionId\\\": \\\"3b1uyedon1m31hgd9t\\\",\\n  \\\"from\\\": \\\"ian@icookafterschool.com\\\",\\n  \\\"subject\\\": \\\"Invitation: Robert x iCook @ Mon Nov 4, 2024 12pm - 12:30pm (EST)\\\",\\n  \\\"summary\\\": \\\"Invitation for a meeting with iCook on November 4, 2024, from 12:00 PM to 12:30 PM EST.\\\",\\n  \\\"actions\\\": {\\n    \\\"needCalAgent\\\": true,\\n    \\\"needDocsAgent\\\": false\\n  },\\n  \\\"calendarDetails\\\": {\\n    \\\"eventTitle\\\": \\\"Robert x iCook Meeting\\\",\\n    \\\"startTime\\\": \\\"2024-11-04T12:00:00-05:00\\\",\\n    \\\"endTime\\\": \\\"2024-11-04T12:30:00-05:00\\\",\\n    \\\"timezone\\\": \\\"EST\\\",\\n    \\\"attendees\\\": [\\n      {\\n        \\\"name\\\": \\\"Ian Corse\\\",\\n        \\\"email\\\": \\\"ian@icookafterschool.com\\\",\\n        \\\"role\\\": \\\"Organizer\\\"\\n      },\\n      {\\n        \\\"name\\\": \\\"Olga Davis\\\",\\n        \\\"email\\\": \\\"automatestpete@gmail.com\\\"\\n      }\\n    ]\\n  },\\n  \\\"response\\\": {\\n    \\\"draftMessage\\\": \\\"Dear Ian,\\\\n\\\\nThank you for your invitation to the Robert x iCook meeting. I will check my schedule for the proposed time on November 4 and I will confirm my attendance shortly.\\\\n\\\\nBest,\\\\n[Your Name]\\\",\\n    \\\"status\\\": \\\"pendingCalendarCheck\\\"\\n  },\\n  \\\"metadata\\\": {\\n    \\\"timestamp\\\": \\\"2024-11-01T17:22:27Z\\\",\\n    \\\"processedBy\\\": \\\"Email Agent\\\",\\n    \\\"status\\\": \\\"processed\\\"\\n  }\\n}\"\n\n\nExample Response for Calendar Agent\nIf the time slot is available:\n{\n  \"sessionId\": \"3b1uyedon1m31hgd9t\",\n  \"availability\": \"available\",\n  \"confirmationStatus\": \"Event scheduled\",\n  \"scheduledEventDetails\": {\n    \"eventTitle\": \"Robert x iCook Meeting\",\n    \"startTime\": \"2024-11-04T12:00:00-05:00\",\n    \"endTime\": \"2024-11-04T12:30:00-05:00\",\n    \"timezone\": \"EST\",\n    \"attendees\": [\n      {\n        \"name\": \"Ian Corse\",\n        \"email\": \"ian@icookafterschool.com\",\n        \"role\": \"Organizer\"\n      },\n      {\n        \"name\": \"Olga Davis\",\n        \"email\": \"automatestpete@gmail.com\"\n      }\n    ]\n  },\n  \"response\": {\n    \"draftMessage\": \"Dear Ian,\\n\\nI have confirmed availability for the Robert x iCook meeting on November 4, 2024, from 12:00 PM to 12:30 PM EST. The event has been scheduled.\\n\\nBest,\\n[Your Name]\",\n    \"status\": \"scheduled\"\n  },\n  \"metadata\": {\n    \"processedBy\": \"Calendar Agent\",\n    \"timestamp\": \"2024-11-01T17:30:00Z\"\n  }\n}\nIf there’s a conflict:\n{\n  \"sessionId\": \"3b1uyedon1m31hgd9t\",\n  \"availability\": \"conflict\",\n  \"confirmationStatus\": \"Conflict detected\",\n  \"alternativeTimes\": [\n    {\n      \"startTime\": \"2024-11-04T13:00:00-05:00\",\n      \"endTime\": \"2024-11-04T13:30:00-05:00\"\n    },\n    {\n      \"startTime\": \"2024-11-05T12:00:00-05:00\",\n      \"endTime\": \"2024-11-05T12:30:00-05:00\"\n    }\n  ],\n  \"response\": {\n    \"draftMessage\": \"Dear Ian,\\n\\nThank you for your invitation to the Robert x iCook meeting. Unfortunately, I am unavailable at the proposed time on November 4, 2024, from 12:00 PM to 12:30 PM EST. Could we reschedule for one of the following times?\\n- November 4, 2024, from 1:00 PM to 1:30 PM EST\\n- November 5, 2024, from 12:00 PM to 12:30 PM EST\\n\\nPlease let me know if either of these options works.\\n\\nBest,\\n[Your Name]\",\n    \"status\": \"conflict\"\n  },\n  \"metadata\": {\n    \"processedBy\": \"Calendar Agent\",\n    \"timestamp\": \"2024-11-01T17:30:00Z\"\n  }\n}\n",
+          "returnIntermediateSteps": true
         }
       },
       "id": "bcb10f87-74a8-479f-ab6e-589049cca6e6",
@@ -768,6 +793,13 @@
           }
         }
       }
+    ],
+    "Email Agent": [
+      {
+        "json": {
+          "output": "{\n  \"sessionId\": \"3b1uyedon1m31hgd9t\",\n  \"from\": \"ian@icookafterschool.com\",\n  \"subject\": \"Invitation: Robert x iCook @ Mon Nov 4, 2024 12pm - 12:30pm (EST)\",\n  \"summary\": \"Invitation for a meeting with iCook on November 4, 2024, from 12:00 PM to 12:30 PM EST.\",\n  \"actions\": {\n    \"needCalAgent\": true,\n    \"needDocsAgent\": false\n  },\n  \"calendarDetails\": {\n    \"eventTitle\": \"Robert x iCook Meeting\",\n    \"startTime\": \"2024-11-04T12:00:00-05:00\",\n    \"endTime\": \"2024-11-04T12:30:00-05:00\",\n    \"timezone\": \"EST\",\n    \"attendees\": [\n      {\n        \"name\": \"Ian Corse\",\n        \"email\": \"ian@icookafterschool.com\",\n        \"role\": \"Organizer\"\n      },\n      {\n        \"name\": \"Olga Davis\",\n        \"email\": \"automatestpete@gmail.com\"\n      }\n    ]\n  },\n  \"response\": {\n    \"draftMessage\": \"Dear Ian,\\n\\nThank you for your invitation to the Robert x iCook meeting. I will check my schedule for the proposed time on November 4 and I will confirm my attendance shortly.\\n\\nBest,\\n[Your Name]\",\n    \"status\": \"pendingCalendarCheck\"\n  },\n  \"metadata\": {\n    \"timestamp\": \"2024-11-01T17:22:27Z\",\n    \"processedBy\": \"Email Agent\",\n    \"status\": \"processed\"\n  }\n}"
+        }
+      }
     ]
   },
   "settings": {
@@ -776,6 +808,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-11-03T11:12:03.000Z",
-  "versionId": "f3bad7bb-219e-4594-9e1e-e17cc8a43d79"
+  "updatedAt": "2024-11-03T16:44:29.000Z",
+  "versionId": "5f42fd67-f23a-4136-b49c-bdae86033f8d"
 }
