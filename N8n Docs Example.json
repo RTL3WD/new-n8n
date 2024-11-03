@@ -1,0 +1,349 @@
+{
+  "active": false,
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wikipedia": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check user input for \"chain\" or \"agent\"": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chat Trigger": {
+      "main": [
+        [
+          {
+            "node": "Check user input for \"chain\" or \"agent\"",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-11-03T01:45:23.097Z",
+  "id": "ykF7yRlqVthkoQT9",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "N8n Docs Example",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "041132d8-b43d-434c-9d40-ee8f091da8ca",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        620,
+        620
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "c0a28d80-a29e-4140-ad46-6d42e60975e5",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        580,
+        1080
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "7daaff7b-0633-4252-b806-457f3f1a6024",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        880,
+        660
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "f2d64e7a-f7fc-410e-aa92-d522443edf9f",
+      "name": "Wikipedia",
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "typeVersion": 1,
+      "position": [
+        1140,
+        540
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "698bbcd9-7009-474f-8bf5-843458599c8f",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.5,
+      "position": [
+        660,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Every time you respond, start your response with the sentence: \"This message came from the chain\"."
+            }
+          ]
+        }
+      },
+      "id": "38c03963-9b1b-408b-b1ce-07cae4eb2215",
+      "name": "Basic LLM Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        640,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Try it out\n\nSelect **Chat**, and try out these queries:\n\n- Please show me a Wikipedia article about cats (agent)\n- Please show me a Wikipedia article about cats (chain)\n- What was my last question? (chain)\n- What was my last question? (agent)\n",
+        "height": 343.8587887368956,
+        "color": 4
+      },
+      "id": "a3b5081f-9b17-4470-b820-d25d5a10f9a8",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "content": "**Set your credentials**",
+        "height": 193,
+        "width": 167,
+        "color": 2
+      },
+      "id": "762769fd-6195-420a-9e77-3e7bae06a179",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        580,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "content": "**Set your credentials**",
+        "height": 193,
+        "width": 167,
+        "color": 2
+      },
+      "id": "a81944b3-6f38-401a-b76d-a16b2f5a8e5a",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        540,
+        1020
+      ]
+    },
+    {
+      "parameters": {
+        "content": "**Memory allows the agent to access previous parts of the chat**\n",
+        "height": 244,
+        "color": 5
+      },
+      "id": "4d7327a7-86c5-4cee-98ad-52e0291eb4f3",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        800,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "content": "**The agent can use the Wikipedia tool to access articles from Wikipedia**",
+        "height": 238,
+        "color": 5
+      },
+      "id": "417e1417-7c9b-40a5-9e0c-84c44266885a",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1060,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.chatInput }}",
+                    "rightValue": "agent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "248f4a34-89c1-4d1e-867a-daa024c8635a",
+                    "leftValue": "={{ $json.chatInput }}",
+                    "rightValue": "chain",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "id": "d5f5116d-2469-4ba5-9f15-2c6ae8697bd5",
+      "name": "Check user input for \"chain\" or \"agent\"",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        340,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Next steps\n\nLearn more about [Advanced AI in n8n](https://docs.n8n.io/advanced-ai/)"
+      },
+      "id": "c369b902-3382-4286-abe7-c2e1b3e5d1a5",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1160,
+        1040
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "3565c434-8a13-4c58-aa4b-40e81a7ccb51",
+      "name": "Chat Trigger",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1,
+      "position": [
+        120,
+        620
+      ],
+      "webhookId": "84bfdbd0-e2ce-4bfa-b746-985e64a14484"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-11-03T01:48:48.000Z",
+  "versionId": "f0923723-9500-4e09-8e45-41afd7eb4c3a"
+}
