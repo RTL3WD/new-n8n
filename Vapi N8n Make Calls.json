@@ -71,7 +71,7 @@
           "interval": [
             {
               "field": "cronExpression",
-              "expression": "0 10-16 * * 1-5"
+              "expression": "0 16-21 * * 1-5"
             }
           ]
         }
@@ -175,7 +175,7 @@
         1740,
         540
       ],
-      "webhookId": "a285b1bb-a56a-421b-8371-3f9dd8521906"
+      "webhookId": "a19a9e42-82ab-4e02-b5e4-6107b3e3d76d"
     }
   ],
   "pinData": {},
@@ -189,6 +189,6 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-10-29T18:25:24.000Z",
-  "versionId": "b0e3c27f-f034-4a7b-a475-91a74c0fb7e2"
+  "updatedAt": "2024-11-04T19:43:31.000Z",
+  "versionId": "cee16c22-f915-4ad2-8db0-7ba38483a3f0"
 }
