@@ -56,11 +56,45 @@
         ]
       ]
     },
-    "Webhook": {
+    "Schedule Trigger": {
       "main": [
         [
           {
+            "node": "Get NoCoDB Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
             "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send NTFY Notification": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get NoCoDB Rows": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
@@ -77,15 +111,15 @@
   "nodes": [
     {
       "parameters": {
-        "jsCode": "function formatPhoneNumber(phoneNumber) {\n   // Remove all non-digit characters\n   let cleaned = phoneNumber.replace(/\\D/g, '');\n   \n   // Handle cases where numbers might have extra digits\n   if (cleaned.length > 10) {\n       cleaned = cleaned.slice(0, 10);\n   }\n   \n   // Return empty array if not exactly 10 digits\n   if (cleaned.length !== 10) {\n       return [];\n   }\n   \n   // Return array with object containing formatted number\n   return [{\n       \"Cleaned Phone\": '+1' + cleaned\n   }];\n}\n\n// Get just the formatted number from the result:\nconst result = formatPhoneNumber($('Webhook').all()[0].json.body.data.rows[0].Phone);\nif (result.length > 0) {\n   return [{\"Cleaned Number\": result[0][\"Cleaned Phone\"]}] ;\n}"
+        "jsCode": "function formatPhoneNumber(phoneNumber) {\n   // Remove all non-digit characters\n   let cleaned = phoneNumber.replace(/\\D/g, '');\n   \n   // Handle cases where numbers might have extra digits\n   if (cleaned.length > 10) {\n       cleaned = cleaned.slice(0, 10);\n   }\n   \n   // Return empty array if not exactly 10 digits\n   if (cleaned.length !== 10) {\n       return [];\n   }\n   \n   // Return array with object containing formatted number\n   return [{\n       \"Cleaned Phone\": '+1' + cleaned\n   }];\n}\n\n// Get just the formatted number from the result:\nconst result = formatPhoneNumber($('Loop Over Items').all()[0].json['Phone']);\nif (result.length > 0) {\n   return [{\"Cleaned Number\": result[0][\"Cleaned Phone\"]}] ;\n}"
       },
       "id": "3cf3c145-fa75-41a3-80e1-37799f084c80",
       "name": "Code",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        900,
-        340
+        640,
+        140
       ]
     },
     {
@@ -111,12 +145,13 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1100,
-        340
+        860,
+        140
       ]
     },
     {
       "parameters": {
+        "amount": 6,
         "unit": "minutes"
       },
       "id": "1bc1b113-6b53-44cf-b066-13d9ade2351d",
@@ -124,10 +159,10 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        1320,
-        340
+        1060,
+        140
       ],
-      "webhookId": "8519a4f8-edfa-4220-8573-e4cd3e2aaed5"
+      "webhookId": "e9da1685-6e8e-4d4e-9da2-082201f3c25e"
     },
     {
       "parameters": {
@@ -148,8 +183,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1540,
-        340
+        1300,
+        140
       ]
     },
     {
@@ -162,7 +197,7 @@
           "fieldValues": [
             {
               "fieldName": "=Id",
-              "fieldValue": "={{ $('Webhook').item.json.body.data.rows[0].Id }}"
+              "fieldValue": "={{ $('Loop Over Items').all()[0].json.Id }}"
             },
             {
               "fieldName": "Call Success Evaluation",
@@ -200,8 +235,8 @@
       "type": "n8n-nodes-base.nocoDb",
       "typeVersion": 3,
       "position": [
-        1760,
-        340
+        1520,
+        140
       ],
       "credentials": {
         "nocoDbApiToken": {
@@ -217,7 +252,7 @@
         "sendBody": true,
         "contentType": "raw",
         "rawContentType": "text/plain",
-        "body": "=Business: {{ $('Webhook').item.json.body.data.rows[0].Business }}\n\nPhone: {{ $('Webhook').item.json.body.data.previous_rows[0].Phone }}\n\nSuccess Eval: {{ $json['Call Success Evaluation'] }}\n\nCall Summary: {{ $json['Call Summary'] }}\n",
+        "body": "=Business: {{ $('Loop Over Items').all()[0].json.Business }}\n\nPhone: {{ $('Loop Over Items').all()[0].json.Phone }}\nSuccess Eval: {{ $json['Call Success Evaluation'] }}\n\nCall Summary: {{ $json['Call Summary'] }}\n",
         "options": {}
       },
       "id": "cfcae217-a4dc-4d7f-8112-ad35640b2242",
@@ -225,35 +260,81 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2000,
-        340
+        1740,
+        140
       ]
     },
     {
       "parameters": {
-        "httpMethod": "POST",
-        "path": "7e797dde-6227-421b-ae5a-e4facf7e3576",
-        "responseMode": "lastNode",
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 16-21 * * 1-5"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "cd94345e-2134-4734-94e2-18ed9fe76b55",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
         "options": {}
       },
-      "id": "eb29e70d-e49c-472d-b6c2-0adacb25e8f4",
-      "name": "Webhook",
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2,
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
       "position": [
-        700,
-        340
+        440,
+        0
       ],
-      "webhookId": "7e797dde-6227-421b-ae5a-e4facf7e3576"
+      "id": "0b8b0a72-59a8-4a0b-9c4f-59d7e6c6e1c4",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "p396c1l7rjkrr41",
+        "table": "mwsufn0rwpc5q6e",
+        "limit": 10,
+        "options": {
+          "viewId": "vw29x4t6pz4uj8cp"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        220,
+        0
+      ],
+      "id": "056034d7-7adf-46e6-b54c-7f86e668aa20",
+      "name": "Get NoCoDB Rows",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "mZ1bN8fBGJ1SO75T",
+          "name": "New NocoDB Token Account"
+        }
+      }
     }
   ],
   "pinData": {},
   "settings": {
     "executionOrder": "v1"
   },
-  "staticData": null,
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-10-29T17:25:13.000Z",
-  "versionId": "a7894a72-3718-4fe0-8f22-1e2fa6f3a5aa"
+  "updatedAt": "2024-11-04T19:46:07.000Z",
+  "versionId": "96baaee2-cfeb-4ec1-8423-02bb43368fc4"
 }
