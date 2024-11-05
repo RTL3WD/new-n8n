@@ -162,7 +162,7 @@
         1060,
         140
       ],
-      "webhookId": "e9da1685-6e8e-4d4e-9da2-082201f3c25e"
+      "webhookId": "fe50d079-19ef-4dd0-8a04-f8e71f45d08c"
     },
     {
       "parameters": {
@@ -226,6 +226,14 @@
             {
               "fieldName": "Vapi Call ID",
               "fieldValue": "={{ $json.id }}"
+            },
+            {
+              "fieldName": "Phone",
+              "fieldValue": "={{ $('Code').all()[0].json['Cleaned Number'] }}"
+            },
+            {
+              "fieldName": "Outbound Call",
+              "fieldValue": "1"
             }
           ]
         }
@@ -335,6 +343,6 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-11-04T19:46:07.000Z",
-  "versionId": "96baaee2-cfeb-4ec1-8423-02bb43368fc4"
+  "updatedAt": "2024-11-05T15:06:39.000Z",
+  "versionId": "99ba9bf3-ebdc-4271-8a53-89b0409a9c62"
 }
