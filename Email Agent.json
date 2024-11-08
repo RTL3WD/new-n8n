@@ -1,12 +1,41 @@
 {
   "active": false,
   "connections": {
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "OpenAI Chat Model": {
       "ai_languageModel": [
         [
           {
             "node": "AI Agent",
             "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
             "index": 0
           }
         ]
@@ -23,7 +52,7 @@
         ]
       ]
     },
-    "Get Email": {
+    "Get Message": {
       "ai_tool": [
         [
           {
@@ -34,7 +63,7 @@
         ]
       ]
     },
-    "Send Email": {
+    "Get Unread Messages": {
       "ai_tool": [
         [
           {
@@ -45,18 +74,7 @@
         ]
       ]
     },
-    "When chat message received": {
-      "main": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get Contact Email Address": {
+    "Send Message": {
       "ai_tool": [
         [
           {
@@ -67,7 +85,7 @@
         ]
       ]
     },
-    "Date Time Tool": {
+    "Mark Message Read": {
       "ai_tool": [
         [
           {
@@ -78,7 +96,7 @@
         ]
       ]
     },
-    "Create Google Contact": {
+    "Create Label": {
       "ai_tool": [
         [
           {
@@ -89,7 +107,7 @@
         ]
       ]
     },
-    "SerpAPI": {
+    "Get All Labels": {
       "ai_tool": [
         [
           {
@@ -100,7 +118,40 @@
         ]
       ]
     },
-    "Calculator": {
+    "Get Label": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Draft": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Drafts": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Draft": {
       "ai_tool": [
         [
           {
@@ -112,26 +163,42 @@
       ]
     }
   },
-  "createdAt": "2024-09-27T15:27:24.980Z",
-  "id": "tHKD3rsg6G4Yc3p1",
-  "meta": {
-    "templateCredsSetupCompleted": true
-  },
+  "createdAt": "2024-11-08T17:54:46.584Z",
+  "id": "GwAaB5OYLCjfoHcv",
+  "meta": null,
   "name": "Email Agent",
   "nodes": [
     {
       "parameters": {
-        "model": "gpt-4o-mini",
+        "promptType": "define",
+        "text": "={{ $('Execute Workflow Trigger').all()[0].json.query }}",
+        "options": {
+          "systemMessage": "=You are a helpful assistant capable of managing email communications using the provided tools. You have access to the following tools:\n\nGet Unread Messages: Use this tool to retrieve a list of unread email messages. Specify the 'Limit' parameter to control the number of messages retrieved (default is 10).\n\nGet Message: Use this tool to retrieve a specific email message by its 'MessageId'.\n\nSend Message: Use this tool to send an email to specified recipients. You'll need to provide 'SendTo' (recipient's email address), 'Subject', and 'Text' (body of the email).\n\nMark Message Read: Use this tool to mark a specific email message as read using its 'MessageId'.\n\nCreate Label: Use this tool to create a new label in the email account. Provide the 'Label' name.\n\nGet All Labels: Use this tool to retrieve all labels available in the email account.\n\nGet Label: Use this tool to retrieve details of a specific label by its 'LabelId'.\n\nCreate Draft: Use this tool to create a draft email message. Provide 'Subject' and 'Message'.\n\nGet Drafts: Use this tool to retrieve all draft messages.\n\nGet Draft: Use this tool to retrieve a specific draft message by its 'DraftId'.\n\nGuidelines:\n\nUnderstanding User Requests: Carefully analyze the user's query to determine the required action—whether it's sending an email, retrieving messages, managing drafts, or handling labels.\n\nParameter Extraction: Extract relevant details from the user's request, such as email addresses, subjects, message content, 'MessageId's, 'DraftId's, 'LabelId's, and label names.\n\nTool Invocation: Call the appropriate tool(s) with the correct parameters based on the user's request.\n\nCommunication Style: Provide clear and concise responses to the user, confirming the actions taken or informing them of any issues.\n\nPrivacy and Security: Ensure that sensitive information, such as email addresses and message content, is handled securely and communicated appropriately.\n\nExamples:\n\nSending an Email:\n\nUser Request: \"Send an email to jane.doe@example.com with the subject 'Meeting Reminder' and the message 'Don't forget about our meeting tomorrow at 10 AM.'\"\nAction: Use the Send Message tool with 'SendTo' as 'jane.doe@example.com', 'Subject' as 'Meeting Reminder', and 'Text' as the message content.\nRetrieving Unread Messages:\n\nUser Request: \"Show me my latest unread emails.\"\nAction: Use the Get Unread Messages tool, possibly specifying a 'Limit' if the user wants a certain number of messages.\nMarking an Email as Read:\n\nUser Request: \"Mark the email from john.smith@example.com as read.\"\nAction: Use the Get Unread Messages tool to find the 'MessageId' of the email from 'john.smith@example.com', then use the Mark Message Read tool with that 'MessageId'.\nCreating a Draft:\n\nUser Request: \"Create a draft email to mike.brown@example.com with the subject 'Project Update' and the message 'Here's the latest update on the project...'\"\nAction: Use the Create Draft tool with the specified 'Subject' and 'Message'."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -480,
+        220
+      ],
+      "id": "58543cb5-2924-4e5f-a890-31537b484ce0",
+      "name": "AI Agent",
+      "alwaysOutputData": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
         "options": {}
       },
-      "id": "0387d03d-c1b0-4c83-b2c2-325284a8970c",
-      "name": "OpenAI Chat Model",
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1,
       "position": [
-        860,
-        680
+        -1040,
+        520
       ],
+      "id": "b2a71e9b-9b3c-480a-940c-1c440633da70",
+      "name": "OpenAI Chat Model",
       "credentials": {
         "openAiApi": {
           "id": "sTmNKjvehSYtW09j",
@@ -141,217 +208,299 @@
     },
     {
       "parameters": {
-        "contextWindowLength": 10
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dd5ba9a8-08eb-480e-b5a7-23ffbed06a2b",
+              "name": "response",
+              "value": "={{ JSON.stringify($json.output) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
       },
-      "id": "65defcab-2f15-4e93-b711-32139878c9a7",
-      "name": "Window Buffer Memory",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        60
+      ],
+      "id": "dd75ca09-b117-46e1-8712-493a9ab25e40",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dd5ba9a8-08eb-480e-b5a7-23ffbed06a2b",
+              "name": "response",
+              "value": "={{ JSON.stringify($json) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        240
+      ],
+      "id": "399a11ce-3c01-4eeb-9ebb-f3b54e0a7e4e",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        -700,
+        220
+      ],
+      "id": "42c0b810-3964-4a58-a7a2-bbe97cd18efb",
+      "name": "Execute Workflow Trigger"
+    },
+    {
+      "parameters": {},
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.2,
       "position": [
-        1000,
-        680
-      ]
-    },
-    {
-      "parameters": {
-        "name": "Get_Email",
-        "description": "Use this tool to retrieve emails when instructed to do so.",
-        "workflowId": {
-          "__rl": true,
-          "value": "kfeEcBwONXHoKhB5",
-          "mode": "list",
-          "cachedResultName": "Read Email Tool"
-        }
-      },
-      "id": "e85b7814-0f65-4596-a5dc-850cde228730",
-      "name": "Get Email",
-      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
-      "typeVersion": 1.2,
-      "position": [
-        1720,
-        720
-      ]
-    },
-    {
-      "parameters": {
-        "name": "Send_Email",
-        "description": "=Use this tool when directed to send an email. When passing data to this tool, include the following fields:\n\n{\n  \"operation\": \"SEND\",\n  \"name\": \"Recipient's name (optional)\",\n  \"email\": \"Recipient's email address (required)\",\n  \"subject\": \"Subject of the email\",\n  \"message_text\": \"{{ $json.chatInput }}\"\n}\n\nMake sure to include all the required fields and ensure the values are formatted correctly before sending.\n\n\n\n\n\n\n",
-        "workflowId": {
-          "__rl": true,
-          "value": "6Pf1uKb8e3irZQ84",
-          "mode": "list",
-          "cachedResultName": "Create Email Tool"
-        },
-        "specifyInputSchema": true,
-        "jsonSchemaExample": "{\n\"operation\":\"SEND\",\n\"name\":\"Name of the person who the email is being sent to if applicable\",\n\"email\":\"email address, required\",\n\"subject\": \"Something related to the message\",\n\"message text\": \"{{ $json.chatInput }}\"\n}"
-      },
-      "id": "7db854ac-9542-40aa-8fd0-8da260a05787",
-      "name": "Send Email",
-      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
-      "typeVersion": 1.2,
-      "position": [
-        1840,
-        720
-      ]
-    },
-    {
-      "parameters": {
-        "options": {}
-      },
-      "id": "71f55727-7986-4508-a7e8-6ca81df6b50b",
-      "name": "When chat message received",
-      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
-      "typeVersion": 1.1,
-      "position": [
-        840,
-        440
+        -880,
+        520
       ],
-      "webhookId": "3a08c5fe-d9bf-448f-8d21-68722bb54555"
+      "id": "959d2466-6417-4820-9718-f84badfa6db6",
+      "name": "Window Buffer Memory"
     },
     {
       "parameters": {
-        "name": "Get_Contact_Email",
-        "description": "=Use this tool when given a name and told to retrieve their email address. Pass a person's name to attempt to get an email. If there is no email, respond back with no email found for the person.",
-        "workflowId": {
-          "__rl": true,
-          "value": "In21UP7C33NeP3Ag",
-          "mode": "list",
-          "cachedResultName": "Get Google Contact Email Tool"
-        }
+        "operation": "get",
+        "messageId": "={{ $fromAI(\"MessageId\") }}"
       },
-      "id": "3ebe5dfe-9f55-4f5e-af1f-c79d96d5fdd3",
-      "name": "Get Contact Email Address",
-      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
-      "typeVersion": 1.2,
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
       "position": [
-        1600,
-        700
-      ]
-    },
-    {
-      "parameters": {
-        "name": "Get_Date_Time",
-        "description": "Use this tool any time someone mentions date or time. This tool will return back the current date and time to the assistant. ",
-        "jsCode": "function getNewYorkDateTime() {\n  // Create a date object and format it for New York timezone\n  const options = {\n    timeZone: 'America/New_York',\n    year: 'numeric',\n    month: '2-digit',\n    day: '2-digit',\n    hour: '2-digit',\n    minute: '2-digit',\n    second: '2-digit',\n    hour12: false // Use 24-hour format\n  };\n  \n  const newYorkDateTime = new Date().toLocaleString('en-US', options);\n  \n  // Format to YYYY-MM-DD HH:MM:SS\n  const formattedDateTime = newYorkDateTime.replace(',', '');\n  const [date, time] = formattedDateTime.split(' ');\n  const [month, day, year] = date.split('/');\n  \n  return `${year}-${month}-${day} ${time}`;\n}\n\nconsole.log(getNewYorkDateTime()); // Example Output: 2024-09-28 14:35:12\n\nreturn getNewYorkDateTime();"
-      },
-      "id": "987ed77c-cf55-4400-a118-6c7109ca8b66",
-      "name": "Date Time Tool",
-      "type": "@n8n/n8n-nodes-langchain.toolCode",
-      "typeVersion": 1.1,
-      "position": [
-        900,
-        1040
-      ]
-    },
-    {
-      "parameters": {
-        "options": {}
-      },
-      "id": "bb4f900d-1df6-459e-a207-de127490bc86",
-      "name": "AI Agent",
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 1.6,
-      "position": [
-        1060,
-        440
-      ]
-    },
-    {
-      "parameters": {
-        "name": "Create_Contact",
-        "description": "=Use this tool when told specifically to create a new contact. When passing data send the following information. If any data is not provided, leave it as a blank string.\n\nEXAMPLE INPUT SCHEMA:\n{\n    \"First Name\": \"Robert\", REQUIRED\n    \"Last Name\": \"Lord\",\n    \"Company Name\": \"Automate St Pete\",\n    \"Company Website\": \"automatestpete.com\",\n    \"Company Position\": \"Owner\",\n    \"Phone\": \"7272918100\",\n    \"Email\": \"automatestpete@gmail.com\" REQUIRED\n}",
-        "workflowId": {
-          "__rl": true,
-          "value": "317eA5FQ421igZg9",
-          "mode": "list",
-          "cachedResultName": "Create Contact Tool"
-        },
-        "specifyInputSchema": true,
-        "jsonSchemaExample": "{\n    \"First Name\": \"Robert\",\n    \"Last Name\": \"Lord\",\n    \"Company Name\": \"Automate St Pete\",\n    \"Company Website\": \"automatestpete.com\",\n    \"Company Position\": \"Owner\",\n    \"Phone\": \"7272918100\",\n    \"Email\": \"automatestpete@gmail.com\",\n    \"submittedAt\": \"2024-09-28T13:28:26.326+02:00\",\n    \"formMode\": \"test\"\n}"
-      },
-      "id": "756e2f6a-6cfd-4554-b298-e9264ca50dfd",
-      "name": "Create Google Contact",
-      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
-      "typeVersion": 1.2,
-      "position": [
-        1480,
-        700
-      ]
-    },
-    {
-      "parameters": {
-        "options": {}
-      },
-      "id": "74a836d5-a398-4d47-9b1f-e18ab970cd82",
-      "name": "SerpAPI",
-      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
-      "typeVersion": 1,
-      "position": [
-        1120,
-        1040
+        240,
+        520
       ],
+      "id": "8ce13078-da7e-4632-aa44-35e095f6ad43",
+      "name": "Get Message",
+      "webhookId": "86e70c67-67d3-4872-9dd5-2f891122afdf",
       "credentials": {
-        "serpApi": {
-          "id": "TrHqZUgKGIHkC3cl",
-          "name": "SerpAPI account"
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
         }
       }
     },
     {
-      "parameters": {},
-      "id": "ffa1a3b9-3a2d-4103-8b38-13dda71790a3",
-      "name": "Calculator",
-      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
-      "typeVersion": 1,
+      "parameters": {
+        "operation": "getAll",
+        "limit": 10,
+        "filters": {
+          "q": "={{ $fromAI(\"Search\") }}",
+          "readStatus": "unread",
+          "sender": "={{ $fromAI(\"Sender\") }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
       "position": [
-        1020,
-        1040
-      ]
+        120,
+        520
+      ],
+      "id": "1b6426ef-12ea-4c5b-becb-64887734dc5f",
+      "name": "Get Unread Messages",
+      "webhookId": "26ffc2e0-d6c9-426c-8ed2-6f481f28b58f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
+        }
+      }
     },
     {
       "parameters": {
-        "content": "## Google Suite Tools",
-        "height": 308.19819819819827,
-        "width": 720.5855855855848
+        "sendTo": "={{ $fromAI(\"SendTo\") }}",
+        "subject": "={{ $fromAI(\"Subject\") }}",
+        "emailType": "text",
+        "message": "={{ $fromAI(\"Text\") }}",
+        "options": {
+          "appendAttribution": false
+        }
       },
-      "id": "ca3f112f-9374-4d03-a425-8f4aa476ed2d",
-      "name": "Sticky Note",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
       "position": [
-        1440,
-        560
-      ]
+        -20,
+        520
+      ],
+      "id": "90bce914-eb25-4e11-9cb9-fd31b5d5d62c",
+      "name": "Send Message",
+      "webhookId": "47b29002-30e2-45ad-97e2-9d198b7e89bc",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
+        }
+      }
     },
     {
       "parameters": {
-        "content": "## Util Tools",
-        "height": 287.0270270270271,
-        "width": 486.2767371271366
+        "operation": "markAsRead",
+        "messageId": "={{ $fromAI(\"MessageId\") }}"
       },
-      "id": "53430585-e25a-4cae-8af4-f2d40d182934",
-      "name": "Sticky Note1",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
       "position": [
-        860,
-        880
-      ]
+        380,
+        520
+      ],
+      "id": "88b5f1b2-0d01-4714-a30a-4666324840ea",
+      "name": "Mark Message Read",
+      "webhookId": "a252b401-6013-430d-ac7c-6bf905623964",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
+        }
+      }
     },
     {
       "parameters": {
-        "content": "## Database Tools",
-        "height": 262.27492928130033,
-        "width": 722.3506799888357
+        "resource": "label",
+        "operation": "create",
+        "name": "={{ $fromAI(\"Label\") }}",
+        "options": {}
       },
-      "id": "60a8bc53-c4e6-48e2-93e9-f05f997335ae",
-      "name": "Sticky Note2",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
       "position": [
-        1440,
-        900
-      ]
+        -740,
+        520
+      ],
+      "id": "4fe45720-9b48-44a4-8bd3-4a44f3783a70",
+      "name": "Create Label",
+      "webhookId": "f3cc8610-bb89-4198-83db-6116db2d756f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "label",
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -620,
+        520
+      ],
+      "id": "e63bc962-2fcf-4733-b0dd-7001ca699bb8",
+      "name": "Get All Labels",
+      "webhookId": "2cab86fd-bfdd-4e6c-94ce-3681d1cb8894",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "label",
+        "operation": "get",
+        "labelId": "={{ $fromAI(\"LabelId\") }}"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -500,
+        520
+      ],
+      "id": "28074605-12a4-4a4f-86b2-dfa94b1d33a7",
+      "name": "Get Label",
+      "webhookId": "4db21f45-4eff-43cc-a21a-eaec6b41e63a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "operation": "get",
+        "messageId": "={{ $fromAI(\"DraftId\") }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -260,
+        520
+      ],
+      "id": "ca7bbb8b-9bde-4645-a932-cda8225550b5",
+      "name": "Get Draft",
+      "webhookId": "ee502330-cf93-4475-a273-85deacebb4c0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "operation": "getAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -140,
+        520
+      ],
+      "id": "27dca723-73fb-4e4e-9dfb-2797295e43ff",
+      "name": "Get Drafts",
+      "webhookId": "d5e7ea61-3e69-41f1-8250-27d510729c05",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $fromAI(\"Subject\") }}",
+        "message": "={{ $fromAI(\"Message\") }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -380,
+        520
+      ],
+      "id": "fb2b0d4e-d53e-4442-bb20-a659063def13",
+      "name": "Create Draft",
+      "webhookId": "1a0135ef-9595-4631-b2f3-7fc177ab4b91",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -361,6 +510,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-09-29T23:45:16.000Z",
-  "versionId": "dd06579b-0e87-4bb2-9894-9df0fc9d0be2"
+  "updatedAt": "2024-11-08T19:12:27.000Z",
+  "versionId": "9c1c4ae2-276b-4b9d-b41a-b490892a14fa"
 }
