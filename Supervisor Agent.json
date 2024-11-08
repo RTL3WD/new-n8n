@@ -1,0 +1,201 @@
+{
+  "active": true,
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Lead AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Lead AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🤖 Calendar Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Lead AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Lead AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🤖 Email Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Lead AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-11-08T16:06:41.388Z",
+  "id": "zfNhepbHXhFPMrO5",
+  "meta": null,
+  "name": "Supervisor Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi there! 👋\nI'm Nathan your personal assistant. How can I help you today?",
+        "options": {
+          "showWelcomeScreen": false,
+          "subtitle": "Start a chat. I'm here to help you 24/7.",
+          "title": "Hi there! 👋"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "5368d227-4f93-42a4-a4ce-0cc636ab2ba0",
+      "name": "When chat message received",
+      "webhookId": "5f2ee329-1eee-4f07-b427-f8d08ff0f568"
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxTokens": -1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        260
+      ],
+      "id": "8999fa0f-7df4-405a-87a8-5f8156187c6d",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "Calendar_Agent",
+        "description": "The Calendar tool is a specialized tool designed to handle all calendar-related operations, including retrieving events, creating new events, and updating existing ones. When the user requests any action involving their calendar, you should delegate the task to the Calendar Agent using this tool.\n",
+        "workflowId": {
+          "__rl": true,
+          "value": "jBuOzpK0qAvxxfTP",
+          "mode": "list",
+          "cachedResultName": "Calendar Agent"
+        },
+        "fields": {
+          "values": [
+            {
+              "name": "sessionId",
+              "stringValue": "={{ $('When chat message received').all()[0].json.sessionId }}"
+            }
+          ]
+        },
+        "jsonSchemaExample": "{\n  \"query\": \"some_value\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        300,
+        260
+      ],
+      "id": "19a4618e-5bd2-4aab-aced-9827be3af97c",
+      "name": "🤖 Calendar Agent"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a helpful assistant that assists users with calendar and email tasks. You have access to two specialized tools:\n\nCalendar Tool:\n\nUse this for all calendar-related operations: creating, updating, and retrieving events.\nProvide necessary details such as event titles, dates, times, and event IDs when invoking this agent.\n\nEmail Tool:\n\nUse this for all email-related operations: sending emails, retrieving messages, managing drafts, and handling labels.\nProvide necessary details like recipient email addresses, subjects, message content, message IDs, draft IDs, or label names when invoking this agent.\n\nGuidelines:\nUnderstand User Requests: Determine whether the user needs calendar or email assistance.\nDelegate Tasks Appropriately: Use the relevant agent based on the user's request.\nProvide Clear Input: Supply all necessary information to the agents for successful execution.\nCommunicate Effectively: Inform the user of outcomes or any issues concisely and clearly.\nMaintain Confidentiality: Handle all user data securely and respectfully.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "18a1549f-7dd9-4150-97d7-ab93ad4aec69",
+      "name": "Lead AI Agent"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 15
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        120,
+        260
+      ],
+      "id": "53aaf64f-319d-40c4-aee9-cdfd40a94618",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "name": "Email_Agent",
+        "description": "This tool designed to handle all email-related tasks. Use this when the user requests actions involving emails, such as sending messages, retrieving emails, managing drafts, or handling labels. Provide necessary details like recipient email addresses, subjects, message content, message IDs, draft IDs, or label names when invoking this agent.",
+        "workflowId": {
+          "__rl": true,
+          "value": "GwAaB5OYLCjfoHcv",
+          "mode": "list",
+          "cachedResultName": "Email Agent"
+        },
+        "fields": {
+          "values": [
+            {
+              "name": "sessionId",
+              "stringValue": "={{ $('When chat message received').all()[0].json.sessionId }}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        460,
+        260
+      ],
+      "id": "9f5cfae0-59dd-44bb-b36b-4c21fda441e4",
+      "name": "🤖 Email Agent"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 2,
+  "updatedAt": "2024-11-08T19:56:59.000Z",
+  "versionId": "61ffaf39-0bba-42c8-a0e0-d5c570882478"
+}
