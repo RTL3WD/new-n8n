@@ -1,0 +1,337 @@
+{
+  "active": false,
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date Time Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Calendar Events": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Calendar Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Calendar Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-11-08T17:25:06.120Z",
+  "id": "hm3FGssTVV5nhawT",
+  "meta": null,
+  "name": "Calendar Agent backup",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Execute Workflow Trigger').all()[0].json.query }}",
+        "options": {
+          "systemMessage": "\"You are a helpful assistant. Always use the the Date Time Tool to get the current date and time before using the calendar.\" I NEED HELP UPDATING THIS SYSTEM MESSAGE"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "99108fbf-5c38-4df7-be86-19595db43833",
+      "name": "AI Agent",
+      "alwaysOutputData": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        20,
+        260
+      ],
+      "id": "d3e52bf8-c383-44d8-918c-92f6bc877188",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "Date_Time",
+        "description": "Call this tool when you need to get the date or time",
+        "jsCode": "const now = new Date();\nconst options = { timeZone: 'America/New_York', hour12: true };\n\n// Format: MM/DD/YYYY\nconst date = now.toLocaleDateString('en-US', options);\n\n// Format: HH:MM:SS AM/PM\nconst time = now.toLocaleTimeString('en-US', options);\n\nconsole.log(`Current Date: ${date}`);\nconsole.log(`Current Time: ${time}`);\n\n// Return the result in an object format\nreturn `Current Date and Time is ${date} @ ${time}`;"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [
+        320,
+        260
+      ],
+      "id": "bc0f078a-ae5e-409b-92c0-034b0917170f",
+      "name": "Date Time Tool"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "automatestpete@gmail.com",
+          "mode": "list",
+          "cachedResultName": "automatestpete@gmail.com"
+        },
+        "limit": 20,
+        "options": {
+          "timeMin": "={{ $fromAI(\"After\") }}",
+          "timeMax": "={{ $fromAI(\"Before\") }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.2,
+      "position": [
+        500,
+        260
+      ],
+      "id": "4d918b45-56ca-4887-9a43-572f5ee369bf",
+      "name": "Get Calendar Events",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "automatestpete@gmail.com",
+          "mode": "list",
+          "cachedResultName": "automatestpete@gmail.com"
+        },
+        "start": "={{ $fromAI(\"Start\") }}",
+        "end": "={{ $fromAI(\"End\") }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.2,
+      "position": [
+        660,
+        260
+      ],
+      "id": "3c29f518-f256-4559-b065-50a5da9759ea",
+      "name": "Create Calendar Event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "value": "automatestpete@gmail.com",
+          "mode": "list",
+          "cachedResultName": "automatestpete@gmail.com"
+        },
+        "eventId": "={{ $fromAI(\"EventId\") }}",
+        "updateFields": {
+          "description": "={{ $fromAI(\"Description\") || \"\" }}",
+          "end": "={{ $fromAI(\"End\") }}",
+          "start": "={{ $fromAI(\"Start\") }}",
+          "summary": "={{ $fromAI(\"Summary\") || \"\"}}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.2,
+      "position": [
+        820,
+        260
+      ],
+      "id": "ab82297c-6721-483f-94bc-ad9b1aa208a1",
+      "name": "Update Calendar Event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dd5ba9a8-08eb-480e-b5a7-23ffbed06a2b",
+              "name": "response",
+              "value": "={{ JSON.stringify($json.output) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        700,
+        -220
+      ],
+      "id": "12488fe2-0874-46f5-96ac-d509f6187fa4",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dd5ba9a8-08eb-480e-b5a7-23ffbed06a2b",
+              "name": "response",
+              "value": "={{ JSON.stringify($json) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        700,
+        20
+      ],
+      "id": "1725b022-358d-465d-8eaa-e6732725f8a2",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "bf8e6e3f-46f4-48a0-8b79-53b4585115e9",
+      "name": "Execute Workflow Trigger"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        180,
+        260
+      ],
+      "id": "8b517dec-0f8d-4c12-a58b-5cf2a69e500d",
+      "name": "Window Buffer Memory"
+    }
+  ],
+  "pinData": {
+    "Execute Workflow Trigger": [
+      {
+        "json": {
+          "query": "Update the event for tomorrow at noon to be one hour long.",
+          "sessionId": "test123"
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/New_York",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-11-08T17:25:06.120Z",
+  "versionId": "2e0377fe-7a73-4d9d-8edb-183e36a3445e"
+}
