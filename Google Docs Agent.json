@@ -1,0 +1,285 @@
+{
+  "active": false,
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Doc": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Doc": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date Time Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-11-09T03:30:25.926Z",
+  "id": "QImsyPywkhNJTCXk",
+  "meta": null,
+  "name": "Google Docs Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "You are a helpful assistant. Your purpose is to take the input you've received and document it in google docs. Be sure to always use the date time tool so you can put the date and time before putting it below the title of every document."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "ea1e3f78-2034-4400-bf8c-a1f102de907e",
+      "name": "AI Agent",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8381b4e1-c5ef-4f28-b6e3-9b0a998855a5",
+      "name": "Execute Workflow Trigger"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        40,
+        280
+      ],
+      "id": "359a9365-ac1f-4259-bd64-31272d44063c",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Execute Workflow Trigger').item.json.sessionId }}",
+        "contextWindowLength": 15
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        200,
+        280
+      ],
+      "id": "56fd1fd2-acc3-49d9-bc36-7139e6827091",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "folderId": "default",
+        "title": "={{ $fromAI(\"title\") }}"
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        620,
+        280
+      ],
+      "id": "fbb37d14-6108-492f-a75d-f4993b4e1cb2",
+      "name": "Create Doc",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "vf3EWQqMHWE96oFt",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $fromAI(\"docId\") }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $fromAI(\"text\") }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        760,
+        280
+      ],
+      "id": "3f2c793e-605a-4b7f-b049-bd015be5d22c",
+      "name": "Update Doc",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "vf3EWQqMHWE96oFt",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "39b734db-1cd2-46c0-92d2-3bb9e4556d51",
+              "name": "response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        600,
+        -160
+      ],
+      "id": "81311b3a-dcf0-44ce-b021-c83a4784437f",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "39b734db-1cd2-46c0-92d2-3bb9e4556d51",
+              "name": "response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        600,
+        20
+      ],
+      "id": "f8f93601-64cf-4f36-9866-6c5304fd0539",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "name": "Date_Time",
+        "description": "Call this tool when you need to get the date or time",
+        "jsCode": "const now = new Date();\nconst options = { timeZone: 'America/New_York', hour12: true };\n\n// Format: MM/DD/YYYY\nconst date = now.toLocaleDateString('en-US', options);\n\n// Format: HH:MM:SS AM/PM\nconst time = now.toLocaleTimeString('en-US', options);\n\nconsole.log(`Current Date: ${date}`);\nconsole.log(`Current Time: ${time}`);\n\n// Return the result in an object format\nreturn `Current Date and Time is ${date} @ ${time}`;"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [
+        460,
+        280
+      ],
+      "id": "2762119f-837e-4cf9-8732-94447c527d57",
+      "name": "Date Time Tool"
+    }
+  ],
+  "pinData": {
+    "Execute Workflow Trigger": [
+      {
+        "json": {
+          "query": "# To-Do List App PRD\nVersion: 1.0\nDate: 2023-10-04\n   \n## Executive Summary\n### Project Overview  \nThe To-Do List App is a web-based application developed using Next.js and MongoDB. It will allow users to create, manage, and organize their tasks efficiently through a user-friendly interface.\n\n### Business Objective  \nThe main objective is to provide a simple and effective task management tool that enhances productivity and helps users keep track of their daily activities.\n\n### Success Metrics  \n- User registration count: At least 500 active users in the first 3 months.\n- User engagement: Average of 10 tasks per user within the first month.\n- Performance: 95% of operations should complete within 2 seconds.\n\n## Product Overview  \n### Product Purpose  \nTo offer a convenient platform for users to manage their tasks, set deadlines, and mark them as complete.\n\n### Target Users  \n- Individuals who need help organizing their daily tasks.\n- Professionals and students managing multiple projects.\n\n### User Problems Solved  \n- Disorganization of tasks leading to missed deadlines.\n- Difficulty in tracking progress on multiple tasks.\n\n### Market Opportunity  \nThe task management software market is rapidly growing with an increasing number of individuals looking for productivity tools. This app will tap into both individuals and professional segments.\n\n## Requirements  \n### Functional Requirements  \n1. Users must be able to create an account and log in.  \n2. Users must be able to add, edit, and delete tasks.  \n3. Users must be able to categorize tasks (e.g., personal, work).\n4. Users must be able to set and edit due dates for tasks.  \n5. Users must be able to mark tasks as complete.  \n\n### Non-Functional Requirements  \n1. The application must be responsive on desktop and mobile devices.  \n2. The application must load in less than 2 seconds.\n\n### Technical Requirements  \n1. Next.js framework must be used for the front-end.\n2. MongoDB must be used for the database solution.\n\n### Compliance Requirements  \n1. The app must comply with data protection regulations (GDPR) if users from the EU are expected.  \n\n### Performance Requirements  \n1. The application must handle up to 1000 concurrent users.\n\n## Features  \n### Core Features  \n1. User Authentication (Sign up and Login).\n2. Task Management (Create, Edit, Delete, and Mark Complete).\n3. Task Categories.\n4. Due Dates and Reminders.\n\n### Feature Priority  \n- High: User Authentication, Core Task Management features.\n- Medium: Task Categories, Due Dates.\n\n### Feature Dependencies  \n- User authentication must be implemented before task management features.\n\n### Future Considerations  \n- Potential addition of reminders and notifications for tasks.\n- Integration with calendar apps for syncing task deadlines.\n\n## User Experience  \n### User Flows  \n1. User Signs Up ➔ User Authenticated ➔ User creates tasks ➔ User sets due dates.\n\n### Critical User Journeys  \n- First-time user creating an account and adding their first task.\n- Returning user editing their existing tasks.\n\n### User Interface Requirements  \n- Simple and clean design.\n- Intuitive navigation.\n\n### Accessibility Requirements  \n- Must comply with the WCAG 2.1 standards.\n\n## Technical Considerations  \n### System Architecture Requirements  \n- Client-Server architecture hosted on a cloud service.\n   \n### Integration Requirements  \n- Integration with MongoDB for data storage.\n\n### Security Requirements  \n- All user passwords must be hashed.\n- Secure API endpoint configuration.\n\n### Scalability Requirements  \n- Ability to scale horizontally with increased user load.\n\n## Constraints and Limitations  \n### Technical Constraints  \n- Performance limitations due to the choice of MongoDB.\n   \n### Business Constraints  \n- Limited budget for initial development phases.\n\n### Resource Constraints  \n- Development team size and expertise in Next.js and MongoDB.\n\n### Timeline Constraints  \n- The application must be launched within 3 months of project initiation.\n\n## Success Criteria  \n### Key Performance Indicators  \n- User acquisition metrics.\n- User retention rates.\n\n### Quality Metrics  \n- Bug counts per release should not exceed 5.\n\n### Acceptance Criteria  \n- All functional requirements must be met before the final product launch.\n\n# To Do List App Feature Requirements\nVersion: 1.1\nDate: 2023-10-08\n\n## Features Overview  \nThis document outlines the feature requirements for the To Do List App, focusing on User Authentication, Task Management, Task Categories, Due Dates, and Reminders. The priorities assigned to each feature are also included.\n\n## 1. Feature Requirements\n\n### 1.1 User Authentication (High Priority)  \n- **FR-01**: Users must be able to create an account with a unique username and password.\n- **FR-02**: Users must be able to log in using their credentials.\n- **FR-03**: The system must implement password recovery functionality for users who forget their passwords.\n- **FR-04**: Users must have the option to log out securely.\n\n### 1.2 Task Management (High Priority)  \n- **FR-05**: Users must be able to create new tasks with the following details:\n  - Title (mandatory)\n  - Description (optional)\n  - Task Category (optional)\n  - Due Date (optional)\n  - Reminders (optional)\n- **FR-06**: Users must be able to edit existing tasks.\n- **FR-07**: Users must be able to mark tasks as complete or incomplete.\n- **FR-08**: Users must be able to delete tasks from their to-do list.\n- **FR-09**: Users must be able to view a list of all tasks with options to filter by completion status (e.g., all tasks, completed tasks, pending tasks).\n\n### 1.3 Task Categories (Medium Priority)  \n- **FR-10**: Users must be able to create and manage task categories (e.g., Work, Personal, Shopping).\n- **FR-11**: Users must be able to assign a category to a task upon creation or editing.\n- **FR-12**: Users must be able to view tasks based on selected categories.\n\n### 1.4 Due Dates (High Priority)  \n- **FR-13**: Users must be able to set a due date for tasks during creation or editing.\n- **FR-14**: The task overview must display upcoming due dates for easy tracking.\n\n### 1.5 Reminders (High Priority)  \n- **FR-15**: Users must be able to set reminders for tasks based on the due date.\n- **FR-16**: Reminders must notify the user before the due date via the following methods:\n  - In-app notifications\n  - Email notifications (if email is provided during registration)\n- **FR-17**: Users must have the ability to customize reminder timing (e.g., 1 day before, 1 hour before).\n\n## 2. Feature Dependencies  \n- **User Authentication** must be implemented first before any other features, as users need accounts to manage tasks.\n- All task-related features (Task Management, Task Categories, Due Dates, Reminders) depend on successful user authentication to ensure security and personalization.",
+          "sessionId": "test-0b4678d6-3354-4d4b-8324-a5dee9a7921c"
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-11-09T04:34:16.000Z",
+  "versionId": "8fe8f12f-7c1d-40fb-a50c-3f1133943ed0"
+}
