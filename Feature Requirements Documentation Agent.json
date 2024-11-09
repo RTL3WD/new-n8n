@@ -159,8 +159,21 @@
     "executionOrder": "v1"
   },
   "staticData": null,
-  "tags": [],
+  "tags": [
+    {
+      "createdAt": "2024-11-09T12:37:16.991Z",
+      "updatedAt": "2024-11-09T12:37:16.991Z",
+      "id": "0yhZAGhpC1N7u9OS",
+      "name": "Worker Agent"
+    },
+    {
+      "createdAt": "2024-11-09T12:36:39.198Z",
+      "updatedAt": "2024-11-09T12:36:39.198Z",
+      "id": "MRby0xygMKHvhREc",
+      "name": "Requirements Agent"
+    }
+  ],
   "triggerCount": 0,
-  "updatedAt": "2024-11-09T04:29:40.000Z",
-  "versionId": "bfe96057-e85f-4ff6-aac8-489fe36ac519"
+  "updatedAt": "2024-11-09T12:38:48.000Z",
+  "versionId": "6a619a30-3313-4080-a11b-26d3c43d08d8"
 }
