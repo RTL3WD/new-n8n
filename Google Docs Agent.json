@@ -278,8 +278,21 @@
     "executionOrder": "v1"
   },
   "staticData": null,
-  "tags": [],
+  "tags": [
+    {
+      "createdAt": "2024-11-09T12:37:16.991Z",
+      "updatedAt": "2024-11-09T12:37:16.991Z",
+      "id": "0yhZAGhpC1N7u9OS",
+      "name": "Worker Agent"
+    },
+    {
+      "createdAt": "2024-11-09T12:37:31.178Z",
+      "updatedAt": "2024-11-09T12:37:31.178Z",
+      "id": "a994HhJ4xFZtoW1n",
+      "name": "Utils Agent"
+    }
+  ],
   "triggerCount": 0,
-  "updatedAt": "2024-11-09T04:34:16.000Z",
-  "versionId": "8fe8f12f-7c1d-40fb-a50c-3f1133943ed0"
+  "updatedAt": "2024-11-09T12:37:33.000Z",
+  "versionId": "4336d12f-6d5d-4b07-ae65-a753ff5726ab"
 }
