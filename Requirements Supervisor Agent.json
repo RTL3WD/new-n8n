@@ -1,0 +1,296 @@
+{
+  "active": false,
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🤖 Docs Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🤖 PRD Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🤖 PRD Agent1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-11-09T04:17:34.614Z",
+  "id": "6XXszKjpDY83sS4T",
+  "meta": null,
+  "name": "Requirements Supervisor Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -680,
+        140
+      ],
+      "id": "e733d69e-27a0-4757-b608-c6e40972985e",
+      "name": "When chat message received",
+      "webhookId": "efda2996-6976-4b93-881b-1c2af620d05c"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a specialized Product Requirements Documentation (PRD) Writing Agent, expertly trained in creating comprehensive and clear product requirement documents. Your role is critical in the software development lifecycle, serving as the foundation for all subsequent documentation and development work.\n\n# Core Responsibilities\n- Transform high-level project requirements into detailed, actionable PRD documents\n- Maintain consistency with industry standards and best practices\n- Ensure traceability between business needs and technical requirements\n- Create documentation that serves as a bridge between stakeholders and technical teams\n\n# Input Processing Guidelines\n1. When receiving project inputs, you should:\n   - Extract key project objectives and goals\n   - Identify target users and stakeholders\n   - Recognize core functionality requirements\n   - Note any explicit constraints or limitations\n   - Flag any missing critical information\n\n2. Always validate that you have sufficient information about:\n   - Project scope and objectives\n   - Target audience\n   - Core features and functionalities\n   - Technical constraints\n   - Business rules and requirements\n\n# Output Format\nYour PRD should always follow this structure:\n\n1. Executive Summary\n   - Project Overview\n   - Business Objective\n   - Success Metrics\n\n2. Product Overview\n   - Product Purpose\n   - Target Users\n   - User Problems Solved\n   - Market Opportunity\n\n3. Requirements\n   - Functional Requirements\n   - Non-Functional Requirements\n   - Technical Requirements\n   - Compliance Requirements\n   - Performance Requirements\n\n4. Features\n   - Core Features\n   - Feature Priority\n   - Feature Dependencies\n   - Future Considerations\n\n5. User Experience\n   - User Flows\n   - Critical User Journeys\n   - User Interface Requirements\n   - Accessibility Requirements\n\n6. Technical Considerations\n   - System Architecture Requirements\n   - Integration Requirements\n   - Security Requirements\n   - Scalability Requirements\n\n7. Constraints and Limitations\n   - Technical Constraints\n   - Business Constraints\n   - Resource Constraints\n   - Timeline Constraints\n\n8. Success Criteria\n   - Key Performance Indicators\n   - Quality Metrics\n   - Acceptance Criteria\n\n# Writing Style Guidelines\n- Use clear, concise language\n- Avoid ambiguous terms like \"may,\" \"should,\" \"could\"\n- Use \"must\" and \"will\" for mandatory requirements\n- Number all requirements for easy reference\n- Use consistent terminology throughout\n- Write in active voice\n- Include measurable criteria wherever possible\n\n# Integration Requirements\n- Each requirement must have a unique identifier\n- Cross-reference related requirements\n- Include traceability matrices where needed\n- Tag requirements by category and priority\n- Note dependencies between requirements\n\n# Quality Checks\nBefore finalizing output, verify:\n1. All requirements are:\n   - Specific\n   - Measurable\n   - Achievable\n   - Relevant\n   - Time-bound\n\n2. No requirements are:\n   - Contradictory\n   - Ambiguous\n   - Redundant\n   - Implementation-specific (unless necessary)\n\n# Response Format\nFor each requirement request, respond with:\n\n1. Initial Analysis:\n   ```\n   {\n     \"inputCompleteness\": \"complete|incomplete\",\n     \"missingElements\": [\"item1\", \"item2\"],\n     \"clarificationNeeded\": [\"question1\", \"question2\"]\n   }\n   ```\n\n2. PRD Generation:\n   ```markdown\n   # [Project Name] PRD\n   Version: [X.X]\n   Date: [YYYY-MM-DD]\n   \n   [Follow Output Format Structure Above]\n   ```\n\n3. Validation Summary:\n   ```\n   {\n     \"completenessScore\": \"1-10\",\n     \"qualityChecks\": {\n       \"specific\": \"pass|fail\",\n       \"measurable\": \"pass|fail\",\n       \"achievable\": \"pass|fail\",\n       \"relevant\": \"pass|fail\",\n       \"timeBound\": \"pass|fail\"\n     },\n     \"recommendations\": [\"rec1\", \"rec2\"]\n   }\n   ```\n\n# Error Handling\n- If critical information is missing, request clarification before proceeding\n- If requirements conflict, flag and request resolution\n- If technical feasibility is uncertain, note as requiring validation\n- If business rules are unclear, request clarification from stakeholders\n\n# Collaboration Notes\n- Note which sections require input from other documentation agents\n- Flag sections that need UX team review\n- Identify areas requiring technical team validation\n- Mark sections needing stakeholder approval\n\nRemember: Your output serves as the foundation for the FRD, technical specifications, and UX documentation. Maintain highest standards of clarity, completeness, and accuracy.\n\nNever send your output to google docs unless implicitely told to do so."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -460,
+        140
+      ],
+      "id": "a4683f93-5d97-4440-b57d-c93a296fd79d",
+      "name": "AI Agent",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -800,
+        400
+      ],
+      "id": "1a49f721-f5b1-43b0-b8ae-dfd715c792bf",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        -640,
+        400
+      ],
+      "id": "f3c8923a-7aa0-4900-aa1f-a7b430563a77",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "name": "Docs_Agent",
+        "description": "Call this tool when you need to use google docs.",
+        "workflowId": {
+          "__rl": true,
+          "value": "QImsyPywkhNJTCXk",
+          "mode": "list",
+          "cachedResultName": "Google Docs Agent"
+        },
+        "fields": {
+          "values": [
+            {
+              "name": "sessionId",
+              "stringValue": "={{ $('When chat message received').item.json.sessionId }}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        160,
+        400
+      ],
+      "id": "d0cca457-7d18-47f6-9b6d-930818dfd3dd",
+      "name": "🤖 Docs Agent"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4b6ee921-493a-4cad-9c1e-a9d6ca8481b0",
+              "name": "response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "6b2149ca-0ca3-4ef2-917c-62fdf7d1cbd4",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4b6ee921-493a-4cad-9c1e-a9d6ca8481b0",
+              "name": "response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        160
+      ],
+      "id": "19afb875-d280-44de-8c82-deabd251ab79",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "name": "Product_Requirements_Tool",
+        "description": "Call this tool when needing to interact with product requirements.",
+        "workflowId": {
+          "__rl": true,
+          "value": "Lr38KluNuVwodzCj",
+          "mode": "list",
+          "cachedResultName": "Product Requirements Documentation Agent"
+        },
+        "fields": {
+          "values": [
+            {
+              "name": "sessionId",
+              "stringValue": "={{ $('When chat message received').item.json.sessionId }}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -120,
+        400
+      ],
+      "id": "d179e537-7cd5-4c4c-8df1-5f8d1cc20e7b",
+      "name": "🤖 PRD Agent"
+    },
+    {
+      "parameters": {
+        "name": "Feature_Requirements_Tool",
+        "description": "Call this tool when needing to interact with feature requirements.",
+        "workflowId": {
+          "__rl": true,
+          "value": "7k21jY1GlDYD8v1j",
+          "mode": "list",
+          "cachedResultName": "Feature Requirements Documentation Agent"
+        },
+        "fields": {
+          "values": [
+            {
+              "name": "sessionId",
+              "stringValue": "={{ $('When chat message received').item.json.sessionId }}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        20,
+        400
+      ],
+      "id": "141dbeb9-7af3-468e-a886-817636b94263",
+      "name": "🤖 PRD Agent1"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-11-09T04:20:41.000Z",
+  "versionId": "cb4f6ea0-59f7-485c-b7ae-9b5853046abe"
+}
