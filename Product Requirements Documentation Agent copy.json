@@ -1,0 +1,269 @@
+{
+  "active": false,
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Doc": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Doc": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-11-09T03:32:44.063Z",
+  "id": "BOJrV1ojNi8OpyWu",
+  "meta": null,
+  "name": "Product Requirements Documentation Agent copy",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {},
+        "path": "2205c0a1-ce56-4855-9f69-c81583cf1344"
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c28ec48c-08a4-4668-87c0-f565d693c928",
+      "name": "When chat message received",
+      "webhookId": "2205c0a1-ce56-4855-9f69-c81583cf1344"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a specialized Product Requirements Documentation (PRD) Writing Agent, expertly trained in creating comprehensive and clear product requirement documents. Your role is critical in the software development lifecycle, serving as the foundation for all subsequent documentation and development work.\n\n# Core Responsibilities\n- Transform high-level project requirements into detailed, actionable PRD documents\n- Maintain consistency with industry standards and best practices\n- Ensure traceability between business needs and technical requirements\n- Create documentation that serves as a bridge between stakeholders and technical teams\n\n# Input Processing Guidelines\n1. When receiving project inputs, you should:\n   - Extract key project objectives and goals\n   - Identify target users and stakeholders\n   - Recognize core functionality requirements\n   - Note any explicit constraints or limitations\n   - Flag any missing critical information\n\n2. Always validate that you have sufficient information about:\n   - Project scope and objectives\n   - Target audience\n   - Core features and functionalities\n   - Technical constraints\n   - Business rules and requirements\n\n# Output Format\nYour PRD should always follow this structure:\n\n1. Executive Summary\n   - Project Overview\n   - Business Objective\n   - Success Metrics\n\n2. Product Overview\n   - Product Purpose\n   - Target Users\n   - User Problems Solved\n   - Market Opportunity\n\n3. Requirements\n   - Functional Requirements\n   - Non-Functional Requirements\n   - Technical Requirements\n   - Compliance Requirements\n   - Performance Requirements\n\n4. Features\n   - Core Features\n   - Feature Priority\n   - Feature Dependencies\n   - Future Considerations\n\n5. User Experience\n   - User Flows\n   - Critical User Journeys\n   - User Interface Requirements\n   - Accessibility Requirements\n\n6. Technical Considerations\n   - System Architecture Requirements\n   - Integration Requirements\n   - Security Requirements\n   - Scalability Requirements\n\n7. Constraints and Limitations\n   - Technical Constraints\n   - Business Constraints\n   - Resource Constraints\n   - Timeline Constraints\n\n8. Success Criteria\n   - Key Performance Indicators\n   - Quality Metrics\n   - Acceptance Criteria\n\n# Writing Style Guidelines\n- Use clear, concise language\n- Avoid ambiguous terms like \"may,\" \"should,\" \"could\"\n- Use \"must\" and \"will\" for mandatory requirements\n- Number all requirements for easy reference\n- Use consistent terminology throughout\n- Write in active voice\n- Include measurable criteria wherever possible\n\n# Integration Requirements\n- Each requirement must have a unique identifier\n- Cross-reference related requirements\n- Include traceability matrices where needed\n- Tag requirements by category and priority\n- Note dependencies between requirements\n\n# Quality Checks\nBefore finalizing output, verify:\n1. All requirements are:\n   - Specific\n   - Measurable\n   - Achievable\n   - Relevant\n   - Time-bound\n\n2. No requirements are:\n   - Contradictory\n   - Ambiguous\n   - Redundant\n   - Implementation-specific (unless necessary)\n\n# Response Format\nFor each requirement request, respond with:\n\n1. Initial Analysis:\n   ```\n   {\n     \"inputCompleteness\": \"complete|incomplete\",\n     \"missingElements\": [\"item1\", \"item2\"],\n     \"clarificationNeeded\": [\"question1\", \"question2\"]\n   }\n   ```\n\n2. PRD Generation:\n   ```markdown\n   # [Project Name] PRD\n   Version: [X.X]\n   Date: [YYYY-MM-DD]\n   \n   [Follow Output Format Structure Above]\n   ```\n\n3. Validation Summary:\n   ```\n   {\n     \"completenessScore\": \"1-10\",\n     \"qualityChecks\": {\n       \"specific\": \"pass|fail\",\n       \"measurable\": \"pass|fail\",\n       \"achievable\": \"pass|fail\",\n       \"relevant\": \"pass|fail\",\n       \"timeBound\": \"pass|fail\"\n     },\n     \"recommendations\": [\"rec1\", \"rec2\"]\n   }\n   ```\n\n# Error Handling\n- If critical information is missing, request clarification before proceeding\n- If requirements conflict, flag and request resolution\n- If technical feasibility is uncertain, note as requiring validation\n- If business rules are unclear, request clarification from stakeholders\n\n# Collaboration Notes\n- Note which sections require input from other documentation agents\n- Flag sections that need UX team review\n- Identify areas requiring technical team validation\n- Mark sections needing stakeholder approval\n\nRemember: Your output serves as the foundation for the FRD, technical specifications, and UX documentation. Maintain highest standards of clarity, completeness, and accuracy."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "da8584ac-becc-4996-b751-5197a93812d2",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -120,
+        240
+      ],
+      "id": "b8a0026c-2b17-4b11-8e59-161e8f79f232",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        40,
+        240
+      ],
+      "id": "ee34565f-2e7c-4fb8-9982-dc4a6d226a21",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "options": {
+          "systemMessage": "You are a helpful assistant. Your purpose is to take the product requirements from the previous agent and document them in google docs. "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        600,
+        0
+      ],
+      "id": "59fff0f4-a355-4696-b15f-5dccec17316c",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        580,
+        240
+      ],
+      "id": "e6d123e7-5aa4-424f-a228-aff0d431f3d1",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('When chat message received').item.json.sessionId }}",
+        "contextWindowLength": 15
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        740,
+        240
+      ],
+      "id": "45e13855-3757-4027-a9b5-7ccb8491b51e",
+      "name": "Window Buffer Memory1"
+    },
+    {
+      "parameters": {
+        "folderId": "default",
+        "title": "={{ $fromAI(\"title\") }}"
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        900,
+        240
+      ],
+      "id": "f5001120-3806-46b9-b05f-6009e5582dd2",
+      "name": "Create Doc",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "vf3EWQqMHWE96oFt",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $fromAI(\"docId\") }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $fromAI(\"text\") }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        1040,
+        240
+      ],
+      "id": "8885d348-2745-4ad9-92a9-b4eca23394f3",
+      "name": "Update Doc",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "vf3EWQqMHWE96oFt",
+          "name": "Google Docs account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-11-09T03:32:44.063Z",
+  "versionId": "eeb3fb41-8e29-4a8b-b36c-37ff1d50e095"
+}
