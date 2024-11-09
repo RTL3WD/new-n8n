@@ -1,0 +1,76 @@
+{
+  "active": false,
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Execute Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-11-09T12:52:17.604Z",
+  "id": "ZEj7pBzdfmZElCaG",
+  "meta": null,
+  "name": "Test Chat",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a4dceb96-cd0c-471f-a13b-415b7b2a5cfd",
+      "name": "When chat message received",
+      "webhookId": "922c57ad-afc7-4fce-864d-839a881df68f"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "ZEj7pBzdfmZElCaG",
+          "mode": "list",
+          "cachedResultName": "Test Chat"
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [
+        420,
+        0
+      ],
+      "id": "792eb548-f6dc-467f-b9f9-9f9dd0df0e0b",
+      "name": "Execute Workflow"
+    }
+  ],
+  "pinData": {
+    "When chat message received": [
+      {
+        "json": {
+          "sessionId": "test-0b4678d6-3354-4d4b-8324-a5dee9a7921c",
+          "action": "sendMessage",
+          "chatInput": "List 5 members of the chamber of commerce"
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-11-09T14:00:04.000Z",
+  "versionId": "4e64ec26-5911-4cbc-9dfd-2d9519d4e5e6"
+}
