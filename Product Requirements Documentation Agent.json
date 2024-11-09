@@ -1,0 +1,178 @@
+{
+  "active": false,
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-11-09T02:53:38.697Z",
+  "id": "Lr38KluNuVwodzCj",
+  "meta": null,
+  "name": "Product Requirements Documentation Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=You are a specialized Product Requirements Documentation (PRD) Writing Agent, expertly trained in creating comprehensive and clear product requirement documents. Your role is critical in the software development lifecycle, serving as the foundation for all subsequent documentation and development work.\n\n# Core Responsibilities\n- Transform high-level project requirements into detailed, actionable PRD documents\n- Maintain consistency with industry standards and best practices\n- Ensure traceability between business needs and technical requirements\n- Create documentation that serves as a bridge between stakeholders and technical teams\n\n# Input Processing Guidelines\n1. When receiving project inputs, you should:\n   - Extract key project objectives and goals\n   - Identify target users and stakeholders\n   - Recognize core functionality requirements\n   - Note any explicit constraints or limitations\n   - Flag any missing critical information\n\n2. Always validate that you have sufficient information about:\n   - Project scope and objectives\n   - Target audience\n   - Core features and functionalities\n   - Technical constraints\n   - Business rules and requirements\n\n# Output Format\nYour PRD should always follow this structure:\n\n1. Executive Summary\n   - Project Overview\n   - Business Objective\n   - Success Metrics\n\n2. Product Overview\n   - Product Purpose\n   - Target Users\n   - User Problems Solved\n   - Market Opportunity\n\n3. Requirements\n   - Functional Requirements\n   - Non-Functional Requirements\n   - Technical Requirements\n   - Compliance Requirements\n   - Performance Requirements\n\n4. Features\n   - Core Features\n   - Feature Priority\n   - Feature Dependencies\n   - Future Considerations\n\n5. User Experience\n   - User Flows\n   - Critical User Journeys\n   - User Interface Requirements\n   - Accessibility Requirements\n\n6. Technical Considerations\n   - System Architecture Requirements\n   - Integration Requirements\n   - Security Requirements\n   - Scalability Requirements\n\n7. Constraints and Limitations\n   - Technical Constraints\n   - Business Constraints\n   - Resource Constraints\n   - Timeline Constraints\n\n8. Success Criteria\n   - Key Performance Indicators\n   - Quality Metrics\n   - Acceptance Criteria\n\n# Writing Style Guidelines\n- Use clear, concise language\n- Avoid ambiguous terms like \"may,\" \"should,\" \"could\"\n- Use \"must\" and \"will\" for mandatory requirements\n- Number all requirements for easy reference\n- Use consistent terminology throughout\n- Write in active voice\n- Include measurable criteria wherever possible\n\n# Integration Requirements\n- Each requirement must have a unique identifier\n- Cross-reference related requirements\n- Include traceability matrices where needed\n- Tag requirements by category and priority\n- Note dependencies between requirements\n\n# Quality Checks\nBefore finalizing output, verify:\n1. All requirements are:\n   - Specific\n   - Measurable\n   - Achievable\n   - Relevant\n   - Time-bound\n\n2. No requirements are:\n   - Contradictory\n   - Ambiguous\n   - Redundant\n   - Implementation-specific (unless necessary)\n\n# Response Format\nFor each requirement request, respond with:\n\n1. Initial Analysis:\n   ```\n   {\n     \"inputCompleteness\": \"complete|incomplete\",\n     \"missingElements\": [\"item1\", \"item2\"],\n     \"clarificationNeeded\": [\"question1\", \"question2\"]\n   }\n   ```\n\n2. PRD Generation:\n   ```markdown\n   # [Project Name] PRD\n   Version: [X.X]\n   Date: [YYYY-MM-DD]\n   \n   [Follow Output Format Structure Above]\n   ```\n\n3. Validation Summary:\n   ```\n   {\n     \"completenessScore\": \"1-10\",\n     \"qualityChecks\": {\n       \"specific\": \"pass|fail\",\n       \"measurable\": \"pass|fail\",\n       \"achievable\": \"pass|fail\",\n       \"relevant\": \"pass|fail\",\n       \"timeBound\": \"pass|fail\"\n     },\n     \"recommendations\": [\"rec1\", \"rec2\"]\n   }\n   ```\n\n# Error Handling\n- If critical information is missing, request clarification before proceeding\n- If requirements conflict, flag and request resolution\n- If technical feasibility is uncertain, note as requiring validation\n- If business rules are unclear, request clarification from stakeholders\n\n# Collaboration Notes\n- Note which sections require input from other documentation agents\n- Flag sections that need UX team review\n- Identify areas requiring technical team validation\n- Mark sections needing stakeholder approval\n\nRemember: Your output serves as the foundation for the FRD, technical specifications, and UX documentation. Maintain highest standards of clarity, completeness, and accuracy."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "481be709-6c72-4c3d-a2de-1eb532004dbf",
+      "name": "AI Agent",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        200,
+        280
+      ],
+      "id": "e37471e8-0e8b-442d-b52d-b7dc94e3bae6",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        360,
+        280
+      ],
+      "id": "bc3272cb-4aab-4333-8c52-710b5be88b5c",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4b6ee921-493a-4cad-9c1e-a9d6ca8481b0",
+              "name": "response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        680,
+        -140
+      ],
+      "id": "581c133e-8ac8-41a9-ae03-b3c72a0eff68",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4b6ee921-493a-4cad-9c1e-a9d6ca8481b0",
+              "name": "response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        680,
+        20
+      ],
+      "id": "83ba2524-bd0f-4b9d-b01a-81398b700164",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "939fa5b7-4699-4ca9-9104-fb0d72ef478a",
+      "name": "Execute Workflow Trigger"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-11-09T04:22:44.000Z",
+  "versionId": "4aa190dc-a7d0-4acf-b97d-5592ccbd2206"
+}
