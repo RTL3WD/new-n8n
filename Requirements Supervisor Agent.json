@@ -74,7 +74,7 @@
         ]
       ]
     },
-    "🤖 PRD Agent1": {
+    "🤖 FRD Agent": {
       "ai_tool": [
         [
           {
@@ -103,7 +103,7 @@
       ],
       "id": "e733d69e-27a0-4757-b608-c6e40972985e",
       "name": "When chat message received",
-      "webhookId": "efda2996-6976-4b93-881b-1c2af620d05c"
+      "webhookId": "f2b74985-dffc-4f28-baa8-962fdf0f37bc"
     },
     {
       "parameters": {
@@ -281,7 +281,7 @@
         400
       ],
       "id": "141dbeb9-7af3-468e-a886-817636b94263",
-      "name": "🤖 PRD Agent1"
+      "name": "🤖 FRD Agent"
     }
   ],
   "pinData": {},
@@ -289,8 +289,21 @@
     "executionOrder": "v1"
   },
   "staticData": null,
-  "tags": [],
+  "tags": [
+    {
+      "createdAt": "2024-11-09T12:36:39.198Z",
+      "updatedAt": "2024-11-09T12:36:39.198Z",
+      "id": "MRby0xygMKHvhREc",
+      "name": "Requirements Agent"
+    },
+    {
+      "createdAt": "2024-11-09T12:36:27.742Z",
+      "updatedAt": "2024-11-09T12:36:27.742Z",
+      "id": "a4X7geLMXlAuCkjI",
+      "name": "Lead Agent"
+    }
+  ],
   "triggerCount": 0,
-  "updatedAt": "2024-11-09T04:20:41.000Z",
-  "versionId": "cb4f6ea0-59f7-485c-b7ae-9b5853046abe"
+  "updatedAt": "2024-11-09T12:36:48.000Z",
+  "versionId": "6c337044-ae8d-4f12-9868-ed812b483e93"
 }
