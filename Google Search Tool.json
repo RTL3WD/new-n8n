@@ -1,0 +1,207 @@
+{
+  "active": false,
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-11-11T18:41:44.831Z",
+  "id": "zAMYayssXi9ff2GF",
+  "meta": null,
+  "name": "Google Search Tool",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "30b0cfa8-6176-47ad-80c4-c1aa1f1f6d09",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        360,
+        -280
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "a8bdb214-50fb-4628-a5c8-483f6501ce9b",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        540,
+        -80
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "//let outputObj = JSON.parse($('Basic LLM Chain').all())\nlet query = $('Basic LLM Chain').all()[0].json;\nquery = query.text;\nquery = JSON.parse(query);\nreturn [{\n  \"query\": query\n}]\n"
+      },
+      "id": "90df9be7-b993-40cb-a0ae-e9b8b4089267",
+      "name": "Code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        940,
+        -280
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://browserless.aspworkplace.com/scrape",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "31a645e3-8903-4aae-8e9e-7854174259de"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "url",
+              "value": "={{ $json.query.GoogleUrl }}"
+            },
+            {
+              "name": "elements",
+              "value": "={{ [\n    { \"selector\": \"div#search\" }\n  ] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5acc34d6-611b-4c1f-9014-273cd76d0121",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1160,
+        -280
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Instructions for Prompt:\n\nExtract relevant keywords from the input statement.\nFormat the extracted keywords into a Google search query.\nUse \"site:linkedin.com/in\" to search LinkedIn profiles.\nInclude the extracted keywords in quotes and place them in the query.\nAdd intext:@gmail.com to specify that the email domain should be Gmail.\nEncode the query string for the Google search URL.\nConstruct the Google search URL using https://www.google.com/search?q=.\nReturn the result in the GoogleUrl key with the encoded search URL.\n\nInput Statement:\n{{ $json.query }}\n\n\nEXAMPLES\nEX INPUT FORMAT:\nInput Statement: search for electricians in st petersburg,fl\nOutput Format:\n{\n  \"GoogleUrl\": \"https://www.google.com/search?q=site%3Alinkedin.com%2Fin+%22electrician%22+%22st+petersburg%22+intext%3A%40gmail.com\"\n}\n\nKEYWORDS WHITELIST:\nLocations such as st petersburg, tampa, clearwater, and more\nServices such as electrican, handyman, plumber, hvac, lawyers, doctors, etc.\n\nKEYWORDS BLACKLIST:\nleads, recruiters, jobs"
+      },
+      "id": "f2ec505b-815e-47ff-aa79-942fc5173512",
+      "name": "Basic LLM Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        560,
+        -280
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f5214840-0c93-4494-ab05-06281698614d",
+              "name": "response",
+              "value": "={{ JSON.stringify($json) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1380,
+        -280
+      ],
+      "id": "6d817166-a9fc-478d-95f6-1d3239cc5f11",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {
+    "Execute Workflow Trigger": [
+      {
+        "json": {
+          "query": "real estate st pete"
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2024-11-11T18:43:22.520Z",
+      "updatedAt": "2024-11-11T18:43:22.520Z",
+      "id": "eeMyzp7QDoHPN1rC",
+      "name": "Ai Assistant Tool"
+    }
+  ],
+  "triggerCount": 0,
+  "updatedAt": "2024-11-11T21:30:47.000Z",
+  "versionId": "7929db62-2972-4ec7-8f25-56730af063ae"
+}
