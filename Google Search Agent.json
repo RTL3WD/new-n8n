@@ -1,0 +1,143 @@
+{
+  "active": false,
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Google Research Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Google Research Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Google Research Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call n8n Workflow Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Google Research Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-11-11T18:39:08.097Z",
+  "id": "pJEM7Ai5t87MrsRP",
+  "meta": null,
+  "name": "Google Search Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "e91e2516-90e6-4dbf-a92e-e42e298dc776",
+      "name": "When chat message received",
+      "webhookId": "1b7255b0-2c1f-4479-b2df-8aa9a7a0a324"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        40,
+        240
+      ],
+      "id": "0e28dea5-0f58-4722-ada4-85a21a3595a6",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        240
+      ],
+      "id": "83a10955-a8ea-4ec2-9060-e2d8fdb37951",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a helpful research assistant. When you are given topics you search google to find the best results. "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "d918b56f-056d-4c64-be69-700563b073a9",
+      "name": "Google Research Agent"
+    },
+    {
+      "parameters": {
+        "name": "LinkedIn_Search_Tool",
+        "description": "Call this tool when searching for linkedin profiles.",
+        "workflowId": {
+          "__rl": true,
+          "value": "zAMYayssXi9ff2GF",
+          "mode": "list",
+          "cachedResultName": "Google Search Tool"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        420,
+        240
+      ],
+      "id": "5357fdcf-c821-428f-8c1b-4171984fbdcc",
+      "name": "Call n8n Workflow Tool"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-11-11T21:30:59.000Z",
+  "versionId": "713a1269-145d-4b7b-9b31-fe0636e625b7"
+}
