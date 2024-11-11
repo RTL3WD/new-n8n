@@ -1,0 +1,155 @@
+{
+  "active": false,
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-11-11T01:51:00.372Z",
+  "id": "mvh5R0R58lO6ZSAW",
+  "meta": null,
+  "name": "Add to Plane",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c29dbb10-d7bf-4c2f-9567-77cc09c2f531",
+      "name": "Execute Workflow Trigger"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://plane.aspworkplace.com/api/v1/workspaces/icook/projects/b63f04ff-2351-4233-bbdd-1deed2ba8b3e/issues",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "plane_api_14030a0b92dd425a93ecb03f24ad3863"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "Test Name"
+            },
+            {
+              "name": "description_html",
+              "value": "<p>Tes description in HTML</p>"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "e32bb3c6-fcfc-4555-a89e-69b0007a2d41",
+      "name": "HTTP Request",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bc02e3ee-0a3e-4202-aaa2-c20bd6f0e3da",
+              "name": "response",
+              "value": "={{ $json }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        460,
+        -120
+      ],
+      "id": "3f555db9-1c79-4396-ab9a-54d46f2fa486",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bc02e3ee-0a3e-4202-aaa2-c20bd6f0e3da",
+              "name": "response",
+              "value": "={{ $json }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        460,
+        80
+      ],
+      "id": "76edb288-7d38-43d0-84dd-7de1da20aa22",
+      "name": "Edit Fields1"
+    }
+  ],
+  "pinData": {
+    "Execute Workflow Trigger": [
+      {
+        "json": {
+          "query": {
+            "name": "Acknowledgment of Coordinator Field Setup Information",
+            "description_html": "<p>Thank you for the information regarding the Coordinator field setup. I appreciate your assistance in this matter.</p>"
+          }
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-11-11T02:14:52.000Z",
+  "versionId": "64cc2d2d-98b9-4559-bb29-c4373b4dee62"
+}
