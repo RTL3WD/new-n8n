@@ -56,23 +56,23 @@
         ]
       ]
     },
-    "Create Plane Task": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent1",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Code": {
       "main": [
         [
           {
             "node": "AI Agent1",
             "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post Data to Plane": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
             "index": 0
           }
         ]
@@ -187,8 +187,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1,
       "position": [
-        660,
-        260
+        720,
+        240
       ],
       "id": "ed8fb9fc-831c-4365-8dd5-b54bb9ade103",
       "name": "OpenAI Chat Model1",
@@ -225,25 +225,44 @@
     },
     {
       "parameters": {
-        "name": "Create_Plane_Issue",
-        "description": "use this tool when creating plane tasks.",
-        "workflowId": {
-          "__rl": true,
-          "value": "mvh5R0R58lO6ZSAW",
-          "mode": "list",
-          "cachedResultName": "Add to Plane"
+        "toolDescription": "use this tool when told to post data to plane",
+        "method": "POST",
+        "url": "https://plane.aspworkplace.com/api/v1/workspaces/automate-st-pete/projects/2ca1f670-f79a-4cae-8137-c9763ddb1937/issues/",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Content-Type",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            },
+            {
+              "name": "X-API-Key",
+              "valueProvider": "fieldValue",
+              "value": "plane_api_14030a0b92dd425a93ecb03f24ad3863"
+            }
+          ]
         },
-        "specifyInputSchema": true,
-        "jsonSchemaExample": "{\n\t\"name\": \"name\",\n  \"description_html\": \"<p>Description Text</p>\"\n}"
+        "sendBody": true,
+        "parametersBody": {
+          "values": [
+            {
+              "name": "name"
+            },
+            {
+              "name": "description_html"
+            }
+          ]
+        }
       },
-      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
-      "typeVersion": 1.2,
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
       "position": [
         940,
-        260
+        240
       ],
-      "id": "1fb7c0bd-f63c-447f-8c68-975298a64636",
-      "name": "Create Plane Task"
+      "id": "de4d5a01-06ce-43b2-8fb5-2b24dc847417",
+      "name": "Post Data to Plane"
     }
   ],
   "pinData": {
@@ -333,6 +352,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-11-11T01:58:19.000Z",
-  "versionId": "28860ea5-14cd-49bd-904c-dd9ef79f579e"
+  "updatedAt": "2024-11-11T20:31:27.000Z",
+  "versionId": "b61ec677-fb45-417c-9e12-10ac9281bc74"
 }
