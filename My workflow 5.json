@@ -22,6 +22,61 @@
           }
         ]
       ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Plane Issues": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Plane Task": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-11-10T23:26:56.645Z",
@@ -61,7 +116,11 @@
     },
     {
       "parameters": {
-        "options": {}
+        "promptType": "define",
+        "text": "=Subject: {{ $json.subject }}\n\nMessage: {{ $json.textAsHtml }}",
+        "options": {
+          "systemMessage": "=You are a helpful assistant tasked with reviewing emails to identify actionable items related to projects. For each email, extract the specific details of tasks, requests, deadlines, and follow-up actions exactly as they appear in the email, without summarizing or omitting essential information.\n\nYour response should be formatted in JSON as follows:\n\n{\n  \"name\": \"Descriptive title of the primary actionable item or task extracted from the email.\",\n  \"description_html\": \"Full description of the task or action item, maintaining any original formatting or HTML tags if applicable.\",\n  \"priority\": \"high/medium/low based on any urgency or specified deadlines; otherwise, 'none'.\",\n  \"start_date\": \"YYYY-MM-DD if a start date is provided, or null if unspecified.\",\n  \"labels\": [\"Relevant tags or labels associated with the task, such as project name, task type, etc., or an empty array if none are specified.\"]\n}\n\nFields Description:\n\nname: A clear title or short description of the primary actionable item.\ndescription_html: A full description of the task, preserving formatting as provided.\npriority: Priority level based on urgency or deadlines; defaults to \"none\" if no priority is specified.\nstart_date: Start date if provided, otherwise null.\nlabels: An array of any tags, labels, or categories associated with the task; leave as an empty array if none are specified.\nThis structure focuses on capturing all relevant details in a way that is ready for immediate action, ensuring no critical information from the email is lost."
+        }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
@@ -79,8 +138,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1,
       "position": [
-        120,
-        200
+        140,
+        260
       ],
       "id": "985be833-e775-447d-a091-abe11fe93489",
       "name": "OpenAI Chat Model",
@@ -90,15 +149,190 @@
           "name": "OpenAi account"
         }
       }
+    },
+    {
+      "parameters": {
+        "jsCode": "let jsonObj = JSON.parse($('AI Agent').all()[0].json.output)\n\nreturn [{\"output\": jsonObj}];\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        560,
+        0
+      ],
+      "id": "b34dd6c7-7a70-44ad-a9b1-ff6602cddff6",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ JSON.stringify($json.output) }}",
+        "options": {
+          "systemMessage": "=You are a helpful assistant responsible for taking actionable item details in a specified JSON format and managing them in the task management program, Plane. Your role includes checking if each task already exists in Plane, adding it if new, or updating it if it already exists.\n\nFollow these steps:\n\nRetrieve Existing Task from Plane:\n\nUse the name field as a unique identifier to search for an existing task in Plane.\nCheck if a task with the same name exists.\n\nDetermine Task Action:\n\nIf the task does not exist: Create a new task in Plane using the JSON data provided.\nIf the task already exists: Review each field (description, priority, start date, labels) to ensure they match the JSON data.\nUpdate if needed: If any field differs, update the existing task in Plane with the new details.\nMapping Fields to Plane:\n\nName: Enter or verify the name field as the task title.\nDescription: Ensure the description_html is accurately presented. If Plane supports HTML, paste directly; if not, strip HTML tags and format as plain text.\nPriority: Set or verify the task priority according to the priority value, mapping it to Plane’s priority levels as needed.\nStart Date: Add or verify the start_date if specified, or leave as is if null.\nLabels: Assign or verify any labels as tags or categories in Plane. Create new labels if needed.\nReview and Confirmation:\n\nAfter adding or updating, review the task to ensure all details match the JSON input.\nConfirm the task is saved, updated, and categorized correctly.\nThese instructions ensure that all actionable items are accurately managed in Plane, whether they are new tasks or updates to existing ones."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        780,
+        0
+      ],
+      "id": "b146d842-7e49-4a4e-bfc1-6eff16f18ee5",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        660,
+        260
+      ],
+      "id": "ed8fb9fc-831c-4365-8dd5-b54bb9ade103",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this to get plane issues",
+        "url": "=https://plane.aspworkplace.com/api/v1/workspaces/icook/projects/b63f04ff-2351-4233-bbdd-1deed2ba8b3e/issues",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "X-API-Key",
+              "valueProvider": "fieldValue",
+              "value": "plane_api_14030a0b92dd425a93ecb03f24ad3863"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1140,
+        240
+      ],
+      "id": "247e0470-b67f-4e4f-8884-46965e775a93",
+      "name": "Read Plane Issues"
+    },
+    {
+      "parameters": {
+        "name": "Create_Plane_Issue",
+        "description": "use this tool when creating plane tasks.",
+        "workflowId": {
+          "__rl": true,
+          "value": "mvh5R0R58lO6ZSAW",
+          "mode": "list",
+          "cachedResultName": "Add to Plane"
+        },
+        "specifyInputSchema": true,
+        "jsonSchemaExample": "{\n\t\"name\": \"name\",\n  \"description_html\": \"<p>Description Text</p>\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        940,
+        260
+      ],
+      "id": "1fb7c0bd-f63c-447f-8c68-975298a64636",
+      "name": "Create Plane Task"
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Gmail Trigger": [
+      {
+        "json": {
+          "id": "1930d8e68dc127dc",
+          "threadId": "1930d4198a058c03",
+          "labelIds": [
+            "IMPORTANT",
+            "CATEGORY_PERSONAL",
+            "INBOX"
+          ],
+          "sizeEstimate": 8384,
+          "headers": {
+            "delivered-to": "Delivered-To: automatestpete@gmail.com",
+            "received": "Received: from mail-sor-f41.google.com (mail-sor-f41.google.com. [209.85.220.41])\r\n        by mx.google.com with SMTPS id 6a1803df08f44-6d3966268fesor38076326d6.5.2024.11.08.12.54.16\r\n        for <automatestpete@gmail.com>\r\n        (Google Transport Security);\r\n        Fri, 08 Nov 2024 12:54:16 -0800 (PST)",
+            "x-received": "X-Received: by 2002:a05:6214:5411:b0:6cb:ee7b:7ac4 with SMTP id\r\n 6a1803df08f44-6d39e1670f3mr49380626d6.3.1731099256020; Fri, 08 Nov 2024\r\n 12:54:16 -0800 (PST)",
+            "arc-seal": "ARC-Seal: i=1; a=rsa-sha256; t=1731099256; cv=none;\r\n        d=google.com; s=arc-20240605;\r\n        b=MPeI5BY7tLYkEu3W+eRX/V6EBOSMZe5RsKIkOcQ6QvN1PGrQND2L4mntC64URWykM6\r\n         m6xgkHVF7sAp5VASmkx8OPdLcJo5ElQ5dAwU9D+QOGPTKLeDL1YM4lVVE1kAeVu4foR4\r\n         B+nYL0QcVQw1W7HyxmycA6HqA9WPUIV7kILxU5wynVlVjttxTaB4cftCOC8cIWYA5KJQ\r\n         zwk38uH/ukXhZMn2cpnpXF8Uoq7zgNKlxE1naizvCDypaM2JcKhHtKM/epor4/gbG2A5\r\n         foiGKyv0aClMuRggo5nIQ+aBRH8BEaMKoa+dSkIxNRPRBqelEctpsa+NRg6VQd3CHNKI\r\n         1qvw==",
+            "arc-message-signature": "ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;\r\n        h=to:subject:message-id:date:from:in-reply-to:references:mime-version\r\n         :dkim-signature;\r\n        bh=07bEnUcFBRKtf7PiWBzoCB/TCHPAruuzpNf7f6osB54=;\r\n        fh=XocreNTYdgAbuP2n6mf+cBSJT3rsP/qQioe2O3nO0UA=;\r\n        b=NxpzEE2lsDchkmeSeZLssgfIoHOpwnR5EDgrncEOF38f5xekg9Qds8oSQb9UEXW0B8\r\n         YKFDoXMZCI8t6JtDwsoh0NxsEU8nhMq6+Du/hHO5qmtxZx3qjEMi6SZqdXxYRe+6ZQf/\r\n         Ks16jBWTraQLzBdBERXr4MphxkUul5uBBmIzXRnIJ9rnZzKviYoR63ZOwk5bORymP8pz\r\n         3Duqq4cPi3tVTzy2xNAPr14SDqDJXbZA4UTt8or71YqISTQxzUGoT+6eMjw3AuFLjeuI\r\n         SKxXxLGMuxuQRHAWAmYNJMdHvI9m7qlSWzRjy363iaUvG193gk7y5YAeu20BHSpgaGqo\r\n         cBdw==;\r\n        dara=google.com",
+            "arc-authentication-results": "ARC-Authentication-Results: i=1; mx.google.com;\r\n       dkim=pass header.i=@icookafterschool-com.20230601.gappssmtp.com header.s=20230601 header.b=hEH1gBF5;\r\n       spf=none (google.com: olga@icookafterschool.com does not designate permitted sender hosts) smtp.mailfrom=olga@icookafterschool.com;\r\n       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=icookafterschool.com;\r\n       dara=pass header.i=@gmail.com",
+            "return-path": "Return-Path: <olga@icookafterschool.com>",
+            "received-spf": "Received-SPF: none (google.com: olga@icookafterschool.com does not designate permitted sender hosts) client-ip=209.85.220.41;",
+            "authentication-results": "Authentication-Results: mx.google.com;\r\n       dkim=pass header.i=@icookafterschool-com.20230601.gappssmtp.com header.s=20230601 header.b=hEH1gBF5;\r\n       spf=none (google.com: olga@icookafterschool.com does not designate permitted sender hosts) smtp.mailfrom=olga@icookafterschool.com;\r\n       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=icookafterschool.com;\r\n       dara=pass header.i=@gmail.com",
+            "dkim-signature": "DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;\r\n        d=icookafterschool-com.20230601.gappssmtp.com; s=20230601; t=1731099256; x=1731704056; dara=google.com;\r\n        h=to:subject:message-id:date:from:in-reply-to:references:mime-version\r\n         :from:to:cc:subject:date:message-id:reply-to;\r\n        bh=07bEnUcFBRKtf7PiWBzoCB/TCHPAruuzpNf7f6osB54=;\r\n        b=hEH1gBF5bueR10zg3LqmqfT5iYrgohrKVpkAmDnaa6S4kk9n0jSoa1jk0hdb2bhwe3\r\n         f0ujxYYKdwpglk20pUOL/LlvWyLdwaaFDIXn1lYm4odA2ay5V0ivZHaFyckFbRlnDuYF\r\n         UihVUryoxSifLTY+3do4fRGeZXfaz2BxkiorktJMQnP1g7uf5pd+dai0F5klFwnmFKrM\r\n         lJxeQFFAoJpkkTRqxTimNesfu0ZcrWT7rR76rrX+r2LICzdJSE7Y+Ak1p1JEA3GTBNFC\r\n         XeJpsOGE4eZo8j9EwVru8oBmAkNQkVgs0VFSzJ52UhfKIt6OjUP9mgo+qFSXMpQJKDab\r\n         F2+Q==",
+            "x-google-dkim-signature": "X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;\r\n        d=1e100.net; s=20230601; t=1731099256; x=1731704056;\r\n        h=to:subject:message-id:date:from:in-reply-to:references:mime-version\r\n         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;\r\n        bh=07bEnUcFBRKtf7PiWBzoCB/TCHPAruuzpNf7f6osB54=;\r\n        b=DdGkNOxxbN2YJbUyHyRoB74wzvpOc6CU/PCh8hG2Qy2c/bgDkqR43NjUTpj44rX1sW\r\n         bnhs89nzaNCwrcpzrtAOm/t0BZpAy3ATutIQdmnhKdD5PDpSxHptPrxagnoNLVuoIY/y\r\n         MJRR8vVzWZLMIJr/tbjNiV636vfRI58gjzUP/QM8kZKTPtlH2IVH7IkEuCFC+qZl2BOj\r\n         YWUNaaNqSaKyf9BLYTQs8ruVqCJztsvX3eRRw67IvHdmtigUKpXqGF+5uMw5ZJCa5JAr\r\n         gTTEtWcumge2Ym/LCw/dLGQjogzJmUBUqHwo5mw1ZQp/F4NIHpNmcTUFWz0cnnocpcFs\r\n         gQXw==",
+            "x-gm-message-state": "X-Gm-Message-State: AOJu0Yy+P3AMgo2BnZCBnryicTBja+3q4y7SH3snbCt/SRzoX0MZBCHb\r\n\tBa94PQ3HyuLbOJ85jl1bSCd0UtmdVTFv6GSzhVo1pPpIhPxsMYBbkCZ0C7QGhUJxYmGBvEuwJhq\r\n\tqAHdYzNuIvj2Ot2inpeEa+tHqzb40V8oE+70PZXEJbuCxQuwgBxw=",
+            "x-google-smtp-source": "X-Google-Smtp-Source: AGHT+IHLO7Uk+Kx7AFzXHVfibBmjEi3c3shpVR6TxCX6Wxze50FBek6gnS4v/G2J+PxgawNldplmlEFq/3fvaGC1MGA=",
+            "mime-version": "MIME-Version: 1.0",
+            "references": "References: <CAEv6MCT_BRFWucamn0o1crRX5tXZDwpRhuSpsT17dsh7B51OZA@mail.gmail.com>",
+            "in-reply-to": "In-Reply-To: <CAEv6MCT_BRFWucamn0o1crRX5tXZDwpRhuSpsT17dsh7B51OZA@mail.gmail.com>",
+            "from": "From: Olga Davis <olga@icookafterschool.com>",
+            "date": "Date: Fri, 8 Nov 2024 14:54:05 -0600",
+            "message-id": "Message-ID: <CADx77UdkOmKWoyhns60VyjKzdLXexKSHX9ONhh+-+HsABhL8WA@mail.gmail.com>",
+            "subject": "Subject: Re: HR Base - Automation not working",
+            "to": "To: automatestpete@gmail.com",
+            "content-type": "Content-Type: multipart/alternative; boundary=\"0000000000003a024706266cf446\""
+          },
+          "html": "<div dir=\"ltr\">Thank you</div><br><div class=\"gmail_quote\"><div dir=\"ltr\" class=\"gmail_attr\">On Fri, Nov 8, 2024 at 1:30 PM &lt;<a href=\"mailto:automatestpete@gmail.com\">automatestpete@gmail.com</a>&gt; wrote:<br></div><blockquote class=\"gmail_quote\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\">Hi Olga,<br>\n<br>\nThank you for the information regarding the Coordinator field setup. I<br>\nappreciate your assistance in this matter.<br>\n<br>\nBest regards,<br>\nRobert<br>\n</blockquote></div><div><br clear=\"all\"></div><div><br></div><span class=\"gmail_signature_prefix\">-- </span><br><div dir=\"ltr\" class=\"gmail_signature\"><div dir=\"ltr\"><div>Sincerely, </div><div><br></div><div><p style=\"margin:0in 0in 0.0001pt;font-size:medium;font-family:&quot;Times New Roman&quot;,serif;color:rgb(0,0,0)\"><b><span style=\"font-size:9.5pt;font-family:Arial,sans-serif;color:rgb(68,154,168)\">Olga Davis</span></b><span style=\"font-size:9.5pt;font-family:Arial,sans-serif;color:rgb(34,34,34)\"></span></p><p style=\"margin:0in 0in 0.0001pt;font-family:&quot;Times New Roman&quot;,serif\"><b><span style=\"color:rgb(68,154,168);font-size:9pt;font-family:Arial,sans-serif\">Co-founder </span></b></p><p style=\"margin:0in 0in 0.0001pt\"><font face=\"arial, sans-serif\" color=\"#0000ff\"><a href=\"https://www.icookafterschool.com/\" target=\"_blank\">iCook </a>| <a href=\"https://www.isteamafterschool.com/\" target=\"_blank\">iSTEAM </a></font><b style=\"font-family:&quot;Times New Roman&quot;,serif\"><span style=\"color:rgb(68,154,168);font-size:9pt;font-family:Arial,sans-serif\"><br></span></b></p><p style=\"margin:0in 0in 0.0001pt;font-size:medium;font-family:&quot;Times New Roman&quot;,serif;color:rgb(0,0,0)\"><b><span style=\"font-size:8pt;font-family:Arial,sans-serif;color:rgb(102,102,102)\">| P:</span></b><span style=\"font-size:8pt;font-family:Arial,sans-serif\"> </span><span style=\"font-size:8pt;font-family:Arial,sans-serif;color:rgb(17,85,204)\">(</span><span style=\"font-size:8pt;font-family:Arial,sans-serif;color:rgb(0,112,192)\">773) 706-2057</span></p></div></div></div>\n",
+          "text": "Thank you\n\nOn Fri, Nov 8, 2024 at 1:30 PM <automatestpete@gmail.com> wrote:\n\n> Hi Olga,\n>\n> Thank you for the information regarding the Coordinator field setup. I\n> appreciate your assistance in this matter.\n>\n> Best regards,\n> Robert\n>\n\n\n-- \nSincerely,\n\n*Olga Davis*\n\n*Co-founder *\n\niCook <https://www.icookafterschool.com/>| iSTEAM\n<https://www.isteamafterschool.com/>\n\n*| P:* (773) 706-2057\n",
+          "textAsHtml": "<p>Thank you</p><p>On Fri, Nov 8, 2024 at 1:30&#x202F;PM &lt;<a href=\"mailto:automatestpete@gmail.com\">automatestpete@gmail.com</a>&gt; wrote:</p><p>&gt; Hi Olga,<br/>&gt;<br/>&gt; Thank you for the information regarding the Coordinator field setup. I<br/>&gt; appreciate your assistance in this matter.<br/>&gt;<br/>&gt; Best regards,<br/>&gt; Robert<br/>&gt;</p><p>--<br/>Sincerely,</p><p>*Olga Davis*</p><p>*Co-founder *</p><p>iCook &lt;<a href=\"https://www.icookafterschool.com/\">https://www.icookafterschool.com/</a>&gt;| iSTEAM<br/>&lt;<a href=\"https://www.isteamafterschool.com/\">https://www.isteamafterschool.com/</a>&gt;</p><p>*| P:* (773) 706-2057</p>",
+          "subject": "Re: HR Base - Automation not working",
+          "references": "<CAEv6MCT_BRFWucamn0o1crRX5tXZDwpRhuSpsT17dsh7B51OZA@mail.gmail.com>",
+          "date": "2024-11-08T20:54:05.000Z",
+          "to": {
+            "value": [
+              {
+                "address": "automatestpete@gmail.com",
+                "name": ""
+              }
+            ],
+            "html": "<span class=\"mp_address_group\"><a href=\"mailto:automatestpete@gmail.com\" class=\"mp_address_email\">automatestpete@gmail.com</a></span>",
+            "text": "automatestpete@gmail.com"
+          },
+          "from": {
+            "value": [
+              {
+                "address": "olga@icookafterschool.com",
+                "name": "Olga Davis"
+              }
+            ],
+            "html": "<span class=\"mp_address_group\"><span class=\"mp_address_name\">Olga Davis</span> &lt;<a href=\"mailto:olga@icookafterschool.com\" class=\"mp_address_email\">olga@icookafterschool.com</a>&gt;</span>",
+            "text": "\"Olga Davis\" <olga@icookafterschool.com>"
+          },
+          "messageId": "<CADx77UdkOmKWoyhns60VyjKzdLXexKSHX9ONhh+-+HsABhL8WA@mail.gmail.com>",
+          "inReplyTo": "<CAEv6MCT_BRFWucamn0o1crRX5tXZDwpRhuSpsT17dsh7B51OZA@mail.gmail.com>"
+        }
+      }
+    ],
+    "Code": [
+      {
+        "json": {
+          "output": {
+            "name": "Acknowledgment of Coordinator Field Setup Information",
+            "description_html": "<p>Thank you for the information regarding the Coordinator field setup. I appreciate your assistance in this matter.</p>",
+            "priority": "none",
+            "start_date": null,
+            "labels": []
+          }
+        }
+      }
+    ]
+  },
   "settings": {
     "executionOrder": "v1"
   },
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-11-10T23:26:56.645Z",
-  "versionId": "2be5a8ed-2d5e-4358-b80a-417033949c87"
+  "updatedAt": "2024-11-11T01:58:19.000Z",
+  "versionId": "28860ea5-14cd-49bd-904c-dd9ef79f579e"
 }
