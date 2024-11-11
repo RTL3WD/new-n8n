@@ -1,0 +1,18 @@
+{
+  "active": false,
+  "connections": {},
+  "createdAt": "2024-11-11T20:40:59.949Z",
+  "id": "m35JYD8Izp8UhuZv",
+  "meta": null,
+  "name": "LinkedIn Scrape Tool",
+  "nodes": [],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-11-11T20:40:59.949Z",
+  "versionId": "538a0672-fa1c-4c78-9bc2-64e7d4821c4b"
+}
