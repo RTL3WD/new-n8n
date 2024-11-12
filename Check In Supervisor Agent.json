@@ -1,0 +1,168 @@
+{
+  "active": false,
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Customers": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check in Customers": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-11-12T17:12:00.647Z",
+  "id": "lPvnOq13dtq7VZvJ",
+  "meta": null,
+  "name": "Check In Supervisor Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "516ff4d2-084c-4d24-9926-6ac9f0ae5069",
+      "name": "When chat message received",
+      "webhookId": "d9f5237e-7fb7-4aea-bb6d-5991d689dae5"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "a6391ab8-e8d5-4b30-ad67-228383412ac5",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        180,
+        220
+      ],
+      "id": "404ed8cf-0949-4bc2-8b3f-ec894f091c5f",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "Get_Customers_Tool",
+        "description": "Use this tool to get customers",
+        "workflowId": {
+          "__rl": true,
+          "value": "D699lO5SB2soQktb",
+          "mode": "list",
+          "cachedResultName": "Airtable Agent Example"
+        },
+        "fields": {
+          "values": [
+            {
+              "name": "sessionId",
+              "stringValue": "={{ $('When chat message received').item.json.sessionId }}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        560,
+        220
+      ],
+      "id": "f1d81138-46f0-4fe1-8c22-c64b72b9654c",
+      "name": "Get Customers"
+    },
+    {
+      "parameters": {
+        "name": "Customer_Check_In_Tool",
+        "description": "Use this to check customers in",
+        "workflowId": {
+          "__rl": true,
+          "value": "A9ntb7E2O8V6ve0E",
+          "mode": "list",
+          "cachedResultName": "Check In Agent"
+        },
+        "fields": {
+          "values": [
+            {
+              "name": "sessionId",
+              "stringValue": "={{ $('When chat message received').item.json.sessionId }}"
+            }
+          ]
+        },
+        "specifyInputSchema": true,
+        "jsonSchemaExample": "{\n\t\"recordId\": \"recMInrX0b6ALODTl\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        380,
+        220
+      ],
+      "id": "f7ccd51d-5169-408a-82f2-8ab3f5caf088",
+      "name": "Check in Customers"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-11-12T17:58:53.000Z",
+  "versionId": "fb9462a0-9902-46ec-9b0f-ba7d8f24eee7"
+}
