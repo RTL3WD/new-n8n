@@ -1,0 +1,179 @@
+{
+  "active": false,
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Get Customers Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Customer": {
+      "ai_tool": [
+        [
+          {
+            "node": "Get Customers Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Customers Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Customers Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-11-12T16:31:18.907Z",
+  "id": "D699lO5SB2soQktb",
+  "meta": null,
+  "name": "Get Airtable Customers Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        20,
+        240
+      ],
+      "id": "9d631418-900d-4cfe-919e-6229fd7c2bc1",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this tool to Read data from Airtable. Format all phone numbers without any special characters.",
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appvxsI5CknHkeQk0",
+          "mode": "list",
+          "cachedResultName": "Finance",
+          "cachedResultUrl": "https://airtable.com/appvxsI5CknHkeQk0"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblAaOlpVsoqqblj0",
+          "mode": "list",
+          "cachedResultName": "Users",
+          "cachedResultUrl": "https://airtable.com/appvxsI5CknHkeQk0/tblAaOlpVsoqqblj0"
+        },
+        "filterByFormula": "=IF({Formatted Phone Number}=\"{{ $fromAI(\"phoneNumber\") }}\",TRUE(),FALSE())",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        340,
+        260
+      ],
+      "id": "4dd85cde-8598-4b02-8d1b-71f7e5742359",
+      "name": "Get Customer",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "ZAJ51B4n1gav3m4S",
+          "name": "Airtable Personal Access Token account 2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        0
+      ],
+      "id": "e9e67299-7ec8-4fc2-8695-d032139d7b67",
+      "name": "Execute Workflow Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=You are an assistant designed to retrieve and process records from Airtable databases. Return the matching record's unique id as a top-level key-value pair in a JSON array format as follows:\n\nExample Output for Record ID Only:\n\n{ \"id\": \"recA1b2C3d4E5f6G7\" }\n\nFor full records or specified fields, return each record with relevant data fields in a similar JSON structure. Always prioritize efficiency and accuracy, handling large datasets with pagination or offsets as needed, and validate any input parameters, such as table names, field names, or filter conditions, to ensure correctness. Make sure to not add any additional commentary you should only ever output the json object no comments, explainations, or anything else besides the json object."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        120,
+        0
+      ],
+      "id": "e16168c0-c374-4d1d-ae99-a6f3973fadf3",
+      "name": "Get Customers Agent",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "58dc86ba-8511-42be-a75e-3cebf68d9522",
+              "name": "response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        0
+      ],
+      "id": "c6f37b9a-914c-4874-bfac-aa52f9774bb9",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-11-12T17:57:55.000Z",
+  "versionId": "fa0c770e-0e7d-4eb8-a3e8-49b563b99445"
+}
