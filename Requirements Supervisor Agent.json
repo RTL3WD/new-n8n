@@ -103,7 +103,7 @@
       ],
       "id": "e733d69e-27a0-4757-b608-c6e40972985e",
       "name": "When chat message received",
-      "webhookId": "f2b74985-dffc-4f28-baa8-962fdf0f37bc"
+      "webhookId": "a7654ddc-fd45-4b4b-b36a-7c7d7d6bf181"
     },
     {
       "parameters": {
@@ -304,6 +304,6 @@
     }
   ],
   "triggerCount": 0,
-  "updatedAt": "2024-11-09T12:36:48.000Z",
-  "versionId": "6c337044-ae8d-4f12-9868-ed812b483e93"
+  "updatedAt": "2024-11-12T18:24:42.000Z",
+  "versionId": "a32f8a26-500a-45e1-b76c-177149c7bd7e"
 }
