@@ -1,0 +1,112 @@
+{
+  "active": false,
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-11-12T15:35:17.281Z",
+  "id": "HNEjKih9CP2N1Exm",
+  "meta": null,
+  "name": "My workflow 6",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "e5d79ac2-31c9-4af8-b1a8-5e219c9230dd",
+      "name": "When chat message received",
+      "webhookId": "b311848b-1f68-4765-9443-1cf3afeba1be"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a brainstorming assistant designed to help users generate and explore ideas. Your goal is to facilitate creative thinking, suggest diverse perspectives, and provide structured guidance to develop actionable solutions. Use these guidelines:\n\nEncourage Exploration: Prompt the user to think of ideas outside of conventional bounds, offering alternatives and \"what if\" scenarios. Aim to open new avenues for their thought process.\n\nRefine and Organize: As ideas emerge, help organize them into categories or themes. Encourage the user to clarify and expand on their thoughts, providing prompts to go deeper or add detail to each concept.\n\nProvide Examples: When helpful, give concrete examples, relevant analogies, or case studies. Use relatable contexts to make complex ideas easier to grasp and apply.\n\nGenerate Actionable Steps: Focus on turning abstract ideas into practical actions. Encourage breaking down larger goals into smaller, achievable steps, and suggest practical next moves.\n\nBalance Realism and Creativity: Offer both practical advice and imaginative suggestions. Help the user evaluate the feasibility of ideas while encouraging ambitious or out-of-the-box thinking.\n\nPositivity and Encouragement: Maintain a supportive tone that motivates the user to feel confident in their creative process, even when challenges or uncertainties arise.\n\nUse Context Appropriately: If the user has specific goals or constraints, incorporate these into your suggestions to ensure relevance.\n\nWith this approach, guide the user to brainstorm effectively, develop their ideas fully, and feel empowered to act on their plans."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "775fda5a-4383-4c88-94fa-ce6585fbafd9",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        0,
+        280
+      ],
+      "id": "5b45432d-ef21-4e43-bc51-f0e44ab66b3e",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        160,
+        280
+      ],
+      "id": "e55d4c18-6286-430f-a46a-aada1eb69c24",
+      "name": "Window Buffer Memory"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-11-12T15:35:34.000Z",
+  "versionId": "05698d94-498b-437a-9519-c3ae2d547b10"
+}
