@@ -74,17 +74,6 @@
         ]
       ]
     },
-    "Send Message": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Mark Message Read": {
       "ai_tool": [
         [
@@ -152,6 +141,17 @@
       ]
     },
     "Create Draft": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Message": {
       "ai_tool": [
         [
           {
@@ -287,7 +287,7 @@
       ],
       "id": "8ce13078-da7e-4632-aa44-35e095f6ad43",
       "name": "Get Message",
-      "webhookId": "86e70c67-67d3-4872-9dd5-2f891122afdf",
+      "webhookId": "ab1a2726-dea7-478f-9bbb-57a193c12689",
       "credentials": {
         "gmailOAuth2": {
           "id": "E777VIw7zyxrVJ7s",
@@ -313,7 +313,7 @@
       ],
       "id": "1b6426ef-12ea-4c5b-becb-64887734dc5f",
       "name": "Get Unread Messages",
-      "webhookId": "26ffc2e0-d6c9-426c-8ed2-6f481f28b58f",
+      "webhookId": "281045a5-369c-4bc6-886d-50d456ce1e05",
       "credentials": {
         "gmailOAuth2": {
           "id": "E777VIw7zyxrVJ7s",
@@ -339,7 +339,7 @@
       ],
       "id": "90bce914-eb25-4e11-9cb9-fd31b5d5d62c",
       "name": "Send Message",
-      "webhookId": "47b29002-30e2-45ad-97e2-9d198b7e89bc",
+      "webhookId": "aba2b4bb-3a0e-4f04-a8d9-f7b0affcf217",
       "credentials": {
         "gmailOAuth2": {
           "id": "E777VIw7zyxrVJ7s",
@@ -360,7 +360,7 @@
       ],
       "id": "88b5f1b2-0d01-4714-a30a-4666324840ea",
       "name": "Mark Message Read",
-      "webhookId": "a252b401-6013-430d-ac7c-6bf905623964",
+      "webhookId": "d20ba29f-e1b6-4fab-94fd-ec8abc56ee45",
       "credentials": {
         "gmailOAuth2": {
           "id": "E777VIw7zyxrVJ7s",
@@ -383,7 +383,7 @@
       ],
       "id": "4fe45720-9b48-44a4-8bd3-4a44f3783a70",
       "name": "Create Label",
-      "webhookId": "f3cc8610-bb89-4198-83db-6116db2d756f",
+      "webhookId": "47b45272-1074-444e-9cdd-903d409d74de",
       "credentials": {
         "gmailOAuth2": {
           "id": "E777VIw7zyxrVJ7s",
@@ -404,7 +404,7 @@
       ],
       "id": "e63bc962-2fcf-4733-b0dd-7001ca699bb8",
       "name": "Get All Labels",
-      "webhookId": "2cab86fd-bfdd-4e6c-94ce-3681d1cb8894",
+      "webhookId": "a84513c8-66d1-498b-8f2b-42a9ebb4d4ee",
       "credentials": {
         "gmailOAuth2": {
           "id": "E777VIw7zyxrVJ7s",
@@ -426,7 +426,7 @@
       ],
       "id": "28074605-12a4-4a4f-86b2-dfa94b1d33a7",
       "name": "Get Label",
-      "webhookId": "4db21f45-4eff-43cc-a21a-eaec6b41e63a",
+      "webhookId": "68513797-a323-43c8-8c6b-560ae0fa217a",
       "credentials": {
         "gmailOAuth2": {
           "id": "E777VIw7zyxrVJ7s",
@@ -449,7 +449,7 @@
       ],
       "id": "ca7bbb8b-9bde-4645-a932-cda8225550b5",
       "name": "Get Draft",
-      "webhookId": "ee502330-cf93-4475-a273-85deacebb4c0",
+      "webhookId": "053da7dd-e038-4d81-a8f5-7988961da51d",
       "credentials": {
         "gmailOAuth2": {
           "id": "E777VIw7zyxrVJ7s",
@@ -471,7 +471,7 @@
       ],
       "id": "27dca723-73fb-4e4e-9dfb-2797295e43ff",
       "name": "Get Drafts",
-      "webhookId": "d5e7ea61-3e69-41f1-8250-27d510729c05",
+      "webhookId": "56f19886-679c-4c44-b357-a64dbd183136",
       "credentials": {
         "gmailOAuth2": {
           "id": "E777VIw7zyxrVJ7s",
@@ -494,7 +494,7 @@
       ],
       "id": "fb2b0d4e-d53e-4442-bb20-a659063def13",
       "name": "Create Draft",
-      "webhookId": "1a0135ef-9595-4631-b2f3-7fc177ab4b91",
+      "webhookId": "fe7913fb-71b9-4413-a1c9-148bb5c641e7",
       "credentials": {
         "gmailOAuth2": {
           "id": "E777VIw7zyxrVJ7s",
@@ -503,13 +503,29 @@
       }
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Execute Workflow Trigger": [
+      {
+        "json": {
+          "query": "{\"Subject\":\"Checking In\",\"Message\":\"Hi Ali,\\n\\nI hope this message finds you well. I wanted to touch base and see if you've had a chance to look into the technologies we discussed. I'd love to hear your thoughts and any feedback you might have.\\n\\nLooking forward to your response!\\n\\nBest regards,\\nYour Name\"}",
+          "sessionId": "test-0b4678d6-3354-4d4b-8324-a5dee9a7921c"
+        }
+      }
+    ]
+  },
   "settings": {
     "executionOrder": "v1"
   },
   "staticData": null,
-  "tags": [],
+  "tags": [
+    {
+      "createdAt": "2024-11-09T12:37:16.991Z",
+      "updatedAt": "2024-11-09T12:37:16.991Z",
+      "id": "0yhZAGhpC1N7u9OS",
+      "name": "Worker Agent"
+    }
+  ],
   "triggerCount": 0,
-  "updatedAt": "2024-11-08T19:12:27.000Z",
-  "versionId": "9c1c4ae2-276b-4b9d-b41a-b490892a14fa"
+  "updatedAt": "2024-11-12T18:00:19.000Z",
+  "versionId": "0690d70a-b6d7-4a68-baf2-2ebcbef1c39c"
 }
