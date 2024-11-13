@@ -1,0 +1,126 @@
+{
+  "active": false,
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-11-13T02:47:32.750Z",
+  "id": "tvSvxyXSe1RkO7a2",
+  "meta": null,
+  "name": "My workflow 7",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2d427b9d-5049-4eba-972c-e0b25d5e19d4",
+      "name": "When chat message received",
+      "webhookId": "aaf88d24-ca2c-4715-a339-2a61aa9a32b9"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "94458fcb-5432-49a1-8216-e83803d20bca",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "resource": "base",
+        "operation": "getSchema",
+        "base": {
+          "__rl": true,
+          "value": "appvxsI5CknHkeQk0",
+          "mode": "list",
+          "cachedResultName": "Finance",
+          "cachedResultUrl": "https://airtable.com/appvxsI5CknHkeQk0"
+        }
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        380,
+        220
+      ],
+      "id": "f841eb79-e0c0-4cfd-84cb-aba80db59f5a",
+      "name": "Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "ZAJ51B4n1gav3m4S",
+          "name": "Airtable Personal Access Token account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        40,
+        220
+      ],
+      "id": "e61b9bb2-5335-40f6-9cf8-11e2697e4716",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-11-13T02:50:34.000Z",
+  "versionId": "3e384ff1-e200-4f5a-830f-e2d4fda350b3"
+}
