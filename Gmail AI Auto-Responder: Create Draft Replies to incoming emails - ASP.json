@@ -1,0 +1,806 @@
+{
+  "active": true,
+  "connections": {
+    "If Needs Reply": {
+      "main": [
+        [
+          {
+            "node": "Generate email reply",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark Email As Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "JSON Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Assess if message needs a reply",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Assess if message needs a reply",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate email reply",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail - Create Draft": {
+      "main": [
+        [
+          {
+            "node": "Text Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail is Received": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Mark As Promo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark As Promo": {
+      "main": [
+        [
+          {
+            "node": "Remove from Inbox",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove from Inbox": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate email reply": {
+      "main": [
+        [
+          {
+            "node": "Gmail - Create Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Assess if message needs a reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Assess if message needs a reply": {
+      "main": [
+        [
+          {
+            "node": "If Needs Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-11-17T18:55:01.546Z",
+  "id": "sxCTBjjKnMfv8nQq",
+  "meta": null,
+  "name": "Gmail AI Auto-Responder: Create Draft Replies to incoming emails - ASP",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "53849246-ad32-4845-9976-9f9688f5a6f2",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json.needsReply }}",
+              "rightValue": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3b3b356d-711d-4d43-bd08-960fc4cfa732",
+      "name": "If Needs Reply",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        740,
+        620
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "jsonSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"needsReply\": {\n      \"type\": \"boolean\"\n      }\n  },\n  \"required\": [\"needsReply\"]\n}\n"
+      },
+      "id": "8c2315c7-185b-4bbd-807c-2244d8bfa378",
+      "name": "JSON Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "position": [
+        600,
+        780
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseFormat": "json_object",
+          "temperature": 0
+        }
+      },
+      "id": "7c5c9725-f2be-4a4e-a1a7-dd21820f4010",
+      "name": "OpenAI Chat",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        440,
+        780
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## When I receive an Email\n",
+        "height": 619.7495413344259,
+        "width": 304.10628068244364
+      },
+      "id": "807f0a47-ccaa-423f-8147-4edb92a9bd09",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -580,
+        300
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## ... that Needs a Reply\n",
+        "height": 397,
+        "width": 556
+      },
+      "id": "570f4b90-6a70-45b9-91cb-4da37b245ec5",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        360,
+        520
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Generate a Reply",
+        "height": 400.08454375343996,
+        "width": 333.19082443588354
+      },
+      "id": "addea87f-7d65-409d-bfd3-de6d11e45bdc",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        940,
+        520
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## ...as a Draft in the conversation",
+        "height": 395,
+        "width": 326
+      },
+      "id": "b90a99ab-d20c-4552-8c06-d23d31254c6f",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1280,
+        520
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "a6d3a526-de1a-4734-87cc-e0ec237f2021",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        980,
+        780
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "=Re: {{ $('Gmail is Received').item.json.headers.subject }}",
+        "emailType": "html",
+        "message": "={{ $json.text.replace(/\\n/g, \"<br />\\n\") }}",
+        "options": {
+          "threadId": "={{ $('Gmail is Received').item.json.threadId }}",
+          "sendTo": "={{ $('Gmail is Received').item.json.headers.from }}"
+        }
+      },
+      "id": "dedb197d-796f-4c00-8883-c4fe8e25708f",
+      "name": "Gmail - Create Draft",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        1380,
+        640
+      ],
+      "typeVersion": 2.1,
+      "webhookId": "3343408c-cdae-4638-926b-23d57502e48f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "5095db80-0a0a-4fbf-8327-da2732dab12a",
+              "leftValue": "={{ $json.textAsHtml }}",
+              "rightValue": "Unsubscribe",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "04c56a74-279e-4c98-ba15-bf5bea6d406a",
+              "leftValue": "={{ $json.textAsHtml }}",
+              "rightValue": "unsubscribe",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "a55fbb90-8865-4a50-82a5-6d1ae3769d72",
+              "leftValue": "={{ $json.from.value[0].address }}",
+              "rightValue": "noreply",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "6ac827b9-0354-4847-a6f4-88b9a37d2e43",
+              "leftValue": "={{ $json.from.value[0].address }}",
+              "rightValue": "no-reply",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "b34a718e-32dc-41cc-be60-c92a3bc01547",
+              "leftValue": "={{ $json.from.value[0].address }}",
+              "rightValue": "dmarcreport@microsoft.com",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "d87f91e6-9cb3-48c2-9cbd-35e90d693f66",
+              "leftValue": "={{ $json.from.value[0].address }}",
+              "rightValue": "@itex.net",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "78c58338-7f00-428d-b8e5-bdc2902e10b9",
+              "leftValue": "={{ $json.from.value[0].address }}",
+              "rightValue": "@cohatch.com",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "09b1d07e-3569-43a6-b54b-9ad8a97a9d33",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -200,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## ... If the email content contains Unsubscribe or noreply in email address",
+        "height": 615.8483784322938
+      },
+      "id": "d7fe8a2b-f7d8-4215-867a-d907de729f88",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -260,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Email Contains Unsubscribe & Not Apart of Exceptions List\n### Label Email as Promotional and Remove Inbox Label",
+        "height": 340.5006044295807,
+        "width": 777.4108310562551
+      },
+      "id": "10bd936f-e8c1-4803-9134-554aee53c8d7",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        360,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 1
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "q": "-from:me",
+          "readStatus": "unread"
+        },
+        "options": {}
+      },
+      "id": "5a437d41-a605-4b28-9f60-278e146ecca0",
+      "name": "Gmail is Received",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "position": [
+        -480,
+        520
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Send Received Email To Phone as Text",
+        "height": 395.8220930232559,
+        "width": 500.85348837209295
+      },
+      "id": "91b4109f-5e9b-4fed-8191-aceada51c618",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1620,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "7029084316@vzwpix.com",
+        "subject": "Email That Requires a Response Was Received",
+        "emailType": "text",
+        "message": "={{ $('Gmail is Received').item.json.text }}",
+        "options": {}
+      },
+      "id": "3e6c350e-c6ee-49ac-bdbb-f8bebd232f59",
+      "name": "Text Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1780,
+        640
+      ],
+      "webhookId": "da3c6d81-4a9a-4eb7-a650-7545984f7173",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('Gmail is Received').item.json.id }}"
+      },
+      "id": "a7165ed5-4ee9-4e9d-b1af-49cf09ca9832",
+      "name": "Mark Email As Read",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        980,
+        1040
+      ],
+      "webhookId": "2f95cd24-46c4-4b76-94c8-0741ee90d82e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Mark As Read",
+        "height": 326.09712547322874,
+        "width": 207.6798146665771
+      },
+      "id": "43c0df02-9478-45d9-94c2-761abe092cb3",
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        940,
+        940
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "b11068ec-9d66-4ab8-9c33-54cf57205ddd",
+              "leftValue": "={{ $json.from.value[0].address }}",
+              "rightValue": "upwork.com",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "6316af34-13b0-4aa5-9cb6-0d86b4b4a312",
+              "leftValue": "={{ $json.from.value[0].address }}",
+              "rightValue": "stpete.com",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "a75579b4-f227-4ce2-a8df-2246e6acd568",
+      "name": "If1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        140,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Email Exception List\n### Emails I want to receive\n\n1. Upwork.com\n2. Stpete.com",
+        "height": 499.22741194637877,
+        "width": 337.64932390001724
+      },
+      "id": "60049cd1-a357-4a0b-ac4a-c042a8095c07",
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# Basic Email Management Automation\n1. Check every half hr for emails received\n\n2. If the email contains unsubscribe as apart of the message contents or no reply is apart of the from email address\nA. If Yes to #2, Mark as promo email and remove from inbox. Upload the pdf file to the assistant\nB. If No to #2, Continue to #3.\n\n3. Assess if message needs a reply\nA. If Yes to #3, Write response\nB. If No to #3, Mark as Read\n\n4. If Write Response, afterward put response in drafts\n\n5. Send original email via email to cell phone number to receive text notification\n\nREQUIREMENTS:\n- Google CLoud Platform Gmail OAuth\n- OpenAi Key\n- List of desired email filters",
+        "height": 619.3126984597945,
+        "width": 438.43317466301903
+      },
+      "id": "be4f84cb-dea9-4491-a39e-9701e9280762",
+      "name": "Sticky Note9",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1040,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "addLabels",
+        "threadId": "={{ $json.id }}",
+        "labelIds": [
+          "CATEGORY_PROMOTIONS"
+        ]
+      },
+      "id": "5b161ee2-8429-4d60-9d09-91b47d59ac57",
+      "name": "Mark As Promo",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        420,
+        300
+      ],
+      "webhookId": "9e869c68-226e-4985-91a8-411b196cb741",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "removeLabels",
+        "threadId": "={{ $json.id }}",
+        "labelIds": [
+          "INBOX"
+        ]
+      },
+      "id": "c14100a6-5e37-48de-b43a-f9ad5ec630d5",
+      "name": "Remove from Inbox",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        680,
+        300
+      ],
+      "webhookId": "95e40def-a395-45f4-8850-2abb861e74f2",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Subject: {{ $('Gmail is Received').item.json.subject }}\nMessage: {{ $('Gmail is Received').item.json.textAsHtml }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are a helpful personal assistant to Robert Lord, the driving force behind Automate St. Pete, LLC, and a seasoned IT innovator based in St. Petersburg, Florida. Your task is to draft replies on Robert's behalf to his incoming emails. Whenever Robert provides some text from an email, return an appropriate draft reply for him and nothing else. Ensure that the reply is suitable for a professional email setting and addresses the topic in a clear, structured, and detailed manner. Do not make things up.\n\nDetailed instructions:\n- Be concise and maintain a business casual tone.\n- Start with \"Hello,\", and end with \"Best,\"\n- When writing responses, draft 2 messages: one affirmative and one negative separated by \" - - - - - - - OR - - - - - - - \"\n- If you don't know an answer, you can leave placeholders like \"[YOUR_ANSWER_HERE]\".\n- Don't use any special formatting, only plain text.\n- Reply in the same language as the inbound email.\n\nRobert Lord is dedicated to bridging the gap between technology and business for small and medium-sized enterprises. His expertise includes designing custom databases, automating workflows, and making technology accessible and manageable for all stakeholders. He operates on Eastern Standard Time with a standard hourly rate of $150, and his business hours are from 10 AM to 6 PM, Monday through Friday, though he is flexible for weekend projects when necessary.\n\n---\n\n**Example Email Response:**\n\n### Incoming Email Example:\n*Subject: Admin Access for Google Workspace*\n\nHi Robert,\n\nI hope this email finds you well. To proceed with setting up the automations for your business, I need admin access to your Google Workspace. This access is crucial for configuring the necessary integrations with Google Cloud Platform, which will enable the automations to connect seamlessly with your Gmail account and other services.\n\nHere are two helpful guides:\n\n[How to Add a User to Google Workspace](https://support.google.com/a/answer/33310?hl=en)\n[How to Grant Admin Access in Google Workspace](https://support.google.com/a/answer/33325?hl=en)\n\nPlease follow these instructions to provide the required permissions.\n\nThank you for your cooperation.\n\nBest regards,\nRobert\n\n---\n\n### Draft Reply:\n\n**Affirmative:**\n\nHello Elias,\n\nThank you for reaching out. I appreciate the detailed instructions. I will follow the guides to grant the necessary admin access to Google Workspace. Please expect to receive the permissions shortly.\n\nBest,\nRobert\n\n- - - - - - - OR - - - - - - -\n\n**Negative:**\n\nHello Elias,\n\nThank you for reaching out. Unfortunately, I am unable to provide admin access to Google Workspace at this time due to internal policy restrictions. Could we discuss alternative ways to achieve the required configurations?\n\nBest,\nRobert"
+            }
+          ]
+        }
+      },
+      "id": "5f913cb4-6a64-4c28-895d-9f0715770275",
+      "name": "Generate email reply",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "position": [
+        960,
+        620
+      ],
+      "typeVersion": 1.4
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "fe4b58e6-a053-45a9-bd27-13205a841d5e",
+              "leftValue": "={{ $json.subject }}",
+              "rightValue": "Invitation",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "0f45cb54-eed9-4bf0-a590-1338d39edd83",
+      "name": "If2",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        100,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "height": 395.97033175200016,
+        "width": 333.1857361058855
+      },
+      "id": "5aac4589-6fd3-43f3-a85e-15a287657eae",
+      "name": "Sticky Note10",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "prompt": "=Subject: {{ $json.subject }}\nMessage:\n{{ $json.textAsHtml }} ",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Your task is to assess if the message requires a response. Return in JSON format true if it does, false otherwise.\nMarketing emails don't require a response."
+            }
+          ]
+        }
+      },
+      "id": "ce4f3683-cea2-4678-b077-a4bbc245a095",
+      "name": "Assess if message needs a reply",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "position": [
+        420,
+        620
+      ],
+      "typeVersion": 1.3
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $json.id }}"
+      },
+      "id": "b644b530-a4f5-4ff9-aed2-adee03e37a19",
+      "name": "Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        940,
+        300
+      ],
+      "webhookId": "96775383-d2f1-470d-8dd8-7c0e7a88d74f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Gmail is Received": {
+      "lastTimeChecked": 1731869772
+    }
+  },
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2024-11-17T18:56:12.000Z",
+  "versionId": "3f7c58ce-7fbc-4d45-9610-84e10a2fc90e"
+}
