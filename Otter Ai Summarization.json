@@ -1,0 +1,303 @@
+{
+  "active": true,
+  "connections": {
+    "Markdown": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Upload File OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload File OpenAI": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "OpenAI3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI3": {
+      "main": [
+        [
+          {
+            "node": "Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-11-17T18:58:26.838Z",
+  "id": "l81Cad5dYCioxBRS",
+  "meta": null,
+  "name": "Otter Ai Summarization",
+  "nodes": [
+    {
+      "parameters": {
+        "sendTo": "automatestpete@gmail.com",
+        "subject": "Summarized Notes For Meeting",
+        "message": "=The summarized notes are below:\n\n {{ $json.data }}",
+        "options": {}
+      },
+      "id": "06a59d42-9ad6-4354-8572-76299a76270c",
+      "name": "Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1980,
+        180
+      ],
+      "webhookId": "3dcbc34d-223e-475b-a13d-2f0b6d06999f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "markdownToHtml",
+        "markdown": "={{ $('OpenAI3').item.json.output }}",
+        "options": {}
+      },
+      "id": "09e30ba1-3eb7-4eee-9c01-e68323df32c8",
+      "name": "Markdown",
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        1700,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "q": "PDF for Note"
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "id": "f5199ac3-b8ce-412c-b6cd-2c86dad95cd7",
+      "name": "Gmail Trigger",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        180
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "binaryPropertyName": "attachment_0",
+        "options": {}
+      },
+      "id": "0062d6ea-3f7d-4a6b-8732-690010bec148",
+      "name": "Upload File OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.3,
+      "position": [
+        700,
+        180
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Summarize Meeting Notes\n\n1. Receive email with pdf of notes\n2. Create a new assistant\n3. Upload the pdf file to the assistant\n4. Have assistant summarize it and create to do lists\n5. convert OpenAI output from Markdown to HTML\n6. Email me summarization and to dos",
+        "height": 448.5581395348835,
+        "width": 394.1162790697675
+      },
+      "id": "a21292b3-7b41-43a2-9b36-095f08545dd8",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Receive Email",
+        "height": 445.279069767442,
+        "width": 209.39534883720935
+      },
+      "id": "db413140-3b7a-4975-8374-80a66c43c99d",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        420,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Upload Email\n## Create Assistant\n## Ask Assistant to Summarize Email and Create To Do's",
+        "height": 443.0930232558138,
+        "width": 938.4418604651164
+      },
+      "id": "dd0f7365-83b7-4723-9512-d36bee453a96",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        660,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "assistant",
+        "operation": "create",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "name": "OtterAi Summarization Assistant",
+        "instructions": "You are Robert's assistant. You're tasks are as follows:\n\n1. Review the file uploaded\n2. Identify who the client is if there is any at all\n3. Summarize what the notes are about\n4. Output summary of notes and if there are any to do lists by person and by project.",
+        "knowledgeRetrieval": true,
+        "file_ids": "={{ $json.id }}",
+        "options": {}
+      },
+      "id": "afc4df2e-4ee7-4bea-84ae-3d66baa387fc",
+      "name": "OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.3,
+      "position": [
+        980,
+        180
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "assistant",
+        "assistantId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "prompt": "define",
+        "text": "analyze the pdf, summarize the meeting, create to do lists for each person and the project overall",
+        "options": {}
+      },
+      "id": "456ba100-2f96-4523-bf24-9196bf0d1990",
+      "name": "OpenAI3",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.3,
+      "position": [
+        1260,
+        180
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Convert OpenAI output from Markdown to HTML",
+        "height": 440.90697674418584
+      },
+      "id": "ae86337c-a84a-4d2a-bfac-bfdbd36155a7",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1640,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Email Results",
+        "height": 440.90697674418584
+      },
+      "id": "5807db55-77fe-46b3-836a-0022df949f1b",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Gmail Trigger": {
+      "Gmail Trigger": {
+        "lastTimeChecked": 1731869927
+      }
+    }
+  },
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2024-11-17T18:58:47.000Z",
+  "versionId": "165de2f6-0d41-42bb-a7de-bf5525ec057d"
+}
