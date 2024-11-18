@@ -1,18 +1,361 @@
 {
   "active": false,
-  "connections": {},
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NocoDB": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "NocoDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain1": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
   "createdAt": "2024-11-11T20:40:59.949Z",
   "id": "m35JYD8Izp8UhuZv",
   "meta": null,
   "name": "LinkedIn Scrape Tool",
-  "nodes": [],
-  "pinData": {},
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "657f97f2-ba69-4658-8e27-1af45f70babd",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        180,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "5d0e7c4b-ea16-4050-8c22-d2dcf48fe613",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        360,
+        100
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "//let outputObj = JSON.parse($('Basic LLM Chain').all())\nlet query = $('Basic LLM Chain').all()[0].json;\nquery = query.text;\nquery = JSON.parse(query);\nreturn [{\n  \"query\": query\n}]\n"
+      },
+      "id": "9cea6622-e31a-45f9-bb10-72fa2945da8e",
+      "name": "Code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        760,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://browserless.aspworkplace.com/scrape",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "31a645e3-8903-4aae-8e9e-7854174259de"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "url",
+              "value": "={{ $json.query.GoogleUrl }}"
+            },
+            {
+              "name": "elements",
+              "value": "={{ [\n    { \"selector\": \"div#search\" }\n  ] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f53c58b8-6ab9-4753-8e42-3229d8e92576",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        980,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "bcea4932-b58a-4627-9e86-ce9cfe7d3e18",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1180,
+        120
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "let searchResults = $('Basic LLM Chain1').all()[0].json.text;\nsearchResults = JSON.parse(searchResults);\nconsole.log(searchResults);\n\nreturn searchResults;"
+      },
+      "id": "ec189c18-f577-4871-8504-33de3d0d59dd",
+      "name": "Code1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1560,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "results",
+        "options": {}
+      },
+      "id": "12ab0f6d-8750-48d5-9fe4-f2bbe5d37860",
+      "name": "Split Out",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1780,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "pjmojxur2fbg7z4",
+        "table": "m9utyjaosi0nhsp",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Name",
+              "fieldValue": "={{ $json.Name }}"
+            },
+            {
+              "fieldName": "Location",
+              "fieldValue": "={{ $json.Location }}"
+            },
+            {
+              "fieldName": "Profession",
+              "fieldValue": "={{ $json.Profession }}"
+            },
+            {
+              "fieldName": "Business",
+              "fieldValue": "={{ $json['Business Name'] }}"
+            },
+            {
+              "fieldName": "Linkedin URL",
+              "fieldValue": "={{ $json['LinkedIn URL'] }}"
+            }
+          ]
+        }
+      },
+      "id": "cec225bd-d422-4ecd-bca5-25296ed8f22b",
+      "name": "NocoDB",
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        2000,
+        -100
+      ],
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "uqLHItDeerRqgsts",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0ed60b36-871b-4776-ab0b-ccf94569b140",
+              "name": "response",
+              "value": "Leads Successfully Added",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "dbfbb8ec-601a-47a8-b06b-a3ce2c5d2d30",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2220,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Instructions for Prompt:\n\nExtract relevant keywords from the input statement.\nFormat the extracted keywords into a Google search query.\nUse \"site:linkedin.com/in\" to search LinkedIn profiles.\nInclude the extracted keywords in quotes and place them in the query.\nAdd intext:@gmail.com to specify that the email domain should be Gmail.\nEncode the query string for the Google search URL.\nConstruct the Google search URL using https://www.google.com/search?q=.\nReturn the result in the GoogleUrl key with the encoded search URL.\n\nInput Statement:\n{{ $json.query }}\n\n\nEXAMPLES\nEX INPUT FORMAT:\nInput Statement: search for electricians in st petersburg,fl\nOutput Format:\n{\n  \"GoogleUrl\": \"https://www.google.com/search?q=site%3Alinkedin.com%2Fin+%22electrician%22+%22st+petersburg%22+intext%3A%40gmail.com\"\n}\n\nKEYWORDS WHITELIST:\nLocations such as st petersburg, tampa, clearwater, and more\nServices such as electrican, handyman, plumber, hvac, lawyers, doctors, etc.\n\nKEYWORDS BLACKLIST:\nleads, recruiters, jobs"
+      },
+      "id": "668bb70b-4f68-4563-b3ab-28d99dcacb42",
+      "name": "Basic LLM Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        380,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Extract lead data from the provided HTML content. Lead data can include, but is not limited to, Name, Location, Profession, Email, Phone, Business Name, and LinkedIn Page URL.\n\nHTML CONTENT:\n{{ $json.data[0].results[0].html }}\n\nDesired Output:\n\nParse the HTML content to identify and extract the lead data.\nStructure the output as an object with a key named results.\nThe value of results should be a list of objects, each containing the following fields where applicable:\nName: Extracted name from the HTML\nLocation: Extracted location from the HTML\nProfession: Extracted profession from the HTML\nEmail: Extracted email from the HTML\nPhone: Extracted phone number from the HTML\nBusiness Name: Extracted business name from the HTML\nLinkedIn URL: Extracted LinkedIn page URL from the HTML\nOutput Format:\n\nOutput only the JSON string with no additional commentary or marks.\nExample of the Structured Output:\n{\n  \"results\": [\n    {\n      \"Name\": \"John Doe\",\n      \"Location\": \"New York\",\n      \"Profession\": \"Marketing Manager\",\n      \"Email\": \"john.doe@example.com\",\n      \"Phone\": \"+1234567890\",\n      \"Business Name\": \"Doe Enterprises\",\n      \"LinkedIn URL\": \"https://www.linkedin.com/in/johndoe\"\n    },\n    {\n      \"Name\": \"Jane Smith\",\n      \"Location\": \"Los Angeles\",\n      \"Profession\": \"Software Developer\",\n      \"Email\": \"jane.smith@example.com\",\n      \"Phone\": \"+0987654321\",\n      \"Business Name\": \"Smith Tech Solutions\",\n      \"LinkedIn URL\": \"https://www.linkedin.com/in/janesmith\"\n    }\n  ]\n}\nEnsure that if any field is missing or not found, it should be omitted from the respective object in the list."
+      },
+      "id": "8623da13-84a0-4eac-8452-064e3dc00583",
+      "name": "Basic LLM Chain1",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        1180,
+        -100
+      ]
+    }
+  ],
+  "pinData": {
+    "Execute Workflow Trigger": [
+      {
+        "json": {
+          "query": "plumbers st pete"
+        }
+      }
+    ]
+  },
   "settings": {
     "executionOrder": "v1"
   },
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-11-11T20:40:59.949Z",
-  "versionId": "538a0672-fa1c-4c78-9bc2-64e7d4821c4b"
+  "updatedAt": "2024-11-18T02:30:21.000Z",
+  "versionId": "ff0224e4-a334-458a-8f30-83d9b0df6b74"
 }
