@@ -1,120 +1,7 @@
 {
   "active": false,
   "connections": {
-    "Code": {
-      "main": [
-        [
-          {
-            "node": "Filter",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Filter": {
-      "main": [
-        [
-          {
-            "node": "Remove Duplicates",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Remove Duplicates": {
-      "main": [
-        [
-          {
-            "node": "Loop Over Items",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "HTTP Request1": {
-      "main": [
-        [
-          {
-            "node": "Loop Over Items",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Loop Over Items": {
-      "main": [
-        [
-          {
-            "node": "Loop Over Items1",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "HTTP Request1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Code1": {
-      "main": [
-        [
-          {
-            "node": "Loop Over Items1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Loop Over Items1": {
-      "main": [
-        [
-          {
-            "node": "Aggregate",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Code1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "HTTP Request": {
-      "main": [
-        [
-          {
-            "node": "Code",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Aggregate": {
-      "main": [
-        [
-          {
-            "node": "Split Out",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Execute Workflow Trigger": {
+    "When clicking ‘Test workflow’": {
       "main": [
         [
           {
@@ -124,305 +11,64 @@
           }
         ]
       ]
-    },
-    "Split Out": {
-      "main": [
-        [
-          {
-            "node": "Remove Duplicates1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Remove Duplicates1": {
-      "main": [
-        [
-          {
-            "node": "Google Sheets",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
     }
   },
-  "createdAt": "2024-11-15T21:00:50.910Z",
-  "id": "j4kFoEWZztoW3rX4",
+  "createdAt": "2024-11-18T02:50:15.692Z",
+  "id": "AxlrdIawUGHAW8Rt",
   "meta": null,
   "name": "My workflow 8",
   "nodes": [
     {
-      "parameters": {
-        "jsCode": "const data = $input.first().json.data\n \nconst regex = /https?:\\/\\/[^\\/]+/g\n \nurls = data.match(regex)\n \nreturn urls.map(url => ({json: {url: url}}))"
-      },
-      "id": "4c8d8252-7712-499a-af7d-1c20b3578746",
-      "name": "Code",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
       "position": [
-        440,
+        0,
         0
-      ]
+      ],
+      "id": "b07b434a-44e2-4be6-9664-f2dc68c186d7",
+      "name": "When clicking ‘Test workflow’"
     },
     {
       "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
+        "url": "https://browserless.aspworkplace.com/function",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
             {
-              "id": "7ecfbe72-c09a-482e-8f81-43d9e7bb2917",
-              "leftValue": "={{ $json.url }}",
-              "rightValue": "(google|gstatic|ggpht|schema|example)",
-              "operator": {
-                "type": "string",
-                "operation": "notRegex"
-              }
+              "name": "token",
+              "value": "31a645e3-8903-4aae-8e9e-7854174259de"
             }
-          ],
-          "combinator": "and"
+          ]
         },
-        "options": {}
-      },
-      "id": "6453f4fa-d4aa-4a98-918d-b43ecf43d010",
-      "name": "Filter",
-      "type": "n8n-nodes-base.filter",
-      "typeVersion": 2.2,
-      "position": [
-        660,
-        0
-      ]
-    },
-    {
-      "parameters": {
-        "compare": "selectedFields",
-        "fieldsToCompare": "url",
-        "options": {}
-      },
-      "id": "0cda292f-ff66-4877-931c-9e7bded5bb57",
-      "name": "Remove Duplicates",
-      "type": "n8n-nodes-base.removeDuplicates",
-      "typeVersion": 2,
-      "position": [
-        860,
-        0
-      ]
-    },
-    {
-      "parameters": {
-        "url": "={{ $json.url }}",
-        "options": {}
-      },
-      "id": "3f5c7f85-88b3-4bfd-9f8c-174f02431eb8",
-      "name": "HTTP Request1",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        1300,
-        20
-      ],
-      "onError": "continueRegularOutput"
-    },
-    {
-      "parameters": {
-        "options": {}
-      },
-      "id": "679a6411-559d-48a8-b0b7-fe7a32f04755",
-      "name": "Loop Over Items",
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
-      "position": [
-        1080,
-        0
-      ],
-      "onError": "continueErrorOutput"
-    },
-    {
-      "parameters": {
-        "jsCode": "const data = $json.data\n \nconst emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.(?!png|jpg|gif|jpeg)[a-zA-Z]{2,}/g\n \nemails = data.match(emailRegex)\n \nconsole.log(emails)\n \nreturn {json: {emails: emails}}"
-      },
-      "id": "0ba98a33-cd17-45ba-bfdb-48e118a04d74",
-      "name": "Code1",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        340,
-        420
-      ],
-      "onError": "continueRegularOutput"
-    },
-    {
-      "parameters": {
-        "options": {}
-      },
-      "id": "bb2f13f8-4bb7-47a2-bd98-b8e768894445",
-      "name": "Loop Over Items1",
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
-      "position": [
-        200,
-        200
-      ],
-      "onError": "continueErrorOutput"
-    },
-    {
-      "parameters": {
-        "operation": "append",
-        "documentId": {
-          "__rl": true,
-          "value": "1SXxqg-v7AkS4HsHNLN7KY-ryP5ZDyHiMycWHrMP7IW8",
-          "mode": "list",
-          "cachedResultName": "Scraping Emails",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1SXxqg-v7AkS4HsHNLN7KY-ryP5ZDyHiMycWHrMP7IW8/edit?usp=drivesdk"
-        },
-        "sheetName": {
-          "__rl": true,
-          "value": 1216822123,
-          "mode": "list",
-          "cachedResultName": "Sheet2",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1SXxqg-v7AkS4HsHNLN7KY-ryP5ZDyHiMycWHrMP7IW8/edit#gid=1216822123"
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "Emails": "={{ $json.emails }}"
-          },
-          "matchingColumns": [
-            "Emails"
-          ],
-          "schema": [
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
             {
-              "id": "Emails",
-              "displayName": "Emails",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
+              "name": "code",
+              "value": "=module.exports = async function ({ page }) {\n  // Navigate to LinkedIn\n  await page.goto('https://www.linkedin.com/');\n  await page.getByRole('link', { name: 'Sign in', exact: true }).click();\n\n  // Fill in login credentials\n  await page.getByLabel('Email or phone').fill('lordrobert92');\n  await page.getByLabel('Email or phone').press('Alt+6');\n  await page.getByLabel('Email or phone').press('Alt+4');\n  await page.getByLabel('Email or phone').fill('lordrobert92@gmail.com');\n  await page.getByLabel('Password').click();\n  await page.getByLabel('Password').fill('##Linkedin727..');\n  await page.getByLabel('Sign in', { exact: true }).click();\n\n  // Perform LinkedIn actions\n  await page.goto('https://www.linkedin.com/in/nicole-leverock-a43aa6124/');\n  await page.getByRole('link', { name: 'Contact info' }).click();\n  await page.getByText('Nicole’s Profile linkedin.com').click();\n  await page.getByText('Birthday September').click();\n  await page.getByLabel('Dismiss').click();\n  await page.getByRole('link', { name: 'Show all activity' }).click();\n  await page.goto('https://www.linkedin.com/in/ken-klosterman-98731344/');\n  await page.getByRole('button', { name: '…see more' }).click();\n  \n  // Extract the text content of the target element\n  const textContent = await page\n    .getByRole('main')\n    .locator('div')\n    .filter({ hasText: 'WANT TO EARN EXTRA MONEY???' })\n    .nth(3)\n    .textContent();\n\n  // Log the extracted text\n  console.log('Extracted Text:', textContent);\n\n  return textContent; // Optional: return the text if required\n};\n"
             }
           ]
         },
         "options": {}
       },
-      "id": "d049e228-b2db-4490-8055-79d1f3b7be33",
-      "name": "Google Sheets",
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.5,
-      "position": [
-        1120,
-        220
-      ],
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "sKITsW661Itsg15I",
-          "name": "Google Sheets account - ASP"
-        }
-      },
-      "disabled": true
-    },
-    {
-      "parameters": {
-        "url": "=https://www.google.com/maps/search/{{ $json.query }}",
-        "options": {}
-      },
-      "id": "bff6bf76-651b-4e9d-9814-c0445eb320df",
-      "name": "HTTP Request",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
         220,
         0
-      ]
-    },
-    {
-      "parameters": {
-        "fieldsToAggregate": {
-          "fieldToAggregate": [
-            {
-              "fieldToAggregate": "emails"
-            }
-          ]
-        },
-        "options": {
-          "mergeLists": true
-        }
-      },
-      "id": "a397bdf1-4975-41af-b1b9-c1f1d16a6d3a",
-      "name": "Aggregate",
-      "type": "n8n-nodes-base.aggregate",
-      "typeVersion": 1,
-      "position": [
-        460,
-        220
-      ]
-    },
-    {
-      "parameters": {},
-      "id": "cc1686cf-e65a-4161-ba86-9d2119f3dc41",
-      "name": "Execute Workflow Trigger",
-      "type": "n8n-nodes-base.executeWorkflowTrigger",
-      "typeVersion": 1,
-      "position": [
-        0,
-        0
-      ]
-    },
-    {
-      "parameters": {
-        "fieldToSplitOut": "emails",
-        "options": {}
-      },
-      "id": "6f1af0e4-5c5d-4028-8363-7b687a3071e7",
-      "name": "Split Out",
-      "type": "n8n-nodes-base.splitOut",
-      "typeVersion": 1,
-      "position": [
-        680,
-        220
       ],
-      "alwaysOutputData": true,
-      "onError": "continueRegularOutput"
-    },
-    {
-      "parameters": {
-        "compare": "selectedFields",
-        "fieldsToCompare": "emails",
-        "options": {}
-      },
-      "id": "65c05c76-0baa-40f1-8782-18b626347dbe",
-      "name": "Remove Duplicates1",
-      "type": "n8n-nodes-base.removeDuplicates",
-      "typeVersion": 2,
-      "position": [
-        900,
-        220
-      ],
-      "alwaysOutputData": true,
-      "onError": "continueRegularOutput"
+      "id": "fb257bab-3aaf-4d3e-a3af-72562fefdd13",
+      "name": "HTTP Request"
     }
   ],
-  "pinData": {
-    "Execute Workflow Trigger": [
-      {
-        "json": {
-          "query": "st+petersburg+plumbers"
-        }
-      }
-    ]
-  },
+  "pinData": {},
   "settings": {
     "executionOrder": "v1"
   },
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-11-16T15:58:27.000Z",
-  "versionId": "a8bd7eb4-0515-476a-a24c-e4626bb11841"
+  "updatedAt": "2024-11-18T02:50:15.692Z",
+  "versionId": "eeffb346-cc34-45d9-93ff-527547f4aa2a"
 }
