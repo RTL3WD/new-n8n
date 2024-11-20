@@ -469,7 +469,13 @@
         1720,
         860
       ],
-      "typeVersion": 1
+      "typeVersion": 1,
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
     },
     {
       "parameters": {
@@ -880,7 +886,13 @@
         2300,
         600
       ],
-      "typeVersion": 1.6
+      "typeVersion": 1.6,
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
     },
     {
       "parameters": {
@@ -1382,23 +1394,13 @@
         2820,
         600
       ],
-      "typeVersion": 1.6
-    },
-    {
-      "parameters": {
-        "content": "# AlexK1919 \n![Alex Kim](https://media.licdn.com/dms/image/v2/D5603AQFOYMkqCPl6Sw/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1718309808352?e=1736985600&v=beta&t=pQKm7lQfUU1ytuC2Gq1PRxNY-XmROFWbo-BjzUPxWOs)\n\n#### I’m Alex Kim, an AI-Native Workflow Automation Architect Building Solutions to Optimize your Personal and Professional Life.\n\n### Workflow Overview Video\nhttps://youtu.be/XaKybLDUlLk\n\n### About Me\nhttps://beacons.ai/alexk1919\n\n### Product Used \n[Leonardo.ai](https://leonardo.ai)\n[RunwayML](https://runwayml.com/)\n[Creatomate](https://creatomate.com/)\n",
-        "height": 946,
-        "width": 252,
-        "color": 6
-      },
-      "id": "e7c95d56-86e1-4456-a6d3-9c8b9fc3a53c",
-      "name": "Sticky Note5",
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        380,
-        240
-      ],
-      "typeVersion": 1
+      "typeVersion": 1.6,
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
     },
     {
       "parameters": {
@@ -1424,6 +1426,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-11-20T21:08:33.799Z",
-  "versionId": "ec0b5cf7-7817-4699-b2b2-e6a44e1d8dd5"
+  "updatedAt": "2024-11-20T23:25:41.000Z",
+  "versionId": "b56bebc8-ef32-476f-ad32-5f3151cd4e5f"
 }
