@@ -118,7 +118,7 @@
       "main": [
         [
           {
-            "node": "Gmail",
+            "node": "Marked As Read",
             "type": "main",
             "index": 0
           }
@@ -774,7 +774,7 @@
         "messageId": "={{ $json.id }}"
       },
       "id": "b644b530-a4f5-4ff9-aed2-adee03e37a19",
-      "name": "Gmail",
+      "name": "Marked As Read",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
       "position": [
@@ -796,16 +796,15 @@
   },
   "staticData": {
     "node:Gmail is Received": {
-      "lastTimeChecked": 1732054512,
+      "lastTimeChecked": 1732095753,
       "possibleDuplicates": [
-        "193467e75cc62857",
-        "1934676f8b29704e",
-        "193463a01ff6a94d"
+        "19348f3c101172b3",
+        "193483d7ee7ee5d7"
       ]
     }
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-11-17T18:56:12.000Z",
-  "versionId": "3f7c58ce-7fbc-4d45-9610-84e10a2fc90e"
+  "updatedAt": "2024-11-19T23:12:26.000Z",
+  "versionId": "bd083115-777f-4ca2-bedf-1e68e83dbce4"
 }
