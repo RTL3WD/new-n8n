@@ -1,0 +1,165 @@
+{
+  "active": false,
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Lead AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Lead AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🤖 Email Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Lead AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Lead AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-11-20T22:57:48.758Z",
+  "id": "DqnbNj2j13lReaVn",
+  "meta": null,
+  "name": "My workflow 11",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi there! 👋\nI'm Nathan your personal assistant. How can I help you today?",
+        "options": {
+          "showWelcomeScreen": false,
+          "subtitle": "Start a chat. I'm here to help you 24/7.",
+          "title": "Hi there! 👋"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "1994d878-a0ab-420c-80b4-8cef9112596f",
+      "name": "When chat message received",
+      "webhookId": "1e6fb5cd-bd8e-4075-b2a9-cc067239e145"
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxTokens": -1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        260
+      ],
+      "id": "bbdc3101-3dda-4b84-be97-3f5f3ee0b50f",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a Supervisor AI that delegates tasks between a Calendar Agent and an Email Agent. Your job is to interpret the user's request, identify the required action, and communicate with the appropriate agent.\n\n### Tools Available:\n1. **Calendar Agent**: Use this for all calendar-related operations, such as creating, updating, and retrieving events.\n2. **Email Agent**: Use this for all email-related tasks, including sending emails, retrieving messages, managing drafts, and handling labels.\n\n### Guidelines:\n- **Identify Task Type**: Determine if the user’s request is related to calendar or email actions.\n- **Delegate to the Appropriate Agent**:\n  - For email tasks, use the **Email Agent** and provide structured instructions.\n  - For calendar tasks, use the **Calendar Agent** and provide necessary event details.\n\n- **Combine Responses**: Collect responses from the agents and present a unified response to the user.\n\n### Email Agent Instruction Format:\nWhen invoking the Email Agent, provide the following structured parameters based on the action requested:\n\n1. **Retrieving Messages**:\n   - `Limit`: Number of emails to retrieve (default 5 if unspecified).\n   - `Sender`: (Optional) Specify a sender to filter results.\n   - `Search`: (Optional) Search term to filter results.\n\n2. **Sending an Email**:\n   - `SendTo`: (Recipient email address).\n   - `Subject`: (Email subject line).\n   - `Text`: (Body content for the email).\n\n### Examples:\n- Query: \"Show me emails from john.doe@example.com\"\n  - Action: Use `Sender: john.doe@example.com` and `Limit: 5` with the Email Agent.\n\n- Query: \"Find emails about the project\"\n  - Action: Use `Search: project` and `Limit: 5` with the Email Agent."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "06f42e15-17de-4a18-8c1d-2e3d3a97adf2",
+      "name": "Lead AI Agent"
+    },
+    {
+      "parameters": {
+        "name": "Email_Agent",
+        "description": "This tool handles all email-related tasks, including retrieving emails, managing drafts, and handling labels. Provide structured parameters for specific actions, such as retrieving messages by sender, searching emails, or sending messages.",
+        "workflowId": {
+          "__rl": true,
+          "value": "GwAaB5OYLCjfoHcv",
+          "mode": "list",
+          "cachedResultName": "Email Agent"
+        },
+        "fields": {
+          "values": [
+            {
+              "name": "sessionId",
+              "stringValue": "={{ $('When chat message received').all()[0].json.sessionId }}"
+            }
+          ]
+        },
+        "specifyInputSchema": true,
+        "jsonSchemaExample": "{\n  \"Sender\": \"john.doe@example.com\",\n  \"Limit\": 5\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        660,
+        260
+      ],
+      "id": "04913460-9b9b-42f4-b2fa-6feb2d323872",
+      "name": "🤖 Email Agent"
+    },
+    {
+      "parameters": {
+        "name": "Current_Date_Tool",
+        "description": "Call this tool to get the current date.",
+        "jsCode": "// Get the current date\nconst currentDate = new Date();\n\n// Format the date (MM/DD/YYYY)\nconst formattedDate = `${currentDate.getMonth() + 1}/${currentDate.getDate()}/${currentDate.getFullYear()}`;\n\n// Display the formatted date\nconsole.log(\"Current Date:\", formattedDate);\n\nreturn `Current date is ${formattedDate}`"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [
+        340,
+        260
+      ],
+      "id": "316628a2-58fc-4e0e-97a7-e4f0096409b7",
+      "name": "Code Tool"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-11-20T22:57:48.758Z",
+  "versionId": "c9599e9e-490f-4751-95a0-cd1749ceaea2"
+}
