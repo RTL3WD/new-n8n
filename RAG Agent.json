@@ -349,7 +349,7 @@
     },
     {
       "parameters": {
-        "model": "text-embedding-3-large",
+        "model": "text-embedding-3-small",
         "options": {}
       },
       "id": "af282544-531e-4a7c-99ca-8ebf282ed91b",
@@ -939,7 +939,6 @@
     },
     {
       "parameters": {
-        "chunkSize": 500,
         "chunkOverlap": 200,
         "options": {}
       },
@@ -959,14 +958,14 @@
   },
   "staticData": {
     "node:File Created": {
-      "lastTimeChecked": "2024-11-20T02:12:57Z"
+      "lastTimeChecked": "2024-11-20T14:53:57Z"
     },
     "node:File Updated": {
-      "lastTimeChecked": "2024-11-20T02:12:57Z"
+      "lastTimeChecked": "2024-11-20T14:53:57Z"
     }
   },
   "tags": [],
   "triggerCount": 5,
-  "updatedAt": "2024-11-20T02:12:57.000Z",
-  "versionId": "9e4c4fce-e8b4-419d-8006-700b82bb4a41"
+  "updatedAt": "2024-11-20T14:53:57.000Z",
+  "versionId": "00a71a54-b8a3-44a3-a13e-5c811d5e6fea"
 }
