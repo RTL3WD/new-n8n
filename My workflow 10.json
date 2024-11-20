@@ -1,55 +1,22 @@
 {
-  "active": true,
+  "active": false,
   "connections": {
-    "OpenAI Chat Model": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "RAG AI Agent",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "OpenAI Chat Model1": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "Retrieve Documents",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Retrieve Documents": {
-      "ai_tool": [
-        [
-          {
-            "node": "RAG AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Download File": {
+    "Gmail Trigger": {
       "main": [
         [
           {
-            "node": "Switch",
+            "node": "Edit Fields",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "File Created": {
+    "Edit Fields": {
       "main": [
         [
           {
-            "node": "Set File ID",
+            "node": "Supabase Vector Store",
             "type": "main",
             "index": 0
           }
@@ -67,202 +34,12 @@
         ]
       ]
     },
-    "Extract Document Text": {
-      "main": [
-        [
-          {
-            "node": "Insert into Supabase Vectorstore",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Embeddings OpenAI1": {
-      "ai_embedding": [
-        [
-          {
-            "node": "Insert into Supabase Vectorstore",
-            "type": "ai_embedding",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Default Data Loader": {
       "ai_document": [
         [
           {
-            "node": "Insert into Supabase Vectorstore",
+            "node": "Supabase Vector Store",
             "type": "ai_document",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Postgres Chat Memory": {
-      "ai_memory": [
-        [
-          {
-            "node": "RAG AI Agent",
-            "type": "ai_memory",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Delete Old Doc Rows": {
-      "main": [
-        [
-          {
-            "node": "Download File",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Set File ID": {
-      "main": [
-        [
-          {
-            "node": "Delete Old Doc Rows",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "File Updated": {
-      "main": [
-        [
-          {
-            "node": "Set File ID",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Edit Fields": {
-      "main": [
-        [
-          {
-            "node": "RAG AI Agent",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "When chat message received": {
-      "main": [
-        [
-          {
-            "node": "Edit Fields",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Webhook": {
-      "main": [
-        [
-          {
-            "node": "Edit Fields",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Extract PDF Text": {
-      "main": [
-        [
-          {
-            "node": "Insert into Supabase Vectorstore",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Aggregate": {
-      "main": [
-        [
-          {
-            "node": "Summarize",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Summarize": {
-      "main": [
-        [
-          {
-            "node": "Insert into Supabase Vectorstore",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "RAG AI Agent": {
-      "main": [
-        [
-          {
-            "node": "Respond to Webhook",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Switch": {
-      "main": [
-        [
-          {
-            "node": "Extract PDF Text",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Extract from Excel",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Extract Document Text",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Supabase Vector Store": {
-      "ai_vectorStore": [
-        [
-          {
-            "node": "Retrieve Documents",
-            "type": "ai_vectorStore",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Extract from Excel": {
-      "main": [
-        [
-          {
-            "node": "Aggregate",
-            "type": "main",
             "index": 0
           }
         ]
@@ -280,314 +57,36 @@
       ]
     }
   },
-  "createdAt": "2024-11-19T18:19:52.777Z",
-  "id": "rBOJ3BiTl4iTvVia",
+  "createdAt": "2024-11-20T13:31:24.962Z",
+  "id": "zMsxAZhebZjgexrF",
   "meta": null,
   "name": "My workflow 10",
   "nodes": [
     {
       "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {},
         "options": {}
       },
-      "id": "706a8155-537d-4a53-879a-a35873edf6ca",
-      "name": "OpenAI Chat Model",
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "typeVersion": 1,
-      "position": [
-        -620,
-        360
-      ],
-      "credentials": {
-        "openAiApi": {
-          "id": "sTmNKjvehSYtW09j",
-          "name": "OpenAi account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "options": {}
-      },
-      "id": "9936536f-3073-4b66-819c-4ee4befe9c55",
-      "name": "OpenAI Chat Model1",
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "typeVersion": 1,
-      "position": [
-        400,
-        300
-      ],
-      "credentials": {
-        "openAiApi": {
-          "id": "sTmNKjvehSYtW09j",
-          "name": "OpenAi account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsonMode": "expressionData",
-        "jsonData": "={{ $json.data || $json.text || $json.concatenated_data }}",
-        "options": {
-          "metadata": {
-            "metadataValues": [
-              {
-                "name": "=file_id",
-                "value": "={{ $('Set File ID').first().json.file_id }}"
-              }
-            ]
-          }
-        }
-      },
-      "id": "3d42ee69-3a4e-4885-8691-4e0e39bbeab0",
-      "name": "Default Data Loader",
-      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
-      "typeVersion": 1,
-      "position": [
-        840,
-        840
-      ]
-    },
-    {
-      "parameters": {
-        "model": "text-embedding-3-small",
-        "options": {}
-      },
-      "id": "af282544-531e-4a7c-99ca-8ebf282ed91b",
-      "name": "Embeddings OpenAI1",
-      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
-      "typeVersion": 1,
-      "position": [
-        680,
-        840
-      ],
-      "credentials": {
-        "openAiApi": {
-          "id": "sTmNKjvehSYtW09j",
-          "name": "OpenAi account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "name": "user_documents",
-        "description": "Contains all the user's documents that you can check for context to answer user questions."
-      },
-      "id": "f6b122f1-8b3c-4022-9ca3-57ef573b2637",
-      "name": "Retrieve Documents",
-      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
-      "typeVersion": 1,
-      "position": [
-        180,
-        120
-      ]
-    },
-    {
-      "parameters": {
-        "content": "## Agent Tools for RAG",
-        "height": 528.85546469693,
-        "width": 583.4552380860637,
-        "color": 4
-      },
-      "id": "d6556944-8fc6-4b89-86ca-df8bdfb136b7",
-      "name": "Sticky Note",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
       "position": [
         0,
         0
-      ]
-    },
-    {
-      "parameters": {
-        "content": "## Tool to Add a Google Drive File to Vector DB",
-        "height": 667.1104380931955,
-        "width": 2352.5048970686776,
-        "color": 5
-      },
-      "id": "ab6016bf-05b7-4bc0-8ba5-84ebce6b7ba6",
-      "name": "Sticky Note1",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        -1220,
-        560
-      ]
-    },
-    {
-      "parameters": {
-        "operation": "download",
-        "fileId": {
-          "__rl": true,
-          "value": "={{ $('Set File ID').item.json.file_id }}",
-          "mode": "id"
-        },
-        "options": {
-          "googleFileConversion": {
-            "conversion": {
-              "docsToFormat": "text/plain"
-            }
-          }
-        }
-      },
-      "id": "7d799ac1-73be-41c5-a5eb-eb08c3ac7293",
-      "name": "Download File",
-      "type": "n8n-nodes-base.googleDrive",
-      "typeVersion": 3,
-      "position": [
-        -400,
-        800
       ],
-      "executeOnce": true,
+      "id": "20b5bdd4-f7f2-4b4c-b37e-4ab969912cd8",
+      "name": "Gmail Trigger",
       "credentials": {
-        "googleDriveOAuth2Api": {
-          "id": "Zw8jmPeh7kB7F9lh",
-          "name": "Google Drive account - ASP"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "pollTimes": {
-          "item": [
-            {
-              "mode": "everyMinute"
-            }
-          ]
-        },
-        "triggerOn": "specificFolder",
-        "folderToWatch": {
-          "__rl": true,
-          "value": "1Pe9imn8BKypYJ5CbZZd1MGEAFMQe2vEA",
-          "mode": "list",
-          "cachedResultName": "N8n",
-          "cachedResultUrl": "https://drive.google.com/drive/folders/1Pe9imn8BKypYJ5CbZZd1MGEAFMQe2vEA"
-        },
-        "event": "fileCreated",
-        "options": {}
-      },
-      "id": "8443cad7-f2ef-4c0d-8916-289d624da58f",
-      "name": "File Created",
-      "type": "n8n-nodes-base.googleDriveTrigger",
-      "typeVersion": 1,
-      "position": [
-        -1160,
-        700
-      ],
-      "credentials": {
-        "googleDriveOAuth2Api": {
-          "id": "Zw8jmPeh7kB7F9lh",
-          "name": "Google Drive account - ASP"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "pollTimes": {
-          "item": [
-            {
-              "mode": "everyMinute"
-            }
-          ]
-        },
-        "triggerOn": "specificFolder",
-        "folderToWatch": {
-          "__rl": true,
-          "value": "1Pe9imn8BKypYJ5CbZZd1MGEAFMQe2vEA",
-          "mode": "list",
-          "cachedResultName": "N8n",
-          "cachedResultUrl": "https://drive.google.com/drive/folders/1Pe9imn8BKypYJ5CbZZd1MGEAFMQe2vEA"
-        },
-        "event": "fileUpdated",
-        "options": {}
-      },
-      "id": "bd21c027-b83c-4d4e-9e58-181839daca26",
-      "name": "File Updated",
-      "type": "n8n-nodes-base.googleDriveTrigger",
-      "typeVersion": 1,
-      "position": [
-        -1160,
-        920
-      ],
-      "credentials": {
-        "googleDriveOAuth2Api": {
-          "id": "Zw8jmPeh7kB7F9lh",
-          "name": "Google Drive account - ASP"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "text",
-        "options": {}
-      },
-      "id": "0f917713-d32a-4bda-bbd7-30079ef76143",
-      "name": "Extract Document Text",
-      "type": "n8n-nodes-base.extractFromFile",
-      "typeVersion": 1,
-      "position": [
-        360,
-        1000
-      ],
-      "alwaysOutputData": true
-    },
-    {
-      "parameters": {
-        "model": "text-embedding-3-small",
-        "options": {}
-      },
-      "id": "e2fd381c-21ca-4089-a771-e0f15414b03c",
-      "name": "Embeddings OpenAI",
-      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
-      "typeVersion": 1,
-      "position": [
-        220,
-        400
-      ],
-      "credentials": {
-        "openAiApi": {
-          "id": "sTmNKjvehSYtW09j",
-          "name": "OpenAi account"
-        }
-      }
-    },
-    {
-      "parameters": {},
-      "id": "e494754a-bd2b-474f-9b17-ea43c5157d02",
-      "name": "Postgres Chat Memory",
-      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
-      "typeVersion": 1,
-      "position": [
-        -480,
-        360
-      ],
-      "notesInFlow": false,
-      "credentials": {
-        "postgres": {
-          "id": "bTUnFXrQZihl7mZ0",
-          "name": "Postgres account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "delete",
-        "tableId": "documents",
-        "filterType": "string",
-        "filterString": "=metadata->>file_id=like.*{{ $json.file_id }}*"
-      },
-      "id": "2ac3d156-f6c3-4bb3-922a-0c16361eca29",
-      "name": "Delete Old Doc Rows",
-      "type": "n8n-nodes-base.supabase",
-      "typeVersion": 1,
-      "position": [
-        -640,
-        800
-      ],
-      "alwaysOutputData": true,
-      "credentials": {
-        "supabaseApi": {
-          "id": "dt1dMrxjzCx0PjDa",
-          "name": "Supabase account"
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
         }
       }
     },
@@ -596,346 +95,171 @@
         "assignments": {
           "assignments": [
             {
-              "id": "10646eae-ae46-4327-a4dc-9987c2d76173",
-              "name": "file_id",
+              "id": "b705ec70-1d29-4ac3-84fb-9d1f89fec4d5",
+              "name": "gmail_id",
               "value": "={{ $json.id }}",
               "type": "string"
             },
             {
-              "id": "f4536df5-d0b1-4392-bf17-b8137fb31a44",
-              "name": "file_type",
-              "value": "={{ $json.mimeType }}",
+              "id": "29ef5d11-d516-49c8-87e9-5e15bb2266b7",
+              "name": "thread_id",
+              "value": "={{ $json.threadId }}",
+              "type": "string"
+            },
+            {
+              "id": "269def41-29a1-4ce0-aa6d-d53a6ac1f7a6",
+              "name": "subject",
+              "value": "={{ $json.subject }}",
+              "type": "string"
+            },
+            {
+              "id": "15449c1e-d94e-4103-abd3-74aa7cdf1bbd",
+              "name": "snippet",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "49592462-7100-46f6-a853-bf4d6d5ded79",
+              "name": "content",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "644b8bc9-3aa1-48ff-8001-a178520fa3d5",
+              "name": "body_html",
+              "value": "={{ $json.textAsHtml }}",
+              "type": "string"
+            },
+            {
+              "id": "41cbd04b-edf7-441a-8664-9fc62710f1c4",
+              "name": "from_address",
+              "value": "={{ $json.from.value[0].address }}",
+              "type": "string"
+            },
+            {
+              "id": "c9697aa0-bd71-44c9-b084-38da28bddeef",
+              "name": "from_name",
+              "value": "={{ $json.from.value[0].name }}",
+              "type": "string"
+            },
+            {
+              "id": "e8768683-6d88-431f-b946-ce49774e1561",
+              "name": "to_address",
+              "value": "={{ $json.to.value[0].address }}",
+              "type": "string"
+            },
+            {
+              "id": "a8078e82-0fa4-45b9-a285-9e512e17ec1a",
+              "name": "to_name",
+              "value": "={{ $json.to.text.match(/\"(.*?)\"/)[1] }}",
+              "type": "string"
+            },
+            {
+              "id": "3dcd8840-dcec-4e28-9624-4c321bd95a5b",
+              "name": "cc_addresses",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "b30fef2a-2b52-4d68-93d7-48fb9d11a4a0",
+              "name": "bcc_addresses",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "3bd27123-b797-427d-b052-4cd6301777d1",
+              "name": "date",
+              "value": "={{ $json.date }}",
+              "type": "string"
+            },
+            {
+              "id": "6796dd44-f8da-4a12-9e18-f2249928cdef",
+              "name": "labels",
+              "value": "={{ $json.labelIds }}",
+              "type": "string"
+            },
+            {
+              "id": "275f5ccd-3318-45ec-a098-0db08a15b349",
+              "name": "size_estimate",
+              "value": "={{ $json.sizeEstimate }}",
+              "type": "string"
+            },
+            {
+              "id": "5224be60-4c0a-498d-96a7-9cde51d4f54f",
+              "name": "headers",
+              "value": "={{ $json.headers }}",
               "type": "string"
             }
           ]
         },
         "options": {}
       },
-      "id": "b1c49afc-1f8c-4f8c-9299-f95f1d9cdd99",
-      "name": "Set File ID",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -880,
-        800
-      ]
-    },
-    {
-      "parameters": {
-        "content": "## RAG AI Agent with Chat Interface",
-        "height": 464.8027193303974,
-        "width": 1035.6381264595484
-      },
-      "id": "68083b0f-b717-452e-bb35-d43e053f7427",
-      "name": "Sticky Note2",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        -1040,
-        60
-      ]
-    },
-    {
-      "parameters": {
-        "options": {}
-      },
-      "id": "42e7b0d4-03c5-4a77-95fc-5c95197849db",
-      "name": "Respond to Webhook",
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.1,
-      "position": [
-        -180,
-        140
-      ]
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "9a9a245e-f1a1-4282-bb02-a81ffe629f0f",
-              "name": "chatInput",
-              "value": "={{ $json?.chatInput || $json.body.chatInput }}",
-              "type": "string"
-            },
-            {
-              "id": "b80831d8-c653-4203-8706-adedfdb98f77",
-              "name": "sessionId",
-              "value": "={{ $json?.sessionId || $json.body.sessionId}}",
-              "type": "string"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "233d72aa-ac66-4fb5-bbca-7d9e4ccb3814",
-      "name": "Edit Fields",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        -740,
-        140
-      ]
-    },
-    {
-      "parameters": {
-        "public": true,
-        "options": {}
-      },
-      "id": "d0a3203f-cc67-467a-8413-1d61f296a71c",
-      "name": "When chat message received",
-      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
-      "typeVersion": 1.1,
-      "position": [
-        -1000,
-        140
+        220,
+        0
       ],
-      "webhookId": "15e4d662-3f98-48d0-9f50-68838769ecac"
-    },
-    {
-      "parameters": {
-        "httpMethod": "POST",
-        "path": "9ba11544-5c4e-4f91-818a-08a4ecb596c5",
-        "authentication": "headerAuth",
-        "responseMode": "responseNode",
-        "options": {}
-      },
-      "id": "24de5356-475e-4da4-9075-fdd2c563d741",
-      "name": "Webhook",
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2,
-      "position": [
-        -1000,
-        340
-      ],
-      "webhookId": "9ba11544-5c4e-4f91-818a-08a4ecb596c5",
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "r3Mbrimadx4jlE9X",
-          "name": "Coolify API"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "pdf",
-        "options": {}
-      },
-      "id": "b81e129d-b368-49c8-8069-25c7f11aec2a",
-      "name": "Extract PDF Text",
-      "type": "n8n-nodes-base.extractFromFile",
-      "typeVersion": 1,
-      "position": [
-        360,
-        620
-      ]
-    },
-    {
-      "parameters": {
-        "aggregate": "aggregateAllItemData",
-        "options": {}
-      },
-      "id": "bdd56fdd-6973-403b-9652-7874b9d9ad27",
-      "name": "Aggregate",
-      "type": "n8n-nodes-base.aggregate",
-      "typeVersion": 1,
-      "position": [
-        280,
-        800
-      ]
-    },
-    {
-      "parameters": {
-        "fieldsToSummarize": {
-          "values": [
-            {
-              "aggregation": "concatenate",
-              "field": "data"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "0ac58b3c-fee1-4c23-824d-9d0cc5206edd",
-      "name": "Summarize",
-      "type": "n8n-nodes-base.summarize",
-      "typeVersion": 1,
-      "position": [
-        440,
-        800
-      ]
-    },
-    {
-      "parameters": {
-        "promptType": "define",
-        "text": "={{ $json.chatInput }}",
-        "options": {
-          "systemMessage": "You are a personal assistant who helps answer questions from a corpus of documents when you don't know the answer yourself."
-        }
-      },
-      "id": "d6e8c483-ef6a-4e0e-b6e3-684bb482a9d7",
-      "name": "RAG AI Agent",
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 1.6,
-      "position": [
-        -520,
-        140
-      ]
-    },
-    {
-      "parameters": {
-        "rules": {
-          "values": [
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 1
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ $('Set File ID').item.json.file_type }}",
-                    "rightValue": "application/pdf",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              }
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 1
-                },
-                "conditions": [
-                  {
-                    "id": "2ae7faa7-a936-4621-a680-60c512163034",
-                    "leftValue": "={{ $('Set File ID').item.json.file_type }}",
-                    "rightValue": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              }
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 1
-                },
-                "conditions": [
-                  {
-                    "id": "fc193b06-363b-4699-a97d-e5a850138b0e",
-                    "leftValue": "={{ $('Set File ID').item.json.file_type }}",
-                    "rightValue": "application/vnd.google-apps.document",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              }
-            }
-          ]
-        },
-        "options": {
-          "fallbackOutput": "=2"
-        }
-      },
-      "id": "2095f697-7ddc-4c27-910e-06ff773bac15",
-      "name": "Switch",
-      "type": "n8n-nodes-base.switch",
-      "typeVersion": 3,
-      "position": [
-        -180,
-        800
-      ]
+      "id": "21bae5c8-2a94-4dfc-abc1-badf9ac82e01",
+      "name": "Edit Fields"
     },
     {
       "parameters": {
         "mode": "insert",
         "tableName": {
           "__rl": true,
-          "value": "documents",
+          "value": "email_data",
           "mode": "list",
-          "cachedResultName": "documents"
+          "cachedResultName": "email_data"
         },
-        "options": {
-          "queryName": "match_documents"
-        }
-      },
-      "id": "d1c4d54d-45c6-4bed-906e-4ceb428c0859",
-      "name": "Insert into Supabase Vectorstore",
-      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
-      "typeVersion": 1,
-      "position": [
-        720,
-        620
-      ],
-      "credentials": {
-        "supabaseApi": {
-          "id": "dt1dMrxjzCx0PjDa",
-          "name": "Supabase account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "tableName": {
-          "__rl": true,
-          "value": "documents",
-          "mode": "list",
-          "cachedResultName": "documents"
-        },
-        "options": {
-          "queryName": "match_documents"
-        }
-      },
-      "id": "46219bb3-b1ec-490e-b4c5-745b15978f5f",
-      "name": "Supabase Vector Store",
-      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
-      "typeVersion": 1,
-      "position": [
-        60,
-        280
-      ],
-      "credentials": {
-        "supabaseApi": {
-          "id": "dt1dMrxjzCx0PjDa",
-          "name": "Supabase account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "xlsx",
         "options": {}
       },
-      "id": "4c1658c3-b751-4e33-b732-d54dafa46f52",
-      "name": "Extract from Excel",
-      "type": "n8n-nodes-base.extractFromFile",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
       "typeVersion": 1,
       "position": [
-        120,
-        800
-      ]
+        460,
+        0
+      ],
+      "id": "7d4fb633-19cd-48a6-8fba-529e6ab34b68",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "dt1dMrxjzCx0PjDa",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        360,
+        220
+      ],
+      "id": "8f28957d-4d79-4714-beca-005b964df921",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        580,
+        200
+      ],
+      "id": "0887d65e-7667-483f-bd5b-873a9de3e3d3",
+      "name": "Default Data Loader"
     },
     {
       "parameters": {
@@ -946,27 +270,104 @@
       "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
       "typeVersion": 1,
       "position": [
-        800,
-        1060
+        540,
+        400
       ],
-      "id": "c9a89ab3-0068-4214-a690-9025929b0fab",
+      "id": "952969ef-71db-4426-853b-fa1df03d9f59",
       "name": "Recursive Character Text Splitter"
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Gmail Trigger": [
+      {
+        "json": {
+          "id": "19349c24c52ef789",
+          "threadId": "19349c24c52ef789",
+          "labelIds": [
+            "CATEGORY_PROMOTIONS",
+            "UNREAD",
+            "INBOX"
+          ],
+          "sizeEstimate": 107042,
+          "headers": {
+            "delivered-to": "Delivered-To: automatestpete@gmail.com",
+            "received": "Received: from localhost (localhost [127.0.0.1])\r\n\tby mail191.atl81.rsgsv.net (Mailchimp) with ESMTP id 4XthqK0xfmzFCsqPW\r\n\tfor <automatestpete@gmail.com>; Wed, 20 Nov 2024 13:22:21 +0000 (GMT)",
+            "x-google-smtp-source": "X-Google-Smtp-Source: AGHT+IHkJsF38pHOXlAPn3D8tkltWg/J22nygaHZ8p6l0R3IyGvf1zA0twXr2jtJzxNFaGjXYOCk",
+            "x-received": "X-Received: by 2002:a05:690c:6d8c:b0:6ee:4a62:609d with SMTP id 00721157ae682-6eebd2ae281mr23765507b3.27.1732109290778;\r\n        Wed, 20 Nov 2024 05:28:10 -0800 (PST)",
+            "arc-seal": "ARC-Seal: i=1; a=rsa-sha256; t=1732109290; cv=none;\r\n        d=google.com; s=arc-20240605;\r\n        b=cRBqP2AfA5sY9UEx8ozVhO2Z+JnxBMte5mHdqDYuuA6QbWle8tm8kJzVZ7U5A2hWE0\r\n         HkoTJddJxYSgGJ8+B7RGMS+noL+3LIOobGw6fI+uvwUe+gHtO4EOrvYmgkPMzf8R/Bj9\r\n         ePiPfB7mKx/cCRrORBoefrwZFZ3KT8Qb9bC0PZvIcsIvyhcDPpCv3fzdeDxl9b2CXj5m\r\n         YPglLDN8DlEi2UcAl3Vick/23zpOgq8j+/KG2A8aHmAxDA6CYfD90pdlDc6rdoztCHJa\r\n         1qXtknx7z0BxPCejBFIjRwrOUpr0z/KQEZTzYCU0Bh9qfev04ErAzhEsKTQ40/xdCBzW\r\n         0Icw==",
+            "arc-message-signature": "ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;\r\n        h=mime-version:list-unsubscribe-post:list-unsubscribe:precedence\r\n         :list-id:feedback-id:message-id:date:to:reply-to:from:subject\r\n         :dkim-signature:dkim-signature;\r\n        bh=EoF5Pbf1/GOm0LzVv98PnxzdzgbtPNjP+VaX44d6IJ8=;\r\n        fh=/HKOjLQWwZJC8sMNFoCcevp62MvKzjPV+mu3soqtu6U=;\r\n        b=fQTmt96sBNBLeQK2S+6o0BquSDn7n4wG3zvRz54qIbSHrkFuu14R8O9jxU3Q4hSSjq\r\n         YZqf6jiJV8QEtAmqfWNuUzZE8Is10duteYY/KFE1dFq/ODDJ6gH0HnowFwCCM7Ts27ce\r\n         9DyCnxXX3hwhpmPZkiJzs4d+hC6TH7GlU6KtOnpUBNgs8+C+4A9N0EikAcDAbch8WYYP\r\n         1NprbTPEXAKgeMSsomcFW3ZfsGe7++Kx8zIqwC4xjXWQBpstTlIb2fN5pAjaUa0u/aKE\r\n         smxsN6DGEIMlCSGYdv33A8u4x+dML1ImWvfVPfTOIECf7C+eTxHzYMOiLOHG3OHifXgv\r\n         MxyQ==;\r\n        dara=google.com",
+            "arc-authentication-results": "ARC-Authentication-Results: i=1; mx.google.com;\r\n       dkim=pass header.i=@gmail.mcsv.net header.s=k2 header.b=CPCU6TiC;\r\n       dkim=pass header.i=@livewebinar.com header.s=k1 header.b=k7Ex6OT+;\r\n       spf=pass (google.com: domain of bounce-mc.us18_94261025.11572260-83bbef5445@mail191.atl81.rsgsv.net designates 198.2.129.191 as permitted sender) smtp.mailfrom=bounce-mc.us18_94261025.11572260-83bbef5445@mail191.atl81.rsgsv.net;\r\n       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=livewebinar.com",
+            "return-path": "Return-Path: <bounce-mc.us18_94261025.11572260-83bbef5445@mail191.atl81.rsgsv.net>",
+            "received-spf": "Received-SPF: pass (google.com: domain of bounce-mc.us18_94261025.11572260-83bbef5445@mail191.atl81.rsgsv.net designates 198.2.129.191 as permitted sender) client-ip=198.2.129.191;",
+            "authentication-results": "Authentication-Results: mx.google.com;\r\n       dkim=pass header.i=@gmail.mcsv.net header.s=k2 header.b=CPCU6TiC;\r\n       dkim=pass header.i=@livewebinar.com header.s=k1 header.b=k7Ex6OT+;\r\n       spf=pass (google.com: domain of bounce-mc.us18_94261025.11572260-83bbef5445@mail191.atl81.rsgsv.net designates 198.2.129.191 as permitted sender) smtp.mailfrom=bounce-mc.us18_94261025.11572260-83bbef5445@mail191.atl81.rsgsv.net;\r\n       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=livewebinar.com",
+            "dkim-signature": "DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=livewebinar.com;\r\n\ts=k1; t=1732108941; x=1732369441; i=info@livewebinar.com;\r\n\tbh=EoF5Pbf1/GOm0LzVv98PnxzdzgbtPNjP+VaX44d6IJ8=;\r\n\th=Subject:From:Reply-To:To:Date:Message-ID:X-MC-User:Feedback-ID:\r\n\t List-ID:List-Unsubscribe:List-Unsubscribe-Post:Content-Type:\r\n\t MIME-Version:CC:Date:Subject:From;\r\n\tb=k7Ex6OT+pS90jSwzfzcTUlomGwxzhijB7QUhdUOgYp5p9whD2bH4JdTppURQKv9v5\r\n\t WseFNf2PJvkFNwpRNx4p6f6j8R329p0yIf6bs1V2g4NkIkEgbOypk7qaqcciLnQrOe\r\n\t rkqvd8HMcYiCSp5/AB2m5faf3lBiKSrB/OuyRXe4=",
+            "subject": "Subject: =?utf-8?Q?Ready=20to=20Launch=20Your=20First=20Webinar=3F=20We=E2=80=99ll=20Show=20You=20How=20=E2=80=93=20For=20Free=21?=",
+            "from": "From: Adrian Zebrowski <info@livewebinar.com>",
+            "reply-to": "Reply-To:  <us18-78d41ea48f-03c714c5ad@inbound.mailchimpapp.net>",
+            "to": "To: =?utf-8?Q?Robert?= <automatestpete@gmail.com>",
+            "date": "Date: Wed, 20 Nov 2024 13:22:00 +0000",
+            "message-id": "Message-ID: <2da3a175a1e6d1c2e5dd0e458.83bbef5445.20241120132150.6f6e4410d3.d4c2137c@mail191.atl81.rsgsv.net>",
+            "x-mailer": "X-Mailer: Mailchimp Mailer - **CID6f6e4410d383bbef5445**",
+            "x-campaign": "X-Campaign: mailchimp2da3a175a1e6d1c2e5dd0e458.6f6e4410d3",
+            "x-campaignid": "X-campaignid: mailchimp2da3a175a1e6d1c2e5dd0e458.6f6e4410d3",
+            "x-report-abuse": "X-Report-Abuse: Please report abuse for this campaign here: https://mailchimp.com/contact/abuse/?u=2da3a175a1e6d1c2e5dd0e458&id=6f6e4410d3&e=83bbef5445",
+            "x-mc-user": "X-MC-User: 2da3a175a1e6d1c2e5dd0e458",
+            "feedback-id": "Feedback-ID: 94261025:94261025.11572260:us18:mc",
+            "list-id": "List-ID: 2da3a175a1e6d1c2e5dd0e458mc list <2da3a175a1e6d1c2e5dd0e458.141001.list-id.mcsv.net>",
+            "precedence": "Precedence: bulk",
+            "x-auto-response-suppress": "X-Auto-Response-Suppress: OOF, AutoReply",
+            "x-accounttype": "X-Accounttype: pr",
+            "list-unsubscribe": "List-Unsubscribe: <https://livewebinar.us18.list-manage.com/unsubscribe?u=2da3a175a1e6d1c2e5dd0e458&id=e87a0f2d91&t=h&e=83bbef5445&c=6f6e4410d3>, <mailto:unsubscribe-mc.us18_2da3a175a1e6d1c2e5dd0e458.6f6e4410d3-83bbef5445@unsubscribe.mailchimpapp.net?subject=unsubscribe>",
+            "list-unsubscribe-post": "List-Unsubscribe-Post: List-Unsubscribe=One-Click",
+            "content-type": "Content-Type: multipart/alternative; boundary=\"_----------=_MCPart_634312753\"",
+            "mime-version": "MIME-Version: 1.0"
+          },
+          "html": "<!doctype html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\">\n    <head>\n        <!-- NAME: TELL A STORY -->\n        <!--[if gte mso 15]>\n        <xml>\n            <o:OfficeDocumentSettings>\n            <o:AllowPNG/>\n            <o:PixelsPerInch>96</o:PixelsPerInch>\n            </o:OfficeDocumentSettings>\n        </xml>\n        <![endif]-->\n        <meta charset=\"UTF-8\">\n        <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n        <title>Ready to Launch Your First Webinar? We’ll Show You How – For Free!</title>\n\n    <style type=\"text/css\">\n\t\tp{\n\t\t\tmargin:10px 0;\n\t\t\tpadding:0;\n\t\t}\n\t\ttable{\n\t\t\tborder-collapse:collapse;\n\t\t}\n\t\th1,h2,h3,h4,h5,h6{\n\t\t\tdisplay:block;\n\t\t\tmargin:0;\n\t\t\tpadding:0;\n\t\t}\n\t\timg,a img{\n\t\t\tborder:0;\n\t\t\theight:auto;\n\t\t\toutline:none;\n\t\t\ttext-decoration:none;\n\t\t}\n\t\tbody,#bodyTable,#bodyCell{\n\t\t\theight:100%;\n\t\t\tmargin:0;\n\t\t\tpadding:0;\n\t\t\twidth:100%;\n\t\t}\n\t\t.mcnPreviewText{\n\t\t\tdisplay:none !important;\n\t\t}\n\t\t#outlook a{\n\t\t\tpadding:0;\n\t\t}\n\t\timg{\n\t\t\t-ms-interpolation-mode:bicubic;\n\t\t}\n\t\ttable{\n\t\t\tmso-table-lspace:0pt;\n\t\t\tmso-table-rspace:0pt;\n\t\t}\n\t\t.ReadMsgBody{\n\t\t\twidth:100%;\n\t\t}\n\t\t.ExternalClass{\n\t\t\twidth:100%;\n\t\t}\n\t\tp,a,li,td,blockquote{\n\t\t\tmso-line-height-rule:exactly;\n\t\t}\n\t\ta[href^=tel],a[href^=sms]{\n\t\t\tcolor:inherit;\n\t\t\tcursor:default;\n\t\t\ttext-decoration:none;\n\t\t}\n\t\tp,a,li,td,body,table,blockquote{\n\t\t\t-ms-text-size-adjust:100%;\n\t\t\t-webkit-text-size-adjust:100%;\n\t\t}\n\t\t.ExternalClass,.ExternalClass p,.ExternalClass td,.ExternalClass div,.ExternalClass span,.ExternalClass font{\n\t\t\tline-height:100%;\n\t\t}\n\t\ta[x-apple-data-detectors]{\n\t\t\tcolor:inherit !important;\n\t\t\ttext-decoration:none !important;\n\t\t\tfont-size:inherit !important;\n\t\t\tfont-family:inherit !important;\n\t\t\tfont-weight:inherit !important;\n\t\t\tline-height:inherit !important;\n\t\t}\n\t\ttable[align=left]{\n\t\t\tfloat:left;\n\t\t}\n\t\ttable[align=right]{\n\t\t\tfloat:right;\n\t\t}\n\t\t.templateContainer{\n\t\t\tmax-width:600px !important;\n\t\t}\n\t\ta.mcnButton{\n\t\t\tdisplay:block;\n\t\t}\n\t\t.mcnImage,.mcnRetinaImage{\n\t\t\tvertical-align:bottom;\n\t\t}\n\t\t.mcnTextContent{\n\t\t\tword-break:break-word;\n\t\t}\n\t\t.mcnTextContent img{\n\t\t\theight:auto !important;\n\t\t}\n\t\t.mcnDividerBlock{\n\t\t\ttable-layout:fixed !important;\n\t\t}\n\t\th1{\n\t\t\tcolor:#222222;\n\t\t\tfont-family:'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;\n\t\t\tfont-size:40px;\n\t\t\tfont-style:normal;\n\t\t\tfont-weight:bold;\n\t\t\tline-height:125%;\n\t\t\tletter-spacing:normal;\n\t\t\ttext-align:center;\n\t\t}\n\t\th2{\n\t\t\tcolor:#222222;\n\t\t\tfont-family:'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;\n\t\t\tfont-size:34px;\n\t\t\tfont-style:normal;\n\t\t\tfont-weight:bold;\n\t\t\tline-height:125%;\n\t\t\tletter-spacing:normal;\n\t\t\ttext-align:left;\n\t\t}\n\t\th3{\n\t\t\tcolor:#444444;\n\t\t\tfont-family:'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;\n\t\t\tfont-size:22px;\n\t\t\tfont-style:normal;\n\t\t\tfont-weight:bold;\n\t\t\tline-height:125%;\n\t\t\tletter-spacing:normal;\n\t\t\ttext-align:left;\n\t\t}\n\t\th4{\n\t\t\tcolor:#949494;\n\t\t\tfont-family:'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;\n\t\t\tfont-size:20px;\n\t\t\tfont-style:italic;\n\t\t\tfont-weight:normal;\n\t\t\tline-height:125%;\n\t\t\tletter-spacing:normal;\n\t\t\ttext-align:left;\n\t\t}\n\t\t#templateHeader{\n\t\t\tbackground-color:#0a8bdd;\n\t\t\tbackground-image:none;\n\t\t\tbackground-repeat:no-repeat;\n\t\t\tbackground-position:50% 50%;\n\t\t\tbackground-size:cover;\n\t\t\tborder-top:0;\n\t\t\tborder-bottom:0;\n\t\t\tpadding-top:0px;\n\t\t\tpadding-bottom:0px;\n\t\t}\n\t\t.headerContainer{\n\t\t\tbackground-color:transparent;\n\t\t\tbackground-image:none;\n\t\t\tbackground-repeat:no-repeat;\n\t\t\tbackground-position:center;\n\t\t\tbackground-size:cover;\n\t\t\tborder-top:0;\n\t\t\tborder-bottom:0;\n\t\t\tpadding-top:0;\n\t\t\tpadding-bottom:0;\n\t\t}\n\t\t.headerContainer .mcnTextContent,.headerContainer .mcnTextContent p{\n\t\t\tcolor:#757575;\n\t\t\tfont-family:Helvetica;\n\t\t\tfont-size:16px;\n\t\t\tline-height:150%;\n\t\t\ttext-align:left;\n\t\t}\n\t\t.headerContainer .mcnTextContent a,.headerContainer .mcnTextContent p a{\n\t\t\tcolor:#007C89;\n\t\t\tfont-weight:normal;\n\t\t\ttext-decoration:underline;\n\t\t}\n\t\t#templateBody{\n\t\t\tbackground-color:#ffffff;\n\t\t\tbackground-image:none;\n\t\t\tbackground-repeat:no-repeat;\n\t\t\tbackground-position:center;\n\t\t\tbackground-size:cover;\n\t\t\tborder-top:0;\n\t\t\tborder-bottom:0;\n\t\t\tpadding-top:25px;\n\t\t\tpadding-bottom:25px;\n\t\t}\n\t\t.bodyContainer{\n\t\t\tbackground-color:#transparent;\n\t\t\tbackground-image:none;\n\t\t\tbackground-repeat:no-repeat;\n\t\t\tbackground-position:center;\n\t\t\tbackground-size:cover;\n\t\t\tborder-top:0;\n\t\t\tborder-bottom:0;\n\t\t\tpadding-top:0;\n\t\t\tpadding-bottom:0;\n\t\t}\n\t\t.bodyContainer .mcnTextContent,.bodyContainer .mcnTextContent p{\n\t\t\tcolor:#757575;\n\t\t\tfont-family:Helvetica;\n\t\t\tfont-size:16px;\n\t\t\tline-height:150%;\n\t\t\ttext-align:left;\n\t\t}\n\t\t.bodyContainer .mcnTextContent a,.bodyContainer .mcnTextContent p a{\n\t\t\tcolor:#007C89;\n\t\t\tfont-weight:normal;\n\t\t\ttext-decoration:underline;\n\t\t}\n\t\t#templateFooter{\n\t\t\tbackground-color:#0a8bdd;\n\t\t\tbackground-image:none;\n\t\t\tbackground-repeat:no-repeat;\n\t\t\tbackground-position:center;\n\t\t\tbackground-size:cover;\n\t\t\tborder-top:0;\n\t\t\tborder-bottom:0;\n\t\t\tpadding-top:0px;\n\t\t\tpadding-bottom:0px;\n\t\t}\n\t\t.footerContainer{\n\t\t\tbackground-color:#transparent;\n\t\t\tbackground-image:none;\n\t\t\tbackground-repeat:no-repeat;\n\t\t\tbackground-position:center;\n\t\t\tbackground-size:cover;\n\t\t\tborder-top:0;\n\t\t\tborder-bottom:0;\n\t\t\tpadding-top:0;\n\t\t\tpadding-bottom:0;\n\t\t}\n\t\t.footerContainer .mcnTextContent,.footerContainer .mcnTextContent p{\n\t\t\tcolor:#FFFFFF;\n\t\t\tfont-family:Helvetica;\n\t\t\tfont-size:12px;\n\t\t\tline-height:150%;\n\t\t\ttext-align:center;\n\t\t}\n\t\t.footerContainer .mcnTextContent a,.footerContainer .mcnTextContent p a{\n\t\t\tcolor:#FFFFFF;\n\t\t\tfont-weight:normal;\n\t\t\ttext-decoration:underline;\n\t\t}\n\t@media only screen and (min-width:768px){\n\t\t.templateContainer{\n\t\t\twidth:600px !important;\n\t\t}\n\n}\t@media only screen and (max-width: 480px){\n\t\tbody,table,td,p,a,li,blockquote{\n\t\t\t-webkit-text-size-adjust:none !important;\n\t\t}\n\n}\t@media only screen and (max-width: 480px){\n\t\tbody{\n\t\t\twidth:100% !important;\n\t\t\tmin-width:100% !important;\n\t\t}\n\n}\t@media only screen and (max-width: 480px){\n\t\t.mcnRetinaImage{\n\t\t\tmax-width:100% !important;\n\t\t}\n\n}\t@media only screen and (max-width: 480px){\n\t\t.mcnImage{\n\t\t\twidth:100% !important;\n\t\t}\n\n}\t@media only screen and (max-width: 480px){\n\t\t.mcnCartContainer,.mcnCaptionTopContent,.mcnRecContentContainer,.mcnCaptionBottomContent,.mcnTextContentContainer,.mcnBoxedTextContentContainer,.mcnImageGroupContentContainer,.mcnCaptionLeftTextContentContainer,.mcnCaptionRightTextContentContainer,.mcnCaptionLeftImageContentContainer,.mcnCaptionRightImageContentContainer,.mcnImageCardLeftTextContentContainer,.mcnImageCardRightTextContentContainer,.mcnImageCardLeftImageContentContainer,.mcnImageCardRightImageContentContainer{\n\t\t\tmax-width:100% !important;\n\t\t\twidth:100% !important;\n\t\t}\n\n}\t@media only screen and (max-width: 480px){\n\t\t.mcnBoxedTextContentContainer{\n\t\t\tmin-width:100% !important;\n\t\t}\n\n}\t@media only screen and (max-width: 480px){\n\t\t.mcnImageGroupContent{\n\t\t\tpadding:9px !important;\n\t\t}\n\n}\t@media only screen and (max-width: 480px){\n\t\t.mcnCaptionLeftContentOuter .mcnTextContent,.mcnCaptionRightContentOuter .mcnTextContent{\n\t\t\tpadding-top:9px !important;\n\t\t}\n\n}\t@media only screen and (max-width: 480px){\n\t\t.mcnImageCardTopImageContent,.mcnCaptionBottomContent:last-child .mcnCaptionBottomImageContent,.mcnCaptionBlockInner .mcnCaptionTopContent:last-child .mcnTextContent{\n\t\t\tpadding-top:18px !important;\n\t\t}\n\n}\t@media only screen and (max-width: 480px){\n\t\t.mcnImageCardBottomImageContent{\n\t\t\tpadding-bottom:9px !important;\n\t\t}\n\n}\t@media only screen and (max-width: 480px){\n\t\t.mcnImageGroupBlockInner{\n\t\t\tpadding-top:0 !important;\n\t\t\tpadding-bottom:0 !important;\n\t\t}\n\n}\t@media only screen and (max-width: 480px){\n\t\t.mcnImageGroupBlockOuter{\n\t\t\tpadding-top:9px !important;\n\t\t\tpadding-bottom:9px !important;\n\t\t}\n\n}\t@media only screen and (max-width: 480px){\n\t\t.mcnTextContent,.mcnBoxedTextContentColumn{\n\t\t\tpadding-right:18px !important;\n\t\t\tpadding-left:18px !important;\n\t\t}\n\n}\t@media only screen and (max-width: 480px){\n\t\t.mcnImageCardLeftImageContent,.mcnImageCardRightImageContent{\n\t\t\tpadding-right:18px !important;\n\t\t\tpadding-bottom:0 !important;\n\t\t\tpadding-left:18px !important;\n\t\t}\n\n}\t@media only screen and (max-width: 480px){\n\t\t.mcpreview-image-uploader{\n\t\t\tdisplay:none !important;\n\t\t\twidth:100% !important;\n\t\t}\n\n}\t@media only screen and (max-width: 480px){\n\t\th1{\n\t\t\tfont-size:30px !important;\n\t\t\tline-height:125% !important;\n\t\t}\n\n}\t@media only screen and (max-width: 480px){\n\t\th2{\n\t\t\tfont-size:26px !important;\n\t\t\tline-height:125% !important;\n\t\t}\n\n}\t@media only screen and (max-width: 480px){\n\t\th3{\n\t\t\tfont-size:20px !important;\n\t\t\tline-height:150% !important;\n\t\t}\n\n}\t@media only screen and (max-width: 480px){\n\t\th4{\n\t\t\tfont-size:18px !important;\n\t\t\tline-height:150% !important;\n\t\t}\n\n}\t@media only screen and (max-width: 480px){\n\t\t.mcnBoxedTextContentContainer .mcnTextContent,.mcnBoxedTextContentContainer .mcnTextContent p{\n\t\t\tfont-size:14px !important;\n\t\t\tline-height:150% !important;\n\t\t}\n\n}\t@media only screen and (max-width: 480px){\n\t\t.headerContainer .mcnTextContent,.headerContainer .mcnTextContent p{\n\t\t\tfont-size:16px !important;\n\t\t\tline-height:150% !important;\n\t\t}\n\n}\t@media only screen and (max-width: 480px){\n\t\t.bodyContainer .mcnTextContent,.bodyContainer .mcnTextContent p{\n\t\t\tfont-size:16px !important;\n\t\t\tline-height:150% !important;\n\t\t}\n\n}\t@media only screen and (max-width: 480px){\n\t\t.footerContainer .mcnTextContent,.footerContainer .mcnTextContent p{\n\t\t\tfont-size:14px !important;\n\t\t\tline-height:150% !important;\n\t\t}\n\n}</style><!--[if !mso]><!--><link href=\"https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i\" rel=\"stylesheet\"><!--<![endif]--></head>\n    <body style=\"height: 100%;margin: 0;padding: 0;width: 100%;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n        <!--\n-->\n        <!--[if !gte mso 9]><!----><span class=\"mcnPreviewText\" style=\"display:none; font-size:0px; line-height:0px; max-height:0px; max-width:0px; opacity:0; overflow:hidden; visibility:hidden; mso-hide:all;\">Start making money with webinars! Join the free training and create your first profitable webinar with us!</span><!--<![endif]-->\n        <!--\n-->\n        <center>\n            <table align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" height=\"100%\" width=\"100%\" id=\"bodyTable\" style=\"border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;height: 100%;margin: 0;padding: 0;width: 100%;\">\n                <tr>\n                    <td align=\"center\" valign=\"top\" id=\"bodyCell\" style=\"mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;height: 100%;margin: 0;padding: 0;width: 100%;\">\n                        <!-- BEGIN TEMPLATE // -->\n                        <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                            <tr>\n                                <td align=\"center\" valign=\"top\" id=\"templateHeader\" data-template-container=\"\" style=\"background:#0a8bdd none no-repeat 50% 50%/cover;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;background-color: #0a8bdd;background-image: none;background-repeat: no-repeat;background-position: 50% 50%;background-size: cover;border-top: 0;border-bottom: 0;padding-top: 0px;padding-bottom: 0px;\">\n                                    <!--[if (gte mso 9)|(IE)]>\n                                    <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"600\" style=\"width:600px;\">\n                                    <tr>\n                                    <td align=\"center\" valign=\"top\" width=\"600\" style=\"width:600px;\">\n                                    <![endif]-->\n                                    <table align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"templateContainer\" style=\"border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;max-width: 600px !important;\">\n                                        <tr>\n                                            <td valign=\"top\" class=\"headerContainer\" style=\"background:transparent none no-repeat center/cover;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;background-color: transparent;background-image: none;background-repeat: no-repeat;background-position: center;background-size: cover;border-top: 0;border-bottom: 0;padding-top: 0;padding-bottom: 0;\"><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"mcnImageBlock\" style=\"min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n    <tbody class=\"mcnImageBlockOuter\">\n            <tr>\n                <td valign=\"top\" style=\"padding: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\" class=\"mcnImageBlockInner\">\n                    <table align=\"left\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"mcnImageContentContainer\" style=\"min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;float: left;\">\n                        <tbody><tr>\n                            <td class=\"mcnImageContent\" valign=\"top\" style=\"padding-right: 9px;padding-left: 9px;padding-top: 0;padding-bottom: 0;text-align: center;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n\n\n                                        <img align=\"center\" alt=\"\" src=\"https://mcusercontent.com/2da3a175a1e6d1c2e5dd0e458/images/aedd3d1b-2900-42a6-a6d8-b5572c827aed.png\" width=\"304.56\" style=\"max-width: 1200px;padding-bottom: 0;display: inline !important;vertical-align: bottom;border: 0;height: auto;outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;\" class=\"mcnRetinaImage\">\n\n\n                            </td>\n                        </tr>\n                    </tbody></table>\n                </td>\n            </tr>\n    </tbody>\n</table></td>\n                                        </tr>\n                                    </table>\n                                    <!--[if (gte mso 9)|(IE)]>\n                                    </td>\n                                    </tr>\n                                    </table>\n                                    <![endif]-->\n                                </td>\n                            </tr>\n                            <tr>\n                                <td align=\"center\" valign=\"top\" id=\"templateBody\" data-template-container=\"\" style=\"background:#ffffff none no-repeat center/cover;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;background-color: #ffffff;background-image: none;background-repeat: no-repeat;background-position: center;background-size: cover;border-top: 0;border-bottom: 0;padding-top: 25px;padding-bottom: 25px;\">\n                                    <!--[if (gte mso 9)|(IE)]>\n                                    <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"600\" style=\"width:600px;\">\n                                    <tr>\n                                    <td align=\"center\" valign=\"top\" width=\"600\" style=\"width:600px;\">\n                                    <![endif]-->\n                                    <table align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"templateContainer\" style=\"border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;max-width: 600px !important;\">\n                                        <tr>\n                                            <td valign=\"top\" class=\"bodyContainer\" style=\"background:#transparent none no-repeat center/cover;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;background-color: #transparent;background-image: none;background-repeat: no-repeat;background-position: center;background-size: cover;border-top: 0;border-bottom: 0;padding-top: 0;padding-bottom: 0;\"><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"mcnTextBlock\" style=\"min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n    <tbody class=\"mcnTextBlockOuter\">\n        <tr>\n            <td valign=\"top\" class=\"mcnTextBlockInner\" style=\"padding-top: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n              \t<!--[if mso]>\n\t\t\t\t<table align=\"left\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%\" style=\"width:100%;\">\n\t\t\t\t<tr>\n\t\t\t\t<![endif]-->\n\t\t\t\n\t\t\t\t<!--[if mso]>\n\t\t\t\t<td valign=\"top\" width=\"600\" style=\"width:600px;\">\n\t\t\t\t<![endif]-->\n                <table align=\"left\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width: 100%;min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;float: left;\" width=\"100%\" class=\"mcnTextContentContainer\">\n                    <tbody><tr>\n\n                        <td valign=\"top\" class=\"mcnTextContent\" style=\"padding-top: 0;padding-right: 18px;padding-bottom: 9px;padding-left: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;\">\n\n                            <h3 class=\"null\" style=\"display: block;margin: 0;padding: 0;color: #444444;font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;font-size: 22px;font-style: normal;font-weight: bold;line-height: 125%;letter-spacing: normal;text-align: left;\">Hi&nbsp;Robert</h3>\n\n                        </td>\n                    </tr>\n                </tbody></table>\n\t\t\t\t<!--[if mso]>\n\t\t\t\t</td>\n\t\t\t\t<![endif]-->\n\n\t\t\t\t<!--[if mso]>\n\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t\t<![endif]-->\n            </td>\n        </tr>\n    </tbody>\n</table><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"mcnTextBlock\" style=\"min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n    <tbody class=\"mcnTextBlockOuter\">\n        <tr>\n            <td valign=\"top\" class=\"mcnTextBlockInner\" style=\"padding-top: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n              \t<!--[if mso]>\n\t\t\t\t<table align=\"left\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%\" style=\"width:100%;\">\n\t\t\t\t<tr>\n\t\t\t\t<![endif]-->\n\t\t\t\n\t\t\t\t<!--[if mso]>\n\t\t\t\t<td valign=\"top\" width=\"600\" style=\"width:600px;\">\n\t\t\t\t<![endif]-->\n                <table align=\"left\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width: 100%;min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;float: left;\" width=\"100%\" class=\"mcnTextContentContainer\">\n                    <tbody><tr>\n\n                        <td valign=\"top\" class=\"mcnTextContent\" style=\"padding-top: 0;padding-right: 18px;padding-bottom: 9px;padding-left: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;\">\n\n                            <p lang=\"PL-PL\" paraeid=\"{9b322462-dd6a-4f0e-ac0e-f711b397fe3e}{131}\" paraid=\"935376599\" style=\"text-align: justify;margin: 10px 0;padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;\" xml:lang=\"PL-PL\"><!-- x-tinymce/html --></p>\n\n<p style=\"text-align: justify;margin: 10px 0;padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;\">Dreaming of<strong> expanding your reach, attracting more customers, and driving sales</strong>?<br>\n<br>\n✨&nbsp;This webinar is designed for you!</p>\n\n<p style=\"text-align: justify;margin: 10px 0;padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;\">Join us to learn step-by-step how to create events that captivate and inspire your audience—transforming their engagement into brand loyalty and real profits.</p>\n\n<p style=\"text-align: justify;margin: 10px 0;padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;\">Guided by Adrian Zebrowski, a webinar marketing expert, you’ll uncover proven strategies and best practices. Plus, during an exclusive live workshop, you’ll learn how to set up your very first webinar on the LiveWebinar platform.</p>\n\n<p style=\"text-align: justify;margin: 10px 0;padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;\">This isn’t just theory—it's practical, actionable steps that will make a difference in your business!</p>\n\n                        </td>\n                    </tr>\n                </tbody></table>\n\t\t\t\t<!--[if mso]>\n\t\t\t\t</td>\n\t\t\t\t<![endif]-->\n\n\t\t\t\t<!--[if mso]>\n\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t\t<![endif]-->\n            </td>\n        </tr>\n    </tbody>\n</table><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"mcnTextBlock\" style=\"min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n    <tbody class=\"mcnTextBlockOuter\">\n        <tr>\n            <td valign=\"top\" class=\"mcnTextBlockInner\" style=\"padding-top: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n              \t<!--[if mso]>\n\t\t\t\t<table align=\"left\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%\" style=\"width:100%;\">\n\t\t\t\t<tr>\n\t\t\t\t<![endif]-->\n\t\t\t\n\t\t\t\t<!--[if mso]>\n\t\t\t\t<td valign=\"top\" width=\"600\" style=\"width:600px;\">\n\t\t\t\t<![endif]-->\n                <table align=\"left\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width: 100%;min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;float: left;\" width=\"100%\" class=\"mcnTextContentContainer\">\n                    <tbody><tr>\n\n                        <td valign=\"top\" class=\"mcnTextContent\" style=\"padding-top: 0;padding-right: 18px;padding-bottom: 9px;padding-left: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;\">\n\n                            <p lang=\"EN-US\" paraeid=\"{2113790d-3604-459f-ad32-3d0327eae839}{174}\" paraid=\"439581758\" style=\"text-align: justify;margin: 10px 0;padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;\" xml:lang=\"EN-US\"><strong>🎉 Your first webinar: How to create an event that increases sales?</strong><br>\n<br>\n📅 November 27,&nbsp;2024<br>\n⏰ 10 AM PDT | 1 PM EDT | 6 PM | CET</p>\n\n                        </td>\n                    </tr>\n                </tbody></table>\n\t\t\t\t<!--[if mso]>\n\t\t\t\t</td>\n\t\t\t\t<![endif]-->\n\n\t\t\t\t<!--[if mso]>\n\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t\t<![endif]-->\n            </td>\n        </tr>\n    </tbody>\n</table><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"mcnButtonBlock\" style=\"min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n    <tbody class=\"mcnButtonBlockOuter\">\n        <tr>\n            <td style=\"padding-top: 0;padding-right: 18px;padding-bottom: 18px;padding-left: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\" valign=\"top\" align=\"center\" class=\"mcnButtonBlockInner\">\n                <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"mcnButtonContentContainer\" style=\"border-collapse: separate !important;border-radius: 50px;background-color: #E0629A;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                    <tbody>\n                        <tr>\n                            <td align=\"center\" valign=\"middle\" class=\"mcnButtonContent\" style=\"font-family: Arial;font-size: 16px;padding: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                                <a class=\"mcnButton \" title=\"I want to participate in the free training!\" href=\"https://livewebinar.us18.list-manage.com/track/click?u=2da3a175a1e6d1c2e5dd0e458&id=dcbb2d1ae4&e=83bbef5445\" target=\"_blank\" style=\"font-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;display: block;\">I want to participate in the free training!</a>\n                            </td>\n                        </tr>\n                    </tbody>\n                </table>\n            </td>\n        </tr>\n    </tbody>\n</table><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"mcnTextBlock\" style=\"min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n    <tbody class=\"mcnTextBlockOuter\">\n        <tr>\n            <td valign=\"top\" class=\"mcnTextBlockInner\" style=\"padding-top: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n              \t<!--[if mso]>\n\t\t\t\t<table align=\"left\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%\" style=\"width:100%;\">\n\t\t\t\t<tr>\n\t\t\t\t<![endif]-->\n\t\t\t\n\t\t\t\t<!--[if mso]>\n\t\t\t\t<td valign=\"top\" width=\"600\" style=\"width:600px;\">\n\t\t\t\t<![endif]-->\n                <table align=\"left\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width: 100%;min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;float: left;\" width=\"100%\" class=\"mcnTextContentContainer\">\n                    <tbody><tr>\n\n                        <td valign=\"top\" class=\"mcnTextContent\" style=\"padding-top: 0;padding-right: 18px;padding-bottom: 9px;padding-left: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;\">\n\n                            <div style=\"text-align: center;\">\n<p style=\"text-align: center;margin: 10px 0;padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;\"><span style=\"font-size:13px\"><em>Can’t join us live?<br>\nNo worries—sign up, and we’ll send you the full webinar recording to watch at your convenience!</em></span></p>\n</div>\n\n                        </td>\n                    </tr>\n                </tbody></table>\n\t\t\t\t<!--[if mso]>\n\t\t\t\t</td>\n\t\t\t\t<![endif]-->\n\n\t\t\t\t<!--[if mso]>\n\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t\t<![endif]-->\n            </td>\n        </tr>\n    </tbody>\n</table><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"mcnTextBlock\" style=\"min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n    <tbody class=\"mcnTextBlockOuter\">\n        <tr>\n            <td valign=\"top\" class=\"mcnTextBlockInner\" style=\"padding-top: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n              \t<!--[if mso]>\n\t\t\t\t<table align=\"left\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%\" style=\"width:100%;\">\n\t\t\t\t<tr>\n\t\t\t\t<![endif]-->\n\t\t\t\n\t\t\t\t<!--[if mso]>\n\t\t\t\t<td valign=\"top\" width=\"600\" style=\"width:600px;\">\n\t\t\t\t<![endif]-->\n                <table align=\"left\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width: 100%;min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;float: left;\" width=\"100%\" class=\"mcnTextContentContainer\">\n                    <tbody><tr>\n\n                        <td valign=\"top\" class=\"mcnTextContent\" style=\"padding-top: 0;padding-right: 18px;padding-bottom: 9px;padding-left: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;\">\n\n                            <h3 class=\"null\" lang=\"EN-US\" paraeid=\"{aa72fe05-2777-4366-bbfc-b11032205e0a}{41}\" paraid=\"728736051\" xml:lang=\"EN-US\" style=\"display: block;margin: 0;padding: 0;color: #444444;font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;font-size: 22px;font-style: normal;font-weight: bold;line-height: 125%;letter-spacing: normal;text-align: left;\">During this webinar you will learn:</h3>\n\n<ul role=\"list\">\n\t<li aria-setsize=\"-1\" data-aria-level=\"1\" data-aria-posinset=\"1\" data-font=\"Symbol\" data-leveltext=\"\" data-list-defn-props=\"{&quot;335552541&quot;:1,&quot;335559683&quot;:0,&quot;335559684&quot;:-2,&quot;335559685&quot;:720,&quot;335559991&quot;:360,&quot;469769226&quot;:&quot;Symbol&quot;,&quot;469769242&quot;:[8226],&quot;469777803&quot;:&quot;left&quot;,&quot;469777804&quot;:&quot;&quot;,&quot;469777815&quot;:&quot;hybridMultilevel&quot;}\" data-listid=\"1\" role=\"listitem\" style=\"mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n\t<p lang=\"EN-US\" paraeid=\"{aa72fe05-2777-4366-bbfc-b11032205e0a}{46}\" paraid=\"2114098430\" xml:lang=\"EN-US\" style=\"margin: 10px 0;padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;\">🚀 How to plan an engaging and profitable webinar step by step.</p>\n\t</li>\n\t<li style=\"mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">👀 How to grab your audience's attention and build engagement from the first minute.</li>\n\t<li style=\"mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">💻 How to set up your first webinar on the LiveWebinar platform.</li>\n\t<li style=\"mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">🌟 How to use webinars to build your brand and generate consistent profits.</li>\n</ul>\n\n                        </td>\n                    </tr>\n                </tbody></table>\n\t\t\t\t<!--[if mso]>\n\t\t\t\t</td>\n\t\t\t\t<![endif]-->\n\n\t\t\t\t<!--[if mso]>\n\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t\t<![endif]-->\n            </td>\n        </tr>\n    </tbody>\n</table><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"mcnTextBlock\" style=\"min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n    <tbody class=\"mcnTextBlockOuter\">\n        <tr>\n            <td valign=\"top\" class=\"mcnTextBlockInner\" style=\"padding-top: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n              \t<!--[if mso]>\n\t\t\t\t<table align=\"left\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%\" style=\"width:100%;\">\n\t\t\t\t<tr>\n\t\t\t\t<![endif]-->\n\t\t\t\n\t\t\t\t<!--[if mso]>\n\t\t\t\t<td valign=\"top\" width=\"600\" style=\"width:600px;\">\n\t\t\t\t<![endif]-->\n                <table align=\"left\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width: 100%;min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;float: left;\" width=\"100%\" class=\"mcnTextContentContainer\">\n                    <tbody><tr>\n\n                        <td valign=\"top\" class=\"mcnTextContent\" style=\"padding-top: 0;padding-right: 18px;padding-bottom: 9px;padding-left: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;\">\n\n                            <p style=\"margin: 10px 0;padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;\">The webinar will be led by an experienced professional who uses these techniques on a daily basis to help companies scale their online operations.</p>\n\n                        </td>\n                    </tr>\n                </tbody></table>\n\t\t\t\t<!--[if mso]>\n\t\t\t\t</td>\n\t\t\t\t<![endif]-->\n\n\t\t\t\t<!--[if mso]>\n\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t\t<![endif]-->\n            </td>\n        </tr>\n    </tbody>\n</table><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"mcnImageBlock\" style=\"min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n    <tbody class=\"mcnImageBlockOuter\">\n            <tr>\n                <td valign=\"top\" style=\"padding: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\" class=\"mcnImageBlockInner\">\n                    <table align=\"left\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"mcnImageContentContainer\" style=\"min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;float: left;\">\n                        <tbody><tr>\n                            <td class=\"mcnImageContent\" valign=\"top\" style=\"padding-right: 9px;padding-left: 9px;padding-top: 0;padding-bottom: 0;text-align: center;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n\n                                    <a href=\"https://livewebinar.us18.list-manage.com/track/click?u=2da3a175a1e6d1c2e5dd0e458&id=f4766ab04a&e=83bbef5445\" title=\"\" class=\"\" target=\"_blank\" style=\"mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                                        <img align=\"center\" alt=\"\" src=\"https://mcusercontent.com/2da3a175a1e6d1c2e5dd0e458/images/0907cadd-dbdb-096d-9e01-d86ac4a19e0d.jpg\" width=\"564\" style=\"max-width: 1200px;padding-bottom: 0;display: inline !important;vertical-align: bottom;border: 0;height: auto;outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;\" class=\"mcnImage\">\n                                    </a>\n\n                            </td>\n                        </tr>\n                    </tbody></table>\n                </td>\n            </tr>\n    </tbody>\n</table><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"mcnDividerBlock\" style=\"min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;table-layout: fixed !important;\">\n    <tbody class=\"mcnDividerBlockOuter\">\n        <tr>\n            <td class=\"mcnDividerBlockInner\" style=\"min-width: 100%;padding: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                <table class=\"mcnDividerContent\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"min-width: 100%;border-top: 2px solid #EAEAEA;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                    <tbody><tr>\n                        <td style=\"mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                            <span></span>\n                        </td>\n                    </tr>\n                </tbody></table>\n<!--\n                <td class=\"mcnDividerBlockInner\" style=\"padding: 18px;\">\n                <hr class=\"mcnDividerContent\" style=\"border-bottom-color:none; border-left-color:none; border-right-color:none; border-bottom-width:0; border-left-width:0; border-right-width:0; margin-top:0; margin-right:0; margin-bottom:0; margin-left:0;\" />\n-->\n            </td>\n        </tr>\n    </tbody>\n</table><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"mcnTextBlock\" style=\"min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n    <tbody class=\"mcnTextBlockOuter\">\n        <tr>\n            <td valign=\"top\" class=\"mcnTextBlockInner\" style=\"padding-top: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n              \t<!--[if mso]>\n\t\t\t\t<table align=\"left\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%\" style=\"width:100%;\">\n\t\t\t\t<tr>\n\t\t\t\t<![endif]-->\n\t\t\t\n\t\t\t\t<!--[if mso]>\n\t\t\t\t<td valign=\"top\" width=\"600\" style=\"width:600px;\">\n\t\t\t\t<![endif]-->\n                <table align=\"left\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width: 100%;min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;float: left;\" width=\"100%\" class=\"mcnTextContentContainer\">\n                    <tbody><tr>\n\n                        <td valign=\"top\" class=\"mcnTextContent\" style=\"padding-top: 0;padding-right: 18px;padding-bottom: 9px;padding-left: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;\">\n\n                            <h2 class=\"null\" style=\"display: block;margin: 0;padding: 0;color: #222222;font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;font-size: 34px;font-style: normal;font-weight: bold;line-height: 125%;letter-spacing: normal;text-align: left;\">Get certified!</h2>\n\n                        </td>\n                    </tr>\n                </tbody></table>\n\t\t\t\t<!--[if mso]>\n\t\t\t\t</td>\n\t\t\t\t<![endif]-->\n\n\t\t\t\t<!--[if mso]>\n\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t\t<![endif]-->\n            </td>\n        </tr>\n    </tbody>\n</table><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"mcnTextBlock\" style=\"min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n    <tbody class=\"mcnTextBlockOuter\">\n        <tr>\n            <td valign=\"top\" class=\"mcnTextBlockInner\" style=\"padding-top: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n              \t<!--[if mso]>\n\t\t\t\t<table align=\"left\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%\" style=\"width:100%;\">\n\t\t\t\t<tr>\n\t\t\t\t<![endif]-->\n\t\t\t\n\t\t\t\t<!--[if mso]>\n\t\t\t\t<td valign=\"top\" width=\"600\" style=\"width:600px;\">\n\t\t\t\t<![endif]-->\n                <table align=\"left\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width: 100%;min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;float: left;\" width=\"100%\" class=\"mcnTextContentContainer\">\n                    <tbody><tr>\n\n                        <td valign=\"top\" class=\"mcnTextContent\" style=\"padding-top: 0;padding-right: 18px;padding-bottom: 9px;padding-left: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;\">\n\n                            <p style=\"text-align: justify;margin: 10px 0;padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;\">Each participant of our training will receive an e-certificate that will confirm their participation and skills acquired. This is an excellent recognition and a valuable addition to your portfolio!</p>\n\n                        </td>\n                    </tr>\n                </tbody></table>\n\t\t\t\t<!--[if mso]>\n\t\t\t\t</td>\n\t\t\t\t<![endif]-->\n\n\t\t\t\t<!--[if mso]>\n\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t\t<![endif]-->\n            </td>\n        </tr>\n    </tbody>\n</table><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"mcnButtonBlock\" style=\"min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n    <tbody class=\"mcnButtonBlockOuter\">\n        <tr>\n            <td style=\"padding-top: 0;padding-right: 18px;padding-bottom: 18px;padding-left: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\" valign=\"top\" align=\"center\" class=\"mcnButtonBlockInner\">\n                <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"mcnButtonContentContainer\" style=\"border-collapse: separate !important;border-radius: 50px;background-color: #E0629A;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                    <tbody>\n                        <tr>\n                            <td align=\"center\" valign=\"middle\" class=\"mcnButtonContent\" style=\"font-family: Arial;font-size: 16px;padding: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                                <a class=\"mcnButton \" title=\"I want to get certified!\" href=\"https://livewebinar.us18.list-manage.com/track/click?u=2da3a175a1e6d1c2e5dd0e458&id=d96bd30e1f&e=83bbef5445\" target=\"_blank\" style=\"font-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;display: block;\">I want to get certified!</a>\n                            </td>\n                        </tr>\n                    </tbody>\n                </table>\n            </td>\n        </tr>\n    </tbody>\n</table><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"mcnImageBlock\" style=\"min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n    <tbody class=\"mcnImageBlockOuter\">\n            <tr>\n                <td valign=\"top\" style=\"padding: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\" class=\"mcnImageBlockInner\">\n                    <table align=\"left\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"mcnImageContentContainer\" style=\"min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;float: left;\">\n                        <tbody><tr>\n                            <td class=\"mcnImageContent\" valign=\"top\" style=\"padding-right: 9px;padding-left: 9px;padding-top: 0;padding-bottom: 0;text-align: center;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n\n                                    <a href=\"https://livewebinar.us18.list-manage.com/track/click?u=2da3a175a1e6d1c2e5dd0e458&id=eec2f19fb1&e=83bbef5445\" title=\"\" class=\"\" target=\"_blank\" style=\"mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                                        <img align=\"center\" alt=\"\" src=\"https://mcusercontent.com/2da3a175a1e6d1c2e5dd0e458/images/0fb87e75-7289-0bf4-f5a2-41e37f3c405e.png\" width=\"564\" style=\"max-width: 1200px;padding-bottom: 0;display: inline !important;vertical-align: bottom;border: 0;height: auto;outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;\" class=\"mcnImage\">\n                                    </a>\n\n                            </td>\n                        </tr>\n                    </tbody></table>\n                </td>\n            </tr>\n    </tbody>\n</table><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"mcnDividerBlock\" style=\"min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;table-layout: fixed !important;\">\n    <tbody class=\"mcnDividerBlockOuter\">\n        <tr>\n            <td class=\"mcnDividerBlockInner\" style=\"min-width: 100%;padding: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                <table class=\"mcnDividerContent\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"min-width: 100%;border-top: 2px solid #EAEAEA;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                    <tbody><tr>\n                        <td style=\"mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                            <span></span>\n                        </td>\n                    </tr>\n                </tbody></table>\n<!--\n                <td class=\"mcnDividerBlockInner\" style=\"padding: 18px;\">\n                <hr class=\"mcnDividerContent\" style=\"border-bottom-color:none; border-left-color:none; border-right-color:none; border-bottom-width:0; border-left-width:0; border-right-width:0; margin-top:0; margin-right:0; margin-bottom:0; margin-left:0;\" />\n-->\n            </td>\n        </tr>\n    </tbody>\n</table><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"mcnTextBlock\" style=\"min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n    <tbody class=\"mcnTextBlockOuter\">\n        <tr>\n            <td valign=\"top\" class=\"mcnTextBlockInner\" style=\"padding-top: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n              \t<!--[if mso]>\n\t\t\t\t<table align=\"left\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%\" style=\"width:100%;\">\n\t\t\t\t<tr>\n\t\t\t\t<![endif]-->\n\t\t\t\n\t\t\t\t<!--[if mso]>\n\t\t\t\t<td valign=\"top\" width=\"600\" style=\"width:600px;\">\n\t\t\t\t<![endif]-->\n                <table align=\"left\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width: 100%;min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;float: left;\" width=\"100%\" class=\"mcnTextContentContainer\">\n                    <tbody><tr>\n\n                        <td valign=\"top\" class=\"mcnTextContent\" style=\"padding-top: 0;padding-right: 18px;padding-bottom: 9px;padding-left: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;\">\n\n                            <div style=\"text-align: justify;\">\n<div style=\"text-align: justify;\"><strong>HOST: ADRIAN ZEBROWSKI</strong></div>\n\n<p style=\"text-align: justify;margin: 10px 0;padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;\">Adrian Zebrowski is a Webinar Marketing Specialist with a background in AI and a data-driven approach. With expertise in digital marketing, he uses advanced analytics to optimize webinars and boost engagement.<br>\n<br>\nA University of Derby graduate, Adrian translates complex data into actionable insights, creating impactful, growth-driven webinars. He frequently shares his knowledge as a speaker and author in the field.</p>\n</div>\n\n                        </td>\n                    </tr>\n                </tbody></table>\n\t\t\t\t<!--[if mso]>\n\t\t\t\t</td>\n\t\t\t\t<![endif]-->\n\n\t\t\t\t<!--[if mso]>\n\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t\t<![endif]-->\n            </td>\n        </tr>\n    </tbody>\n</table><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"mcnDividerBlock\" style=\"min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;table-layout: fixed !important;\">\n    <tbody class=\"mcnDividerBlockOuter\">\n        <tr>\n            <td class=\"mcnDividerBlockInner\" style=\"min-width: 100%;padding: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                <table class=\"mcnDividerContent\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"min-width: 100%;border-top: 2px solid #EAEAEA;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                    <tbody><tr>\n                        <td style=\"mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                            <span></span>\n                        </td>\n                    </tr>\n                </tbody></table>\n<!--\n                <td class=\"mcnDividerBlockInner\" style=\"padding: 18px;\">\n                <hr class=\"mcnDividerContent\" style=\"border-bottom-color:none; border-left-color:none; border-right-color:none; border-bottom-width:0; border-left-width:0; border-right-width:0; margin-top:0; margin-right:0; margin-bottom:0; margin-left:0;\" />\n-->\n            </td>\n        </tr>\n    </tbody>\n</table><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"mcnTextBlock\" style=\"min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n    <tbody class=\"mcnTextBlockOuter\">\n        <tr>\n            <td valign=\"top\" class=\"mcnTextBlockInner\" style=\"padding-top: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n              \t<!--[if mso]>\n\t\t\t\t<table align=\"left\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%\" style=\"width:100%;\">\n\t\t\t\t<tr>\n\t\t\t\t<![endif]-->\n\t\t\t\n\t\t\t\t<!--[if mso]>\n\t\t\t\t<td valign=\"top\" width=\"600\" style=\"width:600px;\">\n\t\t\t\t<![endif]-->\n                <table align=\"left\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width: 100%;min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;float: left;\" width=\"100%\" class=\"mcnTextContentContainer\">\n                    <tbody><tr>\n\n                        <td valign=\"top\" class=\"mcnTextContent\" style=\"padding-top: 0;padding-right: 18px;padding-bottom: 9px;padding-left: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;\">\n\n                            <p style=\"margin: 10px 0;padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;\">We look forward to seeing you at the webinar.</p>\n\n<p style=\"margin: 10px 0;padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;\">P.S. Don't wait – seats are limited and filling up fast! 🥐</p>\n\n                        </td>\n                    </tr>\n                </tbody></table>\n\t\t\t\t<!--[if mso]>\n\t\t\t\t</td>\n\t\t\t\t<![endif]-->\n\n\t\t\t\t<!--[if mso]>\n\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t\t<![endif]-->\n            </td>\n        </tr>\n    </tbody>\n</table><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"mcnTextBlock\" style=\"min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n    <tbody class=\"mcnTextBlockOuter\">\n        <tr>\n            <td valign=\"top\" class=\"mcnTextBlockInner\" style=\"padding-top: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n              \t<!--[if mso]>\n\t\t\t\t<table align=\"left\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%\" style=\"width:100%;\">\n\t\t\t\t<tr>\n\t\t\t\t<![endif]-->\n\t\t\t\n\t\t\t\t<!--[if mso]>\n\t\t\t\t<td valign=\"top\" width=\"600\" style=\"width:600px;\">\n\t\t\t\t<![endif]-->\n                <table align=\"left\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width: 100%;min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;float: left;\" width=\"100%\" class=\"mcnTextContentContainer\">\n                    <tbody><tr>\n\n                        <td valign=\"top\" class=\"mcnTextContent\" style=\"padding-top: 0;padding-right: 18px;padding-bottom: 9px;padding-left: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;\">\n\n                            <div style=\"text-align: right;\">#HappyLiveWebinaring</div>\n\n<div style=\"text-align: right;\">Your Friends from LiveWebinar</div>\n\n                        </td>\n                    </tr>\n                </tbody></table>\n\t\t\t\t<!--[if mso]>\n\t\t\t\t</td>\n\t\t\t\t<![endif]-->\n\n\t\t\t\t<!--[if mso]>\n\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t\t<![endif]-->\n            </td>\n        </tr>\n    </tbody>\n</table><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"mcnTextBlock\" style=\"min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n    <tbody class=\"mcnTextBlockOuter\">\n        <tr>\n            <td valign=\"top\" class=\"mcnTextBlockInner\" style=\"padding-top: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n              \t<!--[if mso]>\n\t\t\t\t<table align=\"left\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%\" style=\"width:100%;\">\n\t\t\t\t<tr>\n\t\t\t\t<![endif]-->\n\t\t\t\n\t\t\t\t<!--[if mso]>\n\t\t\t\t<td valign=\"top\" width=\"600\" style=\"width:600px;\">\n\t\t\t\t<![endif]-->\n                <table align=\"left\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width: 100%;min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;float: left;\" width=\"100%\" class=\"mcnTextContentContainer\">\n                    <tbody><tr>\n\n                        <td valign=\"top\" class=\"mcnTextContent\" style=\"padding-top: 0;padding-right: 18px;padding-bottom: 9px;padding-left: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;\">\n\n\n                        </td>\n                    </tr>\n                </tbody></table>\n\t\t\t\t<!--[if mso]>\n\t\t\t\t</td>\n\t\t\t\t<![endif]-->\n\n\t\t\t\t<!--[if mso]>\n\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t\t<![endif]-->\n            </td>\n        </tr>\n    </tbody>\n</table></td>\n                                        </tr>\n                                    </table>\n                                    <!--[if (gte mso 9)|(IE)]>\n                                    </td>\n                                    </tr>\n                                    </table>\n                                    <![endif]-->\n                                </td>\n                            </tr>\n                            <tr>\n                                <td align=\"center\" valign=\"top\" id=\"templateFooter\" data-template-container=\"\" style=\"background:#0a8bdd none no-repeat center/cover;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;background-color: #0a8bdd;background-image: none;background-repeat: no-repeat;background-position: center;background-size: cover;border-top: 0;border-bottom: 0;padding-top: 0px;padding-bottom: 0px;\">\n                                    <!--[if (gte mso 9)|(IE)]>\n                                    <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"600\" style=\"width:600px;\">\n                                    <tr>\n                                    <td align=\"center\" valign=\"top\" width=\"600\" style=\"width:600px;\">\n                                    <![endif]-->\n                                    <table align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"templateContainer\" style=\"border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;max-width: 600px !important;\">\n                                        <tr>\n                                            <td valign=\"top\" class=\"footerContainer\" style=\"background:#transparent none no-repeat center/cover;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;background-color: #transparent;background-image: none;background-repeat: no-repeat;background-position: center;background-size: cover;border-top: 0;border-bottom: 0;padding-top: 0;padding-bottom: 0;\"><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"mcnFollowBlock\" style=\"min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n    <tbody class=\"mcnFollowBlockOuter\">\n        <tr>\n            <td align=\"center\" valign=\"top\" style=\"padding: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\" class=\"mcnFollowBlockInner\">\n                <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"mcnFollowContentContainer\" style=\"min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n    <tbody><tr>\n        <td align=\"center\" style=\"padding-left: 9px;padding-right: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n            <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\" class=\"mcnFollowContent\">\n                <tbody><tr>\n                    <td align=\"center\" valign=\"top\" style=\"padding-top: 9px;padding-right: 9px;padding-left: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                        <table align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                            <tbody><tr>\n                                <td align=\"center\" valign=\"top\" style=\"mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                                    <!--[if mso]>\n                                    <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n                                    <tr>\n                                    <![endif]-->\n\n                                        <!--[if mso]>\n                                        <td align=\"center\" valign=\"top\">\n                                        <![endif]-->\n\n\n                                            <table align=\"left\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"display: inline;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;float: left;\">\n                                                <tbody><tr>\n                                                    <td valign=\"top\" style=\"padding-right: 10px;padding-bottom: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\" class=\"mcnFollowContentItemContainer\">\n                                                        <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"mcnFollowContentItem\" style=\"border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                                                            <tbody><tr>\n                                                                <td align=\"left\" valign=\"middle\" style=\"padding-top: 5px;padding-right: 10px;padding-bottom: 5px;padding-left: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                                                                    <table align=\"left\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"\" style=\"border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;float: left;\">\n                                                                        <tbody><tr>\n\n                                                                                <td align=\"center\" valign=\"middle\" width=\"24\" class=\"mcnFollowIconContent\" style=\"mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                                                                                    <a href=\"https://livewebinar.us18.list-manage.com/track/click?u=2da3a175a1e6d1c2e5dd0e458&id=ce5b92e5d2&e=83bbef5445\" target=\"_blank\" style=\"mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\"><img src=\"https://cdn-images.mailchimp.com/icons/social-block-v2/outline-light-facebook-48.png\" alt=\"Facebook\" style=\"display: block;border: 0;height: auto;outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;\" height=\"24\" width=\"24\" class=\"\"></a>\n                                                                                </td>\n\n\n                                                                                <td align=\"left\" valign=\"middle\" class=\"mcnFollowTextContent\" style=\"padding-left: 5px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                                                                                    <a href=\"https://livewebinar.us18.list-manage.com/track/click?u=2da3a175a1e6d1c2e5dd0e458&id=e441976d16&e=83bbef5445\" target=\"\" style=\"font-family: Arial;font-size: 12px;text-decoration: none;color: #FFFFFF;font-weight: normal;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">Facebook</a>\n                                                                                </td>\n\n                                                                        </tr>\n                                                                    </tbody></table>\n                                                                </td>\n                                                            </tr>\n                                                        </tbody></table>\n                                                    </td>\n                                                </tr>\n                                            </tbody></table>\n\n                                        <!--[if mso]>\n                                        </td>\n                                        <![endif]-->\n\n                                        <!--[if mso]>\n                                        <td align=\"center\" valign=\"top\">\n                                        <![endif]-->\n\n\n                                            <table align=\"left\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"display: inline;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;float: left;\">\n                                                <tbody><tr>\n                                                    <td valign=\"top\" style=\"padding-right: 10px;padding-bottom: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\" class=\"mcnFollowContentItemContainer\">\n                                                        <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"mcnFollowContentItem\" style=\"border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                                                            <tbody><tr>\n                                                                <td align=\"left\" valign=\"middle\" style=\"padding-top: 5px;padding-right: 10px;padding-bottom: 5px;padding-left: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                                                                    <table align=\"left\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"\" style=\"border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;float: left;\">\n                                                                        <tbody><tr>\n\n                                                                                <td align=\"center\" valign=\"middle\" width=\"24\" class=\"mcnFollowIconContent\" style=\"mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                                                                                    <a href=\"https://livewebinar.us18.list-manage.com/track/click?u=2da3a175a1e6d1c2e5dd0e458&id=c22d23a31b&e=83bbef5445\" target=\"_blank\" style=\"mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\"><img src=\"https://cdn-images.mailchimp.com/icons/social-block-v2/outline-light-linkedin-48.png\" alt=\"LinkedIn\" style=\"display: block;border: 0;height: auto;outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;\" height=\"24\" width=\"24\" class=\"\"></a>\n                                                                                </td>\n\n\n                                                                                <td align=\"left\" valign=\"middle\" class=\"mcnFollowTextContent\" style=\"padding-left: 5px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                                                                                    <a href=\"https://livewebinar.us18.list-manage.com/track/click?u=2da3a175a1e6d1c2e5dd0e458&id=8c3de10ae8&e=83bbef5445\" target=\"\" style=\"font-family: Arial;font-size: 12px;text-decoration: none;color: #FFFFFF;font-weight: normal;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">LinkedIn</a>\n                                                                                </td>\n\n                                                                        </tr>\n                                                                    </tbody></table>\n                                                                </td>\n                                                            </tr>\n                                                        </tbody></table>\n                                                    </td>\n                                                </tr>\n                                            </tbody></table>\n\n                                        <!--[if mso]>\n                                        </td>\n                                        <![endif]-->\n\n                                        <!--[if mso]>\n                                        <td align=\"center\" valign=\"top\">\n                                        <![endif]-->\n\n\n                                            <table align=\"left\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"display: inline;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;float: left;\">\n                                                <tbody><tr>\n                                                    <td valign=\"top\" style=\"padding-right: 10px;padding-bottom: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\" class=\"mcnFollowContentItemContainer\">\n                                                        <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"mcnFollowContentItem\" style=\"border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                                                            <tbody><tr>\n                                                                <td align=\"left\" valign=\"middle\" style=\"padding-top: 5px;padding-right: 10px;padding-bottom: 5px;padding-left: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                                                                    <table align=\"left\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"\" style=\"border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;float: left;\">\n                                                                        <tbody><tr>\n\n                                                                                <td align=\"center\" valign=\"middle\" width=\"24\" class=\"mcnFollowIconContent\" style=\"mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                                                                                    <a href=\"https://livewebinar.us18.list-manage.com/track/click?u=2da3a175a1e6d1c2e5dd0e458&id=564b8b879e&e=83bbef5445\" target=\"_blank\" style=\"mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\"><img src=\"https://cdn-images.mailchimp.com/icons/social-block-v2/outline-light-youtube-48.png\" alt=\"YouTube\" style=\"display: block;border: 0;height: auto;outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;\" height=\"24\" width=\"24\" class=\"\"></a>\n                                                                                </td>\n\n\n                                                                                <td align=\"left\" valign=\"middle\" class=\"mcnFollowTextContent\" style=\"padding-left: 5px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                                                                                    <a href=\"https://livewebinar.us18.list-manage.com/track/click?u=2da3a175a1e6d1c2e5dd0e458&id=e92f800dbe&e=83bbef5445\" target=\"\" style=\"font-family: Arial;font-size: 12px;text-decoration: none;color: #FFFFFF;font-weight: normal;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">YouTube</a>\n                                                                                </td>\n\n                                                                        </tr>\n                                                                    </tbody></table>\n                                                                </td>\n                                                            </tr>\n                                                        </tbody></table>\n                                                    </td>\n                                                </tr>\n                                            </tbody></table>\n\n                                        <!--[if mso]>\n                                        </td>\n                                        <![endif]-->\n\n                                        <!--[if mso]>\n                                        <td align=\"center\" valign=\"top\">\n                                        <![endif]-->\n\n\n                                            <table align=\"left\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"display: inline;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;float: left;\">\n                                                <tbody><tr>\n                                                    <td valign=\"top\" style=\"padding-right: 0;padding-bottom: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\" class=\"mcnFollowContentItemContainer\">\n                                                        <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"mcnFollowContentItem\" style=\"border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                                                            <tbody><tr>\n                                                                <td align=\"left\" valign=\"middle\" style=\"padding-top: 5px;padding-right: 10px;padding-bottom: 5px;padding-left: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                                                                    <table align=\"left\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"\" style=\"border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;float: left;\">\n                                                                        <tbody><tr>\n\n                                                                                <td align=\"center\" valign=\"middle\" width=\"24\" class=\"mcnFollowIconContent\" style=\"mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                                                                                    <a href=\"https://livewebinar.us18.list-manage.com/track/click?u=2da3a175a1e6d1c2e5dd0e458&id=c29306e3c8&e=83bbef5445\" target=\"_blank\" style=\"mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\"><img src=\"https://cdn-images.mailchimp.com/icons/social-block-v2/outline-light-link-48.png\" alt=\"Website\" style=\"display: block;border: 0;height: auto;outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;\" height=\"24\" width=\"24\" class=\"\"></a>\n                                                                                </td>\n\n\n                                                                                <td align=\"left\" valign=\"middle\" class=\"mcnFollowTextContent\" style=\"padding-left: 5px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n                                                                                    <a href=\"https://livewebinar.us18.list-manage.com/track/click?u=2da3a175a1e6d1c2e5dd0e458&id=9c62a7f442&e=83bbef5445\" target=\"\" style=\"font-family: Arial;font-size: 12px;text-decoration: none;color: #FFFFFF;font-weight: normal;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">Website</a>\n                                                                                </td>\n\n                                                                        </tr>\n                                                                    </tbody></table>\n                                                                </td>\n                                                            </tr>\n                                                        </tbody></table>\n                                                    </td>\n                                                </tr>\n                                            </tbody></table>\n\n                                        <!--[if mso]>\n                                        </td>\n                                        <![endif]-->\n\n                                    <!--[if mso]>\n                                    </tr>\n                                    </table>\n                                    <![endif]-->\n                                </td>\n                            </tr>\n                        </tbody></table>\n                    </td>\n                </tr>\n            </tbody></table>\n        </td>\n    </tr>\n</tbody></table>\n\n            </td>\n        </tr>\n    </tbody>\n</table><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"mcnCaptionBlock\" style=\"border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n    <tbody class=\"mcnCaptionBlockOuter\">\n        <tr>\n            <td class=\"mcnCaptionBlockInner\" valign=\"top\" style=\"padding: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n\n\n<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"mcnCaptionLeftContentOuter\" width=\"100%\" style=\"border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n    <tbody><tr>\n        <td valign=\"top\" class=\"mcnCaptionLeftContentInner\" style=\"padding: 0 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n            <table align=\"right\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"mcnCaptionLeftImageContentContainer\" width=\"264\" style=\"border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;float: right;\">\n                <tbody><tr>\n                    <td class=\"mcnCaptionLeftImageContent\" align=\"center\" valign=\"top\" style=\"mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n\n\n                        <img alt=\"\" src=\"https://mcusercontent.com/2da3a175a1e6d1c2e5dd0e458/images/aedd3d1b-2900-42a6-a6d8-b5572c827aed.png\" width=\"264\" style=\"max-width: 1200px;border: 0;height: auto;outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;vertical-align: bottom;\" class=\"mcnImage\">\n\n\n                    </td>\n                </tr>\n            </tbody></table>\n            <table class=\"mcnCaptionLeftTextContentContainer\" align=\"left\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"264\" style=\"border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;float: left;\">\n                <tbody><tr>\n                    <td valign=\"top\" class=\"mcnTextContent\" style=\"mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #FFFFFF;font-family: Helvetica;font-size: 12px;line-height: 150%;text-align: center;\">\n                        Want to change how you receive these emails?<br>\nYou can&nbsp;<a href=\"https://livewebinar.us18.list-manage.com/track/click?u=2da3a175a1e6d1c2e5dd0e458&id=cd7e991f5e&e=83bbef5445\" style=\"mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #FFFFFF;font-weight: normal;text-decoration: underline;\">update your preferences</a>&nbsp;or&nbsp;<a href=\"https://livewebinar.us18.list-manage.com/track/click?u=2da3a175a1e6d1c2e5dd0e458&id=5e312820a1&e=83bbef5445\" style=\"mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #FFFFFF;font-weight: normal;text-decoration: underline;\">unsubscribe from this list</a>.\n                    </td>\n                </tr>\n            </tbody></table>\n        </td>\n    </tr>\n</tbody></table>\n\n\n\n\n\n            </td>\n        </tr>\n    </tbody>\n</table><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" class=\"mcnTextBlock\" style=\"min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n    <tbody class=\"mcnTextBlockOuter\">\n        <tr>\n            <td valign=\"top\" class=\"mcnTextBlockInner\" style=\"padding-top: 9px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;\">\n              \t<!--[if mso]>\n\t\t\t\t<table align=\"left\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%\" style=\"width:100%;\">\n\t\t\t\t<tr>\n\t\t\t\t<![endif]-->\n\t\t\t\n\t\t\t\t<!--[if mso]>\n\t\t\t\t<td valign=\"top\" width=\"600\" style=\"width:600px;\">\n\t\t\t\t<![endif]-->\n                <table align=\"left\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width: 100%;min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;float: left;\" width=\"100%\" class=\"mcnTextContentContainer\">\n                    <tbody><tr>\n\n                        <td valign=\"top\" class=\"mcnTextContent\" style=\"padding-top: 0;padding-right: 18px;padding-bottom: 9px;padding-left: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #FFFFFF;font-family: Helvetica;font-size: 12px;line-height: 150%;text-align: center;\">\n\n                            <em>Copyright © 2024 LiveWebinar, All rights reserved.</em><br>\n You are receiving this email because you signed up at LiveWebinar.com<br>\n<br>\n<strong>Our mailing address is:</strong><br>\n<div class=\"vcard\"><span class=\"org fn\">LiveWebinar</span><div class=\"adr\"><div class=\"street-address\">al. Grunwaldzka 212</div><span class=\"locality\">Gdansk</span> <span class=\"postal-code\">80-266</span> <div class=\"country-name\">Poland</div></div><br><a href=\"https://livewebinar.us18.list-manage.com/vcard?u=2da3a175a1e6d1c2e5dd0e458&id=e87a0f2d91\" class=\"hcard-download\">Add us to your address book</a></div>\n                        </td>\n                    </tr>\n                </tbody></table>\n\t\t\t\t<!--[if mso]>\n\t\t\t\t</td>\n\t\t\t\t<![endif]-->\n\n\t\t\t\t<!--[if mso]>\n\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t\t<![endif]-->\n            </td>\n        </tr>\n    </tbody>\n</table></td>\n                                        </tr>\n                                    </table>\n                                    <!--[if (gte mso 9)|(IE)]>\n                                    </td>\n                                    </tr>\n                                    </table>\n                                    <![endif]-->\n                                </td>\n                            </tr>\n                        </table>\n                        <!-- // END TEMPLATE -->\n                    </td>\n                </tr>\n            </table>\n        </center>\n                <center>\n                <br />\n                <br />\n                <br />\n                <br />\n                <br />\n                <br />\n                <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" id=\"canspamBarWrapper\" style=\"background-color:#FFFFFF; border-top:1px solid #E5E5E5;\">\n                    <tr>\n                        <td align=\"center\" valign=\"top\" style=\"padding-top:20px; padding-bottom:20px;\">\n                            <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" id=\"canspamBar\">\n                                <tr>\n                                    <td align=\"center\" valign=\"top\" style=\"color:#606060; font-family:Helvetica, Arial, sans-serif; font-size:11px; line-height:150%; padding-right:20px; padding-bottom:5px; padding-left:20px; text-align:center;\">\n                                        This email was sent to <a href=\"mailto:automatestpete@gmail.com\" target=\"_blank\" style=\"color:#404040 !important;\">automatestpete@gmail.com</a>\n                                        <br />\n                                        <a href=\"https://livewebinar.us18.list-manage.com/about?u=2da3a175a1e6d1c2e5dd0e458&id=e87a0f2d91&e=83bbef5445&c=6f6e4410d3\" target=\"_blank\" style=\"color:#404040 !important;\"><em>why did I get this?</em></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"https://livewebinar.us18.list-manage.com/unsubscribe?u=2da3a175a1e6d1c2e5dd0e458&id=e87a0f2d91&t=b&e=83bbef5445&c=6f6e4410d3\" style=\"color:#404040 !important;\">unsubscribe from this list</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"https://livewebinar.us18.list-manage.com/profile?u=2da3a175a1e6d1c2e5dd0e458&id=e87a0f2d91&e=83bbef5445&c=6f6e4410d3\" style=\"color:#404040 !important;\">update subscription preferences</a>\n                                        <br />\n                                        LiveWebinar &middot; al. Grunwaldzka 212 &middot; Gdansk 80-266 &middot; Poland\n                                        <br />\n                                        <br />\n\n                                    </td>\n                                </tr>\n                            </table>\n                        </td>\n                    </tr>\n                </table>\n                <style type=\"text/css\">\n                    @media only screen and (max-width: 480px){\n                        table#canspamBar td{font-size:14px !important;}\n                        table#canspamBar td a{display:block !important; margin-top:10px !important;}\n                    }\n                </style>\n            </center><img src=\"https://livewebinar.us18.list-manage.com/track/open.php?u=2da3a175a1e6d1c2e5dd0e458&id=6f6e4410d3&e=83bbef5445\" height=\"1\" width=\"1\" alt=\"\"></body>\n</html>",
+          "text": "Start making money with webinars! Join the free training and create your first profitable webinar with us!\n\n\n** Hi Robert\n------------------------------------------------------------\n\nDreaming of expanding your reach, attracting more customers, and driving sales?\n\n✨ This webinar is designed for you!\n\nJoin us to learn step-by-step how to create events that captivate and inspire your audience—transforming their engagement into brand loyalty and real profits.\n\nGuided by Adrian Zebrowski, a webinar marketing expert, you’ll uncover proven strategies and best practices. Plus, during an exclusive live workshop, you’ll learn how to set up your very first webinar on the LiveWebinar platform.\n\nThis isn’t just theory—it's practical, actionable steps that will make a difference in your business!\n\n🎉 Your first webinar: How to create an event that increases sales?\n\n📅 November 27, 2024\n⏰ 10 AM PDT | 1 PM EDT | 6 PM | CET\nI want to participate in the free training! (https://livewebinar.com/707-365-660?_e_source_t=5abf898a-73a9-4906-8453-2c94044f3ed4)\n\nCan’t join us live?\nNo worries—sign up, and we’ll send you the full webinar recording to watch at your convenience!\n\n\n** During this webinar you will learn:\n------------------------------------------------------------\n* 🚀 How to plan an engaging and profitable webinar step by step.\n* 👀 How to grab your audience's attention and build engagement from the first minute.\n* 💻 How to set up your first webinar on the LiveWebinar platform.\n* 🌟 How to use webinars to build your brand and generate consistent profits.\n\nThe webinar will be led by an experienced professional who uses these techniques on a daily basis to help companies scale their online operations.\nhttps://livewebinar.com/707-365-660?_e_source_t=5abf898a-73a9-4906-8453-2c94044f3ed4\n\n\n** Get certified!\n------------------------------------------------------------\n\nEach participant of our training will receive an e-certificate that will confirm their participation and skills acquired. This is an excellent recognition and a valuable addition to your portfolio!\nI want to get certified! (https://livewebinar.com/707-365-660?_e_source_t=5abf898a-73a9-4906-8453-2c94044f3ed4)\nhttps://www.livewebinar.com/features/audience-engagement/certificate-of-participation\nHOST: ADRIAN ZEBROWSKI\n\nAdrian Zebrowski is a Webinar Marketing Specialist with a background in AI and a data-driven approach. With expertise in digital marketing, he uses advanced analytics to optimize webinars and boost engagement.\n\nA University of Derby graduate, Adrian translates complex data into actionable insights, creating impactful, growth-driven webinars. He frequently shares his knowledge as a speaker and author in the field.\n\nWe look forward to seeing you at the webinar.\n\nP.S. Don't wait – seats are limited and filling up fast! 🥐\n#HappyLiveWebinaring\nYour Friends from LiveWebinar\n\n============================================================\n** Facebook (https://www.facebook.com/LiveWebinar-2338057372881659)\n** Facebook (https://www.facebook.com/LiveWebinar-2338057372881659)\n** LinkedIn (https://www.linkedin.com/company/livewebinarcom/)\n** LinkedIn (https://www.linkedin.com/company/livewebinarcom/)\n** YouTube (https://www.youtube.com/channel/UCWxIlsbSfhX8zq6Hw9GFlxw)\n** YouTube (https://www.youtube.com/channel/UCWxIlsbSfhX8zq6Hw9GFlxw)\n** Website (https://livewebinar.com)\n** Website (https://livewebinar.com)\n\nWant to change how you receive these emails?\nYou can ** update your preferences (https://livewebinar.us18.list-manage.com/profile?u=2da3a175a1e6d1c2e5dd0e458&id=e87a0f2d91&e=[UNIQID])\nor ** unsubscribe from this list (https://livewebinar.us18.list-manage.com/unsubscribe?u=2da3a175a1e6d1c2e5dd0e458&id=e87a0f2d91&e=[UNIQID]&c=e9145e9aa7)\n.\nCopyright © 2024 LiveWebinar, All rights reserved.\n You are receiving this email because you signed up at LiveWebinar.com\n\nOur mailing address is:\nLiveWebinar\nal. Grunwaldzka 212\nGdansk 80-266\nPoland\nThis email was sent to automatestpete@gmail.com (mailto:automatestpete@gmail.com)\nwhy did I get this? (https://livewebinar.us18.list-manage.com/about?u=2da3a175a1e6d1c2e5dd0e458&id=e87a0f2d91&e=83bbef5445&c=6f6e4410d3)     unsubscribe from this list (https://livewebinar.us18.list-manage.com/unsubscribe?u=2da3a175a1e6d1c2e5dd0e458&id=e87a0f2d91&t=b&e=83bbef5445&c=6f6e4410d3)     update subscription preferences (https://livewebinar.us18.list-manage.com/profile?u=2da3a175a1e6d1c2e5dd0e458&id=e87a0f2d91&e=83bbef5445&c=6f6e4410d3)\nLiveWebinar . al. Grunwaldzka 212 . Gdansk 80-266 . Poland",
+          "textAsHtml": "<p>Start making money with webinars! Join the free training and create your first profitable webinar with us!</p><p>** Hi Robert<br/>------------------------------------------------------------</p><p>Dreaming of expanding your reach, attracting more customers, and driving sales?</p><p>&#x2728; This webinar is designed for you!</p><p>Join us to learn step-by-step how to create events that captivate and inspire your audience&mdash;transforming their engagement into brand loyalty and real profits.</p><p>Guided by Adrian Zebrowski, a webinar marketing expert, you&rsquo;ll uncover proven strategies and best practices. Plus, during an exclusive live workshop, you&rsquo;ll learn how to set up your very first webinar on the LiveWebinar platform.</p><p>This isn&rsquo;t just theory&mdash;it&apos;s practical, actionable steps that will make a difference in your business!</p><p>&#x1F389; Your first webinar: How to create an event that increases sales?</p><p>&#x1F4C5; November 27, 2024<br/>&#x23F0; 10 AM PDT | 1 PM EDT | 6 PM | CET<br/>I want to participate in the free training! (<a href=\"https://livewebinar.com/707-365-660?_e_source_t=5abf898a-73a9-4906-8453-2c94044f3ed4\">https://livewebinar.com/707-365-660?_e_source_t=5abf898a-73a9-4906-8453-2c94044f3ed4</a>)</p><p>Can&rsquo;t join us live?<br/>No worries&mdash;sign up, and we&rsquo;ll send you the full webinar recording to watch at your convenience!</p><p>** During this webinar you will learn:<br/>------------------------------------------------------------<br/>* &#x1F680; How to plan an engaging and profitable webinar step by step.<br/>* &#x1F440; How to grab your audience&apos;s attention and build engagement from the first minute.<br/>* &#x1F4BB; How to set up your first webinar on the LiveWebinar platform.<br/>* &#x1F31F; How to use webinars to build your brand and generate consistent profits.</p><p>The webinar will be led by an experienced professional who uses these techniques on a daily basis to help companies scale their online operations.<br/><a href=\"https://livewebinar.com/707-365-660?_e_source_t=5abf898a-73a9-4906-8453-2c94044f3ed4\">https://livewebinar.com/707-365-660?_e_source_t=5abf898a-73a9-4906-8453-2c94044f3ed4</a></p><p>** Get certified!<br/>------------------------------------------------------------</p><p>Each participant of our training will receive an e-certificate that will confirm their participation and skills acquired. This is an excellent recognition and a valuable addition to your portfolio!<br/>I want to get certified! (<a href=\"https://livewebinar.com/707-365-660?_e_source_t=5abf898a-73a9-4906-8453-2c94044f3ed4\">https://livewebinar.com/707-365-660?_e_source_t=5abf898a-73a9-4906-8453-2c94044f3ed4</a>)<br/><a href=\"https://www.livewebinar.com/features/audience-engagement/certificate-of-participation\">https://www.livewebinar.com/features/audience-engagement/certificate-of-participation</a><br/>HOST: ADRIAN ZEBROWSKI</p><p>Adrian Zebrowski is a Webinar Marketing Specialist with a background in AI and a data-driven approach. With expertise in digital marketing, he uses advanced analytics to optimize webinars and boost engagement.</p><p>A University of Derby graduate, Adrian translates complex data into actionable insights, creating impactful, growth-driven webinars. He frequently shares his knowledge as a speaker and author in the field.</p><p>We look forward to seeing you at the webinar.</p><p>P.S. Don&apos;t wait &ndash; seats are limited and filling up fast! &#x1F950;<br/>#HappyLiveWebinaring<br/>Your Friends from LiveWebinar</p><p>============================================================<br/>** Facebook (<a href=\"https://www.facebook.com/LiveWebinar-2338057372881659\">https://www.facebook.com/LiveWebinar-2338057372881659</a>)<br/>** Facebook (<a href=\"https://www.facebook.com/LiveWebinar-2338057372881659\">https://www.facebook.com/LiveWebinar-2338057372881659</a>)<br/>** LinkedIn (<a href=\"https://www.linkedin.com/company/livewebinarcom/\">https://www.linkedin.com/company/livewebinarcom/</a>)<br/>** LinkedIn (<a href=\"https://www.linkedin.com/company/livewebinarcom/\">https://www.linkedin.com/company/livewebinarcom/</a>)<br/>** YouTube (<a href=\"https://www.youtube.com/channel/UCWxIlsbSfhX8zq6Hw9GFlxw\">https://www.youtube.com/channel/UCWxIlsbSfhX8zq6Hw9GFlxw</a>)<br/>** YouTube (<a href=\"https://www.youtube.com/channel/UCWxIlsbSfhX8zq6Hw9GFlxw\">https://www.youtube.com/channel/UCWxIlsbSfhX8zq6Hw9GFlxw</a>)<br/>** Website (<a href=\"https://livewebinar.com\">https://livewebinar.com</a>)<br/>** Website (<a href=\"https://livewebinar.com\">https://livewebinar.com</a>)</p><p>Want to change how you receive these emails?<br/>You can ** update your preferences (<a href=\"https://livewebinar.us18.list-manage.com/profile?u=2da3a175a1e6d1c2e5dd0e458&id=e87a0f2d91&e=[UNIQID]\">https://livewebinar.us18.list-manage.com/profile?u=2da3a175a1e6d1c2e5dd0e458&id=e87a0f2d91&e=[UNIQID]</a>)<br/>or ** unsubscribe from this list (<a href=\"https://livewebinar.us18.list-manage.com/unsubscribe?u=2da3a175a1e6d1c2e5dd0e458&id=e87a0f2d91&e=[UNIQID]&c=e9145e9aa7\">https://livewebinar.us18.list-manage.com/unsubscribe?u=2da3a175a1e6d1c2e5dd0e458&id=e87a0f2d91&e=[UNIQID]&c=e9145e9aa7</a>)<br/>.<br/>Copyright &copy; 2024 LiveWebinar, All rights reserved.<br/> You are receiving this email because you signed up at <a href=\"http://LiveWebinar.com\">LiveWebinar.com</a></p><p>Our mailing address is:<br/>LiveWebinar<br/>al. Grunwaldzka 212<br/>Gdansk 80-266<br/>Poland<br/>This email was sent to <a href=\"mailto:automatestpete@gmail.com\">automatestpete@gmail.com</a> (<a href=\"mailto:automatestpete@gmail.com\">mailto:automatestpete@gmail.com</a>)<br/>why did I get this? (<a href=\"https://livewebinar.us18.list-manage.com/about?u=2da3a175a1e6d1c2e5dd0e458&id=e87a0f2d91&e=83bbef5445&c=6f6e4410d3\">https://livewebinar.us18.list-manage.com/about?u=2da3a175a1e6d1c2e5dd0e458&id=e87a0f2d91&e=83bbef5445&c=6f6e4410d3</a>)     unsubscribe from this list (<a href=\"https://livewebinar.us18.list-manage.com/unsubscribe?u=2da3a175a1e6d1c2e5dd0e458&id=e87a0f2d91&t=b&e=83bbef5445&c=6f6e4410d3\">https://livewebinar.us18.list-manage.com/unsubscribe?u=2da3a175a1e6d1c2e5dd0e458&id=e87a0f2d91&t=b&e=83bbef5445&c=6f6e4410d3</a>)     update subscription preferences (<a href=\"https://livewebinar.us18.list-manage.com/profile?u=2da3a175a1e6d1c2e5dd0e458&id=e87a0f2d91&e=83bbef5445&c=6f6e4410d3\">https://livewebinar.us18.list-manage.com/profile?u=2da3a175a1e6d1c2e5dd0e458&id=e87a0f2d91&e=83bbef5445&c=6f6e4410d3</a>)<br/>LiveWebinar . al. Grunwaldzka 212 . Gdansk 80-266 . Poland</p>",
+          "subject": "Ready to Launch Your First Webinar? We’ll Show You How – For Free!",
+          "date": "2024-11-20T13:22:00.000Z",
+          "to": {
+            "value": [
+              {
+                "address": "automatestpete@gmail.com",
+                "name": "Robert"
+              }
+            ],
+            "html": "<span class=\"mp_address_group\"><span class=\"mp_address_name\">Robert</span> &lt;<a href=\"mailto:automatestpete@gmail.com\" class=\"mp_address_email\">automatestpete@gmail.com</a>&gt;</span>",
+            "text": "\"Robert\" <automatestpete@gmail.com>"
+          },
+          "from": {
+            "value": [
+              {
+                "address": "info@livewebinar.com",
+                "name": "Adrian Zebrowski"
+              }
+            ],
+            "html": "<span class=\"mp_address_group\"><span class=\"mp_address_name\">Adrian Zebrowski</span> &lt;<a href=\"mailto:info@livewebinar.com\" class=\"mp_address_email\">info@livewebinar.com</a>&gt;</span>",
+            "text": "\"Adrian Zebrowski\" <info@livewebinar.com>"
+          },
+          "messageId": "<2da3a175a1e6d1c2e5dd0e458.83bbef5445.20241120132150.6f6e4410d3.d4c2137c@mail191.atl81.rsgsv.net>",
+          "replyTo": {
+            "value": [
+              {
+                "address": "us18-78d41ea48f-03c714c5ad@inbound.mailchimpapp.net",
+                "name": ""
+              }
+            ],
+            "html": "<span class=\"mp_address_group\"><a href=\"mailto:us18-78d41ea48f-03c714c5ad@inbound.mailchimpapp.net\" class=\"mp_address_email\">us18-78d41ea48f-03c714c5ad@inbound.mailchimpapp.net</a></span>",
+            "text": "us18-78d41ea48f-03c714c5ad@inbound.mailchimpapp.net"
+          }
+        }
+      }
+    ]
+  },
   "settings": {
     "executionOrder": "v1"
   },
-  "staticData": {
-    "node:File Created": {
-      "lastTimeChecked": "2024-11-19T20:04:04Z"
-    },
-    "node:File Updated": {
-      "lastTimeChecked": "2024-11-19T20:04:04Z"
-    }
-  },
+  "staticData": null,
   "tags": [],
-  "triggerCount": 5,
-  "updatedAt": "2024-11-19T20:04:04.000Z",
-  "versionId": "bce42b6e-049e-42d4-a814-0f61ba539579"
+  "triggerCount": 0,
+  "updatedAt": "2024-11-20T14:08:30.000Z",
+  "versionId": "8adb2c03-237f-4c36-806c-26025173a463"
 }
