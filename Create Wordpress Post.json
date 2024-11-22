@@ -1,0 +1,771 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Date & Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "Google Docs1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time": {
+      "main": [
+        [
+          {
+            "node": "Date & Time1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Doc": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Docs1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Docs2": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Google Docs3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Create Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Docs3": {
+      "main": [
+        [
+          {
+            "node": "Google Docs2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown": {
+      "main": [
+        [
+          {
+            "node": "Wordpress",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-11-22T15:44:21.900Z",
+  "id": "7KGOJ6bvyYZ4ozlN",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Create Wordpress Post",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "835ff0b4-b0b5-456b-a8d7-1407ceecb40d",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        340,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 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"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"model\": \"llama-3.1-sonar-small-128k-online\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a researcher. Finding information about the given topic\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Ai for small business\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "e528128e-ccf0-4f27-9a4e-874756257b41",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1520,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "f6da4d63-56ac-454d-a655-d61917a5ba8d",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2100,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "citations",
+        "options": {}
+      },
+      "id": "ecec217f-d3ef-4e6d-85b5-307a22d1f2f1",
+      "name": "Split Out",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1800,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://browserless.aspworkplace.com/content",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "31a645e3-8903-4aae-8e9e-7854174259de"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "cookie",
+              "value": "browserless_token=31a645e3-8903-4aae-8e9e-7854174259de;"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "url",
+              "value": "https://workspace.google.com/resources/ai-for-small-business/"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2320,
+        480
+      ],
+      "id": "e16e295f-73af-48fb-8a22-a9811ae05a32",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "data",
+              "cssSelector": "body"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        2540,
+        480
+      ],
+      "id": "209ee811-d0e5-452d-8fb5-17fb4268a0a0",
+      "name": "HTML"
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.data }}",
+        "schemaType": "fromJson",
+        "jsonSchemaExample": "{\n\t\"content\": \"content of the information given\"\n}",
+        "options": {
+          "systemPromptTemplate": "You are an expert extraction algorithm.\nOnly extract relevant information from the text.\nIf you do not know the value of an attribute asked to extract, you may omit the attribute's value."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1,
+      "position": [
+        2760,
+        480
+      ],
+      "id": "326da1c0-5885-4df3-a152-19bcac932b7d",
+      "name": "Information Extractor"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        2680,
+        740
+      ],
+      "id": "c6fbafd7-1703-403a-9c1e-d0514ba8ee27",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $('Create Doc').item.json.id }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "=\n-------------------------------------------------------------------\nInfo Extraction for {{ $('Loop Over Items').item.json.citations }}\n-------------------------------------------------------------------\n{{ $json.output.content }}\n-------------------------------------------------------------------\n"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        3120,
+        480
+      ],
+      "id": "09964d5d-9ff9-47e8-b9f1-f6d581f9abd1",
+      "name": "Google Docs1",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "vf3EWQqMHWE96oFt",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        560,
+        360
+      ],
+      "id": "805498c0-a4d9-40fc-9407-f7f7c28968ab",
+      "name": "Date & Time"
+    },
+    {
+      "parameters": {
+        "operation": "formatDate",
+        "date": "={{ $json.currentDate }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        780,
+        360
+      ],
+      "id": "0e0614f6-04ac-4af5-91e2-32facc800d22",
+      "name": "Date & Time1"
+    },
+    {
+      "parameters": {
+        "folderId": "default",
+        "title": "=Research Doc - {{ $json.formattedDate }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1260,
+        360
+      ],
+      "id": "fe7665c5-85fa-4ba2-bc67-0d315ca47c2f",
+      "name": "Create Doc",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "vf3EWQqMHWE96oFt",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Current Date Info\n",
+        "height": 300,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        520,
+        240
+      ],
+      "typeVersion": 1,
+      "id": "6d04b60f-2e7f-4267-a961-217d1e107bea",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Create Blank Research Doc",
+        "height": 300
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1200,
+        240
+      ],
+      "typeVersion": 1,
+      "id": "eaa8cc04-873d-491d-8ed9-8e7d43656d93",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Get Research Topics",
+        "height": 300
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        940,
+        240
+      ],
+      "typeVersion": 1,
+      "id": "1d86c924-c69f-4b9f-81f3-2159cddbe519",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Research Topics using Perplexity",
+        "height": 300
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1460,
+        240
+      ],
+      "typeVersion": 1,
+      "id": "59f655a1-16cc-4f58-b149-dc60c95ff5f6",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Split out Perplexity Citations",
+        "height": 300,
+        "width": 280
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1720,
+        240
+      ],
+      "typeVersion": 1,
+      "id": "f88a5247-31ff-4e43-9a07-2f5565aa9d65",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## Additional Research",
+        "height": 560,
+        "width": 1280
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2020,
+        300
+      ],
+      "typeVersion": 1,
+      "id": "7015e3c5-0a25-4fac-b7f8-cf91484d056d",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "## Write new article using research results",
+        "height": 260,
+        "width": 1280
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2020,
+        20
+      ],
+      "typeVersion": 1,
+      "id": "f750c48c-59c9-45fb-8851-fd11fe0ff863",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $json.documentId }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        2740,
+        100
+      ],
+      "id": "9bfeccb5-9acf-4197-9c6b-7704ef2a34bb",
+      "name": "Google Docs2",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "vf3EWQqMHWE96oFt",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "documentId"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2320,
+        100
+      ],
+      "id": "90eba6ab-00bd-441b-a3eb-4f1d92b75e4f",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1j1OwR4x1i9WjA6agN0G42ay4MJTC9GU3qfWZ7v3yoSo",
+          "mode": "list",
+          "cachedResultName": "Perlexity N8n Research Topics",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j1OwR4x1i9WjA6agN0G42ay4MJTC9GU3qfWZ7v3yoSo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j1OwR4x1i9WjA6agN0G42ay4MJTC9GU3qfWZ7v3yoSo/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1000,
+        360
+      ],
+      "id": "de5a063a-dfe9-4009-ba97-557aec37c8cb",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sKITsW661Itsg15I",
+          "name": "Google Sheets account - ASP"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $json.documentId[0] }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ JSON.stringify($('HTTP Request').item.json) }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        2540,
+        100
+      ],
+      "id": "b2cc389a-f1e9-434e-bacc-1ec7e404d4e6",
+      "name": "Google Docs3",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "vf3EWQqMHWE96oFt",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.content }}"
+            },
+            {
+              "content": "=You are a helpful and knowledgeable writing assistant who specializes in creating articles about technology. Your primary goal is to present complex technical topics in a clear, concise, and easily relatable way for the average person to understand. \n\n- Use a **friendly and approachable tone** to make readers feel engaged and comfortable.  \n- Break down jargon and technical terms into **simple explanations** whenever possible.  \n- Focus on **practical insights** and examples that readers can relate to in their daily lives.  \n- Ensure your writing is **unbiased** and balanced, presenting information fairly without promoting or criticizing specific brands or technologies.  \n- Keep sentences and paragraphs concise, avoiding unnecessary fluff, while maintaining a natural flow.  \n- Always aim to **educate and empower readers** with actionable knowledge they can use.  \n\nAt the end of your articles, include a **clear call to action**, inviting readers to reach out with any questions or for further information. For example:  \n*\"If you have any questions or want to learn more about this topic, feel free to contact us—we're here to help!\"*  \n\nWrite as if you're explaining the topic to a curious friend who is not an expert but eager to learn.\n\nThe output of your final result must always include a subject and content",
+              "role": "system"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.7,
+      "position": [
+        2960,
+        100
+      ],
+      "id": "3fce0d42-6b43-4b02-890d-6a9d7d628888",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "title": "={{ $json.message.content.subject }}",
+        "additionalFields": {
+          "content": "={{ $json.data }}",
+          "status": "draft"
+        }
+      },
+      "type": "n8n-nodes-base.wordpress",
+      "typeVersion": 1,
+      "position": [
+        3560,
+        100
+      ],
+      "id": "2f44fc68-2651-4f81-84e2-53e72d26b771",
+      "name": "Wordpress",
+      "credentials": {
+        "wordpressApi": {
+          "id": "Xikd26BdacQVX1dR",
+          "name": "Wordpress account - ASP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "markdownToHtml",
+        "markdown": "={{ $json.message.content.content }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        3380,
+        100
+      ],
+      "id": "e1b51d54-8504-4e73-bc17-bf8b96cdbeab",
+      "name": "Markdown"
+    },
+    {
+      "parameters": {
+        "content": "## Format and Publish to Website",
+        "height": 260,
+        "width": 460
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3320,
+        20
+      ],
+      "typeVersion": 1,
+      "id": "06cd17de-0363-4467-9069-e213d519acf0",
+      "name": "Sticky Note8"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-11-22T20:50:02.000Z",
+  "versionId": "14b4ba55-f15e-4d84-92b1-8688d1171538"
+}
