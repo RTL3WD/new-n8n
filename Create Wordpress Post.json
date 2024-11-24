@@ -602,7 +602,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1560,
+        1540,
         380
       ]
     },
@@ -759,7 +759,7 @@
         "title": "={{ $json.message.content.subject }}",
         "additionalFields": {
           "content": "={{ $json.data }}",
-          "status": "draft"
+          "status": "publish"
         }
       },
       "type": "n8n-nodes-base.wordpress",
@@ -775,8 +775,7 @@
           "id": "Xikd26BdacQVX1dR",
           "name": "Wordpress account - ASP"
         }
-      },
-      "disabled": true
+      }
     },
     {
       "parameters": {
@@ -952,6 +951,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-11-23T03:14:00.000Z",
-  "versionId": "f7468e05-b9d1-47ec-aae6-01c5d2d2e354"
+  "updatedAt": "2024-11-24T16:21:14.000Z",
+  "versionId": "e6e28186-deec-44ca-bba5-fd191a3ef103"
 }
