@@ -1,0 +1,46 @@
+{
+  "active": false,
+  "connections": {},
+  "createdAt": "2024-11-24T17:11:10.264Z",
+  "id": "r73ZoWO9at7EhpU3",
+  "meta": null,
+  "name": "Perplexity Research Tool",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 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"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"llama-3.1-sonar-small-128k-online\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are to research companies and their websites. Then answer the following question: What their primary services/products\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"https://bizfundingfinder.com/\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "3d811d73-62fe-436f-849b-3c0462713923",
+      "name": "Search Perplexity",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -400,
+        200
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-11-24T18:15:11.000Z",
+  "versionId": "2b46ffde-084e-4889-ac48-77c1cda8eb78"
+}
