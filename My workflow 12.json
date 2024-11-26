@@ -1,0 +1,139 @@
+{
+  "active": false,
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-11-26T15:18:43.066Z",
+  "id": "NEXNBUl197AOl5kJ",
+  "meta": null,
+  "name": "My workflow 12",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2549274f-4b18-42ad-9ab4-e567bfba692b",
+      "name": "Execute Workflow Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Content is below:\nAction: {{ $('Execute Workflow Trigger').all()[0].json.query.action }}\nEmail Address: {{ $('Execute Workflow Trigger').all()[0].json.query.email }}\nSubject: {{ $('Execute Workflow Trigger').all()[0].json.query.subject }}\nMessage: {{ $('Execute Workflow Trigger').all()[0].json.query.message }}",
+        "options": {
+          "systemMessage": "=You are a helpful assistant integrated. Your primary responsibility is to process input data and determine the correct response or action based on the provided information. Follow these instructions to interact with the input:\n\n1. **Input Format:**\n   - The input will include the following fields:\n     - `action`: Specifies the task to perform (e.g., `send_email`, `retrieve_email`, `draft_email`). This determines your response logic.\n     - `email`: The recipient's email address (mandatory for `send_email`).\n     - `subject`: The subject of the email (mandatory for `send_email` or `draft_email`).\n     - `message`: The body of the email (mandatory for `send_email` or `draft_email`).\n\n2. **Action-Specific Behavior:**\n   - If `action` is `send_email`, validate that all fields (`email`, `subject`, `message`) are present and generate a confirmation message for sending the email.\n   - If `action` is `retrieve_email`, confirm the action and prepare to retrieve emails (no additional fields required).\n   - If `action` is `draft_email`, ensure the `subject` and `message` fields are present, and generate a response confirming the draft creation.\n\n3. **Validation:**\n   - Ensure all required fields for the specified `action` are present. If any required fields are missing or improperly formatted (e.g., invalid email address), generate an error message describing the issue.\n\n4. **Output:**\n   - For successful operations, format a confirmation response detailing the action taken (e.g., \"Email sent to [email] with subject '[subject]'\").\n   - For errors, provide a clear explanation of the problem.\n\n5. **Example Workflow:**\n   - **Input:** \n     ```json\n     {\n       \"action\": \"send_email\",\n       \"email\": \"demo@automatestpete.com\",\n       \"subject\": \"Looking Forward to Our Meeting\",\n       \"message\": \"I'm looking forward to meeting and talking about what Ai can do for my business.\"\n     }\n     ```\n   - **Response:** \"The email has been sent to demo@automatestpete.com with the subject 'Looking Forward to Our Meeting.'\"\n\n6. **Memory and Context:**\n   - Use the memory buffer to maintain context for short-term tasks but ensure that responses remain focused and relevant to the current request.",
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "878d1dc4-e2d1-4fd5-82e8-35d44fd76567",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        160,
+        220
+      ],
+      "id": "ec5cfd03-2c74-4340-97e2-9603512c301f",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $fromAI(\"emailTo\") }}",
+        "subject": "={{ $fromAI(\"subject\") }}",
+        "emailType": "text",
+        "message": "={{ $fromAI(\"message\") }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        380,
+        220
+      ],
+      "id": "ba20a492-7213-42f4-bd13-ecde062281bb",
+      "name": "Gmail",
+      "webhookId": "a13a5eea-ebfd-4b59-9e81-b098525d7455",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Execute Workflow Trigger": [
+      {
+        "json": {
+          "query": {
+            "action": "send_email",
+            "email": "demo@automatestpete.com",
+            "subject": "Looking Forward to Our Meeting",
+            "message": "I'm looking forward to meeting and talking about what Ai can do for my business."
+          },
+          "sessionId": "3d2d392931cc41178fdff419543edd5a"
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-11-26T15:29:13.000Z",
+  "versionId": "f6f90c26-9135-4835-961b-13de24d87893"
+}
