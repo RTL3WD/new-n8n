@@ -41,17 +41,6 @@
         ]
       ]
     },
-    "Window Buffer Memory": {
-      "ai_memory": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_memory",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Get Message": {
       "ai_tool": [
         [
@@ -171,15 +160,16 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "={{ $('Execute Workflow Trigger').all()[0].json.query }}",
+        "text": "={{ JSON.stringify($json.query) }}",
         "options": {
-          "systemMessage": "=You are a helpful assistant capable of managing email communications using the provided tools. You have access to the following tools:\n\nGet Unread Messages: Use this tool to retrieve a list of unread email messages. Specify the 'Limit' parameter to control the number of messages retrieved (default is 10).\n\nGet Message: Use this tool to retrieve a specific email message by its 'MessageId'.\n\nSend Message: Use this tool to send an email to specified recipients. You'll need to provide 'SendTo' (recipient's email address), 'Subject', and 'Text' (body of the email).\n\nMark Message Read: Use this tool to mark a specific email message as read using its 'MessageId'.\n\nCreate Label: Use this tool to create a new label in the email account. Provide the 'Label' name.\n\nGet All Labels: Use this tool to retrieve all labels available in the email account.\n\nGet Label: Use this tool to retrieve details of a specific label by its 'LabelId'.\n\nCreate Draft: Use this tool to create a draft email message. Provide 'Subject' and 'Message'.\n\nGet Drafts: Use this tool to retrieve all draft messages.\n\nGet Draft: Use this tool to retrieve a specific draft message by its 'DraftId'.\n\nGuidelines:\n\nUnderstanding User Requests: Carefully analyze the user's query to determine the required action—whether it's sending an email, retrieving messages, managing drafts, or handling labels.\n\nParameter Extraction: Extract relevant details from the user's request, such as email addresses, subjects, message content, 'MessageId's, 'DraftId's, 'LabelId's, and label names.\n\nTool Invocation: Call the appropriate tool(s) with the correct parameters based on the user's request.\n\nCommunication Style: Provide clear and concise responses to the user, confirming the actions taken or informing them of any issues.\n\nPrivacy and Security: Ensure that sensitive information, such as email addresses and message content, is handled securely and communicated appropriately.\n\nExamples:\n\nSending an Email:\n\nUser Request: \"Send an email to jane.doe@example.com with the subject 'Meeting Reminder' and the message 'Don't forget about our meeting tomorrow at 10 AM.'\"\nAction: Use the Send Message tool with 'SendTo' as 'jane.doe@example.com', 'Subject' as 'Meeting Reminder', and 'Text' as the message content.\nRetrieving Unread Messages:\n\nUser Request: \"Show me my latest unread emails.\"\nAction: Use the Get Unread Messages tool, possibly specifying a 'Limit' if the user wants a certain number of messages.\nMarking an Email as Read:\n\nUser Request: \"Mark the email from john.smith@example.com as read.\"\nAction: Use the Get Unread Messages tool to find the 'MessageId' of the email from 'john.smith@example.com', then use the Mark Message Read tool with that 'MessageId'.\nCreating a Draft:\n\nUser Request: \"Create a draft email to mike.brown@example.com with the subject 'Project Update' and the message 'Here's the latest update on the project...'\"\nAction: Use the Create Draft tool with the specified 'Subject' and 'Message'."
+          "systemMessage": "=You are a helpful assistant capable of managing email communications using the provided tools. You have access to the following tools:\n\nGet Unread Messages: Use this tool to retrieve a list of unread email messages. Specify the 'Limit' parameter to control the number of messages retrieved (default is 10).\n\nGet Message: Use this tool to retrieve a specific email message by its 'MessageId'.\n\nSend Message: Use this tool to send an email to specified recipients. You'll need to provide 'SendTo' (recipient's email address), 'Subject', and 'Text' (body of the email).\n\nMark Message Read: Use this tool to mark a specific email message as read using its 'MessageId'.\n\nCreate Label: Use this tool to create a new label in the email account. Provide the 'Label' name.\n\nGet All Labels: Use this tool to retrieve all labels available in the email account.\n\nGet Label: Use this tool to retrieve details of a specific label by its 'LabelId'.\n\nCreate Draft: Use this tool to create a draft email message. Provide 'Subject' and 'Message'.\n\nGet Drafts: Use this tool to retrieve all draft messages.\n\nGet Draft: Use this tool to retrieve a specific draft message by its 'DraftId'.\n\nGuidelines:\n\nUnderstanding User Requests: Carefully analyze the user's input to determine the required action—whether it's sending an email, retrieving messages, managing drafts, or handling labels.\n\nParameter Extraction: Extract relevant details from the user's request, such as email addresses, subjects, message content, 'MessageId's, 'DraftId's, 'LabelId's, and label names.\n\nTool Invocation: Call the appropriate tool(s) with the correct parameters based on the user's request.\n\nCommunication Style: Provide clear and concise responses to the user, confirming the actions taken or informing them of any issues.\n\nPrivacy and Security: Ensure that sensitive information, such as email addresses and message content, is handled securely and communicated appropriately.\n\nExamples:\n\nSending an Email:\n\nUser Request: \"Send an email to jane.doe@example.com with the subject 'Meeting Reminder' and the message 'Don't forget about our meeting tomorrow at 10 AM.'\"\nAction: Use the Send Message tool with 'SendTo' as 'jane.doe@example.com', 'Subject' as 'Meeting Reminder', and 'Text' as the message content.\nRetrieving Unread Messages:\n\nUser Request: \"Show me my latest unread emails.\"\nAction: Use the Get Unread Messages tool, possibly specifying a 'Limit' if the user wants a certain number of messages.\nMarking an Email as Read:\n\nUser Request: \"Mark the email from john.smith@example.com as read.\"\nAction: Use the Get Unread Messages tool to find the 'MessageId' of the email from 'john.smith@example.com', then use the Mark Message Read tool with that 'MessageId'.\nCreating a Draft:\n\nUser Request: \"Create a draft email to mike.brown@example.com with the subject 'Project Update' and the message 'Here's the latest update on the project...'\"\nAction: Use the Create Draft tool with the specified 'Subject' and 'Message'.",
+          "returnIntermediateSteps": true
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [
-        -480,
+        -260,
         220
       ],
       "id": "58543cb5-2924-4e5f-a890-31537b484ce0",
@@ -194,7 +184,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1,
       "position": [
-        -1040,
+        -680,
         520
       ],
       "id": "b2a71e9b-9b3c-480a-940c-1c440633da70",
@@ -223,7 +213,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        0,
+        220,
         60
       ],
       "id": "dd75ca09-b117-46e1-8712-493a9ab25e40",
@@ -246,7 +236,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        0,
+        220,
         240
       ],
       "id": "399a11ce-3c01-4eeb-9ebb-f3b54e0a7e4e",
@@ -257,22 +247,11 @@
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1,
       "position": [
-        -700,
+        -500,
         220
       ],
       "id": "42c0b810-3964-4a58-a7a2-bbe97cd18efb",
       "name": "Execute Workflow Trigger"
-    },
-    {
-      "parameters": {},
-      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
-      "typeVersion": 1.2,
-      "position": [
-        -880,
-        520
-      ],
-      "id": "959d2466-6417-4820-9718-f84badfa6db6",
-      "name": "Window Buffer Memory"
     },
     {
       "parameters": {
@@ -282,7 +261,7 @@
       "type": "n8n-nodes-base.gmailTool",
       "typeVersion": 2.1,
       "position": [
-        240,
+        460,
         520
       ],
       "id": "8ce13078-da7e-4632-aa44-35e095f6ad43",
@@ -308,7 +287,7 @@
       "type": "n8n-nodes-base.gmailTool",
       "typeVersion": 2.1,
       "position": [
-        120,
+        340,
         520
       ],
       "id": "1b6426ef-12ea-4c5b-becb-64887734dc5f",
@@ -334,7 +313,7 @@
       "type": "n8n-nodes-base.gmailTool",
       "typeVersion": 2.1,
       "position": [
-        -20,
+        200,
         520
       ],
       "id": "90bce914-eb25-4e11-9cb9-fd31b5d5d62c",
@@ -355,7 +334,7 @@
       "type": "n8n-nodes-base.gmailTool",
       "typeVersion": 2.1,
       "position": [
-        380,
+        600,
         520
       ],
       "id": "88b5f1b2-0d01-4714-a30a-4666324840ea",
@@ -378,7 +357,7 @@
       "type": "n8n-nodes-base.gmailTool",
       "typeVersion": 2.1,
       "position": [
-        -740,
+        -520,
         520
       ],
       "id": "4fe45720-9b48-44a4-8bd3-4a44f3783a70",
@@ -399,7 +378,7 @@
       "type": "n8n-nodes-base.gmailTool",
       "typeVersion": 2.1,
       "position": [
-        -620,
+        -400,
         520
       ],
       "id": "e63bc962-2fcf-4733-b0dd-7001ca699bb8",
@@ -421,7 +400,7 @@
       "type": "n8n-nodes-base.gmailTool",
       "typeVersion": 2.1,
       "position": [
-        -500,
+        -280,
         520
       ],
       "id": "28074605-12a4-4a4f-86b2-dfa94b1d33a7",
@@ -444,7 +423,7 @@
       "type": "n8n-nodes-base.gmailTool",
       "typeVersion": 2.1,
       "position": [
-        -260,
+        -40,
         520
       ],
       "id": "ca7bbb8b-9bde-4645-a932-cda8225550b5",
@@ -466,7 +445,7 @@
       "type": "n8n-nodes-base.gmailTool",
       "typeVersion": 2.1,
       "position": [
-        -140,
+        80,
         520
       ],
       "id": "27dca723-73fb-4e4e-9dfb-2797295e43ff",
@@ -489,7 +468,7 @@
       "type": "n8n-nodes-base.gmailTool",
       "typeVersion": 2.1,
       "position": [
-        -380,
+        -160,
         520
       ],
       "id": "fb2b0d4e-d53e-4442-bb20-a659063def13",
@@ -507,8 +486,12 @@
     "Execute Workflow Trigger": [
       {
         "json": {
-          "query": "{\"Subject\":\"Checking In\",\"Message\":\"Hi Ali,\\n\\nI hope this message finds you well. I wanted to touch base and see if you've had a chance to look into the technologies we discussed. I'd love to hear your thoughts and any feedback you might have.\\n\\nLooking forward to your response!\\n\\nBest regards,\\nYour Name\"}",
-          "sessionId": "test-0b4678d6-3354-4d4b-8324-a5dee9a7921c"
+          "query": {
+            "action": "send_email",
+            "email": "contactus@automatestpete.com",
+            "subject": "Looking Forward to Our Meeting",
+            "message": "I'm looking forward to meeting and talking about what Ai can do for my business."
+          }
         }
       }
     ]
@@ -526,6 +509,6 @@
     }
   ],
   "triggerCount": 0,
-  "updatedAt": "2024-11-12T18:00:19.000Z",
-  "versionId": "0690d70a-b6d7-4a68-baf2-2ebcbef1c39c"
+  "updatedAt": "2024-11-26T15:58:24.000Z",
+  "versionId": "3df72db2-b7cb-43cc-bc55-2ebd04abbfa0"
 }
