@@ -5,7 +5,7 @@
       "ai_languageModel": [
         [
           {
-            "node": "AI Agent",
+            "node": "Calendar Agent",
             "type": "ai_languageModel",
             "index": 0
           }
@@ -16,7 +16,7 @@
       "ai_tool": [
         [
           {
-            "node": "AI Agent",
+            "node": "Calendar Agent",
             "type": "ai_tool",
             "index": 0
           }
@@ -27,7 +27,7 @@
       "ai_tool": [
         [
           {
-            "node": "AI Agent",
+            "node": "Calendar Agent",
             "type": "ai_tool",
             "index": 0
           }
@@ -38,7 +38,7 @@
       "ai_tool": [
         [
           {
-            "node": "AI Agent",
+            "node": "Calendar Agent",
             "type": "ai_tool",
             "index": 0
           }
@@ -49,14 +49,36 @@
       "ai_tool": [
         [
           {
-            "node": "AI Agent",
+            "node": "Calendar Agent",
             "type": "ai_tool",
             "index": 0
           }
         ]
       ]
     },
-    "AI Agent": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendar Agent": {
       "main": [
         [
           {
@@ -73,28 +95,6 @@
           }
         ]
       ]
-    },
-    "Execute Workflow Trigger": {
-      "main": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Window Buffer Memory": {
-      "ai_memory": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_memory",
-            "index": 0
-          }
-        ]
-      ]
     }
   },
   "createdAt": "2024-11-08T02:49:15.946Z",
@@ -102,25 +102,6 @@
   "meta": null,
   "name": "Calendar Agent",
   "nodes": [
-    {
-      "parameters": {
-        "promptType": "define",
-        "text": "={{ $('Execute Workflow Trigger').all()[0].json.query }}",
-        "options": {
-          "systemMessage": "You are a helpful assistant capable of managing calendar events using the provided tools. You have access to the following tools:\n\nDate Time Tool: Use this tool to obtain the current date and time. Always invoke this tool before interacting with any calendar functionalities to ensure accurate scheduling.\n\nGet Calendar Events: Utilize this tool to retrieve events from the calendar. It accepts parameters like 'timeMin' and 'timeMax' to specify the time range for events you want to fetch.\n\nCreate Calendar Event: Use this tool to create new events in the calendar. You'll need to provide 'Start' and 'End' times, and you can include additional details like 'Summary' and 'Description'.\n\nUpdate Calendar Event: This tool allows you to modify existing calendar events. It requires the 'EventId' of the event you wish to update and can change fields such as 'Start', 'End', 'Summary', and 'Description'.\n\nGuidelines:\n\nInitial Step: Always use the Date Time Tool to get the current date and time before performing any calendar operations.\n\nUnderstanding User Requests: Carefully parse the user's query to determine the required action—whether it's fetching events, creating a new event, or updating an existing one.\n\nParameter Extraction: Extract relevant details from the user's request, such as dates, times, event titles, and descriptions.\n\nTool Invocation: Call the appropriate tool(s) with the correct parameters based on the user's request.\n\nTime Zones and Formats: Be mindful of time zones and date formats. Use the 'America/New_York' timezone and format dates and times as specified by the tools.\n\nUser Communication: Provide clear and concise responses to the user, confirming the actions taken or informing them of any issues."
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 1.7,
-      "position": [
-        220,
-        0
-      ],
-      "id": "d96ec2f8-9e01-4f26-b164-57c43a59fa48",
-      "name": "AI Agent",
-      "alwaysOutputData": false,
-      "onError": "continueErrorOutput"
-    },
     {
       "parameters": {
         "options": {}
@@ -196,6 +177,9 @@
         "start": "={{ $fromAI(\"Start\") }}",
         "end": "={{ $fromAI(\"End\") }}",
         "additionalFields": {
+          "attendees": [
+            "={{ $fromAI(\"Attendee\") }}"
+          ],
           "description": "={{ $fromAI(\"Description\") }}",
           "summary": "={{ $fromAI(\"Summary\") }}"
         }
@@ -314,6 +298,25 @@
       ],
       "id": "a7a0e973-6521-4d5d-976b-05e38421c85c",
       "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Execute Workflow Trigger').all()[0].json.query }}",
+        "options": {
+          "systemMessage": "=You are a helpful assistant capable of managing calendar events. Use the provided tools to perform actions such as retrieving, creating, updating, and deleting calendar events. Follow these guidelines:\n\n1. **Input Parsing**:\n   - Parse user input into a structured format based on the schema.\n   - Identify the action (`create_event`, `retrieve_events`, `update_event`, `delete_event`) and extract relevant fields.\n\n2. **Parameter Mapping**:\n   - Retrieve Events: Use `dateRange.start` and `dateRange.end` to set `timeMin` and `timeMax`.\n   - Create Events: Map `title` to `summary`, `participants` to `attendees`, and ensure dates are in ISO 8601 format.\n   - Update Events: Provide `eventId` and any updated fields (e.g., `title`, `description`).\n   - Delete Events: Provide only `eventId`.\n\n3. **Response Confirmation**:\n   - Respond with a confirmation or detailed information about the action taken.\n   - If an error occurs, describe the issue clearly and offer guidance for correction.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "d96ec2f8-9e01-4f26-b164-57c43a59fa48",
+      "name": "Calendar Agent",
+      "alwaysOutputData": false,
+      "onError": "continueErrorOutput"
     }
   ],
   "pinData": {},
@@ -326,6 +329,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-11-08T18:00:55.000Z",
-  "versionId": "d9878160-6d52-43d8-9804-342af3b46f5a"
+  "updatedAt": "2024-12-03T15:01:26.000Z",
+  "versionId": "65dd68c7-f868-4905-b036-eac1e584fa80"
 }
