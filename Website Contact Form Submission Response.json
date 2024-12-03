@@ -1,17 +1,6 @@
 {
-  "active": false,
+  "active": true,
   "connections": {
-    "Gmail": {
-      "main": [
-        [
-          {
-            "node": "Gmail1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "If": {
       "main": [
         [
@@ -41,22 +30,11 @@
         ]
       ]
     },
-    "Regular Contact Form": {
-      "main": [
-        [
-          {
-            "node": "Edit Fields",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Edit Fields": {
       "main": [
         [
           {
-            "node": "Gmail",
+            "node": "Respond to Email",
             "type": "main",
             "index": 0
           }
@@ -73,63 +51,37 @@
           }
         ]
       ]
+    },
+    "Regular Contact Form": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Email": {
+      "main": [
+        [
+          {
+            "node": "Send Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-11-17T18:57:34.060Z",
   "id": "REMtqsJjLntQgmJb",
-  "meta": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
   "name": "Website Contact Form Submission Response",
   "nodes": [
-    {
-      "parameters": {
-        "sendTo": "={{ $json.Email }}",
-        "subject": "={{ $json.Subject }}",
-        "message": "={{ $json.Message }}",
-        "options": {
-          "appendAttribution": false
-        }
-      },
-      "id": "68e96d39-dbb0-4a5d-ae98-f3e6664867e7",
-      "name": "Gmail",
-      "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.1,
-      "position": [
-        600,
-        120
-      ],
-      "webhookId": "14f06e26-f3d6-4a9b-9ff1-2de9a749cae8",
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "E777VIw7zyxrVJ7s",
-          "name": "Gmail account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "sendTo": "7029084316@vzwpix.com",
-        "subject": "WARNING: Ai Sent A Message",
-        "message": "=The following email was sent from Ai on your behalf.\n\nSubject:\n{{ $('Edit Fields').item.json.Subject }}\n\nMessage:\n{{ $('Edit Fields').item.json.Message }}\n\nTo Email:\n{{ $('Edit Fields').item.json.Email }}",
-        "options": {
-          "appendAttribution": false
-        }
-      },
-      "id": "f0759b72-7f59-46d4-864c-aaede10f86d1",
-      "name": "Gmail1",
-      "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.1,
-      "position": [
-        820,
-        120
-      ],
-      "webhookId": "0c6de903-d36e-4e98-b0a0-275734ecc36b",
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "E777VIw7zyxrVJ7s",
-          "name": "Gmail account"
-        }
-      }
-    },
     {
       "parameters": {
         "conditions": {
@@ -198,39 +150,6 @@
     },
     {
       "parameters": {
-        "modelId": {
-          "__rl": true,
-          "value": "gpt-4o",
-          "mode": "list",
-          "cachedResultName": "GPT-4O"
-        },
-        "messages": {
-          "values": [
-            {
-              "content": "=Draft an email response to the form submission provided below. This email should:\n\n1. Immediately express gratitude to the submitter by using their name.\n2. Show excitement about their interest in AI and emphasize how eager we are to assist them in building an AI-first business infrastructure.\n3. Acknowledge their message and assure them that we will review it carefully and respond as soon as possible with more details or next steps.\n4. Mention that our availability for appointments is Monday - Friday, 10 AM - 4 PM Eastern Standard Time if they are interested in scheduling a consultation.\n5. Always include a sign-off from Robert Lord at Automate St Pete, along with the contact information: phone number (727-291-8100) and email address (automatestpete@gmail.com).\n\n**FORM SUBMISSION DETAILS:**\n\n- **Name:** {{ $json.body.__submission.user_inputs.names }}\n- **Email:** {{ $json.body.__submission.user_inputs.email }}\n- **Subject:** {{ $json.body.__submission.user_inputs.subject }}\n- **Message:** {{ $json.body.__submission.user_inputs.message }}\n\nAfter drafting the email, place the content into a JSON object. Use \"Subject\" as the key for the email subject line and \"Message\" as the key for the email body content. The final JSON object should be formatted as follows:\n\n\n{\n  \"Subject\": \"{SUBJECT}\",\n  \"Message\": \"{MESSAGE}\"\n}"
-            }
-          ]
-        },
-        "jsonOutput": true,
-        "options": {}
-      },
-      "id": "382ff4c0-4d5b-4b2f-9d64-65b1db6da609",
-      "name": "Regular Contact Form",
-      "type": "@n8n/n8n-nodes-langchain.openAi",
-      "typeVersion": 1.4,
-      "position": [
-        0,
-        240
-      ],
-      "credentials": {
-        "openAiApi": {
-          "id": "sTmNKjvehSYtW09j",
-          "name": "OpenAi account"
-        }
-      }
-    },
-    {
-      "parameters": {
         "assignments": {
           "assignments": [
             {
@@ -282,6 +201,89 @@
         120
       ],
       "webhookId": "20cd1e92-848b-4f92-932b-f900839384bd"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Draft an email response to the form submission provided below. This email should:\n\n1. Immediately express gratitude to the submitter by using their name.\n2. Show excitement about their interest in AI and emphasize how eager we are to assist them in building an AI-first business infrastructure.\n3. Acknowledge their message and assure them that we will review it carefully and respond as soon as possible with more details or next steps.\n4. Mention that our availability for appointments is Monday - Friday, 10 AM - 4 PM Eastern Standard Time if they are interested in scheduling a consultation.\n5. Always include a sign-off from Robert Lord at Automate St Pete, along with the contact information: phone number (727-291-8100) and email address (automatestpete@gmail.com).\n\n**FORM SUBMISSION DETAILS:**\n\n- **Name:** {{ $json.body.__submission.user_inputs.names }}\n- **Email:** {{ $json.body.__submission.user_inputs.email }}\n- **Subject:** {{ $json.body.__submission.user_inputs.subject }}\n- **Message:** {{ $json.body.__submission.user_inputs.message }}\n\nAfter drafting the email, place the content into a JSON object. Use \"Subject\" as the key for the email subject line and \"Message\" as the key for the email body content. The final JSON object should be formatted as follows:\n\n\n{\n  \"Subject\": \"{SUBJECT}\",\n  \"Message\": \"{MESSAGE}\"\n}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "id": "382ff4c0-4d5b-4b2f-9d64-65b1db6da609",
+      "name": "Regular Contact Form",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        240
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "7029084316@vzwpix.com",
+        "subject": "WARNING: Ai Sent A Message",
+        "message": "=The following email was sent from Ai on your behalf.\n\nSubject:\n{{ $('Edit Fields').item.json.Subject }}\n\nMessage:\n{{ $('Edit Fields').item.json.Message }}\n\nTo Email:\n{{ $('Edit Fields').item.json.Email }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "f0759b72-7f59-46d4-864c-aaede10f86d1",
+      "name": "Send Text",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        820,
+        120
+      ],
+      "webhookId": "0c6de903-d36e-4e98-b0a0-275734ecc36b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "={{ $json.Subject }}",
+        "message": "={{ $json.Message }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "68e96d39-dbb0-4a5d-ae98-f3e6664867e7",
+      "name": "Respond to Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        600,
+        120
+      ],
+      "webhookId": "14f06e26-f3d6-4a9b-9ff1-2de9a749cae8",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -290,7 +292,7 @@
   },
   "staticData": null,
   "tags": [],
-  "triggerCount": 0,
-  "updatedAt": "2024-11-17T19:11:41.000Z",
-  "versionId": "05b9c405-af15-4d88-b320-a112de379d3a"
+  "triggerCount": 1,
+  "updatedAt": "2024-12-03T19:31:33.000Z",
+  "versionId": "1c9c11b7-28ee-45d7-9110-d0312918f095"
 }
