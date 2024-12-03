@@ -102,7 +102,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1,
       "position": [
-        -40,
+        40,
         260
       ],
       "id": "8999fa0f-7df4-405a-87a8-5f8156187c6d",
@@ -116,8 +116,8 @@
     },
     {
       "parameters": {
-        "name": "Calendar_Agent",
-        "description": "The Calendar tool is a specialized tool designed to handle all calendar-related operations, including retrieving events, creating new events, and updating existing ones. When the user requests any action involving their calendar, you should delegate the task to the Calendar Agent using this tool.\n",
+        "name": "Calendar_Tool",
+        "description": "The Calendar tool is a specialized tool designed to handle all calendar-related operations, including retrieving events, creating new events, and updating existing ones. When the user requests any action involving their calendar, you must delegate the task to the Calendar tool using this tool.\n",
         "workflowId": {
           "__rl": true,
           "value": "jBuOzpK0qAvxxfTP",
@@ -132,7 +132,9 @@
             }
           ]
         },
-        "jsonSchemaExample": "{\n  \"query\": \"some_value\"\n}"
+        "specifyInputSchema": true,
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"action\": {\n      \"type\": \"string\",\n      \"enum\": [\"create_event\", \"update_event\", \"retrieve_events\", \"delete_event\"],\n      \"description\": \"The action to perform on the calendar. Must be one of the predefined options.\"\n    },\n    \"eventId\": {\n      \"type\": \"string\",\n      \"description\": \"The unique identifier of the event. Required for update or delete actions.\"\n    },\n    \"title\": {\n      \"type\": \"string\",\n      \"description\": \"The title of the event. Required for create actions.\"\n    },\n    \"date\": {\n      \"type\": \"string\",\n      \"format\": \"date-time\",\n      \"description\": \"The date and time of the event in ISO 8601 format. Required for create actions and may be used for updates or retrieval.\"\n    },\n    \"duration\": {\n      \"type\": \"string\",\n      \"description\": \"The duration of the event, e.g., '1h', '30m'. Optional.\"\n    },\n    \"attendees\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\",\n        \"format\": \"email\",\n        \"description\": \"Email address of a attendee.\"\n      },\n      \"description\": \"List of participants' email addresses. Optional.\"\n    },\n    \"location\": {\n      \"type\": \"string\",\n      \"description\": \"The location of the event. Optional.\"\n    },\n    \"description\": {\n      \"type\": \"string\",\n      \"description\": \"Additional details about the event. Optional.\"\n    },\n    \"dateRange\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"start\": {\n          \"type\": \"string\",\n          \"format\": \"date-time\",\n          \"description\": \"The start of the date range for retrieving events in ISO 8601 format.\"\n        },\n        \"end\": {\n          \"type\": \"string\",\n          \"format\": \"date-time\",\n          \"description\": \"The end of the date range for retrieving events in ISO 8601 format.\"\n        }\n      },\n      \"required\": [\"start\", \"end\"],\n      \"description\": \"The date range for retrieving events. Required for retrieve actions if a range is specified.\"\n    }\n  },\n  \"required\": [\"action\"],\n  \"additionalProperties\": false\n}"
       },
       "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
       "typeVersion": 1.2,
@@ -150,7 +152,7 @@
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.2,
       "position": [
-        120,
+        200,
         260
       ],
       "id": "53aaf64f-319d-40c4-aee9-cdfd40a94618",
@@ -176,7 +178,7 @@
         },
         "specifyInputSchema": true,
         "schemaType": "manual",
-        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"action\": {\n      \"type\": \"string\",\n      \"enum\": [\"create_label\",\"create_labels\",\"get_label\",\"get_labels\",\"\",],\n      \"description\": \"The action to be performed. Must be one of the predefined options.\"\n    },\n    \"email\": {\n      \"type\": \"string\",\n      \"format\": \"email\",\n      \"description\": \"The recipient's email address.\"\n    },\n    \"subject\": {\n      \"type\": \"string\",\n      \"minLength\": 1,\n      \"maxLength\": 255,\n      \"description\": \"The subject of the email.\"\n    },\n    \"message\": {\n      \"type\": \"string\",\n      \"minLength\": 1,\n      \"description\": \"The body of the email.\"\n    }\n  },\n  \"required\": [\"email\", \"subject\", \"message\"],\n  \"additionalProperties\": true\n}\n"
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"action\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"get_message\",\n        \"get_unread_messages\",\n        \"send_message\",\n        \"mark_message_read\",\n        \"create_label\",\n        \"get_all_labels\",\n        \"get_label\",\n        \"get_draft\",\n        \"get_all_drafts\",\n        \"create_draft\"\n      ],\n      \"description\": \"The action to be performed. Must be one of the predefined options.\"\n    },\n    \"email\": {\n      \"type\": \"string\",\n      \"format\": \"email\",\n      \"description\": \"The recipient's email address.\"\n    },\n    \"subject\": {\n      \"type\": \"string\",\n      \"minLength\": 1,\n      \"maxLength\": 255,\n      \"description\": \"The subject of the email.\"\n    },\n    \"message\": {\n      \"type\": \"string\",\n      \"minLength\": 1,\n      \"description\": \"The body of the email.\"\n    },\n    \"limit\": {\n      \"type\": \"integer\",\n      \"description\": \"The maximum number of unread messages to retrieve.\",\n      \"minimum\": 1,\n      \"default\": 5\n    }\n  },\n  \"required\": [\"action\"],\n  \"additionalProperties\": true\n}"
       },
       "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
       "typeVersion": 1.2,
@@ -205,7 +207,7 @@
     {
       "parameters": {
         "options": {
-          "systemMessage": "=You are a Supervisor AI that delegates tasks between a Calendar Agent and an Email Agent. Your job is to interpret the user's request, identify the required action, and communicate with the appropriate agent.\n\n### Tools Available:\n1. **Calendar Agent**: Use this for all calendar-related operations, such as creating, updating, and retrieving events.\n2. **Email Agent**: Use this for all email-related tasks, including sending emails, retrieving messages, managing drafts, and handling labels.\n\n### Guidelines:\n- **Identify Task Type**: Determine if the user’s request is related to calendar or email actions.\n- **Delegate to the Appropriate Agent**:\n  - For email tasks, use the **Email Agent** and provide structured instructions.\n  - For calendar tasks, use the **Calendar Agent** and provide necessary event details.\n\n- **Combine Responses**: Collect responses from the agents and present a unified response to the user.\n\n### Email Agent Instruction Format:\nWhen invoking the Email Agent, provide the following structured parameters based on the action requested:\n\n1. **Sending an Email**:\n   - `SendTo`: (Recipient email address)\n   - `Subject`: (Email subject line)\n   - `Text`: (Body content for the email)\n\n2. **Retrieving Messages**:\n   - `Limit`: Number of emails to retrieve (default 5 if unspecified)\n   - `Sender`: (Optional) Specify a sender to filter results\n   - `Search`: (Optional) Search term to filter results\n\n3. **Marking an Email as Read**:\n   - `MessageId`: The ID of the email to mark as read\n\n4. **Creating a Label**:\n   - `Label`: The name for the new label\n\n5. **Creating a Draft**:\n   - `Subject`: (Draft subject line)\n   - `Message`: (Draft message content)\n\n### Calendar Agent Instruction Format:\nWhen invoking the Calendar Agent, provide the following structured parameters based on the action requested:\n\n1. **Creating an Event**:\n   - `Title`: Event title\n   - `Date`: Event date in ISO 8601 format (e.g., 2024-11-12T15:00:00Z)\n   - `Duration`: Event duration (optional but recommended)\n   - `Participants`: (Optional) List of participants’ email addresses\n   - `Location`: (Optional) Event location\n   - `Description`: (Optional) Event description\n\n2. **Retrieving Events**:\n   - `Date`: Date or date range to retrieve events\n\n3. **Updating an Event**:\n   - `EventId`: ID of the event to update\n   - Other fields as necessary (e.g., `Title`, `Date`, `Duration`, etc.)\n\n4. **Deleting an Event**:\n   - `EventId`: ID of the event to delete\n\n### Example Tasks:\n- **Send an Email**: \"Send an email to jane.doe@example.com with the subject 'Meeting Reminder' and message 'Don’t forget our meeting tomorrow at 10 AM.'\"\n  - Action: Use `SendTo`, `Subject`, and `Text` with the Email Agent.\n\n- **Create a Calendar Event**: \"Schedule a meeting titled 'Project Kickoff' for November 15th at 2 PM with john.doe@example.com.\"\n  - Action: Use `Title`, `Date`, `Participants`, and other relevant fields with the Calendar Agent.\n\n- **Retrieve Events**: \"Show my calendar events for tomorrow.\"\n  - Action: Provide `Date` or a date range to the Calendar Agent to retrieve events.\n\nEnsure to include all necessary fields and format instructions clearly when passing data to the agents to enable accurate task execution.\n"
+          "systemMessage": "=You are a Supervisor AI responsible for delegating tasks to two specialized tools: Calendar Tool and Email Tool. Your role is to interpret the user's requests, determine the appropriate action, and delegate it to the correct tool. Additionally, you should combine and format the responses from the tools before presenting them to the user.\n\n### Task Identification Guidelines:\n- **Calendar Tool**: Handle requests involving calendar management, such as scheduling, updating, retrieving, or deleting events. Keywords indicating calendar tasks include:\n  - \"schedule,\" \"calendar,\" \"event,\" \"meeting,\" \"add attendee,\" \"time,\" \"date.\"\n  - Presence of timeframes (e.g., \"9 AM to 10 AM,\" \"tomorrow morning\").\n  - Email addresses in the context of attendees for a meeting or event.\n\n- **Email Tool**: Handle requests involving email communication, such as sending, retrieving, or organizing emails. Keywords indicating email tasks include:\n  - \"email,\" \"send,\" \"draft,\" \"inbox,\" \"mark as read.\"\n  - Email addresses used as recipients or senders.\n\n### Instruction Formats:\n#### Calendar Tool:\n- **Create Event**:\n  - `action`: \"create_event\".\n  - `title`: Event title (mandatory).\n  - `date`: ISO 8601 formatted date/time (mandatory).\n  - `duration`: Event duration (optional).\n  - `attendees`: List of attendee email addresses (optional).\n  - `location`: Event location (optional).\n  - `description`: Event description (optional).\n\n#### Email Tool:\n- **Send Email**:\n  - `action`: \"send_message\".\n  - `sendTo`: Recipient email address (mandatory).\n  - `subject`: Email subject (mandatory).\n  - `text`: Email body content (mandatory).\n\n### Example Scenarios:\n1. **Create Calendar Event**:\n   - Input: \"Create a calendar event for tomorrow morning 9 to 10am. Add lordrobert92@gmail.com as an attendee.\"\n   - Action: Delegate to the **Calendar Tool** with:\n     ```json\n     {\n       \"action\": \"create_event\",\n       \"title\": \"New Event\",\n       \"date\": \"2024-12-04T09:00:00Z\",\n       \"duration\": \"1h\",\n       \"attendees\": [\"lordrobert92@gmail.com\"]\n     }\n     ```\n\n2. **Send Email**:\n   - Input: \"Send an email to john.doe@example.com with the subject 'Meeting Reminder' and body 'The meeting starts at 9 AM tomorrow.'\"\n   - Action: Delegate to the **Email Tool** with:\n     ```json\n     {\n       \"action\": \"send_message\",\n       \"sendTo\": \"john.doe@example.com\",\n       \"subject\": \"Meeting Reminder\",\n       \"text\": \"The meeting starts at 9 AM tomorrow.\"\n     }\n     ```\n\n### Guidelines:\n1. **Identify Intent**:\n   - Use contextual clues and keywords to determine the correct tool.\n   - If the request includes time, dates, or phrases like \"schedule\" or \"meeting,\" prioritize the Calendar Tool.\n2. **Combine Responses**:\n   - If multiple tools are involved, merge their outputs into a cohesive response.\n3. **Confirmation**:\n   - Confirm actions with the user or provide clear feedback if the request cannot be fulfilled.\n"
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -220,11 +222,13 @@
   ],
   "pinData": {},
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "timezone": "America/New_York",
+    "callerPolicy": "workflowsFromSameOwner"
   },
   "staticData": null,
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2024-11-26T15:57:58.000Z",
-  "versionId": "c21e4f10-92e8-462b-a080-922d1593606e"
+  "updatedAt": "2024-12-03T15:19:56.000Z",
+  "versionId": "1a9cd389-2640-4647-86f3-3837c9827828"
 }
