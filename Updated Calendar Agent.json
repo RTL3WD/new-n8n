@@ -1,0 +1,331 @@
+{
+  "active": false,
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date Time Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Calendar Events": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Calendar Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Calendar Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendar Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-12-03T15:28:25.634Z",
+  "id": "NpcG1FgplbXZsaEw",
+  "meta": null,
+  "name": "Updated Calendar Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -1380,
+        580
+      ],
+      "id": "2a8e277a-3a7e-4dcb-bfb2-2f27d1841193",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "Date_Time",
+        "description": "Call this tool when you need to get the date or time",
+        "jsCode": "const now = new Date();\nconst options = { timeZone: 'America/New_York', hour12: false };\n\n// Format: MM/DD/YYYY\nconst date = now.toLocaleDateString('en-US', options);\n\n// Format: HH:MM:SS\nconst time = now.toLocaleTimeString('en-US', options);\n\n// Add EST conversion logic for event times\nconst tomorrow = new Date(now);\ntomorrow.setDate(now.getDate() + 1);\nconst eventStart = new Date(tomorrow.setHours(9, 0, 0, 0)).toLocaleString('en-US', options);\nconst eventEnd = new Date(tomorrow.setHours(10, 0, 0, 0)).toLocaleString('en-US', options);\n\n// Return ISO 8601 formatted timestamps for EST\nreturn {\n  start: new Date(eventStart).toISOString(),\n  end: new Date(eventEnd).toISOString()\n};\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [
+        -1080,
+        580
+      ],
+      "id": "7f3fd95a-c412-4e0f-9db3-8734e8d4b6d5",
+      "name": "Date Time Tool"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "automatestpete@gmail.com",
+          "mode": "list",
+          "cachedResultName": "automatestpete@gmail.com"
+        },
+        "limit": 20,
+        "options": {
+          "timeMin": "={{ $fromAI(\"After\") }}",
+          "timeMax": "={{ $fromAI(\"Before\") }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.2,
+      "position": [
+        -900,
+        580
+      ],
+      "id": "163fdd2a-c157-46a8-8a80-752452dd44f9",
+      "name": "Get Calendar Events",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "automatestpete@gmail.com",
+          "mode": "list",
+          "cachedResultName": "automatestpete@gmail.com"
+        },
+        "start": "={{ $json.query.date }}",
+        "end": "={{ new Date(new Date($json.query.date).getTime() + 60 * 60 * 1000).toISOString() }}",
+        "additionalFields": {
+          "attendees": "={{ $json.query.attendees.map(email => ({ email })) }}",
+          "description": "Event created using AI assistant",
+          "summary": "={{ $json.query.title }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.2,
+      "position": [
+        -740,
+        580
+      ],
+      "id": "02d49d86-6707-4583-8215-dcd4f1cd62af",
+      "name": "Create Calendar Event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "value": "automatestpete@gmail.com",
+          "mode": "list",
+          "cachedResultName": "automatestpete@gmail.com"
+        },
+        "eventId": "={{ $fromAI(\"EventId\") }}",
+        "updateFields": {
+          "description": "={{ $fromAI(\"Description\") || \"\" }}",
+          "end": "={{ $fromAI(\"End\") }}",
+          "start": "={{ $fromAI(\"Start\") }}",
+          "summary": "={{ $fromAI(\"Summary\") || \"\"}}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.2,
+      "position": [
+        -580,
+        580
+      ],
+      "id": "48d2e06d-0139-4a31-bc1c-7ac992bd1a6c",
+      "name": "Update Calendar Event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dd5ba9a8-08eb-480e-b5a7-23ffbed06a2b",
+              "name": "response",
+              "value": "={{ JSON.stringify($json.output) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -700,
+        100
+      ],
+      "id": "fc5bd336-6e2a-4280-b6bf-b1e20d5ee08c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dd5ba9a8-08eb-480e-b5a7-23ffbed06a2b",
+              "name": "response",
+              "value": "={{ JSON.stringify($json) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -700,
+        340
+      ],
+      "id": "4b6a873d-60b2-4acb-8ba8-d1384f864a8f",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1400,
+        320
+      ],
+      "id": "759644a9-bf81-491e-8425-86a20d47c083",
+      "name": "Execute Workflow Trigger"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        -1220,
+        580
+      ],
+      "id": "e92242d4-061b-4f43-aa3c-659390e93ffa",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Execute Workflow Trigger').all()[0].json.query }}",
+        "options": {
+          "systemMessage": "=You are a helpful assistant capable of managing calendar events. Use the provided tools to perform actions such as retrieving, creating, updating, and deleting calendar events. Follow these guidelines:\n\n1. **Input Parsing**:\n   - Parse user input into a structured format based on the schema.\n   - Identify the action (`create_event`, `retrieve_events`, `update_event`, `delete_event`) and extract relevant fields.\n\n2. **Parameter Mapping**:\n   - Retrieve Events: Use `dateRange.start` and `dateRange.end` to set `timeMin` and `timeMax`.\n   - Create Events: Map `title` to `summary`, `participants` to `attendees`, and ensure dates are in ISO 8601 format.\n   - Update Events: Provide `eventId` and any updated fields (e.g., `title`, `description`).\n   - Delete Events: Provide only `eventId`.\n\n3. **Response Confirmation**:\n   - Respond with a confirmation or detailed information about the action taken.\n   - If an error occurs, describe the issue clearly and offer guidance for correction.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -1180,
+        320
+      ],
+      "id": "c588e6b8-140b-4f54-bc5f-328a31ea3bce",
+      "name": "Calendar Agent",
+      "alwaysOutputData": false,
+      "onError": "continueErrorOutput"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/New_York",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-12-03T15:38:33.000Z",
+  "versionId": "ea11c6fc-2683-4a3d-b055-41ec4a333f39"
+}
