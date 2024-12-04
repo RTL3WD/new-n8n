@@ -94,6 +94,7 @@
     },
     "If1": {
       "main": [
+        [],
         [
           {
             "node": "Mark As Promo",
@@ -138,6 +139,7 @@
     },
     "If2": {
       "main": [
+        [],
         [
           {
             "node": "Assess if message needs a reply",
@@ -708,7 +710,8 @@
           "options": {
             "caseSensitive": true,
             "leftValue": "",
-            "typeValidation": "strict"
+            "typeValidation": "strict",
+            "version": 1
           },
           "conditions": [
             {
@@ -796,15 +799,16 @@
   },
   "staticData": {
     "node:Gmail is Received": {
-      "lastTimeChecked": 1733309459,
+      "lastTimeChecked": 1733352581,
       "possibleDuplicates": [
-        "193914b950deac81",
-        "19390a86c2ebdd13"
+        "19393dd739c02fd2",
+        "19393cbdc8f0ced0",
+        "19393c65bccd16ab"
       ]
     }
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-11-19T23:12:26.000Z",
-  "versionId": "bd083115-777f-4ca2-bedf-1e68e83dbce4"
+  "updatedAt": "2024-12-04T19:33:14.000Z",
+  "versionId": "0d8d9cf0-8878-4494-aab6-12c50c9f411d"
 }
