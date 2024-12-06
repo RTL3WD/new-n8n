@@ -67,17 +67,6 @@
         ]
       ]
     },
-    "Window Buffer Memory": {
-      "ai_memory": [
-        [
-          {
-            "node": "Calendar Agent",
-            "type": "ai_memory",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Calendar Agent": {
       "main": [
         [
@@ -289,17 +278,6 @@
       "name": "Execute Workflow Trigger"
     },
     {
-      "parameters": {},
-      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
-      "typeVersion": 1.2,
-      "position": [
-        180,
-        260
-      ],
-      "id": "a7a0e973-6521-4d5d-976b-05e38421c85c",
-      "name": "Window Buffer Memory"
-    },
-    {
       "parameters": {
         "promptType": "define",
         "text": "={{ $('Execute Workflow Trigger').all()[0].json.query }}",
@@ -319,7 +297,29 @@
       "onError": "continueErrorOutput"
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Execute Workflow Trigger": [
+      {
+        "json": {
+          "query": {
+            "action": "create_event",
+            "title": "TB with Scott and Rob",
+            "date": "2024-12-09T15:30:00-05:00",
+            "duration": "1h",
+            "attendees": [
+              "info@bffiso.com"
+            ],
+            "location": "",
+            "description": "",
+            "dateRange": {
+              "start": "2024-12-09T15:30:00-05:00",
+              "end": "2024-12-09T16:30:00-05:00"
+            }
+          }
+        }
+      }
+    ]
+  },
   "settings": {
     "executionOrder": "v1",
     "timezone": "America/New_York",
@@ -329,6 +329,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-12-03T15:01:26.000Z",
-  "versionId": "65dd68c7-f868-4905-b036-eac1e584fa80"
+  "updatedAt": "2024-12-06T18:32:58.000Z",
+  "versionId": "8b9d45ab-d409-4a4e-afba-20aa67a83c79"
 }
