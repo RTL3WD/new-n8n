@@ -349,7 +349,7 @@
     },
     {
       "parameters": {
-        "model": "text-embedding-3-small",
+        "model": "text-embedding-3-large",
         "options": {}
       },
       "id": "af282544-531e-4a7c-99ca-8ebf282ed91b",
@@ -958,14 +958,14 @@
   },
   "staticData": {
     "node:File Created": {
-      "lastTimeChecked": "2024-12-04T20:43:12Z"
+      "lastTimeChecked": "2024-12-07T17:30:57Z"
     },
     "node:File Updated": {
-      "lastTimeChecked": "2024-12-04T20:43:12Z"
+      "lastTimeChecked": "2024-12-07T17:30:57Z"
     }
   },
   "tags": [],
   "triggerCount": 5,
-  "updatedAt": "2024-11-20T14:53:57.000Z",
-  "versionId": "00a71a54-b8a3-44a3-a13e-5c811d5e6fea"
+  "updatedAt": "2024-12-07T17:30:57.000Z",
+  "versionId": "9a0f2e8c-a4b9-4bf3-b5b2-c6221ae6ee6f"
 }
