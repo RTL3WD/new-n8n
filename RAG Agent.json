@@ -384,8 +384,8 @@
     {
       "parameters": {
         "content": "## Agent Tools for RAG",
-        "height": 528.85546469693,
-        "width": 583.4552380860637,
+        "height": 549,
+        "width": 1123,
         "color": 4
       },
       "id": "d6556944-8fc6-4b89-86ca-df8bdfb136b7",
@@ -623,16 +623,16 @@
     {
       "parameters": {
         "content": "## RAG AI Agent with Chat Interface",
-        "height": 464.8027193303974,
-        "width": 1035.6381264595484
+        "height": 545,
+        "width": 1196
       },
       "id": "68083b0f-b717-452e-bb35-d43e053f7427",
       "name": "Sticky Note2",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -1040,
-        60
+        -1220,
+        0
       ]
     },
     {
@@ -958,14 +958,14 @@
   },
   "staticData": {
     "node:File Created": {
-      "lastTimeChecked": "2024-12-07T17:30:57Z"
+      "lastTimeChecked": "2024-12-12T19:30:02Z"
     },
     "node:File Updated": {
-      "lastTimeChecked": "2024-12-07T17:30:57Z"
+      "lastTimeChecked": "2024-12-12T19:30:03Z"
     }
   },
   "tags": [],
   "triggerCount": 5,
-  "updatedAt": "2024-12-07T17:30:57.000Z",
-  "versionId": "9a0f2e8c-a4b9-4bf3-b5b2-c6221ae6ee6f"
+  "updatedAt": "2024-12-12T19:28:21.000Z",
+  "versionId": "9b043a3a-e57d-4adf-9b7e-ba5831b870ac"
 }
