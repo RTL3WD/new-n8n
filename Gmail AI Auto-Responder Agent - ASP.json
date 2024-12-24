@@ -595,7 +595,8 @@
         "subject": "={{ $fromAI('subject', 'the subject of the email response' ) }}",
         "message": "={{ $fromAI('message', 'the message of the email response' ) }}",
         "options": {
-          "threadId": "={{ $json.threadId }}"
+          "threadId": "={{ $json.threadId }}",
+          "sendTo": "={{ $('Gmail is Received').item.json.from.text }}"
         }
       },
       "type": "n8n-nodes-base.gmailTool",
@@ -621,14 +622,14 @@
   },
   "staticData": {
     "node:Gmail is Received": {
-      "lastTimeChecked": 1734993972,
+      "lastTimeChecked": 1735036505,
       "possibleDuplicates": [
-        "193f5b3139d0fa07"
+        "193f83cef44e6ec1"
       ]
     }
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-12-16T14:10:22.000Z",
-  "versionId": "05d47c37-4908-419e-bc0b-ed92f867d1a3"
+  "updatedAt": "2024-12-24T03:24:13.000Z",
+  "versionId": "6cd0280f-5e05-4a11-9e48-7e1e33735e54"
 }
