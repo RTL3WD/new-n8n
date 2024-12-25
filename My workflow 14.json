@@ -1,0 +1,90 @@
+{
+  "active": false,
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-12-25T21:31:12.904Z",
+  "id": "ZXFeHDRXRHShZUpF",
+  "meta": null,
+  "name": "My workflow 14",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "1bba68bd-53c0-4591-be8c-23eda6d344ed",
+      "name": "When chat message received",
+      "webhookId": "a19f9105-e17b-4368-96e4-f973cf73b0ee"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a helpful assistant. Your purpose is to Process transcripts and extract the following details:\n\n1.\tIntroduction: Summarize the introduction in 1-2 sentences.\n2.\tKey Points: List the key points discussed, ideally as bullet points.\n3.\tActionable Insights: Extract actionable advice or steps if mentioned.\n4.\tConclusion: Summarize the conclusion in 1-2 sentences.\n5.\tImportant Quotes: Highlight any notable quotes with timestamps if available."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "2444b71c-5a52-415d-8a7b-87ffa2d26889",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        0,
+        220
+      ],
+      "id": "87449e06-5ab2-4a71-851d-ed0fc3c09249",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-12-25T21:31:44.000Z",
+  "versionId": "656d1960-934e-4c53-8d76-d4a79725b1c9"
+}
