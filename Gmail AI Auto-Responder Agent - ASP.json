@@ -216,7 +216,7 @@
             },
             {
               "id": "2a2f839b-31e4-4390-944f-8e3cb7aa71aa",
-              "leftValue": "={{ $json.html }}",
+              "leftValue": "={{ $json.html.toString() }}",
               "rightValue": "unsubscribe",
               "operator": {
                 "type": "string",
@@ -632,14 +632,14 @@
   },
   "staticData": {
     "node:Gmail is Received": {
-      "lastTimeChecked": 1735337575,
+      "lastTimeChecked": 1735370709,
       "possibleDuplicates": [
-        "1940a7da6f0b23f8"
+        "1940c279eb7f788f"
       ]
     }
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-12-26T15:30:28.000Z",
-  "versionId": "172d500d-ba11-4754-97cc-ce30e4f14112"
+  "updatedAt": "2024-12-27T23:52:26.000Z",
+  "versionId": "54aabaaf-b0d9-4489-9f28-ed3f1e9c1543"
 }
