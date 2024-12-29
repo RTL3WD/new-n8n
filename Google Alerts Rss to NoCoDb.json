@@ -5,7 +5,7 @@
       "main": [
         [
           {
-            "node": "NocoDB1",
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
@@ -31,6 +31,13 @@
             "type": "main",
             "index": 0
           }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
@@ -39,6 +46,29 @@
         [
           {
             "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "NocoDB1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NocoDB": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
@@ -102,19 +132,19 @@
           "fieldValues": [
             {
               "fieldName": "Provider",
-              "fieldValue": "={{ $('Edit Fields').item.json.Provider }}"
+              "fieldValue": "={{ $('Loop Over Items').item.json.Provider }}"
             },
             {
               "fieldName": "Title",
-              "fieldValue": "={{ $('Edit Fields').item.json.Title }}"
+              "fieldValue": "={{ $('Loop Over Items').item.json.Title }}"
             },
             {
               "fieldName": "URL",
-              "fieldValue": "={{ $('Edit Fields').item.json.URL }}"
+              "fieldValue": "={{ $('Loop Over Items').item.json.URL }}"
             },
             {
               "fieldName": "Publish Date",
-              "fieldValue": "={{ $('Edit Fields').item.json[\"Publish Date\"] }}"
+              "fieldValue": "={{ $('Loop Over Items').item.json[\"Publish Date\"] }}"
             }
           ]
         }
@@ -122,8 +152,8 @@
       "type": "n8n-nodes-base.nocoDb",
       "typeVersion": 3,
       "position": [
-        940,
-        -80
+        1120,
+        80
       ],
       "id": "2d4c4731-b53a-4967-a80e-46192ec69862",
       "name": "NocoDB",
@@ -148,8 +178,8 @@
       "type": "n8n-nodes-base.nocoDb",
       "typeVersion": 3,
       "position": [
-        440,
-        0
+        660,
+        100
       ],
       "id": "f5ea9d37-a45e-497b-b624-05bd12a03f5c",
       "name": "NocoDB1",
@@ -189,8 +219,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        660,
-        0
+        860,
+        100
       ],
       "id": "0a6faf1b-5e0a-4b70-ad74-89f22a80adad",
       "name": "If"
@@ -214,6 +244,19 @@
       ],
       "id": "f0604a35-2b7a-4c11-af39-399ea7545ee6",
       "name": "RSS Feed Trigger"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        440,
+        0
+      ],
+      "id": "a2b7bb22-b2cf-468d-b869-d7ed54920d8b",
+      "name": "Loop Over Items"
     }
   ],
   "pinData": {},
@@ -222,7 +265,7 @@
   },
   "staticData": {
     "node:RSS Feed Trigger": {
-      "lastItemDate": "2024-12-29T07:03:00.000Z"
+      "lastItemDate": "2024-12-29T19:59:48.000Z"
     },
     "node:Research Feed Trigger": {
       "lastItemDate": "2024-12-24T05:00:00.000Z"
@@ -230,6 +273,6 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-12-29T03:14:23.000Z",
-  "versionId": "4b64cc2e-c141-4ff7-b2cd-e23ed36294c1"
+  "updatedAt": "2024-12-29T12:37:03.000Z",
+  "versionId": "2a8094fa-2d38-44a9-987b-690f7312fdea"
 }
