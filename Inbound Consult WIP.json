@@ -1,0 +1,669 @@
+{
+  "active": true,
+  "connections": {
+    "Make Phone Call": {
+      "main": [
+        [
+          {
+            "node": "Wait for Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Call Results": {
+      "main": [
+        [
+          {
+            "node": "NocoDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NocoDB": {
+      "main": [
+        [
+          {
+            "node": "Send NTFY Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send NTFY Notification": {
+      "main": [
+        []
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Clean Phone Number",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Wait Until Scheduled Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean Phone Number": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait Until Scheduled Time": {
+      "main": [
+        [
+          {
+            "node": "Make Phone Call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Results": {
+      "main": [
+        [
+          {
+            "node": "Get Call Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-12-29T21:17:13.198Z",
+  "id": "tHTqdBW6bJVqPzKq",
+  "meta": null,
+  "name": "Inbound Consult WIP",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "377a1aae-a18e-4c5a-b10b-ae59c240b2de",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -20,
+        0
+      ],
+      "id": "75b7b3b0-6c82-4c60-88ee-836cbf57fcee",
+      "name": "Webhook",
+      "webhookId": "377a1aae-a18e-4c5a-b10b-ae59c240b2de"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.vapi.ai/call/phone",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 3097c5d8-ad92-4f60-904a-b641d0fb0323"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"assistant\": {\n    \"model\": {\n      \"messages\": [\n        {\n          \"content\": \"You are Clara, an AI Voice Assistant for Automate St Pete, conducting initial consultations with businesses interested in AI and automation solutions. Your role is to facilitate a structured yet conversational discovery session to understand their business needs and opportunities for AI implementation. Consultation Structure: 1. Introduction and Context Setting: - Introduce yourself clearly - Explain the consultation structure - Set expectations for the conversation 2. Information Gathering Categories: Business Overview: - Nature of business and target audience - Current business model - Core services/products offered - Key challenges and opportunities Workflows and Processes: - Time-consuming tasks and workflows - Inefficient processes needing streamlining - Manual operations that could be automated - Current operational bottlenecks Technology Infrastructure: - Current technology stack - Critical business tools and systems - Desired integrations - Existing automation attempts Goals and Outcomes: - Short-term objectives - Long-term vision - Definition of success - Desired measurable outcomes Pain Points: - Specific problems needing solutions - Areas of inefficiency - Current business impact of these issues Interaction Guidelines: - Maintain a professional, conversational tone - Provide real-time feedback and clarification - Confirm understanding regularly - Ask follow-up questions when needed - Keep the conversation focused but natural At the end of each section: - Summarize key points gathered - Confirm accuracy of understanding - Bridge naturally to next topic Closing the Consultation: - Summarize all key information gathered - Explain next steps in the process - Thank them for their time Key Principles: - Listen actively and show understanding - Dive deeper when valuable information is shared - Keep the conversation focused on their business needs - Demonstrate value through efficient information gathering - Be conversational while maintaining structure Your role is to make this consultation efficient and valuable while giving them a practical demonstration of AI capabilities through your own performance.\",\n          \"role\": \"system\"\n        }\n      ],\n      \"provider\": \"openai\",\n      \"model\": \"gpt-4o-mini\",\n      \"temperature\": 2,\n      \"maxTokens\": 10000,\n      \"emotionRecognitionEnabled\": true,\n      \"numFastTurns\": 0\n    },\n    \"firstMessage\": \"Hello this is Clara, the AI assistant from Automate St Pete. May I speak with {{ $json.Name }} ?\",\n    \"firstMessageMode\": \"assistant-speaks-first\"\n  },\n  \"phoneNumberId\": \"c385d18a-3eb8-477b-bfa5-5c3a6e7c3f31\",\n  \"customer\": {\n    \"number\": \"+1{{ $json.Phone }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "a3f779be-e113-4160-a5d1-cc1216aac1d9",
+      "name": "Make Phone Call",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        920,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.vapi.ai/call/{{ $json.id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 3097c5d8-ad92-4f60-904a-b641d0fb0323"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "14ae9675-c788-4b8c-8198-1131b06ce433",
+      "name": "Get Call Results",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1380,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "p396c1l7rjkrr41",
+        "table": "mwsufn0rwpc5q6e",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "=Id",
+              "fieldValue": "={{ $('Loop Over Items').all()[0].json.Id }}"
+            },
+            {
+              "fieldName": "Call Success Evaluation",
+              "fieldValue": "={{ $json.analysis.successEvaluation }}"
+            },
+            {
+              "fieldName": "Call Summary",
+              "fieldValue": "={{ $json.summary }}"
+            },
+            {
+              "fieldName": "Transcript",
+              "fieldValue": "={{ $json.transcript }}"
+            },
+            {
+              "fieldName": "Recording",
+              "fieldValue": "={{ $json.recordingUrl }}"
+            },
+            {
+              "fieldName": "Call Cost",
+              "fieldValue": "={{ $json.cost }}"
+            },
+            {
+              "fieldName": "Messages JSON",
+              "fieldValue": "={{ $json.messages }}"
+            },
+            {
+              "fieldName": "Vapi Call ID",
+              "fieldValue": "={{ $json.id }}"
+            },
+            {
+              "fieldName": "Phone",
+              "fieldValue": "={{ $('Clean Phone Number').all()[0].json['Cleaned Number'] }}"
+            },
+            {
+              "fieldName": "Outbound Call",
+              "fieldValue": "1"
+            }
+          ]
+        }
+      },
+      "id": "b84ea364-4ccc-4a62-a3c5-dec2af88043c",
+      "name": "NocoDB",
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1580,
+        0
+      ],
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "mZ1bN8fBGJ1SO75T",
+          "name": "New NocoDB Token Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://ntfy.aspworkplace.com/n8nAutodialerResults",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "text/plain",
+        "body": "=Business: {{ $('Loop Over Items').all()[0].json.Business }}\n\nPhone: {{ $('Loop Over Items').all()[0].json.Phone }}\nSuccess Eval: {{ $json['Call Success Evaluation'] }}\n\nCall Summary: {{ $json['Call Summary'] }}\n",
+        "options": {}
+      },
+      "id": "c19ede47-d095-477f-b126-d119d9a54f62",
+      "name": "Send NTFY Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1800,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d48f073f-f416-49a3-b3a5-f109611ab118",
+              "name": "Name",
+              "value": "={{ $('Webhook').item.json.body.booking.first_name }} {{ $('Webhook').item.json.body.booking.last_name }}",
+              "type": "string"
+            },
+            {
+              "id": "c39a8b7a-1c52-47f9-b364-018803d031ee",
+              "name": "Phone",
+              "value": "={{ $json[\"Cleaned Number\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "70acfd50-36d1-4b19-86e2-ad607e42d91d",
+              "name": "Time",
+              "value": "={{ $('Webhook').item.json.body.booking.start_time.replace(\" \",\"T\") }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        0
+      ],
+      "id": "555b1a15-9a08-401b-ba5b-c591ac523fae",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "function formatPhoneNumber(phoneNumber) {\n    // Remove all non-digit characters\n    let cleaned = phoneNumber.replace(/\\D/g, '');\n\n    // Ensure the number has 11 digits (including the country code)\n    if (cleaned.length === 11 && cleaned.startsWith('1')) {\n        // Remove the leading country code\n        cleaned = cleaned.slice(1);\n    }\n\n    // Return empty array if not exactly 10 digits after processing\n    if (cleaned.length !== 10) {\n        return [];\n    }\n\n    // Return array with object containing the cleaned phone number\n    return [{\n        \"Cleaned Phone\": cleaned\n    }];\n}\n\n// Get just the formatted number from the result:\nconst result = formatPhoneNumber($('Webhook').all()[0].json.body.booking.custom_fields.custom_phone);\nif (result.length > 0) {\n    return [{\"Cleaned Number\": result[0][\"Cleaned Phone\"]}];\n}"
+      },
+      "id": "fed26679-e664-4720-ba45-6371b5bcd36b",
+      "name": "Clean Phone Number",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        680,
+        0
+      ],
+      "id": "3cc04033-8fb8-41e7-87a2-5ecd56eafa9f",
+      "name": "Wait Until Scheduled Time",
+      "webhookId": "991e6445-8498-4c83-bc1b-e50aafb40027"
+    },
+    {
+      "parameters": {
+        "amount": 6,
+        "unit": "minutes"
+      },
+      "id": "ee9e4588-3dba-4857-a79b-5dc4b8ebb895",
+      "name": "Wait for Results",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1160,
+        0
+      ],
+      "webhookId": "fe50d079-19ef-4dd0-8a04-f8e71f45d08c"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.vapi.ai/call/phone",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 3097c5d8-ad92-4f60-904a-b641d0fb0323"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"assistant\": {\n    \"model\": {\n      \"messages\": [\n        {\n          \"content\": \"You are Clara, an AI Voice Assistant for Automate St Pete, conducting initial consultations with businesses interested in AI and automation solutions. Your role is to facilitate a structured yet conversational discovery session to understand their business needs and opportunities for AI implementation. Consultation Structure: 1. Introduction and Context Setting: - Introduce yourself clearly - Explain the consultation structure - Set expectations for the conversation 2. Information Gathering Categories: Business Overview: - Nature of business and target audience - Current business model - Core services/products offered - Key challenges and opportunities Workflows and Processes: - Time-consuming tasks and workflows - Inefficient processes needing streamlining - Manual operations that could be automated - Current operational bottlenecks Technology Infrastructure: - Current technology stack - Critical business tools and systems - Desired integrations - Existing automation attempts Goals and Outcomes: - Short-term objectives - Long-term vision - Definition of success - Desired measurable outcomes Pain Points: - Specific problems needing solutions - Areas of inefficiency - Current business impact of these issues Interaction Guidelines: - Maintain a professional, conversational tone - Provide real-time feedback and clarification - Confirm understanding regularly - Ask follow-up questions when needed - Keep the conversation focused but natural At the end of each section: - Summarize key points gathered - Confirm accuracy of understanding - Bridge naturally to next topic Closing the Consultation: - Summarize all key information gathered - Explain next steps in the process - Thank them for their time Key Principles: - Listen actively and show understanding - Dive deeper when valuable information is shared - Keep the conversation focused on their business needs - Demonstrate value through efficient information gathering - Be conversational while maintaining structure Your role is to make this consultation efficient and valuable while giving them a practical demonstration of AI capabilities through your own performance.\",\n          \"role\": \"system\"\n        }\n      ],\n      \"provider\": \"openai\",\n      \"model\": \"gpt-4o-mini\",\n      \"temperature\": 2,\n      \"maxTokens\": 10000,\n      \"emotionRecognitionEnabled\": true,\n      \"numFastTurns\": 0\n    },\n    \"firstMessage\": \"Hello this is Clara, the AI assistant from Automate St Pete. May I speak with  ?\",\n    \"firstMessageMode\": \"assistant-speaks-first\"\n  },\n  \"phoneNumberId\": \"c385d18a-3eb8-477b-bfa5-5c3a6e7c3f31\",\n  \"customer\": {\n    \"number\": \"+17272918100\"\n  }\n}",
+        "options": {}
+      },
+      "id": "641b7b63-555e-4181-8888-1cff3dc05c83",
+      "name": "Make Phone Call1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        560,
+        280
+      ],
+      "disabled": true
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n.aspworkplace.com",
+            "user-agent": "WordPress/6.7.1; https://automatestpete.com",
+            "content-length": "7622",
+            "accept": "*/*",
+            "accept-encoding": "deflate, gzip",
+            "content-type": "application/json; charset=utf-8",
+            "x-forwarded-for": "198.175.150.81",
+            "x-forwarded-host": "n8n.aspworkplace.com",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "713be61c884b",
+            "x-real-ip": "198.175.150.81"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "booking": {
+              "id": 9,
+              "hash": "d7b85b9875cd5bbb2cef26e9f3b39bc0",
+              "calendar_id": "1",
+              "event_id": "1",
+              "group_id": "1",
+              "fcrm_id": null,
+              "parent_id": null,
+              "host_user_id": "1",
+              "person_user_id": "1",
+              "person_contact_id": null,
+              "person_time_zone": "America/New_York",
+              "start_time": "2024-12-30 16:00:00",
+              "end_time": "2024-12-30 16:30:00",
+              "slot_minutes": "30",
+              "first_name": "Your",
+              "last_name": "Name",
+              "email": "automatestpete@gmail.com",
+              "message": "I want to talk about Ai",
+              "internal_note": null,
+              "phone": "",
+              "country": null,
+              "ip_address": "",
+              "browser": null,
+              "device": null,
+              "other_info": null,
+              "location_details": {
+                "type": "phone_organizer",
+                "description": "7272918100"
+              },
+              "cancelled_by": null,
+              "status": "scheduled",
+              "source": "web",
+              "booking_type": "scheduling",
+              "event_type": "single",
+              "payment_status": null,
+              "payment_method": null,
+              "source_url": "https://automatestpete.com/contact/",
+              "source_id": null,
+              "utm_source": "",
+              "utm_medium": "",
+              "utm_campaign": "",
+              "utm_term": "",
+              "created_at": "2024-12-30T02:17:32+00:00",
+              "updated_at": "2024-12-30T02:17:32+00:00",
+              "custom_fields": {
+                "custom_phone": "+17272918100"
+              }
+            },
+            "calendar_event": {
+              "id": 1,
+              "hash": "8ba7f1361581d0d629ccebbd778e8479",
+              "user_id": "1",
+              "calendar_id": "1",
+              "duration": "30",
+              "title": "Free Consultation",
+              "slug": "automate-st-pete-free-consultation",
+              "media_id": null,
+              "description": "Initial Consultation with Our Voice AI Assistant: What to Expect and How to Prepare\n\nOur initial consultation will be guided by a Voice AI Assistant, designed to help gather essential information about your business, workflows, and goals. The assistant is conversational, efficient, and focused on identifying opportunities where AI and automation can bring the most value to your operations.\n\n_________________________________________________________________________________\n\nWhat to Prepare Before the Call\n\n1. Business Overview:\n   - A short summary of your business model and core services/products.\n   - Key challenges or opportunities you’re currently facing.\n\n2. Workflows and Processes:\n   - Examples of tasks or workflows that take up significant time or resources.\n   - Processes that you feel could be more efficient, automated, or streamlined.\n\n3. Technology Stack:\n   - A list of tools or systems you currently use (e.g., CRM, project management, email platforms).\n   - Any integrations you are interested in (e.g., linking your calendar or customer database).\n\n4. Goals and Outcomes:\n   - What do you hope to achieve through AI and automation? (e.g., save time, improve customer engagement, scale operations.)\n   - Short-term goals vs. long-term vision for your business.\n\n5. Pain Points:\n   - Specific problems you’d like to solve (e.g., missed leads, manual data entry, scheduling inefficiencies).\n   - Any areas where delays, errors, or inefficiencies are affecting your business.\n\n_________________________________________________________________________________\n\nHow the Voice AI Assistant Works\n\n1. Introduction and Context Setting:\n   - The AI assistant will introduce itself and explain the structure of the consultation.\n   - It will begin with broad questions to understand your business and refine its focus as the conversation progresses.\n\n2. Question Categories:\n   - General Business Questions:\n     - What is the nature of your business, and who is your target audience?\n     - What challenges are you facing in your current workflows?\n   - Workflow-Specific Questions:\n     - Can you describe your lead management process? How are leads assigned or followed up on?\n     - What tasks are currently manual or repetitive in your day-to-day operations?\n   - Technology-Specific Questions:\n     - Which tools or software are critical to your operations?\n     - Are there specific systems you'd like to integrate or automate?\n   - Goal-Oriented Questions:\n     - What measurable outcomes would define success for you?\n     - Are you looking for immediate fixes or long-term AI transformation?\n\n3. Real-Time Feedback and Follow-Up:\n   - The AI assistant will confirm its understanding and ask for clarification if needed.\n   - At the end of the call, it will summarize the information gathered and outline the next steps.\n_________________________________________________________________________________\n\nWhat to Expect After the Consultation\n\nThe information gathered by the AI assistant will be used to:\n- Identify key areas where AI and automation can provide value.\n- Draft an initial strategy tailored to your business needs.\n- Schedule follow-ups for deeper discussions or to review proposed solutions.\n\nThis AI-powered consultation ensures a quick, streamlined process that captures all the critical details while giving you a glimpse into the efficiency and effectiveness of AI solutions in action.",
+              "settings": {
+                "schedule_type": "weekly_schedules",
+                "weekly_schedules": {
+                  "sun": {
+                    "enabled": false,
+                    "slots": []
+                  },
+                  "mon": {
+                    "enabled": true,
+                    "slots": [
+                      {
+                        "start": "15:00",
+                        "end": "21:00"
+                      }
+                    ]
+                  },
+                  "tue": {
+                    "enabled": true,
+                    "slots": [
+                      {
+                        "start": "15:00",
+                        "end": "21:00"
+                      }
+                    ]
+                  },
+                  "wed": {
+                    "enabled": true,
+                    "slots": [
+                      {
+                        "start": "15:00",
+                        "end": "21:00"
+                      }
+                    ]
+                  },
+                  "thu": {
+                    "enabled": true,
+                    "slots": [
+                      {
+                        "start": "15:00",
+                        "end": "21:00"
+                      }
+                    ]
+                  },
+                  "fri": {
+                    "enabled": true,
+                    "slots": [
+                      {
+                        "start": "15:00",
+                        "end": "21:00"
+                      }
+                    ]
+                  },
+                  "sat": {
+                    "enabled": false,
+                    "slots": []
+                  }
+                },
+                "date_overrides": [],
+                "range_type": "range_days",
+                "range_days": 1,
+                "range_date_between": [
+                  "",
+                  ""
+                ],
+                "schedule_conditions": {
+                  "value": 0,
+                  "unit": "days"
+                },
+                "location_fields": {
+                  "conferencing": {
+                    "label": "Conferencing",
+                    "options": {
+                      "google_meet": {
+                        "title": "Google Meet (Connect Google Meet First)",
+                        "disabled": true,
+                        "location_type": "conferencing"
+                      },
+                      "ms_teams": {
+                        "title": "MS Teams (Connect Outlook First)",
+                        "disabled": true,
+                        "location_type": "conferencing"
+                      }
+                    }
+                  },
+                  "in_person": {
+                    "label": "In Person",
+                    "options": {
+                      "in_person_guest": {
+                        "title": "In Person (Attendee Address)"
+                      },
+                      "in_person_organizer": {
+                        "title": "In Person (Organizer Address)"
+                      }
+                    }
+                  },
+                  "phone": {
+                    "label": "Phone",
+                    "options": {
+                      "phone_guest": {
+                        "title": "Attendee Phone Number"
+                      },
+                      "phone_organizer": {
+                        "title": "Organizer Phone Number"
+                      }
+                    }
+                  },
+                  "online": {
+                    "label": "Online",
+                    "options": {
+                      "online_meeting": {
+                        "title": "Online Meeting"
+                      }
+                    }
+                  },
+                  "other": {
+                    "label": "Other",
+                    "options": {
+                      "custom": {
+                        "title": "Custom"
+                      }
+                    }
+                  }
+                },
+                "buffer_time_before": "15",
+                "buffer_time_after": "15",
+                "slot_interval": "",
+                "booking_frequency": {
+                  "enabled": true,
+                  "limits": [
+                    {
+                      "unit": "per_month",
+                      "value": 1
+                    }
+                  ]
+                },
+                "booking_duration": {
+                  "enabled": false,
+                  "limits": [
+                    {
+                      "unit": "per_day",
+                      "value": 120
+                    }
+                  ]
+                },
+                "can_cancel": "yes",
+                "can_reschedule": "no",
+                "custom_redirect": {
+                  "enabled": false,
+                  "redirect_url": "",
+                  "is_query_string": "no",
+                  "query_string": ""
+                },
+                "multi_duration": {
+                  "enabled": false,
+                  "default_duration": "",
+                  "available_durations": []
+                },
+                "common_schedule": false,
+                "booking_title": "Free Ai Consultation between Automate St Pete and {{guest.full_name}}",
+                "submit_button_text": "",
+                "requires_confirmation": {
+                  "enabled": false,
+                  "type": "always",
+                  "condition": {
+                    "unit": "minutes",
+                    "value": 30
+                  }
+                },
+                "multiple_booking": {
+                  "enabled": false,
+                  "limit": 5
+                },
+                "can_not_cancel": {
+                  "enabled": false,
+                  "type": "always",
+                  "message": "Sorry! you can not cancel this",
+                  "condition": {
+                    "unit": "minutes",
+                    "value": 30
+                  }
+                },
+                "can_not_reschedule": {
+                  "enabled": true,
+                  "type": "always",
+                  "message": "Sorry! you can not reschedule this",
+                  "condition": {
+                    "unit": "minutes",
+                    "value": 30
+                  }
+                },
+                "lock_timezone": {
+                  "enabled": false,
+                  "timezone": ""
+                }
+              },
+              "availability_type": "existing_schedule",
+              "availability_id": "1",
+              "status": "active",
+              "type": "free",
+              "color_schema": "#0099ff",
+              "location_type": "",
+              "location_heading": "",
+              "location_settings": [
+                {
+                  "type": "phone_organizer",
+                  "title": "Organizer Phone Number",
+                  "display_on_booking": "no",
+                  "host_phone_number": "7272918100"
+                }
+              ],
+              "event_type": "single",
+              "is_display_spots": "0",
+              "max_book_per_slot": "1",
+              "created_at": "2024-01-06T02:33:22+00:00",
+              "updated_at": "2024-12-30T02:08:50+00:00"
+            }
+          },
+          "webhookUrl": "https://n8n.aspworkplace.com/webhook/377a1aae-a18e-4c5a-b10b-ae59c240b2de",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2024-12-29T23:09:24.000Z",
+  "versionId": "5ff519cb-9eee-429f-956b-37025de26c25"
+}
