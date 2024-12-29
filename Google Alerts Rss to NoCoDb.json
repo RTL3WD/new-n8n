@@ -1,0 +1,235 @@
+{
+  "active": true,
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "NocoDB1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NocoDB1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "NocoDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Feed Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-12-29T02:53:46.855Z",
+  "id": "7La4y55J3RcC51hi",
+  "meta": null,
+  "name": "Google Alerts Rss to NoCoDb",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d8ba6482-6bac-44a6-84bd-bfffad96d3e4",
+              "name": "Provider",
+              "value": "Google Alerts",
+              "type": "string"
+            },
+            {
+              "id": "7eb2288b-14a4-4840-8ac0-1228043b1031",
+              "name": "Title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "46c16f11-a449-46da-a593-b127a87b2a48",
+              "name": "URL",
+              "value": "={{ $json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "52257b26-de2b-40ac-a407-649966e62a7e",
+              "name": "Publish Date",
+              "value": "={{ $json.isoDate }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ],
+      "id": "6f02391d-c0b7-407f-ad66-31e9261f3d61",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "pttjcin7q0epdbb",
+        "table": "ms1j6j4wzcgjo3f",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Provider",
+              "fieldValue": "={{ $('Edit Fields').item.json.Provider }}"
+            },
+            {
+              "fieldName": "Title",
+              "fieldValue": "={{ $('Edit Fields').item.json.Title }}"
+            },
+            {
+              "fieldName": "URL",
+              "fieldValue": "={{ $('Edit Fields').item.json.URL }}"
+            },
+            {
+              "fieldName": "Publish Date",
+              "fieldValue": "={{ $('Edit Fields').item.json[\"Publish Date\"] }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        940,
+        -80
+      ],
+      "id": "2d4c4731-b53a-4967-a80e-46192ec69862",
+      "name": "NocoDB",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "mZ1bN8fBGJ1SO75T",
+          "name": "New NocoDB Token Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pttjcin7q0epdbb",
+        "table": "ms1j6j4wzcgjo3f",
+        "limit": 5,
+        "options": {
+          "where": "=(URL,eq,{{ $json.URL }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        440,
+        0
+      ],
+      "id": "f5ea9d37-a45e-497b-b624-05bd12a03f5c",
+      "name": "NocoDB1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "mZ1bN8fBGJ1SO75T",
+          "name": "New NocoDB Token Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6c58e545-f0f2-48eb-91ac-024996bc87ef",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        660,
+        0
+      ],
+      "id": "0a6faf1b-5e0a-4b70-ad74-89f22a80adad",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "feedUrl": "https://www.google.com/alerts/feeds/16640484749544077318/14117786376064434591"
+      },
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "f0604a35-2b7a-4c11-af39-399ea7545ee6",
+      "name": "RSS Feed Trigger"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:RSS Feed Trigger": {
+      "lastItemDate": "2024-12-29T07:03:00.000Z"
+    },
+    "node:Research Feed Trigger": {
+      "lastItemDate": "2024-12-24T05:00:00.000Z"
+    }
+  },
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2024-12-29T03:14:23.000Z",
+  "versionId": "4b64cc2e-c141-4ff7-b2cd-e23ed36294c1"
+}
