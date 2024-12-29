@@ -1,0 +1,392 @@
+{
+  "active": false,
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-12-27T18:23:50.910Z",
+  "id": "1TkSSfGbJxlVrUMy",
+  "meta": null,
+  "name": "WPRC Nextdoor Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1UE5pj-rcyxY0SB_BYcAR0kXal-jsmHeT4fs1GG9WbfA",
+          "mode": "list",
+          "cachedResultName": "WPRC ND TM WB",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UE5pj-rcyxY0SB_BYcAR0kXal-jsmHeT4fs1GG9WbfA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 361188498,
+          "mode": "list",
+          "cachedResultName": "ND Posts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UE5pj-rcyxY0SB_BYcAR0kXal-jsmHeT4fs1GG9WbfA/edit#gid=361188498"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "034437ff-d8fb-4bcc-a758-df620bf850c3",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "eiB1yvbgSrE4wzmw",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Person who made the post: {{ $json.Name }}\n\nPost Content: {{ $json['Post Content'] }}",
+        "options": {
+          "systemMessage": "=Analyze the provided Nextdoor post to determine if the user is seeking a roofer or roofing services. Use the following criteria:\n\nIntent: Does the post explicitly or implicitly indicate a need for roofing services, such as roof repairs, replacements, inspections, or recommendations for roofers?\n\nKeywords: Look for terms or phrases like \"roofer,\" \"roof repair,\" \"roof replacement,\" \"leak,\" \"shingles,\" \"storm damage,\" or similar language related to roofing.\n\nClarity: Ensure the post is unambiguous in its request for roofing-related help or recommendations.\n\nIf the post is determined to be seeking roofing services, generate a dynamic, conversational response tailored to the specific details of the post. The response should:\n\nAcknowledge the specific concern or request mentioned in the post.\nRecommend Weatherproof Roofing Company as a solution, including their contact information: (727) 461-7663.\nUse a friendly, approachable tone.\n\nExample: If the post mentions a leaky roof, the response might be:\n\n\"It sounds like you're dealing with a frustrating roof leak. I recommend reaching out to Weatherproof Roofing Company. They're experienced with repairs like this and have a great reputation. You can call them at (727) 461-7663. Best of luck with getting it fixed!\"\n\nIf the post does not indicate a need for roofing services, provide a brief explanation for why no response is necessary."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        200,
+        0
+      ],
+      "id": "2ed61c15-cde1-4c32-b8fe-ecd4c14e5590",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        200,
+        200
+      ],
+      "id": "ada5866c-4172-423d-9a1c-14ac521b72f6",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1UE5pj-rcyxY0SB_BYcAR0kXal-jsmHeT4fs1GG9WbfA",
+          "mode": "list",
+          "cachedResultName": "WPRC ND TM WB",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UE5pj-rcyxY0SB_BYcAR0kXal-jsmHeT4fs1GG9WbfA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 361188498,
+          "mode": "list",
+          "cachedResultName": "ND Posts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UE5pj-rcyxY0SB_BYcAR0kXal-jsmHeT4fs1GG9WbfA/edit#gid=361188498"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Wrote Response?": "={{ $json.output }}",
+            "row_number": "={{ $runIndex }}",
+            "Link": "={{ $('Google Sheets Trigger').item.json.Link }}"
+          },
+          "matchingColumns": [
+            "Link"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "When & Where",
+              "displayName": "When & Where",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Post Content",
+              "displayName": "Post Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Wrote Response?",
+              "displayName": "Wrote Response?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        580,
+        0
+      ],
+      "id": "7e0080d5-26e2-4e4e-9877-2bebcf5aa753",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sKITsW661Itsg15I",
+          "name": "Google Sheets account - ASP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json['Wrote Response?'] }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "If the content contains what is supposed to be a response, extract it, otherwise, do nothing."
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        800,
+        0
+      ],
+      "id": "ba62fd7c-feca-4c79-b262-8a00cd3d1bbd",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://webhooks.taskmagic.com/hook/lHsDRUP4e2qHrLY8MiVi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "responseUrl",
+              "value": "={{ $('Google Sheets').item.json.Link }}"
+            },
+            {
+              "name": "responseText",
+              "value": "={{ $json.text.slice(1,-1) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1440,
+        140
+      ],
+      "id": "7f0b4b89-2281-4570-9860-13cedc349572",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "638d1575-d77c-42fb-b7bf-c752e85f6dc1",
+              "leftValue": "={{ $json.text.toLowerCase() }}",
+              "rightValue": "no response",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "0f18d1a5-dcfd-46ab-93de-a8649a4a629f",
+              "leftValue": "={{ $json.text.toLowerCase() }}",
+              "rightValue": "no content",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1160,
+        0
+      ],
+      "id": "203f32fc-58ec-42f8-8f61-3d8af790a3a7",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        880,
+        200
+      ],
+      "id": "51b2b317-f8ef-4830-87c2-490406287150",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-12-29T12:38:21.000Z",
+  "versionId": "657c46ed-1178-43dc-afd0-3c84f6406f58"
+}
