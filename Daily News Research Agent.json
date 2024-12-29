@@ -1,0 +1,229 @@
+{
+  "active": false,
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "NocoDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NocoDB": {
+      "main": [
+        []
+      ]
+    },
+    "Research Agent": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-12-29T01:34:25.587Z",
+  "id": "W2nccXQEJyCGZAcm",
+  "meta": null,
+  "name": "Daily News Research Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        220,
+        220
+      ],
+      "id": "9edc0600-432d-4dff-951c-6cee594ed606",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this to get the most recent news about AI.",
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "accept",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "valueProvider": "fieldValue",
+              "value": "Bearer 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"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"llama-3.1-sonar-small-128k-online\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are an assistant that retrieves five of the latest news articles about AI. Provide the news with the following fields: provider, title, url, and date.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Provide the most recent news about AI.\"\n    }\n  ]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        400,
+        220
+      ],
+      "id": "06ed9fe4-efc3-4138-8d4b-c491a7497dd2",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "function extractNewsItemsFromText(text) {\n    const results = [];\n\n    // Helper function to format date to YYYY-MM-DD\n    function formatDate(dateString) {\n        // Handle cases like \"Unknown Date\" or \"(No specific date mentioned)\"\n        if (!dateString || dateString.toLowerCase().includes(\"no specific date\") || dateString.toLowerCase().includes(\"unknown\")) {\n            return \"\";\n        }\n\n        try {\n            const date = new Date(dateString);\n\n            // Check if the date is valid\n            if (isNaN(date)) {\n                return \"\";\n            }\n\n            const year = date.getFullYear();\n            const month = (date.getMonth() + 1).toString().padStart(2, \"0\");\n            const day = date.getDate().toString().padStart(2, \"0\");\n\n            return `${year}-${month}-${day}`;\n        } catch {\n            return \"\";\n        }\n    }\n\n    // Check for JSON-formatted block\n    const jsonRegex = /```json\\n([\\s\\S]*?)\\n```/;\n    const jsonMatch = text.match(jsonRegex);\n\n    if (jsonMatch && jsonMatch[1]) {\n        try {\n            const newsArray = JSON.parse(jsonMatch[1]);\n\n            if (Array.isArray(newsArray)) {\n                newsArray.forEach(item => {\n                    results.push({\n                        provider: item.provider || \"Unknown Provider\",\n                        title: item.title || \"Untitled\",\n                        url: item.url || \"No URL Provided\",\n                        date: formatDate(item.date)\n                    });\n                });\n            }\n        } catch (error) {\n            console.error(\"Error parsing JSON:\", error);\n        }\n    }\n\n    // Check for bullet-point style news\n    const bulletPointRegex = /\\*\\*(.*?)\\*\\*\\n - \\*\\*Provider:\\*\\* (.*?)\\n - \\*\\*Date:\\*\\* (.*?)\\n - \\*\\*URL:\\*\\* \\[Read more\\]\\((.*?)\\)/g;\n    let match;\n\n    while ((match = bulletPointRegex.exec(text)) !== null) {\n        results.push({\n            title: match[1] || \"Untitled\",\n            provider: match[2] || \"Unknown Provider\",\n            date: formatDate(match[3]),\n            url: match[4] || \"No URL Provided\"\n        });\n    }\n\n    // Check for inline key-value pair news\n    const inlineRegex = /\\*\\*Provider:\\*\\* (.*?)\\s{2,}\\*\\*Title:\\*\\* (.*?)\\s{2,}\\*\\*URL:\\*\\* \\[.*?\\]\\((.*?)\\)\\s{2,}\\*\\*Date:\\*\\* (.*?)\\s{2,}/g;\n    while ((match = inlineRegex.exec(text)) !== null) {\n        results.push({\n            provider: match[1] || \"Unknown Provider\",\n            title: match[2] || \"Untitled\",\n            url: match[3] || \"No URL Provided\",\n            date: formatDate(match[4])\n        });\n    }\n\n    // Check for numbered list style news\n    const numberedListRegex = /\\d+\\.\\s+\\*\\*Provider:\\*\\* (.*?)\\s+\\*\\*Title:\\*\\* \"(.*?)\"\\s+\\*\\*URL:\\*\\* \\[.*?\\]\\((.*?)\\)\\s+\\*\\*Date:\\*\\* (.*?)\\n/g;\n    while ((match = numberedListRegex.exec(text)) !== null) {\n        results.push({\n            provider: match[1] || \"Unknown Provider\",\n            title: match[2] || \"Untitled\",\n            url: match[3] || \"No URL Provided\",\n            date: formatDate(match[4])\n        });\n    }\n\n    return results;\n}\n\n\nconst newsItems = extractNewsItemsFromText($('Research Agent').all()[0].json.output);\n\nif (newsItems.length > 0) {\n    console.log(\"Extracted News Items:\", newsItems);\n  return newsItems;\n} else {\n    console.log(\"No news items found in the text.\");\n}\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        580,
+        0
+      ],
+      "id": "99ad0f1a-b0f8-4bbe-a779-2f4cc9af056c",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "pttjcin7q0epdbb",
+        "table": "ms1j6j4wzcgjo3f",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Provider",
+              "fieldValue": "={{ $json.provider }}"
+            },
+            {
+              "fieldName": "Title",
+              "fieldValue": "={{ $json.title }}"
+            },
+            {
+              "fieldName": "URL",
+              "fieldValue": "={{ $json.url }}"
+            },
+            {
+              "fieldName": "Publish Date",
+              "fieldValue": "={{ $json.date }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        780,
+        0
+      ],
+      "id": "fc7cb055-b3f5-40df-8866-a9a96a4cd60c",
+      "name": "NocoDB",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "mZ1bN8fBGJ1SO75T",
+          "name": "New NocoDB Token Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Get the most recent news about AI.",
+        "options": {
+          "systemMessage": "You are an assistant that retrieves the latest news about AI. Provide the latest news in AI. Make sure to remove any duplicate information.",
+          "returnIntermediateSteps": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "6076ddcf-d9f0-4b1a-b762-f28e92e31de8",
+      "name": "Research Agent"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 12
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2a42a6ef-9029-4a77-b5d5-2561319b9f49",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2024-12-29T02:53:04.000Z",
+  "versionId": "fbafa30c-b284-4408-a538-524ff6c3e4c7"
+}
