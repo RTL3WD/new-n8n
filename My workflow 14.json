@@ -22,10 +22,21 @@
           }
         ]
       ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "createdAt": "2024-12-25T21:31:12.904Z",
-  "id": "ZXFeHDRXRHShZUpF",
+  "createdAt": "2024-12-29T14:59:28.481Z",
+  "id": "WqH74zlFJUwjwCAO",
   "meta": null,
   "name": "My workflow 14",
   "nodes": [
@@ -39,14 +50,14 @@
         0,
         0
       ],
-      "id": "1bba68bd-53c0-4591-be8c-23eda6d344ed",
+      "id": "fe68ef25-1c32-4f9e-a286-44dff09ae2ea",
       "name": "When chat message received",
-      "webhookId": "a19f9105-e17b-4368-96e4-f973cf73b0ee"
+      "webhookId": "e4348077-1b38-4884-a086-2e04580a932c"
     },
     {
       "parameters": {
         "options": {
-          "systemMessage": "=You are a helpful assistant. Your purpose is to Process transcripts and extract the following details:\n\n1.\tIntroduction: Summarize the introduction in 1-2 sentences.\n2.\tKey Points: List the key points discussed, ideally as bullet points.\n3.\tActionable Insights: Extract actionable advice or steps if mentioned.\n4.\tConclusion: Summarize the conclusion in 1-2 sentences.\n5.\tImportant Quotes: Highlight any notable quotes with timestamps if available."
+          "systemMessage": "=You are a helpful assistant. Your task is to prequalify potential clients by asking thoughtful and targeted questions to determine if they are prepared to take on the user's services. Start by asking the following:\n\n1. What is the primary challenge or goal you’re looking to address with automation or AI agents?\n\n2. Do you have an existing system or workflow that you’re trying to improve, or are you building something new?\n\n3. What tools, software, or platforms are you currently using (e.g., CRM, project management tools, cloud storage)?\n\n4. Do you have any technical constraints or specific requirements I should know about (e.g., integrations, budget, timeline)?\n\n5. Have you worked with automation or AI solutions before? If yes, what worked well or didn’t meet your expectations?\n\n6. What is the expected outcome or ROI you’d like to achieve from this project?\n\nGuide the client through these questions conversationally and provide clarifications if needed. Once you gather the answers, summarize their responses and confirm readiness to proceed."
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -55,7 +66,7 @@
         220,
         0
       ],
-      "id": "2444b71c-5a52-415d-8a7b-87ffa2d26889",
+      "id": "0f09829b-6ca8-4dcf-a74d-fd71db4bffe2",
       "name": "AI Agent"
     },
     {
@@ -65,10 +76,10 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1,
       "position": [
-        0,
+        60,
         220
       ],
-      "id": "87449e06-5ab2-4a71-851d-ed0fc3c09249",
+      "id": "d18a3d43-f7df-4d9f-9fce-7f6c29e376d0",
       "name": "OpenAI Chat Model",
       "credentials": {
         "openAiApi": {
@@ -76,6 +87,19 @@
           "name": "OpenAi account"
         }
       }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        240,
+        220
+      ],
+      "id": "5e520ad3-23b3-4745-a3c8-22481e5df467",
+      "name": "Window Buffer Memory"
     }
   ],
   "pinData": {},
@@ -85,6 +109,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-12-25T21:31:44.000Z",
-  "versionId": "656d1960-934e-4c53-8d76-d4a79725b1c9"
+  "updatedAt": "2024-12-29T14:59:28.481Z",
+  "versionId": "384c780c-d516-4a38-bc7d-16eeddaeba43"
 }
