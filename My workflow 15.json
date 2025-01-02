@@ -1,17 +1,6 @@
 {
   "active": false,
   "connections": {
-    "Google Sheets Trigger": {
-      "main": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "OpenAI Chat Model": {
       "ai_languageModel": [
         [
@@ -23,124 +12,63 @@
         ]
       ]
     },
-    "AI Agent": {
+    "SerpAPI": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "When chat message received": {
       "main": [
         [
           {
-            "node": "Google Sheets",
+            "node": "AI Agent",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Google Sheets": {
-      "main": [
+    "Reddit Access Token": {
+      "ai_tool": [
         [
           {
-            "node": "Basic LLM Chain",
-            "type": "main",
+            "node": "AI Agent",
+            "type": "ai_tool",
             "index": 0
           }
         ]
       ]
     },
-    "Basic LLM Chain": {
-      "main": [
+    "HTTP Request": {
+      "ai_tool": [
         [
           {
-            "node": "If",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "If": {
-      "main": [
-        [],
-        [
-          {
-            "node": "HTTP Request",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "OpenAI Chat Model1": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "Basic LLM Chain",
-            "type": "ai_languageModel",
+            "node": "AI Agent",
+            "type": "ai_tool",
             "index": 0
           }
         ]
       ]
     }
   },
-  "createdAt": "2024-12-27T18:23:50.910Z",
-  "id": "1TkSSfGbJxlVrUMy",
+  "createdAt": "2025-01-02T20:20:28.437Z",
+  "id": "HQO5r09bXLXucOJS",
   "meta": null,
   "name": "My workflow 15",
   "nodes": [
     {
       "parameters": {
-        "pollTimes": {
-          "item": [
-            {
-              "mode": "everyMinute"
-            }
-          ]
-        },
-        "documentId": {
-          "__rl": true,
-          "value": "1UE5pj-rcyxY0SB_BYcAR0kXal-jsmHeT4fs1GG9WbfA",
-          "mode": "list",
-          "cachedResultName": "WPRC ND TM WB",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UE5pj-rcyxY0SB_BYcAR0kXal-jsmHeT4fs1GG9WbfA/edit?usp=drivesdk"
-        },
-        "sheetName": {
-          "__rl": true,
-          "value": 361188498,
-          "mode": "list",
-          "cachedResultName": "ND Posts",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UE5pj-rcyxY0SB_BYcAR0kXal-jsmHeT4fs1GG9WbfA/edit#gid=361188498"
-        },
-        "event": "rowAdded",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.googleSheetsTrigger",
-      "typeVersion": 1,
-      "position": [
-        0,
-        0
-      ],
-      "id": "034437ff-d8fb-4bcc-a758-df620bf850c3",
-      "name": "Google Sheets Trigger",
-      "credentials": {
-        "googleSheetsTriggerOAuth2Api": {
-          "id": "eiB1yvbgSrE4wzmw",
-          "name": "Google Sheets Trigger account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "promptType": "define",
-        "text": "=Person who made the post: {{ $json.Name }}\n\nPost Content: {{ $json['Post Content'] }}",
         "options": {
-          "systemMessage": "=Analyze the provided Nextdoor post to determine if the user is seeking a roofer or roofing services. Use the following criteria:\n\nIntent: Does the post explicitly or implicitly indicate a need for roofing services, such as roof repairs, replacements, inspections, or recommendations for roofers?\n\nKeywords: Look for terms or phrases like \"roofer,\" \"roof repair,\" \"roof replacement,\" \"leak,\" \"shingles,\" \"storm damage,\" or similar language related to roofing.\n\nClarity: Ensure the post is unambiguous in its request for roofing-related help or recommendations.\n\nIf the post is determined to be seeking roofing services, generate a dynamic, conversational response tailored to the specific details of the post. The response should:\n\nAcknowledge the specific concern or request mentioned in the post.\nRecommend Weatherproof Roofing Company as a solution, including their contact information: (727) 461-7663.\nUse a friendly, approachable tone.\n\nExample: If the post mentions a leaky roof, the response might be:\n\n\"It sounds like you're dealing with a frustrating roof leak. I recommend reaching out to Weatherproof Roofing Company. They're experienced with repairs like this and have a great reputation. You can call them at (727) 461-7663. Best of luck with getting it fixed!\"\n\nIf the post does not indicate a need for roofing services, provide a brief explanation for why no response is necessary."
+          "systemMessage": "You are a helpful assistant who posts on Reddit. Before you make a post, you must first get an access token. Afterward, you then can make a post."
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [
-        200,
+        220,
         0
       ],
-      "id": "2ed61c15-cde1-4c32-b8fe-ecd4c14e5590",
+      "id": "74d555f2-c2d7-401f-9b86-43eb3083d508",
       "name": "AI Agent"
     },
     {
@@ -150,10 +78,10 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1,
       "position": [
-        200,
-        200
+        140,
+        180
       ],
-      "id": "ada5866c-4172-423d-9a1c-14ac521b72f6",
+      "id": "655e462b-6bdf-4f50-8694-c2d175b752f0",
       "name": "OpenAI Chat Model",
       "credentials": {
         "openAiApi": {
@@ -164,220 +92,175 @@
     },
     {
       "parameters": {
-        "operation": "update",
-        "documentId": {
-          "__rl": true,
-          "value": "1UE5pj-rcyxY0SB_BYcAR0kXal-jsmHeT4fs1GG9WbfA",
-          "mode": "list",
-          "cachedResultName": "WPRC ND TM WB",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UE5pj-rcyxY0SB_BYcAR0kXal-jsmHeT4fs1GG9WbfA/edit?usp=drivesdk"
-        },
-        "sheetName": {
-          "__rl": true,
-          "value": 361188498,
-          "mode": "list",
-          "cachedResultName": "ND Posts",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UE5pj-rcyxY0SB_BYcAR0kXal-jsmHeT4fs1GG9WbfA/edit#gid=361188498"
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "Wrote Response?": "={{ $json.output }}",
-            "row_number": "={{ $runIndex }}",
-            "Link": "={{ $('Google Sheets Trigger').item.json.Link }}"
-          },
-          "matchingColumns": [
-            "Link"
-          ],
-          "schema": [
-            {
-              "id": "Name",
-              "displayName": "Name",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": true
-            },
-            {
-              "id": "When & Where",
-              "displayName": "When & Where",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": true
-            },
-            {
-              "id": "Post Content",
-              "displayName": "Post Content",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": true
-            },
-            {
-              "id": "Link",
-              "displayName": "Link",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "Wrote Response?",
-              "displayName": "Wrote Response?",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "row_number",
-              "displayName": "row_number",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "readOnly": true,
-              "removed": false
-            }
-          ]
-        },
         "options": {}
       },
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.5,
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
       "position": [
-        580,
-        0
+        800,
+        260
       ],
-      "id": "7e0080d5-26e2-4e4e-9877-2bebcf5aa753",
-      "name": "Google Sheets",
+      "id": "4ec695dc-f2dc-4e4e-93b6-b63c72b9a6d0",
+      "name": "SerpAPI",
       "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "sKITsW661Itsg15I",
-          "name": "Google Sheets account - ASP"
+        "serpApi": {
+          "id": "TrHqZUgKGIHkC3cl",
+          "name": "SerpAPI account"
         }
       }
     },
     {
       "parameters": {
-        "promptType": "define",
-        "text": "={{ $json['Wrote Response?'] }}",
-        "messages": {
-          "messageValues": [
-            {
-              "message": "If the content contains what is supposed to be a response, extract it, otherwise, do nothing."
-            }
-          ]
-        }
+        "options": {}
       },
-      "type": "@n8n/n8n-nodes-langchain.chainLlm",
-      "typeVersion": 1.5,
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
       "position": [
-        800,
+        0,
         0
       ],
-      "id": "ba62fd7c-feca-4c79-b262-8a00cd3d1bbd",
-      "name": "Basic LLM Chain"
+      "id": "daa95ffd-26b2-41bd-99bd-feccaf50ee12",
+      "name": "When chat message received",
+      "webhookId": "20b13c31-7b1c-4e33-9fb2-e1d595c0ad12"
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "https://webhooks.taskmagic.com/hook/lHsDRUP4e2qHrLY8MiVi",
-        "sendBody": true,
-        "bodyParameters": {
+        "url": "https://oauth.reddit.com/api/submit",
+        "sendHeaders": true,
+        "headerParameters": {
           "parameters": [
             {
-              "name": "responseUrl",
-              "value": "={{ $('Google Sheets').item.json.Link }}"
+              "name": "Authorization",
+              "value": "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IlNIQTI1NjpzS3dsMnlsV0VtMjVmcXhwTU40cWY4MXE2OWFFdWFyMnpLMUdhVGxjdWNZIiwidHlwIjoiSldUIn0.eyJzdWIiOiJ1c2VyIiwiZXhwIjoxNzM1OTM2NDU1LjU0NTUwNSwiaWF0IjoxNzM1ODUwMDU1LjU0NTUwNSwianRpIjoiV3lTc09kbXZZclBpbnZzN3ZldVQyblFyVjdWbVJBIiwiY2lkIjoidDRUdjEyb25ma1N0X2ZhXzVlelNNQSIsImxpZCI6InQyXzFjZTNxMGVyIiwiYWlkIjoidDJfMWNlM3EwZXIiLCJsY2EiOjE1MjU5NzE0NzY0MjUsInNjcCI6ImVKeUtWdEpTaWdVRUFBRF9fd056QVNjIiwiZmxvIjo5fQ.A16AThiGoML1tHMFutperWe0qG5SJfZzkRohzV9hORgkK5geWdtH8cjpn0SIJ0PAdHqV8A8pBPWmudwsaIKOcxdatyE9fyh1Mf2tWroJAfW9Lk1hh_FgnHt7tUxLsSIE85I-el4KyslRK1Bb1zG-zpxsb8QpQMQGwzJrZ3BTBkF8p2Jm2PsCBwm1hLesXIt4EMO32uLT2_bom-vbacQ5gfC-9-ggof5NfJGkDWgLLFG3CZSc2N23tnXu-npPUSmIQ5bLdUtU6Stas8z7iTMq76wJxOE2fkjZ0yp8A9nReboZNaHFU2M3hc_lhQl9Ch94Hg9LJ4vs6QHJJyZEHdu-6w"
             },
             {
-              "name": "responseText",
-              "value": "={{ $json.text.slice(1,-1) }}"
+              "name": "cookie",
+              "value": "edgebucket=G5YHq9JxHU2LZJ1cxj;loid=00000000001ce3q0er.2.1525971476425.Z0FBQUFBQm5kdmpodFEza2xENEpZZkljWjZSWUp2U01uRDMyN3djaXY1Ynk4N2Iyb2xMa3RoLWRDNWN4YjJSMW9pMU5wdTJNZ0R5TzRwVUk1LUJtV1FIcGhtTnEwdXpjbG01OC16YW9nTWFCejJCdG8zUWJNRjhzRUpwaFVDR3hvMGpHdU1WTHpkRXQ;session_tracker=hikhpjhjhmchrighag.0.1735850209253.Z0FBQUFBQm5kdmpoZmZTQTJwUVo4bTFuY1d2RjZpbHRkUUdYNWVMVUU3Skt1d0ZraVJyaU9BUG5jbHg3M0g1MFhmLVFERW42T3BRbnJrSFBNeHJ0Y0o3cWxPRXlCemlrTTk2YXJGY3VLcURzUWhDSDNERk8wSWl2eWExcEM4WVh3WUVUeU03VHBwRmo;"
             }
           ]
         },
-        "options": {}
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1440,
-        140
+        480,
+        400
       ],
-      "id": "7f0b4b89-2281-4570-9860-13cedc349572",
-      "name": "HTTP Request"
+      "id": "434c32dd-5d04-4f5d-87cd-b616b3ad7b7e",
+      "name": "HTTP Request1"
     },
     {
       "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
+        "toolDescription": "Use this to get reddit authorization access token.",
+        "method": "POST",
+        "url": "https://www.reddit.com/api/v1/access_token",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
             {
-              "id": "638d1575-d77c-42fb-b7bf-c752e85f6dc1",
-              "leftValue": "={{ $json.text.toLowerCase() }}",
-              "rightValue": "no response",
-              "operator": {
-                "type": "string",
-                "operation": "contains"
-              }
+              "name": "Content-Type",
+              "valueProvider": "fieldValue",
+              "value": "application/x-www-form-urlencoded"
+            }
+          ]
+        },
+        "sendBody": true,
+        "parametersBody": {
+          "values": [
+            {
+              "name": "grant_type",
+              "valueProvider": "fieldValue",
+              "value": "password"
             },
             {
-              "id": "0f18d1a5-dcfd-46ab-93de-a8649a4a629f",
-              "leftValue": "={{ $json.text.toLowerCase() }}",
-              "rightValue": "no content",
-              "operator": {
-                "type": "string",
-                "operation": "contains"
-              }
+              "name": "username",
+              "valueProvider": "fieldValue",
+              "value": "Rtl3wd"
+            },
+            {
+              "name": "password",
+              "valueProvider": "fieldValue",
+              "value": "##Reddit727.."
             }
-          ],
-          "combinator": "or"
-        },
-        "options": {}
+          ]
+        }
       },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
       "position": [
-        1160,
-        0
+        260,
+        360
       ],
-      "id": "203f32fc-58ec-42f8-8f61-3d8af790a3a7",
-      "name": "If"
+      "id": "56c589b7-aa3b-499b-be85-333b9489cc29",
+      "name": "Reddit Access Token",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "yU89jUlvsdnxI0sn",
+          "name": "Reddit credential"
+        }
+      }
     },
     {
       "parameters": {
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "typeVersion": 1,
-      "position": [
-        880,
-        200
-      ],
-      "id": "51b2b317-f8ef-4830-87c2-490406287150",
-      "name": "OpenAI Chat Model1",
-      "credentials": {
-        "openAiApi": {
-          "id": "sTmNKjvehSYtW09j",
-          "name": "OpenAi account"
+        "toolDescription": "Use this tool to submit a post to reddit.",
+        "method": "POST",
+        "url": "https://oauth.reddit.com/api/submit",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Authorization"
+            },
+            {
+              "name": "Content-Type",
+              "valueProvider": "fieldValue",
+              "value": "application/x-www-form-urlencoded"
+            }
+          ]
+        },
+        "sendBody": true,
+        "parametersBody": {
+          "values": [
+            {
+              "name": "sr"
+            },
+            {
+              "name": "title"
+            },
+            {
+              "name": "kind",
+              "valueProvider": "fieldValue",
+              "value": "self"
+            },
+            {
+              "name": "text"
+            }
+          ]
         }
-      }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        380,
+        220
+      ],
+      "id": "5b682f7a-92ce-4f15-b426-5e1952c089b1",
+      "name": "HTTP Request"
     }
   ],
   "pinData": {},
@@ -387,6 +270,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-12-27T20:12:08.000Z",
-  "versionId": "ab53113a-51a4-4a62-b4cf-72cfc407457e"
+  "updatedAt": "2025-01-02T20:55:59.000Z",
+  "versionId": "f667bd2c-fa27-4af0-86da-05882c96090d"
 }
