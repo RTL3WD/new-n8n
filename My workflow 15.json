@@ -5,7 +5,7 @@
       "ai_languageModel": [
         [
           {
-            "node": "AI Agent",
+            "node": "Reddit Agent",
             "type": "ai_languageModel",
             "index": 0
           }
@@ -14,14 +14,20 @@
     },
     "SerpAPI": {
       "ai_tool": [
-        []
+        [
+          {
+            "node": "Reddit Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
       ]
     },
     "When chat message received": {
       "main": [
         [
           {
-            "node": "AI Agent",
+            "node": "Reddit Agent",
             "type": "main",
             "index": 0
           }
@@ -32,18 +38,18 @@
       "ai_tool": [
         [
           {
-            "node": "AI Agent",
+            "node": "Reddit Agent",
             "type": "ai_tool",
             "index": 0
           }
         ]
       ]
     },
-    "HTTP Request": {
+    "Post to Reddit": {
       "ai_tool": [
         [
           {
-            "node": "AI Agent",
+            "node": "Reddit Agent",
             "type": "ai_tool",
             "index": 0
           }
@@ -56,21 +62,6 @@
   "meta": null,
   "name": "My workflow 15",
   "nodes": [
-    {
-      "parameters": {
-        "options": {
-          "systemMessage": "You are a helpful assistant who posts on Reddit. Before you make a post, you must first get an access token. Afterward, you then can make a post."
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 1.7,
-      "position": [
-        220,
-        0
-      ],
-      "id": "74d555f2-c2d7-401f-9b86-43eb3083d508",
-      "name": "AI Agent"
-    },
     {
       "parameters": {
         "options": {}
@@ -97,8 +88,8 @@
       "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
       "typeVersion": 1,
       "position": [
-        800,
-        260
+        660,
+        340
       ],
       "id": "4ec695dc-f2dc-4e4e-93b6-b63c72b9a6d0",
       "name": "SerpAPI",
@@ -122,45 +113,6 @@
       "id": "daa95ffd-26b2-41bd-99bd-feccaf50ee12",
       "name": "When chat message received",
       "webhookId": "20b13c31-7b1c-4e33-9fb2-e1d595c0ad12"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://oauth.reddit.com/api/submit",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Authorization",
-              "value": "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IlNIQTI1NjpzS3dsMnlsV0VtMjVmcXhwTU40cWY4MXE2OWFFdWFyMnpLMUdhVGxjdWNZIiwidHlwIjoiSldUIn0.eyJzdWIiOiJ1c2VyIiwiZXhwIjoxNzM1OTM2NDU1LjU0NTUwNSwiaWF0IjoxNzM1ODUwMDU1LjU0NTUwNSwianRpIjoiV3lTc09kbXZZclBpbnZzN3ZldVQyblFyVjdWbVJBIiwiY2lkIjoidDRUdjEyb25ma1N0X2ZhXzVlelNNQSIsImxpZCI6InQyXzFjZTNxMGVyIiwiYWlkIjoidDJfMWNlM3EwZXIiLCJsY2EiOjE1MjU5NzE0NzY0MjUsInNjcCI6ImVKeUtWdEpTaWdVRUFBRF9fd056QVNjIiwiZmxvIjo5fQ.A16AThiGoML1tHMFutperWe0qG5SJfZzkRohzV9hORgkK5geWdtH8cjpn0SIJ0PAdHqV8A8pBPWmudwsaIKOcxdatyE9fyh1Mf2tWroJAfW9Lk1hh_FgnHt7tUxLsSIE85I-el4KyslRK1Bb1zG-zpxsb8QpQMQGwzJrZ3BTBkF8p2Jm2PsCBwm1hLesXIt4EMO32uLT2_bom-vbacQ5gfC-9-ggof5NfJGkDWgLLFG3CZSc2N23tnXu-npPUSmIQ5bLdUtU6Stas8z7iTMq76wJxOE2fkjZ0yp8A9nReboZNaHFU2M3hc_lhQl9Ch94Hg9LJ4vs6QHJJyZEHdu-6w"
-            },
-            {
-              "name": "cookie",
-              "value": "edgebucket=G5YHq9JxHU2LZJ1cxj;loid=00000000001ce3q0er.2.1525971476425.Z0FBQUFBQm5kdmpodFEza2xENEpZZkljWjZSWUp2U01uRDMyN3djaXY1Ynk4N2Iyb2xMa3RoLWRDNWN4YjJSMW9pMU5wdTJNZ0R5TzRwVUk1LUJtV1FIcGhtTnEwdXpjbG01OC16YW9nTWFCejJCdG8zUWJNRjhzRUpwaFVDR3hvMGpHdU1WTHpkRXQ;session_tracker=hikhpjhjhmchrighag.0.1735850209253.Z0FBQUFBQm5kdmpoZmZTQTJwUVo4bTFuY1d2RjZpbHRkUUdYNWVMVUU3Skt1d0ZraVJyaU9BUG5jbHg3M0g1MFhmLVFERW42T3BRbnJrSFBNeHJ0Y0o3cWxPRXlCemlrTTk2YXJGY3VLcURzUWhDSDNERk8wSWl2eWExcEM4WVh3WUVUeU03VHBwRmo;"
-            }
-          ]
-        },
-        "sendBody": true,
-        "contentType": "form-urlencoded",
-        "bodyParameters": {
-          "parameters": [
-            {}
-          ]
-        },
-        "options": {
-          "redirect": {
-            "redirect": {}
-          }
-        }
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        480,
-        400
-      ],
-      "id": "434c32dd-5d04-4f5d-87cd-b616b3ad7b7e",
-      "name": "HTTP Request1"
     },
     {
       "parameters": {
@@ -203,8 +155,8 @@
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 1.1,
       "position": [
-        260,
-        360
+        320,
+        340
       ],
       "id": "56c589b7-aa3b-499b-be85-333b9489cc29",
       "name": "Reddit Access Token",
@@ -237,10 +189,14 @@
         "parametersBody": {
           "values": [
             {
-              "name": "sr"
+              "name": "sr",
+              "valueProvider": "fieldValue",
+              "value": "{subreddit}"
             },
             {
-              "name": "title"
+              "name": "title",
+              "valueProvider": "fieldValue",
+              "value": "{title}"
             },
             {
               "name": "kind",
@@ -248,7 +204,27 @@
               "value": "self"
             },
             {
-              "name": "text"
+              "name": "text",
+              "valueProvider": "fieldValue",
+              "value": "{content}"
+            }
+          ]
+        },
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "subreddit",
+              "description": "the title of the subreddit",
+              "type": "string"
+            },
+            {
+              "name": "title",
+              "description": "the title of the reddit post",
+              "type": "string"
+            },
+            {
+              "name": "content",
+              "description": "the post content of the reddit post"
             }
           ]
         }
@@ -256,11 +232,26 @@
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 1.1,
       "position": [
-        380,
-        220
+        500,
+        340
       ],
       "id": "5b682f7a-92ce-4f15-b426-5e1952c089b1",
-      "name": "HTTP Request"
+      "name": "Post to Reddit"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a helpful assistant who posts on Reddit. Before you make a post, you must first get an access token. Afterward, you then can make a post."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "74d555f2-c2d7-401f-9b86-43eb3083d508",
+      "name": "Reddit Agent"
     }
   ],
   "pinData": {},
@@ -270,6 +261,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2025-01-02T20:55:59.000Z",
-  "versionId": "f667bd2c-fa27-4af0-86da-05882c96090d"
+  "updatedAt": "2025-01-03T15:33:10.000Z",
+  "versionId": "0dd3dd96-91f9-4313-86f2-9d4aef53042e"
 }
