@@ -1,0 +1,278 @@
+{
+  "active": true,
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NocoDB1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "NocoDB",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Feed Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "NocoDB1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NocoDB": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-01-03T15:47:14.592Z",
+  "id": "CQ8Abu2nXlQpOGX8",
+  "meta": null,
+  "name": "Palisade Rss to NoCoDB",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d8ba6482-6bac-44a6-84bd-bfffad96d3e4",
+              "name": "Provider",
+              "value": "Palisade Research",
+              "type": "string"
+            },
+            {
+              "id": "7eb2288b-14a4-4840-8ac0-1228043b1031",
+              "name": "Title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "46c16f11-a449-46da-a593-b127a87b2a48",
+              "name": "URL",
+              "value": "={{ $json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "52257b26-de2b-40ac-a407-649966e62a7e",
+              "name": "Publish Date",
+              "value": "={{ $json.isoDate }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ],
+      "id": "0827b434-00e3-4766-82f0-9bfd8ee42819",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "pttjcin7q0epdbb",
+        "table": "ms1j6j4wzcgjo3f",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Provider",
+              "fieldValue": "={{ $('Loop Over Items').item.json.Provider }}"
+            },
+            {
+              "fieldName": "Title",
+              "fieldValue": "={{ $('Loop Over Items').item.json.Title }}"
+            },
+            {
+              "fieldName": "URL",
+              "fieldValue": "={{ $('Loop Over Items').item.json.URL }}"
+            },
+            {
+              "fieldName": "Publish Date",
+              "fieldValue": "={{ $('Loop Over Items').item.json[\"Publish Date\"] }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1120,
+        80
+      ],
+      "id": "290a1c9c-bacd-4d25-b111-a8d6bf71d039",
+      "name": "NocoDB",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "mZ1bN8fBGJ1SO75T",
+          "name": "New NocoDB Token Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pttjcin7q0epdbb",
+        "table": "ms1j6j4wzcgjo3f",
+        "limit": 5,
+        "options": {
+          "where": "=(URL,eq,{{ $json.URL }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        660,
+        100
+      ],
+      "id": "a29a3cd0-37a9-4e6a-b7fa-6934fd5b107c",
+      "name": "NocoDB1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "mZ1bN8fBGJ1SO75T",
+          "name": "New NocoDB Token Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6c58e545-f0f2-48eb-91ac-024996bc87ef",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        860,
+        100
+      ],
+      "id": "e73ca678-8fa7-48b8-804f-53a39fccd53b",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "feedUrl": "https://palisaderesearch.org/feed.xml"
+      },
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9fcfee89-f1c2-40d7-a722-3d464c8d34fb",
+      "name": "RSS Feed Trigger"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        440,
+        0
+      ],
+      "id": "d26dd7eb-707b-4f60-94cb-fe044c86237d",
+      "name": "Loop Over Items"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:RSS Feed Trigger": {
+      "lastItemDate": "2024-11-05T00:00:00.000Z"
+    },
+    "node:Research Feed Trigger": {
+      "lastItemDate": "2024-12-24T05:00:00.000Z"
+    }
+  },
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-01-03T15:48:09.000Z",
+  "versionId": "0c170dc4-2b69-4356-8835-f9c30e28a13e"
+}
