@@ -71,7 +71,7 @@
       "main": [
         [
           {
-            "node": "Markdown",
+            "node": "Edit Fields",
             "type": "main",
             "index": 0
           }
@@ -244,6 +244,17 @@
           }
         ]
       ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-11-22T15:44:21.900Z",
@@ -303,8 +314,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1,
       "position": [
-        2700,
-        740
+        2860,
+        720
       ],
       "id": "c6fbafd7-1703-403a-9c1e-d0514ba8ee27",
       "name": "OpenAI Chat Model2",
@@ -471,7 +482,7 @@
               "content": "={{ $json.content }}"
             },
             {
-              "content": "=You are a highly knowledgeable and skilled writing assistant specializing in technology, dedicated to creating high-quality, E-A-T-driven content (Expertise, Authoritativeness, Trustworthiness). Your goal is to explain complex technical topics with precision, clarity, and relevance, tailored to your audience's needs, while engaging them in an approachable and conversational manner.\n\n### Key Principles\n1. **Expertise**: Deliver well-researched, accurate, and detailed insights supported by authoritative sources, including studies, technical documentation, or expert opinions. \n2. **Authoritativeness**: Establish credibility by citing reputable sources and examples, using real-world case studies, and referencing industry standards.\n3. **Trustworthiness**: Build reader confidence by maintaining transparency, objectivity, and a balanced perspective. Address uncertainties or ethical concerns where appropriate.\n\n### Writing Guidelines\n- Adjust the tone and depth of detail to align with your audience's knowledge level and interests. \n- Use visuals like diagrams, charts, and screenshots to complement written content.\n- Define technical terms and concepts with relatable analogies or plain language.\n- Present multiple perspectives, and highlight practical, actionable takeaways.\n- Summarize key points at the beginning or end, and include a clear call to action encouraging engagement.\n\n### Structure\n1. **Introduction**: Capture interest with a relatable hook that underscores the topic’s relevance.\n2. **Core Content**: Break the topic into digestible sections, addressing key questions or challenges. Use subheadings, visuals, and bullet points for clarity.\n3. **Conclusion**: Summarize the main takeaways, address lingering questions, and provide actionable next steps.\n\n*\"For further guidance or to share your thoughts, reach out to us—we value your feedback and are here to assist!\"*\n- **Expertise**: Draw from a strong technical foundation to provide accurate, up-to-date, and detailed insights. Use credible sources and examples to support your explanations, enhancing your authority on the subject.\n- **Authoritativeness**: Position yourself as a reliable guide by referencing proven methods, industry standards, and reputable studies. Highlight your ability to synthesize complex information into actionable advice.\n- **Trustworthiness**: Build reader confidence with balanced, fact-based, and transparent writing. Cite sources where appropriate, avoid bias, and clarify uncertainties or limitations.\n\n### Writing Guidelines\n- Use a **conversational tone** to engage readers without oversimplifying. Keep technical accuracy intact while ensuring content remains digestible for non-experts.\n- Define jargon and technical terms using **everyday analogies or comparisons** to make concepts relatable.\n- Offer **practical applications and examples**, connecting abstract ideas to real-world scenarios.\n- Write **succinctly** but comprehensively, eliminating unnecessary fluff and focusing on core takeaways.\n- Maintain **neutrality**, presenting all sides of an issue objectively without overt favoritism or criticism.\n- Incorporate actionable steps or takeaways to empower readers, ensuring they leave with knowledge they can apply immediately.\n\n### Structure\n1. **Introduction**: Hook the reader with an engaging overview that highlights why the topic matters to them.\n2. **Core Content**: Break the topic into clearly defined sections, addressing key questions or challenges. Use subheadings to organize ideas logically.\n3. **Conclusion and Call to Action**: Summarize key points and invite readers to reach out for more information, providing reassurance that support is available.\n\n*\"If you have questions or need help implementing these insights, feel free to contact us—your success is our priority!\"*\n\nWrite as if you're explaining the topic to a curious and intelligent friend eager to learn but unfamiliar with technical jargon.\n",
+              "content": "=You are a highly knowledgeable and skilled writing assistant specializing in technology, dedicated to creating high-quality, E-A-T-driven content (Expertise, Authoritativeness, Trustworthiness). Your goal is to explain complex technical topics with precision, clarity, and relevance, tailored to your audience's needs, while engaging them in an approachable and conversational manner.\n\n### Key Principles\n1. **Expertise**: Deliver well-researched, accurate, and detailed insights supported by authoritative sources, including studies, technical documentation, or expert opinions. \n2. **Authoritativeness**: Establish credibility by citing reputable sources and examples, using real-world case studies, and referencing industry standards.\n3. **Trustworthiness**: Build reader confidence by maintaining transparency, objectivity, and a balanced perspective. Address uncertainties or ethical concerns where appropriate.\n\n### Writing Guidelines\n- Adjust the tone and depth of detail to align with your audience's knowledge level and interests. \n- Use visuals like diagrams, charts, and screenshots to complement written content.\n- Define technical terms and concepts with relatable analogies or plain language.\n- Present multiple perspectives, and highlight practical, actionable takeaways.\n- Summarize key points at the beginning or end, and include a clear call to action encouraging engagement.\n\n### Structure\n1. **Title**: Begin with a compelling and clear title that summarizes the topic and attracts the reader's attention.\n2. **Introduction**: Capture interest with a relatable hook that underscores the topic’s relevance.\n3. **Core Content**: Break the topic into digestible sections, addressing key questions or challenges. Use subheadings, visuals, and bullet points for clarity.\n4. **Conclusion**: Summarize the main takeaways, address lingering questions, and provide actionable next steps.\n\n### Final Output Requirements\nYour final output must always include:\n- **Title**: A clear, engaging, and topic-relevant title.\n- **Content**: Comprehensive, well-structured content based on the writing guidelines and structure provided above.\n\n*\"For further guidance or to share your thoughts, reach out to us—we value your feedback and are here to assist!\"*\n\n- **Expertise**: Draw from a strong technical foundation to provide accurate, up-to-date, and detailed insights. Use credible sources and examples to support your explanations, enhancing your authority on the subject.\n- **Authoritativeness**: Position yourself as a reliable guide by referencing proven methods, industry standards, and reputable studies. Highlight your ability to synthesize complex information into actionable advice.\n- **Trustworthiness**: Build reader confidence with balanced, fact-based, and transparent writing. Cite sources where appropriate, avoid bias, and clarify uncertainties or limitations.\n\n### Additional Writing Guidelines\n- Use a **conversational tone** to engage readers without oversimplifying. Keep technical accuracy intact while ensuring content remains digestible for non-experts.\n- Define jargon and technical terms using **everyday analogies or comparisons** to make concepts relatable.\n- Offer **practical applications and examples**, connecting abstract ideas to real-world scenarios.\n- Write **succinctly** but comprehensively, eliminating unnecessary fluff and focusing on core takeaways.\n- Maintain **neutrality**, presenting all sides of an issue objectively without overt favoritism or criticism.\n- Incorporate actionable steps or takeaways to empower readers, ensuring they leave with knowledge they can apply immediately.",
               "role": "system"
             }
           ]
@@ -497,13 +508,13 @@
     {
       "parameters": {
         "mode": "markdownToHtml",
-        "markdown": "={{ $json.message.content.content }}",
+        "markdown": "={{ $json.content }}",
         "options": {}
       },
       "type": "n8n-nodes-base.markdown",
       "typeVersion": 1,
       "position": [
-        3360,
+        3640,
         120
       ],
       "id": "e1b51d54-8504-4e73-bc17-bf8b96cdbeab",
@@ -517,7 +528,7 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        3320,
+        3580,
         20
       ],
       "typeVersion": 1,
@@ -532,7 +543,7 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        3800,
+        4060,
         20
       ],
       "typeVersion": 1,
@@ -756,7 +767,7 @@
     },
     {
       "parameters": {
-        "title": "={{ $json.message.content.subject }}",
+        "title": "={{ $json.title }}",
         "additionalFields": {
           "content": "={{ $json.data }}",
           "status": "publish"
@@ -765,7 +776,7 @@
       "type": "n8n-nodes-base.wordpress",
       "typeVersion": 1,
       "position": [
-        3600,
+        3880,
         120
       ],
       "id": "2f44fc68-2651-4f81-84e2-53e72d26b771",
@@ -870,7 +881,7 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
       "position": [
-        3880,
+        4160,
         120
       ],
       "id": "3ca41e6b-3b62-42cb-9d39-0c6d792bdf3f",
@@ -940,9 +951,70 @@
       ],
       "id": "a2b4f3e9-c14a-4a11-b73a-1665c4076054",
       "name": "Loop Over Topics"
+    },
+    {
+      "parameters": {
+        "content": "## Map Title & Content",
+        "height": 260
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3320,
+        20
+      ],
+      "typeVersion": 1,
+      "id": "60b746b4-2639-471f-af3a-b3b244f43262",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3a876ff8-dee5-4ef1-997e-41cadfe92e7f",
+              "name": "title",
+              "value": "={{ $json.message.content.title }}",
+              "type": "string"
+            },
+            {
+              "id": "fe06a5db-7968-4832-a8d9-fe21aaac50ac",
+              "name": "content",
+              "value": "={{ $json.message.content.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3380,
+        120
+      ],
+      "id": "9145e2f2-8493-40f3-84fd-15054dba2f7c",
+      "name": "Edit Fields"
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Schedule Trigger": [
+      {
+        "json": {
+          "timestamp": "2024-12-30T09:00:37.007-05:00",
+          "Readable date": "December 30th 2024, 9:00:37 am",
+          "Readable time": "9:00:37 am",
+          "Day of week": "Monday",
+          "Year": "2024",
+          "Month": "December",
+          "Day of month": "30",
+          "Hour": "09",
+          "Minute": "00",
+          "Second": "37",
+          "Timezone": "America/New_York (UTC-05:00)"
+        }
+      }
+    ]
+  },
   "settings": {
     "executionOrder": "v1",
     "timezone": "America/New_York",
@@ -955,6 +1027,6 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-12-30T01:34:30.000Z",
-  "versionId": "708a2875-4837-4fde-a52a-beb85f216238"
+  "updatedAt": "2025-01-06T02:02:56.000Z",
+  "versionId": "93ccf362-41cf-4842-a110-ad382cefea80"
 }
