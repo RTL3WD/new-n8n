@@ -1,0 +1,121 @@
+{
+  "active": false,
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-01-07T22:25:09.184Z",
+  "id": "ji787enoXpXEtR2b",
+  "meta": null,
+  "name": "Google Email Tool Agent",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d378e3c7-ae6c-452f-bef0-6770de792c4d",
+      "name": "Execute Workflow Trigger"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        200,
+        240
+      ],
+      "id": "232ef9a3-038f-4cbb-a797-bd78e177dc5e",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $fromAI(\"toEmail\",\"The email address to send the email to \",\"string\") }}",
+        "subject": "={{ $fromAI(\"subject\",\"The subject of the email \",\"string\") }}",
+        "message": "={{ $fromAI(\"message\",\"The content of the email \",\"string\") }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        380,
+        240
+      ],
+      "id": "f43d0114-a328-4d9e-8229-6590aa32d3a0",
+      "name": "Gmail",
+      "webhookId": "3928798f-12fe-4cd3-91c2-72d4a85835e3",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "d90cf66e-7b5b-45bc-84f8-1c11857320d1",
+      "name": "Email Agent"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-01-07T22:29:14.000Z",
+  "versionId": "4f7ff781-1030-4abe-a5d9-a84bcf0e04cf"
+}
