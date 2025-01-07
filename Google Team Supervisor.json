@@ -1,0 +1,174 @@
+{
+  "active": true,
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Supervisor Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Supervisor Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Supervisor Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🤖 Calendar Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Supervisor Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date Time Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Supervisor Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-01-07T22:17:24.922Z",
+  "id": "FKkwG8XEYuKdl5Ug",
+  "meta": null,
+  "name": "Google Team Supervisor",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi there! 👋\nI'm your Google Agent. How can I assist you today?",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "133c9b94-6b9e-4822-bb27-904b14a699fe",
+      "name": "When chat message received",
+      "webhookId": "ee1a4292-c757-4553-a4dc-62671c2a3973"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        20,
+        240
+      ],
+      "id": "94210c51-8426-4ba1-9b29-70af3230c6c5",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        220,
+        240
+      ],
+      "id": "8d0ee7c1-7f42-4791-b1cc-fe4285e7762f",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "name": "Calendar_Agent",
+        "description": "Use this when needing to interact with the calendar",
+        "workflowId": {
+          "__rl": true,
+          "value": "0HpIueWtDSZJCrBY",
+          "mode": "list",
+          "cachedResultName": "Google Calendar Tool Agent"
+        },
+        "specifyInputSchema": true,
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"title\": \"Calendar Event\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"startTime\": {\n      \"type\": \"string\",\n      \"description\": \"The start time of the event in the following format: 2025-01-07T17:27:18\"\n    },\n    \"endTime\": {\n      \"type\": \"string\",\n      \"description\": \"The end time of the event in the following format: 2025-01-07T17:27:18\"\n    },\n    \"title\": {\n      \"type\": \"string\",\n      \"description\": \"title of the event\"\n    },\n    \"description\": {\n      \"type\": \"string\",\n      \"description\": \"description of the event\"\n    }\n  }\n}\n\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        540,
+        240
+      ],
+      "id": "5bc4107f-f641-4139-8e7f-ebf1aca63d40",
+      "name": "🤖 Calendar Agent"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a helpful assistant. Use your calendar tool when you need to create, read, update, or delete calendar events."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "69a4de92-9c0a-4016-9f27-44ff314eb990",
+      "name": "Supervisor Agent"
+    },
+    {
+      "parameters": {
+        "name": "date_tool",
+        "description": "call this tool whenever you need to know what the current date and time is.",
+        "jsCode": "// Get the current date and time\nconst now = new Date();\n\n// Extract date components\nconst year = now.getFullYear();\nconst month = now.getMonth() + 1; // Months are zero-based\nconst day = now.getDate();\n\n// Extract time components\nconst hours = now.getHours();\nconst minutes = now.getMinutes();\nconst seconds = now.getSeconds();\n\n// Format the date and time\nconst formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;\nconst formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;\n\nconsole.log(`Current Date: ${formattedDate}`);\nconsole.log(`Current Time: ${formattedTime}`);\nreturn `The Current Date and Time is ${formattedDate} at ${formattedTime}`"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [
+        380,
+        240
+      ],
+      "id": "4c52a9b2-beb8-4191-bf0c-b33dbd38c65e",
+      "name": "Date Time Tool"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 2,
+  "updatedAt": "2025-01-07T22:57:20.000Z",
+  "versionId": "07cf378c-8afe-4b14-aa7f-72ebcc7daff3"
+}
