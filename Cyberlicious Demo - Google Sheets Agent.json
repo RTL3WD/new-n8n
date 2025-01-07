@@ -1,0 +1,185 @@
+{
+  "active": true,
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Google Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Google Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Google Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "Google Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "Google Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-01-07T19:44:58.679Z",
+  "id": "ZMgfvZnnq1twDLWI",
+  "meta": null,
+  "name": "Cyberlicious Demo - Google Sheets Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi there! 👋\nHow can I assist you today?",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "1cadf460-292a-4c75-b8c8-a58736c615cc",
+      "name": "When chat message received",
+      "webhookId": "7cf85654-90bd-4d6f-a85a-dbafb8a42c98"
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxTokens": -1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        20,
+        260
+      ],
+      "id": "1d81ddfa-03db-4608-bbd7-b3cc0ae5b383",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        180,
+        260
+      ],
+      "id": "e931d53a-0e51-45ee-8a39-e6caab51fca9",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "10EGxq1Uf8Nx5uLtOiw6o9XZMowuPWHF2fq0qa3TcIVI",
+          "mode": "list",
+          "cachedResultName": "Cyberlicious Demo Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10EGxq1Uf8Nx5uLtOiw6o9XZMowuPWHF2fq0qa3TcIVI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 803697529,
+          "mode": "list",
+          "cachedResultName": "E-Commerce_Store_Inventory",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10EGxq1Uf8Nx5uLtOiw6o9XZMowuPWHF2fq0qa3TcIVI/edit#gid=803697529"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        500,
+        280
+      ],
+      "id": "8f1b61a7-1af4-4b31-9f80-8d9286c5546c",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sKITsW661Itsg15I",
+          "name": "Google Sheets account - ASP"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        340,
+        280
+      ],
+      "id": "e7b505b8-f74c-4421-960e-2afe9e2516b0",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a helpful assistant. ",
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "e09feb0d-0984-4f0d-89c6-dc906c0bf452",
+      "name": "Google Agent"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 2,
+  "updatedAt": "2025-01-07T20:29:02.000Z",
+  "versionId": "925952c3-2bc0-4453-abbb-e78fe58f4783"
+}
