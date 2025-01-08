@@ -3,13 +3,7 @@
   "connections": {
     "Execute Workflow Trigger": {
       "main": [
-        [
-          {
-            "node": "Email Agent",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "OpenAI Chat Model": {
@@ -18,6 +12,17 @@
           {
             "node": "Email Agent",
             "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "main",
             "index": 0
           }
         ]
@@ -49,7 +54,8 @@
         0
       ],
       "id": "d378e3c7-ae6c-452f-bef0-6770de792c4d",
-      "name": "Execute Workflow Trigger"
+      "name": "Execute Workflow Trigger",
+      "disabled": true
     },
     {
       "parameters": {
@@ -58,7 +64,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1,
       "position": [
-        200,
+        180,
         240
       ],
       "id": "232ef9a3-038f-4cbb-a797-bd78e177dc5e",
@@ -72,41 +78,50 @@
     },
     {
       "parameters": {
-        "sendTo": "={{ $fromAI(\"toEmail\",\"The email address to send the email to \",\"string\") }}",
-        "subject": "={{ $fromAI(\"subject\",\"The subject of the email \",\"string\") }}",
-        "message": "={{ $fromAI(\"message\",\"The content of the email \",\"string\") }}",
-        "options": {
-          "appendAttribution": false
-        }
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        440,
+        0
+      ],
+      "id": "d90cf66e-7b5b-45bc-84f8-1c11857320d1",
+      "name": "Email Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        220,
+        0
+      ],
+      "id": "7c064e5b-5037-41f1-b8fc-99871ac9f57e",
+      "name": "When chat message received",
+      "webhookId": "6d1bbefc-33f8-4c98-bb83-69758da82f0e"
+    },
+    {
+      "parameters": {
+        "operation": "get"
       },
       "type": "n8n-nodes-base.gmailTool",
       "typeVersion": 2.1,
       "position": [
-        380,
-        240
+        500,
+        260
       ],
-      "id": "f43d0114-a328-4d9e-8229-6590aa32d3a0",
+      "id": "4c06847a-7894-4877-b147-c742733ad4b1",
       "name": "Gmail",
-      "webhookId": "3928798f-12fe-4cd3-91c2-72d4a85835e3",
+      "webhookId": "5299add0-d096-4cd4-9a3a-dcac27ddd546",
       "credentials": {
         "gmailOAuth2": {
           "id": "E777VIw7zyxrVJ7s",
           "name": "Gmail account"
         }
       }
-    },
-    {
-      "parameters": {
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 1.7,
-      "position": [
-        220,
-        0
-      ],
-      "id": "d90cf66e-7b5b-45bc-84f8-1c11857320d1",
-      "name": "Email Agent"
     }
   ],
   "pinData": {},
@@ -116,6 +131,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2025-01-07T22:29:14.000Z",
-  "versionId": "4f7ff781-1030-4abe-a5d9-a84bcf0e04cf"
+  "updatedAt": "2025-01-08T01:38:37.000Z",
+  "versionId": "f9d28390-b458-43e4-904c-c157b97851e5"
 }
