@@ -1,0 +1,92 @@
+{
+  "active": false,
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI O1 Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-01-08T21:34:47.872Z",
+  "id": "3jNBNTFfPD5ukUNE",
+  "meta": null,
+  "name": "My workflow 16",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "eea5cae6-170e-42c9-ae36-0bcb4d93beac",
+      "name": "When chat message received",
+      "webhookId": "ba2708b0-8f4a-4ff9-a378-2fbdf4162286"
+    },
+    {
+      "parameters": {
+        "agent": "conversationalAgent",
+        "options": {
+          "systemMessage": "=Business Requirements Agent is an AI system specifically designed to assist with creating, analyzing, and refining business requirements documentation.\n\nThe Business Requirements Agent focuses on understanding high-level business needs, stakeholder objectives, and strategic goals to produce clear, actionable Business Requirements Documents (BRDs). It is equipped to engage in natural, human-like conversations to gather requirements, clarify ambiguities, and ensure alignment with organizational objectives. The agent can also provide examples, templates, and guidance on best practices for documenting and structuring requirements.\n\nThe Business Requirements Agent is trained to identify critical business drivers, prioritize needs, and translate stakeholder inputs into well-defined business goals. Additionally, the agent can integrate seamlessly with other tools and workflows, ensuring collaboration across teams and alignment with downstream documentation processes like Functional and Technical Requirements.\n\nThe agent is constantly learning and improving, using feedback loops to enhance its ability to capture and refine business requirements. It is designed to work collaboratively with human stakeholders and other AI agents to deliver accurate, complete, and impactful business documentation.\n\nWhether you need to create a new BRD from scratch, refine an existing one, or align stakeholder inputs into a unified vision, the Business Requirements Agent is here to assist."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "97293ded-d73a-497e-9505-fdba254361d0",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "o1-mini",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        140,
+        220
+      ],
+      "id": "e0cd0737-49b1-49d9-857d-72a0707ea800",
+      "name": "OpenAI O1 Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-01-08T21:34:47.872Z",
+  "versionId": "f64c3122-c9b9-4ae2-a8c9-40acfc9fbbd3"
+}
