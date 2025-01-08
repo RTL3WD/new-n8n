@@ -23,29 +23,29 @@
         ]
       ]
     },
-    "Google Calendar": {
-      "ai_tool": [
-        [
-          {
-            "node": "Calendar Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Code Tool": {
-      "ai_tool": [
-        [
-          {
-            "node": "Calendar Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Get Events": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date Time Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Calendar Event": {
       "ai_tool": [
         [
           {
@@ -67,8 +67,8 @@
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1,
       "position": [
-        0,
-        0
+        -20,
+        -40
       ],
       "id": "ca163846-dcd0-4975-8eb8-112d48707c68",
       "name": "Execute Workflow Trigger"
@@ -80,8 +80,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1,
       "position": [
-        60,
-        240
+        40,
+        200
       ],
       "id": "9f97433c-2079-47b2-bd86-c4b5eb266341",
       "name": "OpenAI Chat Model",
@@ -89,37 +89,6 @@
         "openAiApi": {
           "id": "sTmNKjvehSYtW09j",
           "name": "OpenAi account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "calendar": {
-          "__rl": true,
-          "value": "automatestpete@gmail.com",
-          "mode": "list",
-          "cachedResultName": "automatestpete@gmail.com"
-        },
-        "start": "={{ $fromAI(\"startTime\",\"The start time of the event in the following format: 2025-01-07T17:27:18\",\"string\") }}",
-        "end": "={{ $fromAI(\"endTime\",\"The end time of the event in the following format: 2025-01-07T17:27:18\",\"string\") }}",
-        "additionalFields": {
-          "attendees": [],
-          "description": "={{ $fromAI(\"eventDescription\",\"Description of the event\") }}",
-          "summary": "={{ $fromAI(\"title\",\"title for the event\") }}"
-        }
-      },
-      "type": "n8n-nodes-base.googleCalendarTool",
-      "typeVersion": 1.2,
-      "position": [
-        400,
-        240
-      ],
-      "id": "4c8e4b0d-c443-4fc2-8e4b-969b6df0a4e1",
-      "name": "Google Calendar",
-      "credentials": {
-        "googleCalendarOAuth2Api": {
-          "id": "uN5dopaOLSVA2U6J",
-          "name": "Google Calendar account"
         }
       }
     },
@@ -135,26 +104,11 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [
-        220,
-        0
+        200,
+        -40
       ],
       "id": "b00aa8a0-4410-4155-aba2-6abdd0a5d282",
       "name": "Calendar Agent"
-    },
-    {
-      "parameters": {
-        "name": "date_tool",
-        "description": "call this tool whenever you need to know what the current date and time is.",
-        "jsCode": "// Get the current date and time\nconst now = new Date();\n\n// Extract date components\nconst year = now.getFullYear();\nconst month = now.getMonth() + 1; // Months are zero-based\nconst day = now.getDate();\n\n// Extract time components\nconst hours = now.getHours();\nconst minutes = now.getMinutes();\nconst seconds = now.getSeconds();\n\n// Format the date and time\nconst formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;\nconst formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;\n\nconsole.log(`Current Date: ${formattedDate}`);\nconsole.log(`Current Time: ${formattedTime}`);\nreturn `The Current Date and Time is ${formattedDate} at ${formattedTime}`"
-      },
-      "type": "@n8n/n8n-nodes-langchain.toolCode",
-      "typeVersion": 1.1,
-      "position": [
-        200,
-        240
-      ],
-      "id": "c6329249-699e-41b2-a978-b88fde91d652",
-      "name": "Code Tool"
     },
     {
       "parameters": {
@@ -174,11 +128,59 @@
       "type": "n8n-nodes-base.googleCalendarTool",
       "typeVersion": 1.2,
       "position": [
-        580,
-        240
+        540,
+        200
       ],
       "id": "388a38ff-c46c-4fde-a93d-7a36c6f98e0b",
       "name": "Get Events",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "date_tool",
+        "description": "call this tool whenever you need to know what the current date and time is.",
+        "jsCode": "// Get the current date and time\nconst now = new Date();\n\n// Extract date components\nconst year = now.getFullYear();\nconst month = now.getMonth() + 1; // Months are zero-based\nconst day = now.getDate();\n\n// Extract time components\nconst hours = now.getHours();\nconst minutes = now.getMinutes();\nconst seconds = now.getSeconds();\n\n// Format the date and time\nconst formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;\nconst formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;\n\nconsole.log(`Current Date: ${formattedDate}`);\nconsole.log(`Current Time: ${formattedTime}`);\nreturn `The Current Date and Time is ${formattedDate} at ${formattedTime}`"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [
+        220,
+        200
+      ],
+      "id": "c6329249-699e-41b2-a978-b88fde91d652",
+      "name": "Date Time Tool"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "automatestpete@gmail.com",
+          "mode": "list",
+          "cachedResultName": "automatestpete@gmail.com"
+        },
+        "start": "={{ $fromAI(\"startTime\",\"The start time of the event in the following format: 2025-01-07T17:27:18\",\"string\") }}",
+        "end": "={{ $fromAI(\"endTime\",\"The end time of the event in the following format: 2025-01-07T17:27:18\",\"string\") }}",
+        "additionalFields": {
+          "attendees": [
+            "={{ $fromAI(\"attendees\",\"A comma-separated list of email addresses to invite to the event. For example: 'john@example.com,jane@example.com'.\") }}"
+          ],
+          "description": "={{ $fromAI(\"eventDescription\",\"Description of the event\") }}",
+          "summary": "={{ $fromAI(\"title\",\"title for the event\") }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        200
+      ],
+      "id": "4c8e4b0d-c443-4fc2-8e4b-969b6df0a4e1",
+      "name": "Create Calendar Event",
       "credentials": {
         "googleCalendarOAuth2Api": {
           "id": "uN5dopaOLSVA2U6J",
@@ -192,10 +194,14 @@
       {
         "json": {
           "query": {
-            "startTime": "2025-01-08T00:00:00",
-            "endTime": "2025-01-09T23:59:59",
-            "title": "Calendar Events for Tomorrow",
-            "description": "Retrieving events scheduled for tomorrow."
+            "task": "create",
+            "startTime": "2025-01-08T19:00:00-05:00",
+            "endTime": "2025-01-08T21:00:00-05:00",
+            "title": "Kaylin's Birthday",
+            "description": "Celebration for Kaylin's Birthday",
+            "eventId": "",
+            "location": "",
+            "attendees": "lordrobert92@gmail.com,rtl3wd@gmail.com"
           }
         }
       }
@@ -209,6 +215,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2025-01-07T22:59:54.000Z",
-  "versionId": "7df18649-14c0-4dc8-9106-4d262961fdf3"
+  "updatedAt": "2025-01-08T00:59:07.000Z",
+  "versionId": "e37679ac-71e0-4fca-8934-b7130688daa3"
 }
