@@ -55,6 +55,17 @@
           }
         ]
       ]
+    },
+    "🤖 Email Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Supervisor Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2025-01-07T22:17:24.922Z",
@@ -71,8 +82,8 @@
       "type": "@n8n/n8n-nodes-langchain.chatTrigger",
       "typeVersion": 1.1,
       "position": [
-        0,
-        0
+        -20,
+        20
       ],
       "id": "133c9b94-6b9e-4822-bb27-904b14a699fe",
       "name": "When chat message received",
@@ -85,8 +96,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1,
       "position": [
-        20,
-        240
+        -60,
+        260
       ],
       "id": "94210c51-8426-4ba1-9b29-70af3230c6c5",
       "name": "OpenAI Chat Model",
@@ -102,8 +113,8 @@
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.3,
       "position": [
-        220,
-        240
+        120,
+        260
       ],
       "id": "8d0ee7c1-7f42-4791-b1cc-fe4285e7762f",
       "name": "Window Buffer Memory"
@@ -111,7 +122,7 @@
     {
       "parameters": {
         "name": "Calendar_Agent",
-        "description": "Use this when needing to interact with the calendar",
+        "description": "Use this when needing to interact with the calendar or scheduling",
         "workflowId": {
           "__rl": true,
           "value": "0HpIueWtDSZJCrBY",
@@ -120,13 +131,13 @@
         },
         "specifyInputSchema": true,
         "schemaType": "manual",
-        "inputSchema": "{\n  \"title\": \"Calendar Event\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"startTime\": {\n      \"type\": \"string\",\n      \"description\": \"The start time of the event in the following format: 2025-01-07T17:27:18\"\n    },\n    \"endTime\": {\n      \"type\": \"string\",\n      \"description\": \"The end time of the event in the following format: 2025-01-07T17:27:18\"\n    },\n    \"title\": {\n      \"type\": \"string\",\n      \"description\": \"title of the event\"\n    },\n    \"description\": {\n      \"type\": \"string\",\n      \"description\": \"description of the event\"\n    }\n  }\n}\n\n"
+        "inputSchema": "{\n  \"title\": \"Calendar Agent Input\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"task\": {\n      \"type\": \"string\",\n      \"enum\": [\"create\", \"readOne\", \"readAll\", \"update\"],\n      \"description\": \"Specifies the type of calendar action to perform. Use 'create' to add a new event, 'readOne' to retrieve a specific event by eventId, 'readAll' to retrieve all events within a time range, or 'update' to edit an existing event.\"\n    },\n    \"startTime\": {\n      \"type\": \"string\",\n      \"description\": \"The start time for the event (if create/update) or the start of the time range (if readAll) in ISO 8601 format (e.g., 2025-01-07T17:27:18).\"\n    },\n    \"endTime\": {\n      \"type\": \"string\",\n      \"description\": \"The end time for the event (if create/update) or the end of the time range (if readAll) in ISO 8601 format (e.g., 2025-01-07T18:27:18).\"\n    },\n    \"title\": {\n      \"type\": \"string\",\n      \"description\": \"Title of the event. Typically required when creating a new event.\"\n    },\n    \"description\": {\n      \"type\": \"string\",\n      \"description\": \"Optional description of the event.\"\n    },\n    \"eventId\": {\n      \"type\": \"string\",\n      \"description\": \"Unique identifier of the event. Required when task is 'readOne' (to retrieve a specific event) or 'update' (to edit an existing event).\"\n    },\n    \"location\": {\n      \"type\": \"string\",\n      \"description\": \"Physical or virtual location for the event (e.g., a conference room or Zoom link).\"\n    },\n    \"attendees\": {\n      \"type\": \"string\",\n      \"description\": \"A comma-separated list of email addresses to invite to the event. For example: 'john@example.com,jane@example.com'.\"\n    }\n  },\n  \"required\": [\"task\"]\n}"
       },
       "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
       "typeVersion": 1.3,
       "position": [
-        540,
-        240
+        440,
+        260
       ],
       "id": "5bc4107f-f641-4139-8e7f-ebf1aca63d40",
       "name": "🤖 Calendar Agent"
@@ -134,14 +145,14 @@
     {
       "parameters": {
         "options": {
-          "systemMessage": "You are a helpful assistant. Use your calendar tool when you need to create, read, update, or delete calendar events."
+          "systemMessage": "=You are a scheduling assistant designed to help users with calendar management, date/time queries, and scheduling tasks. Use the following tools when appropriate:\n\n### Tools:\n1. **Calendar Tool**  \n   - Use this tool for actions involving calendar events, such as:  \n     - Retrieving the schedule for a specific date or time range.  \n     - Creating, updating, or deleting calendar events.  \n   - Ensure the input schema includes:  \n     - **startTime**: Start time in ISO 8601 format (e.g., `2025-01-07T17:27:18`).  \n     - **endTime**: End time in ISO 8601 format (e.g., `2025-01-07T18:27:18`).  \n     - **title**: Event title.  \n     - **description**: Optional event description.\n\n2. **Date Time Tool**  \n   - Use this tool to retrieve the current date and time.  \n   - Particularly useful for time-sensitive scheduling or when users refer to relative dates (e.g., \"tomorrow\" or \"next week\").\n\n### Guidelines:\n- For phrases like \"Get my schedule for tomorrow,\" interpret \"tomorrow\" by using the **Date Time Tool** to determine the exact date, then use the **Calendar Tool** to retrieve events for that day.\n- If the user provides ambiguous input, ask clarifying questions before proceeding.\n- Validate all user input to ensure it matches the required format for the tools.\n- Respond clearly and concisely, guiding users through the scheduling process.\n\n### Error Handling:\nIf a task cannot be completed due to an error or missing information:\n- Explain the issue clearly.\n- Suggest a resolution or provide instructions for correcting the input."
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [
-        220,
-        0
+        200,
+        20
       ],
       "id": "69a4de92-9c0a-4016-9f27-44ff314eb990",
       "name": "Supervisor Agent"
@@ -150,25 +161,48 @@
       "parameters": {
         "name": "date_tool",
         "description": "call this tool whenever you need to know what the current date and time is.",
-        "jsCode": "// Get the current date and time\nconst now = new Date();\n\n// Extract date components\nconst year = now.getFullYear();\nconst month = now.getMonth() + 1; // Months are zero-based\nconst day = now.getDate();\n\n// Extract time components\nconst hours = now.getHours();\nconst minutes = now.getMinutes();\nconst seconds = now.getSeconds();\n\n// Format the date and time\nconst formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;\nconst formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;\n\nconsole.log(`Current Date: ${formattedDate}`);\nconsole.log(`Current Time: ${formattedTime}`);\nreturn `The Current Date and Time is ${formattedDate} at ${formattedTime}`"
+        "jsCode": "const now = new Date();\n\n// Get UTC values\nconst utcYear = now.getUTCFullYear();\nconst utcMonth = now.getUTCMonth(); // Zero-based\nconst utcDate = now.getUTCDate();\nconst utcHours = now.getUTCHours();\nconst utcMinutes = now.getUTCMinutes();\nconst utcSeconds = now.getUTCSeconds();\n\n// EST offset (UTC-5 during standard time, UTC-4 during daylight saving time)\nconst isDST = new Date().getTimezoneOffset() < 240; // Eastern time DST starts in March\nconst estOffset = isDST ? -4 : -5;\n\nconst estDate = new Date(Date.UTC(\n  utcYear,\n  utcMonth,\n  utcDate,\n  utcHours + estOffset,\n  utcMinutes,\n  utcSeconds\n));\n\n// Format date and time\nconst formattedDate = estDate.toISOString().split('T')[0];\nconst formattedTime = estDate.toTimeString().split(' ')[0];\n\nreturn `The current date and time in EST is ${formattedDate} at ${formattedTime}.`"
       },
       "type": "@n8n/n8n-nodes-langchain.toolCode",
       "typeVersion": 1.1,
       "position": [
-        380,
-        240
+        260,
+        260
       ],
       "id": "4c52a9b2-beb8-4191-bf0c-b33dbd38c65e",
       "name": "Date Time Tool"
+    },
+    {
+      "parameters": {
+        "name": "Email_Agent",
+        "workflowId": {
+          "__rl": true,
+          "value": "ji787enoXpXEtR2b",
+          "mode": "list",
+          "cachedResultName": "Google Email Tool Agent"
+        },
+        "specifyInputSchema": true,
+        "schemaType": "manual"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        620,
+        260
+      ],
+      "id": "c3b3eceb-9082-46fb-8132-3fb761ee40ac",
+      "name": "🤖 Email Agent"
     }
   ],
   "pinData": {},
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "timezone": "America/New_York",
+    "callerPolicy": "workflowsFromSameOwner"
   },
   "staticData": null,
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2025-01-07T22:57:20.000Z",
-  "versionId": "07cf378c-8afe-4b14-aa7f-72ebcc7daff3"
+  "updatedAt": "2025-01-08T01:37:56.000Z",
+  "versionId": "f99f28b0-c04a-448a-8d12-347062302036"
 }
