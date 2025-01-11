@@ -5,27 +5,82 @@
       "main": [
         [
           {
-            "node": "AI Agent",
+            "node": "Calendar Agent",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "OpenAI O1 Model": {
+    "Get Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
       "ai_languageModel": [
         [
           {
-            "node": "AI Agent",
+            "node": "Calendar Agent",
             "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date Time Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Calendar Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Current Month Dates with Days": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
             "index": 0
           }
         ]
       ]
     }
   },
-  "createdAt": "2025-01-08T21:34:47.872Z",
-  "id": "3jNBNTFfPD5ukUNE",
+  "createdAt": "2025-01-11T01:36:47.386Z",
+  "id": "JM5LPCXeuEkFk0r6",
   "meta": null,
   "name": "My workflow 16",
   "nodes": [
@@ -36,57 +91,175 @@
       "type": "@n8n/n8n-nodes-langchain.chatTrigger",
       "typeVersion": 1.1,
       "position": [
-        0,
+        -20,
         0
       ],
-      "id": "eea5cae6-170e-42c9-ae36-0bcb4d93beac",
+      "id": "6963c0d9-6649-4298-a54c-f07b8891eafc",
       "name": "When chat message received",
-      "webhookId": "ba2708b0-8f4a-4ff9-a378-2fbdf4162286"
+      "webhookId": "d4964591-7870-4d70-980f-8be33160b47e"
     },
     {
       "parameters": {
-        "agent": "conversationalAgent",
         "options": {
-          "systemMessage": "=Business Requirements Agent is an AI system specifically designed to assist with creating, analyzing, and refining business requirements documentation.\n\nThe Business Requirements Agent focuses on understanding high-level business needs, stakeholder objectives, and strategic goals to produce clear, actionable Business Requirements Documents (BRDs). It is equipped to engage in natural, human-like conversations to gather requirements, clarify ambiguities, and ensure alignment with organizational objectives. The agent can also provide examples, templates, and guidance on best practices for documenting and structuring requirements.\n\nThe Business Requirements Agent is trained to identify critical business drivers, prioritize needs, and translate stakeholder inputs into well-defined business goals. Additionally, the agent can integrate seamlessly with other tools and workflows, ensuring collaboration across teams and alignment with downstream documentation processes like Functional and Technical Requirements.\n\nThe agent is constantly learning and improving, using feedback loops to enhance its ability to capture and refine business requirements. It is designed to work collaboratively with human stakeholders and other AI agents to deliver accurate, complete, and impactful business documentation.\n\nWhether you need to create a new BRD from scratch, refine an existing one, or align stakeholder inputs into a unified vision, the Business Requirements Agent is here to assist."
+          "systemMessage": "=You are an AI assistant responsible for managing Robert Lord’s calendar efficiently and handling any date-related conversations or topics with precision and accuracy. Your primary objective is to ensure all date- and time-related tasks are executed flawlessly while respecting availability, priorities, and preferences.\n\nCore Responsibilities\n\n1. Schedule Management\n\t•\tCreate, update, and delete events as instructed, confirming significant actions with Robert.\n\t•\tAvoid overlapping events unless explicitly allowed, and prioritize urgent or critical events during conflicts.\n\t•\tSuggest alternative times when conflicts arise, considering recurring patterns and historical preferences.\n\n2. Availability Management\n\t•\tRespect predefined working hours: Monday to Friday, 10:00 AM - 4:00 PM EST.\n\t•\tAlways seek explicit approval before scheduling any event outside these hours.\n\t•\tConsider public holidays, marked unavailable days, and recurring commitments before scheduling.\n\n3. Time Optimization\n\t•\tGroup similar tasks or appointments to minimize context-switching.\n\t•\tAllocate sufficient buffer time between meetings (default: 15 minutes).\n\n4. Event Categorization\n\t•\tUse categories (e.g., “Work,” “Personal,” “Urgent”) and tags to differentiate events visually.\n\t•\tUse past behavior or user input to assign categories intelligently.\n\n5. Communication and Formatting\n\t•\tStructure responses with clear, readable formatting:\n\t•\tEvent Title\n\t•\tTime (with explicit time zone)\n\t•\tDescription or Location\n\t•\tAttendees\n\t•\tFor vague queries, seek clarification before proceeding (e.g., “Which Monday do you mean?”).\n\n6. Date and Time Verification\n\t•\tMANDATORY REQUIREMENT: Always use both the Date Time Tool and Current Month Dates with Days Tool:\n\t•\tRetrieve the current day, date, and time using the Date Time Tool.\n\t•\tGenerate a complete list of dates and their corresponding days of the week for the current month using the Current Month Dates with Days Tool.\n\t•\tConfirm all gathered data before taking any actions or delivering responses.\n\t•\tDouble-check results for completeness and consistency to prevent errors.\n\n7. Error Handling\n\t•\tIf a tool fails or data cannot be retrieved, provide an explanation and suggest corrective actions to the user.\n\nIntegration Guidelines\n\n1. Google Calendar\n\t•\tQuery events for the full day (12:00 AM to 11:59 PM) when retrieving schedules, ensuring no events are excluded.\n\t•\tAlways include automatestpete@gmail.com as an attendee for new events.\n\nExpected Behavior\n\n1. Proactive\n\t•\tSuggest relevant times and flag conflicts in advance.\n\n2. Accurate\n\t•\tUse mandatory tools to verify all data.\n\t•\tConfirm gathered information before responding.\n\n3. Secure\n\t•\tOperate within privacy and confidentiality limits.\n\n4. Responsive\n\t•\tSeek clarification or confirm with Robert whenever necessary.\n\nExample Scenarios\n\n1. Meeting Request\n\t•\tQuery: “What’s Robert got going on this Monday?”\n\t•\tProcess:\n\t1.\tUse the Date Time Tool to confirm the current date and time.\n\t2.\tUse the Current Month Dates with Days Tool to verify the specific Monday’s date.\n\t3.\tQuery the Google Calendar Tool for all events from 12:00 AM to 11:59 PM on the determined date.\n\t4.\tDouble-check all gathered events before responding.\n\t5.\tResponse Example:\n\nThis Monday, January 13, 2025, Robert has the following events scheduled:\n\n1. Morning Meeting  \n   - Time: 9:00 AM - 10:00 AM EST  \n   - Description: Discuss project updates.  \n\n2. Touch Base with Olga  \n   - Time: 12:00 PM - 1:00 PM EST  \n   - Description: Join via Webinar.\n\n\n\n2. Determining the Day for a Specific Date\n\t•\tQuery: “What day of the week is the 15th of this month?”\n\t•\tProcess:\n\t1.\tUse the Date Time Tool to confirm the current date.\n\t2.\tUse the Current Month Dates with Days Tool to determine the day of the week.\n\t3.\tDouble-check results before responding.\n\t4.\tResponse Example:\n\nThe 15th of this month falls on a Wednesday.\n\n\n\n3. Scheduling Outside Working Hours\n\t•\tQuery: “Can we schedule a meeting for 7:00 PM on Wednesday?”\n\t•\tProcess:\n\t1.\tSeek explicit approval from Robert before scheduling the event.\n\t2.\tIf approved, proceed with scheduling and include all necessary attendees.\n\t3.\tConfirm the event details in the response.\n\n4. Event Creation\n\t•\tSteps:\n\t1.\tUse the Date Time Tool to verify the current date and time.\n\t2.\tUse the Current Month Dates with Days Tool to confirm the day of the week for the event’s date.\n\t3.\tAdd automatestpete@gmail.com as an attendee.\n\t4.\tDouble-check all event details before creating the event.",
+          "returnIntermediateSteps": true
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [
-        220,
+        200,
         0
       ],
-      "id": "97293ded-d73a-497e-9505-fdba254361d0",
-      "name": "AI Agent"
+      "id": "4f00b037-6e92-4f56-b5dd-01ace7d9af3f",
+      "name": "Calendar Agent"
     },
     {
       "parameters": {
-        "model": "o1-mini",
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "automatestpete@gmail.com",
+          "mode": "list",
+          "cachedResultName": "automatestpete@gmail.com"
+        },
+        "limit": 10,
+        "options": {
+          "timeMin": "={{ $fromAI(\"after\") }}",
+          "timeMax": "={{ $fromAI(\"before\") }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.2,
+      "position": [
+        640,
+        220
+      ],
+      "id": "6594c95f-37f5-4faf-a189-5d3b836d6308",
+      "name": "Get Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1,
       "position": [
-        140,
+        -240,
         220
       ],
-      "id": "e0cd0737-49b1-49d9-857d-72a0707ea800",
-      "name": "OpenAI O1 Model",
+      "id": "eb35f158-a30f-43ed-8918-c7ccc91ed43e",
+      "name": "OpenAI Chat Model",
       "credentials": {
         "openAiApi": {
           "id": "sTmNKjvehSYtW09j",
           "name": "OpenAi account"
         }
       }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -80,
+        220
+      ],
+      "id": "6df84e7c-f5dc-4335-8148-111e340e9e0b",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "name": "Date_Time_Tool",
+        "description": "Call this tool when you need to get the current date and time.",
+        "jsCode": "// Get the current date and time in UTC\nconst nowUTC = new Date();\n\n// Calculate EST offset (UTC-5 during standard time, UTC-4 during daylight saving time)\nconst isDST = nowUTC.getTimezoneOffset() < 240; // Eastern time DST is UTC-4\nconst estOffset = isDST ? -4 : -5;\n\n// Create a new date object adjusted for EST\nconst nowEST = new Date(nowUTC.getTime() + estOffset * 60 * 60 * 1000);\n\n// Extract date components\nconst year = nowEST.getUTCFullYear();\nconst month = nowEST.getUTCMonth() + 1; // Months are zero-based\nconst day = nowEST.getUTCDate();\n\n// Extract time components\nconst hours = nowEST.getUTCHours();\nconst minutes = nowEST.getUTCMinutes();\nconst seconds = nowEST.getUTCSeconds();\n\n// Get the day of the week\nconst daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];\nconst dayOfWeek = daysOfWeek[nowEST.getUTCDay()];\n\n// Format the date and time\nconst formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;\nconst formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;\n\n// Log the current date, time, and day of the week in EST\nconsole.log(`Current Date in EST: ${formattedDate}`);\nconsole.log(`Current Time in EST: ${formattedTime}`);\nconsole.log(`Day of the Week in EST: ${dayOfWeek}`);\n\n// Return the formatted string\nreturn `Today is ${dayOfWeek}, the current date in EST is ${formattedDate}, and the time is ${formattedTime}`;"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [
+        80,
+        220
+      ],
+      "id": "a328fa9e-a9d0-4ca3-9b0e-a3270537c782",
+      "name": "Date Time Tool"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "automatestpete@gmail.com",
+          "mode": "list",
+          "cachedResultName": "automatestpete@gmail.com"
+        },
+        "start": "={{ $fromAI(\"start\") }}",
+        "end": "={{ $fromAI(\"end\") }}",
+        "useDefaultReminders": false,
+        "additionalFields": {
+          "attendees": [
+            "={{ $fromAI(\"attendees\",\"This is an optional string of comma separated emails\") }}"
+          ],
+          "description": "={{ $fromAI(\"description\") }}",
+          "summary": "={{ $fromAI(\"summary\") }}"
+        },
+        "remindersUi": {
+          "remindersValues": [
+            {
+              "method": "email",
+              "minutes": 10
+            },
+            {
+              "method": "email",
+              "minutes": 1440
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.2,
+      "position": [
+        460,
+        220
+      ],
+      "id": "f0a13ecb-fc17-46f8-9e64-14fb541e9c06",
+      "name": "Create Calendar Event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "Current_Month_Dates_and_Days",
+        "description": "Use this tool to get the dates and days of the current month.",
+        "jsCode": "function generateDatesWithDays() {\n    const today = new Date();\n\n    // Calculate the start and end dates for the 45-day window\n    const startDate = new Date(today);\n    startDate.setDate(today.getDate() - 14); // 2 weeks behind\n\n    const endDate = new Date(today);\n    endDate.setDate(today.getDate() + 30); // 30 days ahead\n\n    // Generate dates with their corresponding days\n    let result = '';\n    for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {\n        const dayName = date.toLocaleDateString('en-US', { weekday: 'long' }); // Day name\n        result += `${date.toDateString()} - ${dayName}\\n`; // Append to result\n    }\n\n    return result.trim(); // Return the final string without extra spaces\n}\n\n// Get the result and log it\nconst datesWithDaysString = generateDatesWithDays();\nreturn datesWithDaysString;"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [
+        260,
+        220
+      ],
+      "id": "1f6c7595-faf5-4cf1-bf24-beadacdb82fc",
+      "name": "Current Month Dates with Days"
     }
   ],
   "pinData": {},
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "timezone": "America/New_York",
+    "callerPolicy": "workflowsFromSameOwner"
   },
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2025-01-08T21:34:47.872Z",
-  "versionId": "f64c3122-c9b9-4ae2-a8c9-40acfc9fbbd3"
+  "updatedAt": "2025-01-11T03:39:45.000Z",
+  "versionId": "b2028ede-7826-4fe6-b364-7629ac581cf8"
 }
