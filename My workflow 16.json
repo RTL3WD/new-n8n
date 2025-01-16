@@ -1,148 +1,119 @@
 {
   "active": false,
   "connections": {
-    "When chat message received": {
-      "main": [
-        [
-          {
-            "node": "Calendar Agent",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get Calendar": {
-      "ai_tool": [
-        [
-          {
-            "node": "Calendar Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "OpenAI Chat Model": {
       "ai_languageModel": [
         [
           {
-            "node": "Calendar Agent",
+            "node": "AI Agent",
             "type": "ai_languageModel",
             "index": 0
           }
         ]
       ]
     },
-    "Window Buffer Memory": {
-      "ai_memory": [
+    "Google Sheets Trigger": {
+      "main": [
         [
           {
-            "node": "Calendar Agent",
-            "type": "ai_memory",
+            "node": "AI Agent",
+            "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Date Time Tool": {
-      "ai_tool": [
+    "AI Agent": {
+      "main": [
         [
           {
-            "node": "Calendar Agent",
-            "type": "ai_tool",
+            "node": "Google Sheets",
+            "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Create Calendar Event": {
-      "ai_tool": [
+    "Google Sheets": {
+      "main": [
         [
           {
-            "node": "Calendar Agent",
-            "type": "ai_tool",
+            "node": "If",
+            "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Current Month Dates with Days": {
-      "ai_tool": [
+    "HTTP Request": {
+      "main": [
         [
           {
-            "node": "Calendar Agent",
-            "type": "ai_tool",
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
             "index": 0
           }
         ]
       ]
     }
   },
-  "createdAt": "2025-01-11T01:36:47.386Z",
-  "id": "JM5LPCXeuEkFk0r6",
+  "createdAt": "2025-01-16T01:50:52.220Z",
+  "id": "g7cKyrgr6qMnCobT",
   "meta": null,
   "name": "My workflow 16",
   "nodes": [
     {
       "parameters": {
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
-      "typeVersion": 1.1,
-      "position": [
-        -20,
-        0
-      ],
-      "id": "6963c0d9-6649-4298-a54c-f07b8891eafc",
-      "name": "When chat message received",
-      "webhookId": "d4964591-7870-4d70-980f-8be33160b47e"
-    },
-    {
-      "parameters": {
+        "promptType": "define",
+        "text": "=<Name>{{ $json.Name }}</Name>\n\n<Neighborhood and When>{{ $json['Neighborhood & When'] }}</Neighborhood and When> \n\n<Content> {{ $json.Content }} </Content>\n\n<Link> {{ $json.Link }} </Link\n\n\n",
         "options": {
-          "systemMessage": "=You are an AI assistant responsible for managing Robert Lord’s calendar efficiently and handling any date-related conversations or topics with precision and accuracy. Your primary objective is to ensure all date- and time-related tasks are executed flawlessly while respecting availability, priorities, and preferences.\n\nCore Responsibilities\n\n1. Schedule Management\n\t•\tCreate, update, and delete events as instructed, confirming significant actions with Robert.\n\t•\tAvoid overlapping events unless explicitly allowed, and prioritize urgent or critical events during conflicts.\n\t•\tSuggest alternative times when conflicts arise, considering recurring patterns and historical preferences.\n\n2. Availability Management\n\t•\tRespect predefined working hours: Monday to Friday, 10:00 AM - 4:00 PM EST.\n\t•\tAlways seek explicit approval before scheduling any event outside these hours.\n\t•\tConsider public holidays, marked unavailable days, and recurring commitments before scheduling.\n\n3. Time Optimization\n\t•\tGroup similar tasks or appointments to minimize context-switching.\n\t•\tAllocate sufficient buffer time between meetings (default: 15 minutes).\n\n4. Event Categorization\n\t•\tUse categories (e.g., “Work,” “Personal,” “Urgent”) and tags to differentiate events visually.\n\t•\tUse past behavior or user input to assign categories intelligently.\n\n5. Communication and Formatting\n\t•\tStructure responses with clear, readable formatting:\n\t•\tEvent Title\n\t•\tTime (with explicit time zone)\n\t•\tDescription or Location\n\t•\tAttendees\n\t•\tFor vague queries, seek clarification before proceeding (e.g., “Which Monday do you mean?”).\n\n6. Date and Time Verification\n\t•\tMANDATORY REQUIREMENT: Always use both the Date Time Tool and Current Month Dates with Days Tool:\n\t•\tRetrieve the current day, date, and time using the Date Time Tool.\n\t•\tGenerate a complete list of dates and their corresponding days of the week for the current month using the Current Month Dates with Days Tool.\n\t•\tConfirm all gathered data before taking any actions or delivering responses.\n\t•\tDouble-check results for completeness and consistency to prevent errors.\n\n7. Error Handling\n\t•\tIf a tool fails or data cannot be retrieved, provide an explanation and suggest corrective actions to the user.\n\nIntegration Guidelines\n\n1. Google Calendar\n\t•\tQuery events for the full day (12:00 AM to 11:59 PM) when retrieving schedules, ensuring no events are excluded.\n\t•\tAlways include automatestpete@gmail.com as an attendee for new events.\n\nExpected Behavior\n\n1. Proactive\n\t•\tSuggest relevant times and flag conflicts in advance.\n\n2. Accurate\n\t•\tUse mandatory tools to verify all data.\n\t•\tConfirm gathered information before responding.\n\n3. Secure\n\t•\tOperate within privacy and confidentiality limits.\n\n4. Responsive\n\t•\tSeek clarification or confirm with Robert whenever necessary.\n\nExample Scenarios\n\n1. Meeting Request\n\t•\tQuery: “What’s Robert got going on this Monday?”\n\t•\tProcess:\n\t1.\tUse the Date Time Tool to confirm the current date and time.\n\t2.\tUse the Current Month Dates with Days Tool to verify the specific Monday’s date.\n\t3.\tQuery the Google Calendar Tool for all events from 12:00 AM to 11:59 PM on the determined date.\n\t4.\tDouble-check all gathered events before responding.\n\t5.\tResponse Example:\n\nThis Monday, January 13, 2025, Robert has the following events scheduled:\n\n1. Morning Meeting  \n   - Time: 9:00 AM - 10:00 AM EST  \n   - Description: Discuss project updates.  \n\n2. Touch Base with Olga  \n   - Time: 12:00 PM - 1:00 PM EST  \n   - Description: Join via Webinar.\n\n\n\n2. Determining the Day for a Specific Date\n\t•\tQuery: “What day of the week is the 15th of this month?”\n\t•\tProcess:\n\t1.\tUse the Date Time Tool to confirm the current date.\n\t2.\tUse the Current Month Dates with Days Tool to determine the day of the week.\n\t3.\tDouble-check results before responding.\n\t4.\tResponse Example:\n\nThe 15th of this month falls on a Wednesday.\n\n\n\n3. Scheduling Outside Working Hours\n\t•\tQuery: “Can we schedule a meeting for 7:00 PM on Wednesday?”\n\t•\tProcess:\n\t1.\tSeek explicit approval from Robert before scheduling the event.\n\t2.\tIf approved, proceed with scheduling and include all necessary attendees.\n\t3.\tConfirm the event details in the response.\n\n4. Event Creation\n\t•\tSteps:\n\t1.\tUse the Date Time Tool to verify the current date and time.\n\t2.\tUse the Current Month Dates with Days Tool to confirm the day of the week for the event’s date.\n\t3.\tAdd automatestpete@gmail.com as an attendee.\n\t4.\tDouble-check all event details before creating the event.",
+          "systemMessage": "=You are responsible for analyzing community posts to identify inquiries about irrigation services. Your expertise ensures that community members receive timely and helpful recommendations. You maintain credibility and professionalism in all your interactions.\n\n---\n\n## **Your Job Description**\n- You review datasets to identify specific needs or requests related to irrigation services.\n- You apply a systematic process to identify and respond to relevant posts.\n- You craft personalized, professional responses to inquiries when required.\n- You categorize posts based on whether a response or no response is needed.\n- You ensure all interactions are accurate and align with community standards.\n\n---\n\n## **Your Chain of Thought for Identifying, Categorizing, and Responding**\n\n### **1. Understand the Dataset Structure**  \n- You familiarize yourself with the dataset, focusing on:\n  - **Content**: The main body of the post where needs are expressed.\n  - **Name**: For personalizing your responses.\n  - **Neighborhood & When**: To understand the recency and context of the post.\n  - **Link**: To verify the original post, if necessary.\n\n### **2. Define Your Search Parameters**  \n- You look for keywords that signal interest in irrigation services, such as:\n  - *\"sprinkler,\" \"irrigation,\" \"lawn watering,\" \"recommendation for sprinklers.\"*\n- You also focus on phrases that indicate requests, such as:\n  - *\"Anyone know?\" \"Looking for help,\" or \"Can someone recommend?\"*\n\n### **3. Filter and Analyze Posts**  \n- You filter the **Content** column for these keywords and phrases.\n- For each post, you ask yourself:\n  - Does this explicitly mention irrigation or a related service?\n  - Is the poster asking for help, advice, or recommendations?\n\n### **4. Categorize the Post**  \n- If the post explicitly requests irrigation services or related help, you mark it as **Response Needed**.\n- If the post does not pertain to irrigation services or is ambiguous, you mark it as **No Response Needed**.\n\n### **5. Craft or Document the Response**  \n- **For Response Needed**:\n  - Use this response template:\n    - _\"Hi [Name], I’ve got an irrigation company I can recommend. Let me know if you’d like their contact information!\"_\n  - Personalize your response using the poster’s name from the **Name** column.\n  - Enter your response into the **Response** column.\n- **For No Response Needed**:\n  - Document \"No response needed\" in the **Response** column with a note explaining why (e.g., \"Post not related to irrigation services\").\n\n### **6. Log the Interaction**  \n- For all posts, ensure the **Response** column contains either a response or the note \"No response needed.\"\n- Add any context or additional notes if required.\n\n### **7. Perform a Final Review**  \n- You review your flagged posts and responses to ensure:\n  - Posts marked as **Response Needed** have accurate, professional responses.\n  - Posts marked as **No Response Needed** are justified with clear notes.\n- Disregard ambiguous or irrelevant posts to uphold credibility.\n\n---\n\n## **Example Workflow**\n\n**Scenario 1: Response Needed**  \nYou read a post that says:  \n*\"Hi all, I am looking for someone to fix the sprinklers in my yard. Any recommendations?\"*\n\n### **Step 1: Recognize the Need**  \n- The phrase \"looking for someone to fix the sprinklers\" explicitly indicates a need for irrigation services.  \n- The word \"recommendations\" confirms the request.\n\n### **Step 2: Confirm Relevance**  \n- You check the **Neighborhood & When** column to ensure the post is recent and relevant.  \n- You verify the source using the **Link** column.\n\n### **Step 3: Craft Your Response**  \n- You create a response using the template:  \n  _\"Hi [Name], I’ve got an irrigation company I can recommend. Let me know if you’d like their contact information!\"_\n\n### **Step 4: Log the Interaction**  \n- You record your response in the **Response** column of the dataset.\n\n---\n\n**Scenario 2: No Response Needed**  \nYou read a post that says:  \n*\"Anyone else having issues with low water pressure in the neighborhood?\"*\n\n### **Step 1: Recognize the Irrelevance**  \n- The post mentions water pressure, but it does not request irrigation services or assistance.\n\n### **Step 2: Confirm Irrelevance**  \n- You verify that no keywords or phrases indicate irrigation-related needs.\n\n### **Step 3: Document \"No Response Needed\"**  \n- You write \"No response needed\" in the **Response** column with the note: \"Post about water pressure, unrelated to irrigation services.\"\n\n---\n\n## **Conclusion**\nBy ensuring every post is categorized and either responded to or documented as \"No response needed,\" you provide consistent and thorough coverage. This process guarantees that relevant inquiries are addressed, and irrelevant posts are appropriately logged for accountability. Let me know if you’re ready to apply this method!",
           "returnIntermediateSteps": true
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [
-        200,
+        220,
         0
       ],
-      "id": "4f00b037-6e92-4f56-b5dd-01ace7d9af3f",
-      "name": "Calendar Agent"
-    },
-    {
-      "parameters": {
-        "operation": "getAll",
-        "calendar": {
-          "__rl": true,
-          "value": "automatestpete@gmail.com",
-          "mode": "list",
-          "cachedResultName": "automatestpete@gmail.com"
-        },
-        "limit": 10,
-        "options": {
-          "timeMin": "={{ $fromAI(\"after\") }}",
-          "timeMax": "={{ $fromAI(\"before\") }}"
-        }
-      },
-      "type": "n8n-nodes-base.googleCalendarTool",
-      "typeVersion": 1.2,
-      "position": [
-        640,
-        220
-      ],
-      "id": "6594c95f-37f5-4faf-a189-5d3b836d6308",
-      "name": "Get Calendar",
-      "credentials": {
-        "googleCalendarOAuth2Api": {
-          "id": "uN5dopaOLSVA2U6J",
-          "name": "Google Calendar account"
-        }
-      }
+      "id": "31392be3-2a9e-4c25-a9f2-32448bc484e0",
+      "name": "AI Agent"
     },
     {
       "parameters": {
@@ -151,10 +122,10 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1,
       "position": [
-        -240,
-        220
+        160,
+        180
       ],
-      "id": "eb35f158-a30f-43ed-8918-c7ccc91ed43e",
+      "id": "1aead806-011c-411a-bf1e-741f4608fca3",
       "name": "OpenAI Chat Model",
       "credentials": {
         "openAiApi": {
@@ -164,102 +135,271 @@
       }
     },
     {
-      "parameters": {},
-      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
-      "typeVersion": 1.3,
-      "position": [
-        -80,
-        220
-      ],
-      "id": "6df84e7c-f5dc-4335-8148-111e340e9e0b",
-      "name": "Window Buffer Memory"
-    },
-    {
       "parameters": {
-        "name": "Date_Time_Tool",
-        "description": "Call this tool when you need to get the current date and time.",
-        "jsCode": "// Get the current date and time in UTC\nconst nowUTC = new Date();\n\n// Calculate EST offset (UTC-5 during standard time, UTC-4 during daylight saving time)\nconst isDST = nowUTC.getTimezoneOffset() < 240; // Eastern time DST is UTC-4\nconst estOffset = isDST ? -4 : -5;\n\n// Create a new date object adjusted for EST\nconst nowEST = new Date(nowUTC.getTime() + estOffset * 60 * 60 * 1000);\n\n// Extract date components\nconst year = nowEST.getUTCFullYear();\nconst month = nowEST.getUTCMonth() + 1; // Months are zero-based\nconst day = nowEST.getUTCDate();\n\n// Extract time components\nconst hours = nowEST.getUTCHours();\nconst minutes = nowEST.getUTCMinutes();\nconst seconds = nowEST.getUTCSeconds();\n\n// Get the day of the week\nconst daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];\nconst dayOfWeek = daysOfWeek[nowEST.getUTCDay()];\n\n// Format the date and time\nconst formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;\nconst formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;\n\n// Log the current date, time, and day of the week in EST\nconsole.log(`Current Date in EST: ${formattedDate}`);\nconsole.log(`Current Time in EST: ${formattedTime}`);\nconsole.log(`Day of the Week in EST: ${dayOfWeek}`);\n\n// Return the formatted string\nreturn `Today is ${dayOfWeek}, the current date in EST is ${formattedDate}, and the time is ${formattedTime}`;"
-      },
-      "type": "@n8n/n8n-nodes-langchain.toolCode",
-      "typeVersion": 1.1,
-      "position": [
-        80,
-        220
-      ],
-      "id": "a328fa9e-a9d0-4ca3-9b0e-a3270537c782",
-      "name": "Date Time Tool"
-    },
-    {
-      "parameters": {
-        "calendar": {
-          "__rl": true,
-          "value": "automatestpete@gmail.com",
-          "mode": "list",
-          "cachedResultName": "automatestpete@gmail.com"
-        },
-        "start": "={{ $fromAI(\"start\") }}",
-        "end": "={{ $fromAI(\"end\") }}",
-        "useDefaultReminders": false,
-        "additionalFields": {
-          "attendees": [
-            "={{ $fromAI(\"attendees\",\"This is an optional string of comma separated emails\") }}"
-          ],
-          "description": "={{ $fromAI(\"description\") }}",
-          "summary": "={{ $fromAI(\"summary\") }}"
-        },
-        "remindersUi": {
-          "remindersValues": [
+        "pollTimes": {
+          "item": [
             {
-              "method": "email",
-              "minutes": 10
-            },
-            {
-              "method": "email",
-              "minutes": 1440
+              "mode": "everyHour",
+              "minute": 35
             }
           ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1qDG_RroTV8Jj7slfI2mAktVziIPCtMSNpR51Dbu7p8g",
+          "mode": "list",
+          "cachedResultName": "Nextdoor Irregation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qDG_RroTV8Jj7slfI2mAktVziIPCtMSNpR51Dbu7p8g/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qDG_RroTV8Jj7slfI2mAktVziIPCtMSNpR51Dbu7p8g/edit#gid=0"
+        },
+        "event": "rowAdded",
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "specifyRangeA1",
+              "range": "A1:G4"
+            }
+          }
         }
       },
-      "type": "n8n-nodes-base.googleCalendarTool",
-      "typeVersion": 1.2,
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
       "position": [
-        460,
-        220
+        0,
+        0
       ],
-      "id": "f0a13ecb-fc17-46f8-9e64-14fb541e9c06",
-      "name": "Create Calendar Event",
+      "id": "9829f81f-30bc-491c-a411-a468dd6b32c4",
+      "name": "Google Sheets Trigger",
       "credentials": {
-        "googleCalendarOAuth2Api": {
-          "id": "uN5dopaOLSVA2U6J",
-          "name": "Google Calendar account"
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "eiB1yvbgSrE4wzmw",
+          "name": "Google Sheets Trigger account"
         }
       }
     },
     {
       "parameters": {
-        "name": "Current_Month_Dates_and_Days",
-        "description": "Use this tool to get the dates and days of the current month.",
-        "jsCode": "function generateDatesWithDays() {\n    const today = new Date();\n\n    // Calculate the start and end dates for the 45-day window\n    const startDate = new Date(today);\n    startDate.setDate(today.getDate() - 14); // 2 weeks behind\n\n    const endDate = new Date(today);\n    endDate.setDate(today.getDate() + 30); // 30 days ahead\n\n    // Generate dates with their corresponding days\n    let result = '';\n    for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {\n        const dayName = date.toLocaleDateString('en-US', { weekday: 'long' }); // Day name\n        result += `${date.toDateString()} - ${dayName}\\n`; // Append to result\n    }\n\n    return result.trim(); // Return the final string without extra spaces\n}\n\n// Get the result and log it\nconst datesWithDaysString = generateDatesWithDays();\nreturn datesWithDaysString;"
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1qDG_RroTV8Jj7slfI2mAktVziIPCtMSNpR51Dbu7p8g",
+          "mode": "list",
+          "cachedResultName": "Nextdoor Irregation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qDG_RroTV8Jj7slfI2mAktVziIPCtMSNpR51Dbu7p8g/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qDG_RroTV8Jj7slfI2mAktVziIPCtMSNpR51Dbu7p8g/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Link": "={{ $('Google Sheets Trigger').item.json.Link }}",
+            "Response": "={{ $json.output }}"
+          },
+          "matchingColumns": [
+            "Link"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Neighborhood & When",
+              "displayName": "Neighborhood & When",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Content",
+              "displayName": "Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Response",
+              "displayName": "Response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ]
+        },
+        "options": {}
       },
-      "type": "@n8n/n8n-nodes-langchain.toolCode",
-      "typeVersion": 1.1,
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
       "position": [
-        260,
-        220
+        580,
+        0
       ],
-      "id": "1f6c7595-faf5-4cf1-bf24-beadacdb82fc",
-      "name": "Current Month Dates with Days"
+      "id": "2ee6aadb-8f46-49ca-81e3-ed9eb32f2402",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sKITsW661Itsg15I",
+          "name": "Google Sheets account - ASP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://webhooks.taskmagic.com/hook/vtZRQtR9YZr3fahhNm9z",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "=responseUrl",
+              "value": "={{ $json.responseUrl }}"
+            },
+            {
+              "name": "response",
+              "value": "={{ $json.response }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1440,
+        260
+      ],
+      "id": "06a685e4-ebcc-4433-8633-a3f8dc69e63d",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1260,
+        140
+      ],
+      "id": "cab61446-5c87-46cc-bd49-53a9ebd72d24",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "61164c91-b758-4b6b-ba78-91c5b49b919f",
+              "name": "responseUrl",
+              "value": "={{ $json.Link }}",
+              "type": "string"
+            },
+            {
+              "id": "d1ebc897-01c4-466a-ac86-e92b9cd3ded5",
+              "name": "response",
+              "value": "={{ $json.Response }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1040,
+        140
+      ],
+      "id": "50c6b235-510c-4e4b-b5d6-98543a69dc32",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c52408f9-547e-43ea-b6cf-c245115b105d",
+              "leftValue": "={{ $json.Response }}",
+              "rightValue": "No response needed",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        800,
+        0
+      ],
+      "id": "d43b78b8-775e-4a19-a5b1-2f00dedbd49a",
+      "name": "If"
     }
   ],
   "pinData": {},
   "settings": {
-    "executionOrder": "v1",
-    "timezone": "America/New_York",
-    "callerPolicy": "workflowsFromSameOwner"
+    "executionOrder": "v1"
   },
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2025-01-11T03:39:45.000Z",
-  "versionId": "b2028ede-7826-4fe6-b364-7629ac581cf8"
+  "updatedAt": "2025-01-16T02:47:22.000Z",
+  "versionId": "2d76f164-8cdd-4397-b314-7ee2ae8e4b31"
 }
