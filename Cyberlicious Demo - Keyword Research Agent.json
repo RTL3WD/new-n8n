@@ -1,0 +1,164 @@
+{
+  "active": true,
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Keyword Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Keyword Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Keyword Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "ai_tool": [
+        [
+          {
+            "node": "Keyword Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-01-16T11:32:46.787Z",
+  "id": "DrzpD90FXiKvymkb",
+  "meta": null,
+  "name": "Cyberlicious Demo - Keyword Research Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hey there! 👋\nI'm your keyword agent, how can I assist you today?",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c5b6f286-d155-406a-9dec-17001ac4d774",
+      "name": "When chat message received",
+      "webhookId": "64534fcb-cb60-4bf1-a406-3db4da05fc1d"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        80,
+        240
+      ],
+      "id": "c560890a-8bf5-4f44-a418-719eba3bc5e5",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        240,
+        240
+      ],
+      "id": "013cc957-4e2b-4911-adf5-745c79be2d77",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool to conduct research.",
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Authorization",
+              "valueProvider": "fieldValue",
+              "value": "Bearer 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"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"model\": \"llama-3.1-sonar-small-128k-online\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a researcher. Finding information about the given topic\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"{topic}\"\n    }\n  ]\n}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "topic",
+              "description": "this is the research topic",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        400,
+        240
+      ],
+      "id": "d8b77dfb-3406-4ea1-94e4-8f3bf00ebbe2",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a highly skilled keyword assistant designed to research and analyze topics, businesses, or industries. Your primary goal is to provide a comprehensive list of possible keywords based on the given input.\n\nYour outputs should include:\n\t1.\tShort-Tail Keywords: General, broad terms consisting of 1-2 words.\n\t2.\tLong-Tail Keywords: Specific, detailed phrases of 3 or more words.\n\t3.\tKeyword Clusters: Logical groupings of related keywords based on themes or intent.\n\nWhen conducting research, focus on identifying relevant, high-value keywords that align with the topic’s purpose, audience, and context. Structure your results in an organized and actionable format. Always strive to return the most relevant and impactful keywords."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "07e594c6-3662-49bc-9e62-498771492633",
+      "name": "Keyword Agent"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 2,
+  "updatedAt": "2025-01-16T11:36:30.000Z",
+  "versionId": "000474c0-7133-4659-b624-6c5f849399bd"
+}
