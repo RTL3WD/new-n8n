@@ -66,7 +66,13 @@
     },
     "If2": {
       "main": [
-        [],
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ],
         [
           {
             "node": "AI Agent",
@@ -123,7 +129,9 @@
   },
   "createdAt": "2024-12-14T00:51:00.194Z",
   "id": "XM0E4Y43kUMPASGN",
-  "meta": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
   "name": "Gmail AI Auto-Responder Agent - ASP",
   "nodes": [
     {
@@ -469,16 +477,16 @@
           },
           "conditions": [
             {
-              "id": "fe4b58e6-a053-45a9-bd27-13205a841d5e",
-              "leftValue": "={{ $json.subject }}",
-              "rightValue": "Invitation",
+              "id": "3b81aefe-dc74-4c44-be8d-09d395acea79",
+              "leftValue": "={{ $json.headers.subject }}",
+              "rightValue": "Coolify",
               "operator": {
                 "type": "string",
                 "operation": "contains"
               }
             }
           ],
-          "combinator": "and"
+          "combinator": "or"
         },
         "options": {}
       },
@@ -624,6 +632,27 @@
           "name": "Gmail account"
         }
       }
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        120,
+        980
+      ],
+      "id": "1804d65d-d47e-4664-8f4a-ba70301fcb76",
+      "name": "Gmail",
+      "webhookId": "55595f60-f6dc-4e09-8cb9-47dc2aedd4e5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -632,15 +661,14 @@
   },
   "staticData": {
     "node:Gmail is Received": {
-      "lastTimeChecked": 1737362799,
+      "lastTimeChecked": 1737413982,
       "possibleDuplicates": [
-        "19482e5357024154",
-        "19482e518a7af11a"
+        "19485f17c76c216f"
       ]
     }
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-12-27T23:52:26.000Z",
-  "versionId": "54aabaaf-b0d9-4489-9f28-ed3f1e9c1543"
+  "updatedAt": "2025-01-20T20:18:49.000Z",
+  "versionId": "6a976d34-42c7-40da-acf2-7546671e73fa"
 }
