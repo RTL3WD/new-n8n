@@ -1,0 +1,66 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-01-20T02:34:57.598Z",
+  "id": "QrfFexrlczzF9CK6",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "My workflow 18",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "e7ca027b-30dd-4140-abb5-448d7f801d1c",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://crawl4ai.aspworkplace.com/api/v1/crawl/multi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"urls\": [\n    \"https://docs.crawl4ai.com/\",\n    \"https://docs.crawl4ai.com/advanced/advanced-features/\",\n    \"https://docs.crawl4ai.com/advanced/crawl-dispatcher/\",\n    \"https://docs.crawl4ai.com/advanced/file-downloading/\",\n    \"https://docs.crawl4ai.com/advanced/hooks-auth/\",\n    \"https://docs.crawl4ai.com/advanced/identity-based-crawling/\",\n    \"https://docs.crawl4ai.com/advanced/lazy-loading/\",\n    \"https://docs.crawl4ai.com/advanced/multi-url-crawling/\",\n    \"https://docs.crawl4ai.com/advanced/proxy-security/\",\n    \"https://docs.crawl4ai.com/advanced/session-management/\",\n    \"https://docs.crawl4ai.com/advanced/ssl-certificate/\",\n    \"https://docs.crawl4ai.com/api/arun/\",\n    \"https://docs.crawl4ai.com/api/async-webcrawler/\",\n    \"https://docs.crawl4ai.com/api/crawl-result/\",\n    \"https://docs.crawl4ai.com/api/parameters/\",\n    \"https://docs.crawl4ai.com/api/strategies/\",\n    \"https://docs.crawl4ai.com/blog/\",\n    \"https://docs.crawl4ai.com/blog/articles/dockerize_hooks/\",\n    \"https://docs.crawl4ai.com/blog/releases/0.4.0/\",\n    \"https://docs.crawl4ai.com/blog/releases/0.4.1/\",\n    \"https://docs.crawl4ai.com/blog/releases/0.4.2/\",\n    \"https://docs.crawl4ai.com/core/browser-crawler-config/\",\n    \"https://docs.crawl4ai.com/core/cache-modes/\",\n    \"https://docs.crawl4ai.com/core/content-selection/\",\n    \"https://docs.crawl4ai.com/core/crawler-result/\",\n    \"https://docs.crawl4ai.com/core/docker-deploymeny/\",\n    \"https://docs.crawl4ai.com/core/fit-markdown/\",\n    \"https://docs.crawl4ai.com/core/installation/\",\n    \"https://docs.crawl4ai.com/core/link-media/\",\n    \"https://docs.crawl4ai.com/core/local-files/\",\n    \"https://docs.crawl4ai.com/core/markdown-generation/\",\n    \"https://docs.crawl4ai.com/core/page-interaction/\",\n    \"https://docs.crawl4ai.com/core/quickstart/\",\n    \"https://docs.crawl4ai.com/core/simple-crawling/\",\n    \"https://docs.crawl4ai.com/extraction/chunking/\",\n    \"https://docs.crawl4ai.com/extraction/clustring-strategies/\",\n    \"https://docs.crawl4ai.com/extraction/llm-strategies/\",\n    \"https://docs.crawl4ai.com/extraction/no-llm-strategies/\"\n  ],\n  \"mode\": \"parallel\",\n  \"max_concurrent\": 3,\n  \"headless\": true,\n  \"session_reuse\": true\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "4daffd11-5a41-4d35-a1e2-e5d7198175f2",
+      "name": "HTTP Request"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-01-20T02:34:57.598Z",
+  "versionId": "8b2b681a-ebe7-458b-8203-477560a2d16e"
+}
