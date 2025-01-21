@@ -1,0 +1,187 @@
+{
+  "active": false,
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrape Single Website Page": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-01-20T01:48:38.828Z",
+  "id": "2X904IoBplzUQf6Y",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Scraping Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "1b7e4d29-f60d-4f8d-bb6f-124d4b76cb2e",
+      "name": "When chat message received",
+      "webhookId": "e1e43630-5883-4614-8228-a0bd95339acb"
+    },
+    {
+      "parameters": {
+        "options": {
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "51c8df48-448d-4a39-9288-d9f6e60a6bac",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "llama3-70b-8192",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        160,
+        200
+      ],
+      "id": "b68ebc1f-964b-409d-8ac7-ff539dd63d36",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "Sky8svfm6OEcYSKn",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        300,
+        200
+      ],
+      "id": "83273d9f-1e02-483b-9457-4d2ea9df71ed",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this to scrape a single website.",
+        "method": "POST",
+        "url": "http://crawl4ai.aspworkplace.com/api/v1/crawl/basic",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Content-Type",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "parametersBody": {
+          "values": [
+            {
+              "name": "url",
+              "valueProvider": "fieldValue",
+              "value": "{url}"
+            },
+            {
+              "name": "headless",
+              "valueProvider": "fieldValue",
+              "value": "true"
+            },
+            {
+              "name": "viewport_width",
+              "valueProvider": "fieldValue",
+              "value": "1280"
+            },
+            {
+              "name": "viewport_height",
+              "valueProvider": "fieldValue",
+              "value": "800"
+            }
+          ]
+        },
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "url",
+              "description": "website to scrape",
+              "type": "string"
+            }
+          ]
+        },
+        "optimizeResponse": true,
+        "responseType": "text"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        440,
+        200
+      ],
+      "id": "88adbc7a-f1e9-4736-a2a7-467f2060e587",
+      "name": "Scrape Single Website Page"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-01-21T23:25:47.000Z",
+  "versionId": "550dd740-6bd1-439e-abc0-924b77966228"
+}
