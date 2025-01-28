@@ -1,0 +1,18 @@
+{
+  "active": false,
+  "connections": {},
+  "createdAt": "2025-01-28T20:11:37.576Z",
+  "id": "Pvfh01yhTpoMlHr8",
+  "meta": null,
+  "name": "DVN Agent Team EX",
+  "nodes": [],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-01-28T20:11:37.576Z",
+  "versionId": "f4a95307-fbe4-4dab-aa85-601628c30e64"
+}
