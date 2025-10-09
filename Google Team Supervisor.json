@@ -70,6 +70,7 @@
   },
   "createdAt": "2025-01-07T22:17:24.922Z",
   "id": "FKkwG8XEYuKdl5Ug",
+  "isArchived": false,
   "meta": null,
   "name": "Google Team Supervisor",
   "nodes": [
@@ -200,9 +201,18 @@
     "timezone": "America/New_York",
     "callerPolicy": "workflowsFromSameOwner"
   },
+  "shared": [
+    {
+      "createdAt": "2025-01-07T22:17:24.929Z",
+      "updatedAt": "2025-01-07T22:17:24.929Z",
+      "role": "workflow:owner",
+      "workflowId": "FKkwG8XEYuKdl5Ug",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": null,
   "tags": [],
-  "triggerCount": 2,
+  "triggerCount": 1,
   "updatedAt": "2025-01-08T01:37:56.000Z",
   "versionId": "f99f28b0-c04a-448a-8d12-347062302036"
 }
