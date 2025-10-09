@@ -282,6 +282,7 @@
   },
   "createdAt": "2024-11-19T18:19:52.777Z",
   "id": "rBOJ3BiTl4iTvVia",
+  "isArchived": false,
   "meta": null,
   "name": "RAG Agent",
   "nodes": [
@@ -956,16 +957,25 @@
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "createdAt": "2024-11-19T18:19:52.782Z",
+      "updatedAt": "2024-11-19T18:19:52.782Z",
+      "role": "workflow:owner",
+      "workflowId": "rBOJ3BiTl4iTvVia",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": {
     "node:File Created": {
-      "lastTimeChecked": "2025-01-29T23:08:59Z"
+      "lastTimeChecked": "2025-09-07T10:04:25Z"
     },
     "node:File Updated": {
-      "lastTimeChecked": "2025-01-29T23:08:59Z"
+      "lastTimeChecked": "2025-09-07T10:04:26Z"
     }
   },
   "tags": [],
-  "triggerCount": 5,
+  "triggerCount": 4,
   "updatedAt": "2024-12-12T19:28:21.000Z",
   "versionId": "9b043a3a-e57d-4adf-9b7e-ba5831b870ac"
 }
