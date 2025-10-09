@@ -48,6 +48,7 @@
   },
   "createdAt": "2025-01-16T11:32:46.787Z",
   "id": "DrzpD90FXiKvymkb",
+  "isArchived": false,
   "meta": null,
   "name": "Cyberlicious Demo - Keyword Research Agent",
   "nodes": [
@@ -156,9 +157,18 @@
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "createdAt": "2025-01-16T11:32:46.795Z",
+      "updatedAt": "2025-01-16T11:32:46.795Z",
+      "role": "workflow:owner",
+      "workflowId": "DrzpD90FXiKvymkb",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": null,
   "tags": [],
-  "triggerCount": 2,
+  "triggerCount": 1,
   "updatedAt": "2025-01-16T11:36:30.000Z",
   "versionId": "000474c0-7133-4659-b624-6c5f849399bd"
 }
