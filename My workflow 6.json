@@ -37,6 +37,7 @@
   },
   "createdAt": "2024-11-12T15:35:17.281Z",
   "id": "HNEjKih9CP2N1Exm",
+  "isArchived": false,
   "meta": null,
   "name": "My workflow 6",
   "nodes": [
@@ -104,6 +105,15 @@
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "createdAt": "2024-11-12T15:35:17.286Z",
+      "updatedAt": "2024-11-12T15:35:17.286Z",
+      "role": "workflow:owner",
+      "workflowId": "HNEjKih9CP2N1Exm",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
