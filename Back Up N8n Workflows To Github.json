@@ -177,6 +177,7 @@
   },
   "createdAt": "2024-10-10T15:20:19.979Z",
   "id": "QfbAx4UUQyU39UDq",
+  "isArchived": false,
   "meta": {
     "templateId": "1534",
     "templateCredsSetupCompleted": true
@@ -483,6 +484,15 @@
   ],
   "pinData": {},
   "settings": {},
+  "shared": [
+    {
+      "createdAt": "2024-10-10T15:20:19.983Z",
+      "updatedAt": "2024-10-10T15:20:19.983Z",
+      "role": "workflow:owner",
+      "workflowId": "QfbAx4UUQyU39UDq",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": null,
   "tags": [],
   "triggerCount": 1,
