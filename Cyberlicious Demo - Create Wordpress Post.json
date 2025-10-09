@@ -259,6 +259,7 @@
   },
   "createdAt": "2025-01-16T12:52:46.339Z",
   "id": "7I7DKE5NSQia5zYr",
+  "isArchived": false,
   "meta": {
     "templateCredsSetupCompleted": true
   },
@@ -1020,6 +1021,15 @@
     "timezone": "America/New_York",
     "callerPolicy": "workflowsFromSameOwner"
   },
+  "shared": [
+    {
+      "createdAt": "2025-01-16T12:52:46.343Z",
+      "updatedAt": "2025-01-16T12:52:46.343Z",
+      "role": "workflow:owner",
+      "workflowId": "7I7DKE5NSQia5zYr",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": {
     "node:Schedule Trigger": {
       "recurrenceRules": []
