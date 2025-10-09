@@ -1,0 +1,66 @@
+{
+  "active": true,
+  "connections": {
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-04-25T18:57:48.355Z",
+  "id": "OhPJIfJ6jfBO0D7d",
+  "isArchived": false,
+  "meta": null,
+  "name": "MCP Server",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "57e5d996-6611-4f8d-bc1d-66e689c7a1f7"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b5eb7d1d-4df1-435a-88de-dcbb83dade69",
+      "name": "MCP Server Trigger",
+      "webhookId": "57e5d996-6611-4f8d-bc1d-66e689c7a1f7"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        160,
+        160
+      ],
+      "id": "111641c4-7886-46d7-83ff-47596950376c",
+      "name": "Calculator"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-04-25T18:57:48.365Z",
+      "updatedAt": "2025-04-25T18:57:48.365Z",
+      "role": "workflow:owner",
+      "workflowId": "OhPJIfJ6jfBO0D7d",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-04-25T19:08:41.000Z",
+  "versionId": "d20c7589-e46f-4e86-b490-58e6c2fef2ca"
+}
