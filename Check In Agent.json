@@ -55,6 +55,7 @@
   },
   "createdAt": "2024-11-12T17:14:14.332Z",
   "id": "A9ntb7E2O8V6ve0E",
+  "isArchived": false,
   "meta": null,
   "name": "Check In Agent",
   "nodes": [
@@ -857,6 +858,15 @@
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "createdAt": "2024-11-12T17:14:14.337Z",
+      "updatedAt": "2024-11-12T17:14:14.337Z",
+      "role": "workflow:owner",
+      "workflowId": "A9ntb7E2O8V6ve0E",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
