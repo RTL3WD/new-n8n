@@ -3,6 +3,7 @@
   "connections": {},
   "createdAt": "2024-11-24T17:11:10.264Z",
   "id": "r73ZoWO9at7EhpU3",
+  "isArchived": false,
   "meta": null,
   "name": "Perplexity Research Tool",
   "nodes": [
@@ -38,6 +39,15 @@
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "createdAt": "2024-11-24T17:11:10.270Z",
+      "updatedAt": "2024-11-24T17:11:10.270Z",
+      "role": "workflow:owner",
+      "workflowId": "r73ZoWO9at7EhpU3",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
