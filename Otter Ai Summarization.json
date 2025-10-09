@@ -59,6 +59,7 @@
   },
   "createdAt": "2024-11-17T18:58:26.838Z",
   "id": "l81Cad5dYCioxBRS",
+  "isArchived": false,
   "meta": null,
   "name": "Otter Ai Summarization",
   "nodes": [
@@ -289,12 +290,21 @@
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "createdAt": "2024-11-17T18:58:26.842Z",
+      "updatedAt": "2024-11-17T18:58:26.842Z",
+      "role": "workflow:owner",
+      "workflowId": "l81Cad5dYCioxBRS",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": {
     "node:Gmail Trigger": {
       "Gmail Trigger": {
-        "lastTimeChecked": 1737592844,
+        "lastTimeChecked": 1756942046,
         "possibleDuplicates": [
-          "194909aaf705448e"
+          "19911e82aa92f122"
         ]
       }
     }
