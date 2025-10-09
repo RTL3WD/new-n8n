@@ -94,6 +94,7 @@
   },
   "createdAt": "2025-01-16T01:50:52.220Z",
   "id": "g7cKyrgr6qMnCobT",
+  "isArchived": false,
   "meta": null,
   "name": "My workflow 16",
   "nodes": [
@@ -397,6 +398,15 @@
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "createdAt": "2025-01-16T01:50:52.225Z",
+      "updatedAt": "2025-01-16T01:50:52.225Z",
+      "role": "workflow:owner",
+      "workflowId": "g7cKyrgr6qMnCobT",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
