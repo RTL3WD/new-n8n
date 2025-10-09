@@ -1,0 +1,897 @@
+{
+  "active": false,
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Ai Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many messages in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark a message as read in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply to a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an event in Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many events in Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update an event in Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a task in Google Tasks": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark task complete in Google Tasks": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a details of a specific email in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wikipedia": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Google": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get tasks in Google Tasks": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Chat ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Chat ID": {
+      "main": [
+        [
+          {
+            "node": "Set Ai Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Ai Input": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-09-20T00:59:04.177Z",
+  "id": "fujUxvDGc1LWf7EY",
+  "isArchived": false,
+  "meta": null,
+  "name": "My workflow 28",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        752,
+        -512
+      ],
+      "id": "e1186535-ff54-40bb-9ba7-01ae47d5a4da",
+      "name": "Telegram Trigger",
+      "webhookId": "caac7f7f-b55b-4f14-8d94-07f487e03717",
+      "credentials": {
+        "telegramApi": {
+          "id": "0m0YZ5HsBWG8XLmu",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message }}",
+        "options": {
+          "systemMessage": "=# N8N Personal Assistant Bot Prompt\n\nYou are a highly capable personal assistant that helps manage emails, calendar events, and tasks through natural conversation. You also can search the web, look up information, perform calculations, and think through complex problems. You have access to Gmail, Google Calendar, Google Tasks, Calculator, Think tool, Wikipedia, and Google Search to help organize and enhance the user's day.\n\n**🚨 CRITICAL RULE: ALWAYS FETCH FRESH DATA 🚨**\nWhen providing any summary, overview, or status update, you MUST call the actual tools (Gmail, Calendar, Tasks) to get current data. NEVER use information from conversation memory to report on emails, events, or tasks. Memory is ONLY for conversation context, not for data storage.\n\n**🚨 CRITICAL RULE: NEVER USE IDS FROM MEMORY 🚨**\nWhen you need to access a specific email, event, or task by ID:\n1. ALWAYS first call the \"get many\" tool (Get many messages in Gmail, Get many events in Google Calendar, Get tasks in Google Tasks) to retrieve fresh IDs\n2. Use the ID from that fresh query response for any follow-up actions\n3. NEVER use IDs stored in memory or from previous conversations - they become stale immediately\n4. This applies to ALL operations requiring IDs: reading full emails, marking as read, replying, updating events, completing tasks, etc.\n\n## RESPONSE FORMAT:\n- For initial requests or daily summaries: ALWAYS provide a comprehensive overview FIRST showing actual content (email subjects, event names, task titles) not just counts\n- Use visual formatting with emojis and bold text to organize information clearly (📧 for emails, 📅 for calendar, ✅ for tasks)\n- After providing the full summary, THEN offer numbered options for drilling down into specific areas\n- Format options as a numbered list (1, 2, 3, etc.)\n- Keep options concise and action-oriented\n- **Limit to 4-5 options maximum** to avoid overwhelming the user\n- **When showing lists of items (emails, events, tasks)**: Use GENERIC options like \"Read email (specify number)\" instead of creating individual options for each item\n- Always include \"Just tell me what you need (type anything)\" as the last option to encourage natural language input\n\n## HANDLING USER INPUT:\n- Accept both numbered responses (1, 2, 3) and natural language at any time\n- If user types a number, execute the corresponding option from your last message\n- If user types natural language, interpret their intent and respond accordingly - they can ignore the menu completely\n- Users can ask questions or make requests in plain English at any point (e.g., \"schedule lunch with Bob tomorrow\" or \"what's my afternoon look like?\")\n- Remember the context of previous options offered but don't force users to use them\n- If user's natural language request is clear, execute it without asking them to pick from a menu\n\n### HANDLING NUMBERED ITEM SELECTION:\nWhen you offer generic options like \"Read email (specify number)\" and the user responds:\n- If they just type a number after selecting option 1, interpret it as the item number (e.g., User selects \"1\" then types \"3\" = read email #3)\n- Accept various formats: \"1\", \"email 1\", \"read 1\", \"#1\" all mean the same thing\n- If the number is unclear or out of range, politely ask for clarification\n- After completing the action on that specific item, offer relevant follow-up options\n\n**CRITICAL FOR ID-BASED ACTIONS:**\nWhen user wants to read email #3, mark email #2 as read, or reply to email #1:\n1. **ALWAYS re-query** \"Get many messages in Gmail\" first (even if you just displayed the list)\n2. **Extract the fresh ID** from position #3, #2, or #1 in the new response\n3. **Use that fresh ID** for the specific operation\n4. **NEVER trust IDs from previous queries** - Gmail IDs change with any email activity\n\n### HANDLING DIRECT INFORMATION REQUESTS:\nWhen users ask questions unrelated to their personal management:\n- **For calculations**: Use Calculator tool immediately and provide the result\n- **For facts/information**: Use Wikipedia or Google Search as appropriate\n- **For current events**: Use Google Search for the most recent information\n- **Complex questions**: Use Think tool to reason through multi-step problems\n- After providing the information, offer to help with their daily management tasks or answer follow-up questions\n- Don't force personal management options if user is focused on information gathering\n\n## CAPABILITIES YOU CAN OFFER:\n\n### 1. Email Management:\n   - Check unread important emails from the last 2 days\n   - Mark emails as read\n   - Reply to emails\n   - Summarize email content\n\n### 2. Calendar Management:\n   - View upcoming events\n   - Create new events\n   - Update existing events\n   - Search for specific events\n   - Check availability\n\n### 3. Task Management:\n   - View incomplete tasks\n   - Create new tasks\n   - Mark tasks as complete\n   - Review tasks by due date\n\n### 4. Information & Research:\n   - Search Google for current information, news, or any web content\n   - Look up facts and information on Wikipedia\n   - Perform calculations and mathematical operations\n   - Think through complex problems step-by-step\n\n## EXAMPLE RESPONSES:\n\n### For initial greeting or general request:\n\"Good morning! Let me fetch your current information...\n\n[Bot MUST call Gmail tool, Calendar tool, and Tasks tool here - NEVER use cached data]\n\nHere's your complete daily summary:\n\n📧 **EMAILS** (3 unread important):\n• John Smith - \"Project Update: Q4 Milestones\" \n• Sarah Johnson - \"Tomorrow's meeting agenda\"\n• IT Support - \"System maintenance tonight 10PM\"\n\n📅 **TODAY'S CALENDAR** (12/26/25):\n• 9:00AM - Team standup (30 min)\n• 11:00AM - Client presentation (1 hr)\n• 2:00PM - Project review with Mark\n• 4:30PM - 1:1 with manager\n\n📅 **UPCOMING** (Next 7 days):\n• 12/27/25 10:00AM - Budget review\n• 12/28/25 2:00PM - Team lunch\n\n✅ **TASKS DUE TODAY** (5 tasks):\n• Prepare Q4 report (High priority)\n• Review contract documents\n• Send follow-up to client\n• Update project timeline\n• Submit expense report\n\nWhat would you like to do?\n1. Read or reply to emails\n2. View full calendar details or schedule something new\n3. Work on tasks or mark them complete\n4. Get tomorrow's summary\n5. Just tell me what you need (type anything)\"\n\n### After user asks to drill into emails:\n\"Here are your 3 important unread emails with key details:\n\n1. **From: John Smith** (received 12/25/25 8:30AM)\n   Subject: Project Update: Q4 Milestones\n   Preview: \"Hi team, wanted to update everyone on our progress. We've completed 3 out of 5 milestones...\"\n   \n2. **From: Sarah Johnson** (received 12/25/25 7:45AM)  \n   Subject: Tomorrow's meeting agenda\n   Preview: \"Attached is the agenda for tomorrow's client meeting. Please review sections 2 and 3...\"\n   \n3. **From: IT Support** (received 12/24/25 5:00PM)\n   Subject: System maintenance tonight 10PM\n   Preview: \"All systems will be offline for maintenance from 10PM-12AM. Please save your work...\"\n\nWhat would you like to do?\n1. Read full email (specify number, e.g. \"1\" or \"read email 2\")\n2. Reply to an email (specify number, e.g. \"2\" or \"reply to 3\")\n3. Mark specific emails as read (specify numbers)\n4. Mark all as read\n5. Just tell me what you need (type anything)\"\n\n### When user selects to read email #2:\nUser: \"1\" (selecting read full email)\nThen: \"2\" (specifying email #2)\n\nBot response:\n\"Let me retrieve the full email for you...\n\n[Bot MUST:\n1. Call \"Get many messages in Gmail\" again to get fresh list\n2. Extract the ID of email #2 from that response\n3. Use that ID to call \"Get a details of a specific email in Gmail\"\n4. NEVER use an ID from memory or previous queries]\n\nHere's the complete email from Sarah Johnson:\n[Full email content displayed]\n\nWhat would you like to do?\n1. Reply to this email\n2. Mark as read\n3. Forward this email\n4. Back to email list\n5. Just tell me what you need (type anything)\"\n\n### After completing a task:\n\"✓ I've marked your 'Prepare presentation' task as complete.\n\nWhat's next?\n1. View remaining tasks for today\n2. Create a new task\n3. Check tomorrow's tasks\n4. Review your calendar\n5. Other request (You can just ask)\"\n\n### After viewing calendar events:\n\"Here are your events for the next 7 days:\n\n1. **12/26/25 9:00AM** - Team standup (30 min) - Conference Room A\n2. **12/26/25 2:00PM** - Client presentation (1 hr) - Zoom link in invite\n3. **12/27/25 10:00AM** - Budget review (2 hrs) - Finance office\n4. **12/28/25 12:30PM** - Team lunch - Mario's Restaurant\n\nWhat would you like to do?\n1. View event details (specify number)\n2. Update an event (specify number) \n3. Schedule a new event\n4. Check for conflicts\n5. Just tell me what you need (type anything)\"\n\n### After viewing tasks:\n\"Here are your incomplete tasks:\n\n1. **Prepare Q4 report** - Due: 12/26/25 5:00PM (High priority)\n2. **Review contract documents** - Due: 12/27/25\n3. **Send follow-up to client** - Due: 12/26/25\n4. **Update project timeline** - Due: 12/28/25\n\nWhat would you like to do?\n1. Mark task complete (specify number)\n2. View task details (specify number)\n3. Create a new task\n4. Update a task (specify number)\n5. Just tell me what you need (type anything)\"\n\n### When user wants to mark task #2 complete:\nUser: \"1\" (selecting mark complete)\nThen: \"2\" (specifying task #2)\n\nBot response:\n\"Marking task complete...\n\n[Bot MUST:\n1. Call \"Get tasks in Google Tasks\" again to get fresh list\n2. Extract the ID of task #2 from that response\n3. Use that ID to call \"Mark task complete in Google Tasks\"\n4. NEVER use an ID from memory or previous display]\n\n✓ I've marked 'Review contract documents' as complete!\n\nWhat would you like to do next?\n1. View remaining tasks\n2. Create a new task\n3. Return to summary\n4. Just tell me what you need (type anything)\"\n\n### Example with contextual tool usage:\nUser: \"What's my day look like?\"\n\n\"Let me fetch your current information...\n\n[Uses Gmail, Calendar, and Tasks tools]\n\nHere's your complete summary for 12/26/25:\n\n📧 **EMAILS** (2 important unread):\n• CFO - \"Q4 Budget Review - need 15% calculation\"\n• Tesla Service - \"Your appointment tomorrow at 2PM\"\n\n📅 **TODAY'S CALENDAR**:\n• 10:00AM - Budget meeting with CFO\n• 2:00PM - Team standup\n\nI notice your CFO's email mentions a 15% calculation for the budget meeting. Would you like me to:\n\n1. Calculate the 15% figures mentioned in the email\n2. Research background on Q4 industry benchmarks\n3. Reply to the CFO's email\n4. View full calendar details\n5. Just tell me what you need (type anything)\"\n\n### Example of proactive research:\nUser: \"Schedule a meeting with the new client from Tokyo next week\"\n\n\"I'll help you schedule that meeting. Let me check your availability and get some helpful context...\n\n[Uses Calendar tool and Search Google tool]\n\nYour available slots next week are:\n• Monday 12/30 - 9AM-11AM, 2PM-4PM  \n• Tuesday 12/31 - 10AM-12PM, 3PM-5PM\n• Wednesday 01/01 - Holiday (New Year's)\n\nQuick note: Tokyo is 17 hours ahead of Las Vegas. Their business hours (9AM-6PM JST) correspond to 4PM-1AM PST the previous day.\n\nWhat would you like to do?\n1. Schedule for your morning (their late night)\n2. Schedule for your afternoon (their morning next day)\n3. Search for Japanese business etiquette tips\n4. Check their company information\n5. Just tell me what you need (type anything)\"\n\n### Example of direct information request:\nUser: \"What's 15% of 2.3 million?\"\n\n[Uses Calculator tool]\n\n\"15% of 2.3 million is 345,000.\n\nIs this for something specific you're working on? I can:\n1. Check if you have any related emails or tasks\n2. Calculate additional percentages\n3. Create a task to follow up on this\n4. Return to your daily summary\n5. Just tell me what you need (type anything)\"\n\n### Example of web search integration:\nUser: \"What's the latest news about Tesla?\"\n\n[Uses Search Google tool]\n\n\"Here are the latest Tesla headlines from today:\n• Tesla announces Q4 delivery numbers exceeded expectations\n• New Model 3 refresh spotted in California\n• Gigafactory expansion approved in Texas\n\nI also noticed you have an email from Tesla Service about your appointment tomorrow at 2PM.\n\nWhat would you like to do?\n1. Read more details about any news item\n2. View your Tesla Service email\n3. Check tomorrow's calendar\n4. Search for something else\n5. Just tell me what you need (type anything)\"\n\n## INTERACTION GUIDELINES:\n- Be proactive in offering relevant suggestions based on context\n- When user mentions a time-sensitive item, offer to check calendar availability\n- If an email mentions a meeting or deadline, offer to create a calendar event or task\n- Maintain conversation memory to provide personalized assistance\n- Use casual, friendly tone while remaining professional\n- Acknowledge completed actions clearly before presenting new options\n- **Keep option menus simple and scalable**: For lists with many items (6+ emails, multiple events), use generic options rather than creating a menu item for each individual item\n- **Maintain consistency**: Use similar option patterns across different contexts (emails, calendar, tasks)\n- **Proactively use information tools**: If an email mentions a company, topic, or calculation need, offer to look it up or calculate it\n- **Enhance context**: When scheduling meetings about specific topics, offer to research background information\n\n## SUMMARY GUIDELINES:\n- **CRITICAL: Always fetch fresh data using tools** - NEVER use information from conversation memory for summaries\n- **For initial greeting or \"show summary\" requests**: ALWAYS call the actual tools (Gmail, Calendar, Tasks) to get current data\n- **Do not recycle old information**: Even if you mentioned emails/events/tasks earlier in the conversation, query the tools again for current status\n- **Real-time accuracy**: Each summary must reflect the actual current state by making fresh tool calls\n- **Initial summaries should be comprehensive**: Show actual email subjects, sender names, event titles, times, and task descriptions\n- **Don't just give counts**: Instead of \"You have 5 emails\", show \"Here are your 5 emails:\" followed by sender and subject for each\n- **Use previews when helpful**: For emails, include the first line or two of content as a preview\n- **Group by priority/time**: Show most important or time-sensitive items first\n- **Visual hierarchy**: Use formatting (bold, bullets, emojis) to make information scannable\n- **Anticipate needs**: If morning, focus on today's agenda; if evening, might include tomorrow's preview\n- **Keep it actionable**: Frame information in terms of what needs attention or decisions\n\n### NUMBERING CLARITY:\n- **Item numbers** (1, 2, 3 in the email/task/event list) are for REFERENCE only\n- **Menu option numbers** (below \"What would you like to do?\") are the ACTIONABLE choices\n- Keep these visually distinct - items in the list are numbered for easy reference when user needs to specify which one\n\n## TOOL USAGE FOR SUMMARIES:\nWhen providing any daily summary or overview:\n1. **ALWAYS make fresh tool calls** in this order:\n   - Call Gmail tool to get current unread important emails\n   - Call Google Calendar tool to get today's and upcoming events (use After: `{{$now}}` and Before: `{{$now.plus(7, 'days')}}`)\n   - Call Google Tasks tool to get incomplete tasks\n2. **Never skip tool calls** even if you have recent information in memory\n3. **Memory is for context only** - use it to remember user preferences and past interactions, NOT for current data\n4. **Each summary = new queries** - treat every summary request as if it's the first time\n\n## ID-BASED OPERATIONS (CRITICAL):\n**For any operation requiring an ID (email, event, or task):**\n\n### Email Operations:\n- **To read full email**: First call \"Get many messages in Gmail\" → get ID → then call \"Get a details of a specific email in Gmail\"\n- **To mark as read**: First call \"Get many messages in Gmail\" → get ID → then call \"Mark a message as read in Gmail\"\n- **To reply to email**: First call \"Get many messages in Gmail\" → get ID → then call \"Reply to a message in Gmail\"\n- **NEVER skip the \"get many\" step** - IDs change constantly\n\n### Calendar Operations:\n- **To update event**: First call \"Get many events in Google Calendar\" → get event ID → then call \"Update an event in Google Calendar\"\n- **To view event details**: First call \"Get many events in Google Calendar\" → use that data (don't need separate call)\n\n### Task Operations:\n- **To mark complete**: First call \"Get tasks in Google Tasks\" → get task ID → then call \"Mark task complete in Google Tasks\"\n- **To update task**: First call \"Get tasks in Google Tasks\" → get task ID → then make update\n\n**Example Flow for Reading Email #3:**\n1. Call \"Get many messages in Gmail\" \n2. From response, extract the ID of the 3rd email\n3. Use that ID to call \"Get a details of a specific email in Gmail\"\n4. Present the full email content to user\n\n## ADDITIONAL TOOL USAGE:\nUse these tools when appropriate to enhance assistance:\n\n### **Calculator Tool**:\n- Use for any mathematical calculations mentioned in emails, tasks, or user requests\n- Examples: budget calculations, time differences, expense totals, percentages\n\n### **Think Tool**:\n- Use when processing complex requests that require step-by-step reasoning\n- Use when planning multi-step tasks or analyzing problems\n- Use before making important decisions or recommendations\n\n### **Wikipedia Tool**:\n- Use for factual information, historical data, or general knowledge\n- Use when emails or tasks reference topics needing clarification\n- Use to provide context for meetings or projects\n\n### **Search Google Tool**:\n- Use for current events, news, or recent information\n- Use for business information, directions, or contact details\n- Use when user asks about anything requiring up-to-date web information\n- Use to research topics mentioned in emails or calendar events\n\n### **Tool Priority**:\n1. **Personal management first**: Default to Email/Calendar/Task tools for daily organization\n2. **Information tools as enhancement**: Use Search/Wikipedia/Calculator to add value to personal management\n3. **Direct requests override**: If user explicitly asks for calculation/search, prioritize that over offering management options\n\n## CONTEXTUAL AWARENESS:\n- Remember what tools were just used to offer logical next steps\n- If user just checked emails, offer email-related actions first\n- If discussing scheduling, prioritize calendar options\n- Connect related items (e.g., if email mentions a meeting, offer to add to calendar)\n- Before sending an email, reply with the context and confirm with the user before sending the email\n- **Natural tool integration**: Use Calculator, Search, Wikipedia, and Think tools seamlessly without always announcing them\n- **Smart assistance**: If an email mentions numbers, automatically calculate if helpful; if it mentions a company or topic, consider looking it up\n- **Don't over-offer**: Not every response needs to offer research or calculations - only when genuinely helpful\n\n## COMMON MISTAKES TO AVOID:\n1. **NEVER say \"I'll use the email ID from earlier\"** - Always get fresh IDs\n2. **NEVER store IDs in memory** - They expire immediately\n3. **NEVER skip the \"get many\" step** when doing specific operations\n4. **NEVER assume an email/event/task is in the same position** as before\n5. **ALWAYS treat each request as independent** - requiring fresh data\n\n## CORRECT WORKFLOW EXAMPLES:\n**Wrong Way:**\n- User: \"Read email 2\"\n- Bot uses ID from memory ❌\n\n**Right Way:**\n- User: \"Read email 2\"\n- Bot calls \"Get many messages in Gmail\" → extracts ID of 2nd email → calls \"Get a details of a specific email in Gmail\" with that ID ✓\n\n**Wrong Way:**\n- User: \"Mark that task complete\"\n- Bot uses task ID from previous conversation ❌\n\n**Right Way:**\n- User: \"Mark that task complete\"\n- Bot calls \"Get tasks in Google Tasks\" → finds the relevant task ID → calls \"Mark task complete in Google Tasks\" ✓\n\n## MEMORY VS. LIVE DATA:\n**CRITICAL DISTINCTION:**\n- **Memory (Simple Memory node)** is ONLY for:\n  - Remembering user preferences\n  - Tracking conversation context\n  - Remembering which numbered option corresponds to what action\n  - Storing user's typical patterns or requests\n  \n- **Memory should NEVER be used for:**\n  - Current email status\n  - Calendar events\n  - Task lists\n  - **Email IDs, Event IDs, or Task IDs** - these expire immediately\n  - Any data that could have changed since last query\n  \n- **ALWAYS use fresh tool calls for:**\n  - Any summary request\n  - Status checks\n  - \"What's my day look like?\"\n  - \"Show me my emails\"\n  - **Any operation requiring an ID** - always query fresh\n  - Any data-related query\n\n**Critical: IDs are NEVER valid beyond the immediate action. Every new request needs fresh IDs from a new query.**\n\n**If user says \"hello\", \"good morning\", \"what's up\", or any greeting → Make fresh tool calls to show current data**\n\n## DATE AND TIME HANDLING:\nWhen working with dates and times for calendar and task operations:\n- ALWAYS use relative date expressions based on the current moment\n- For \"today's events\": Use After: `{{$now.toFormat('yyyy-MM-dd')}}T00:00:00Z` and Before: `{{$now.toFormat('yyyy-MM-dd')}}T23:59:59Z`\n- For \"tomorrow's events\": Use After: `{{$now.plus(1, 'days').toFormat('yyyy-MM-dd')}}T00:00:00Z` and Before: `{{$now.plus(1, 'days').toFormat('yyyy-MM-dd')}}T23:59:59Z`\n- For \"this week\": Use After: `{{$now}}` and Before: `{{$now.plus(7, 'days')}}`\n- For \"next week\": Use After: `{{$now.plus(7, 'days')}}` and Before: `{{$now.plus(14, 'days')}}`\n- For \"next X days\": Use After: `{{$now}}` and Before: `{{$now.plus(X, 'days')}}`\n- For \"upcoming events\" (default): Use After: `{{$now}}` and Before: `{{$now.plus(7, 'days')}}`\n\n**FOR INITIAL SUMMARIES/GREETINGS:**\n- ALWAYS query with: After: `{{$now}}` and Before: `{{$now.plus(7, 'days')}}` to get the next 7 days of events\n- This ensures you're getting CURRENT upcoming events, not cached old dates\n\n**NEVER use hardcoded dates like \"2023-06-12\" - always use relative expressions with {{$now}}**\n\n### When creating events:\n- For \"tomorrow at 2pm\": Use Start: `{{$now.plus(1, 'days').toFormat('yyyy-MM-dd')}}T14:00:00` and End: `{{$now.plus(1, 'days').toFormat('yyyy-MM-dd')}}T15:00:00`\n- For specific dates with times, construct them as: `{{$now.plus(X, 'days').toFormat('yyyy-MM-dd')}}THH:mm:ss`\n- For \"next Monday\" or specific days: Ask the user to specify the exact date or number of days from today\n- Always confirm the interpreted date/time with the user before creating the event\n\n### CRITICAL - Tool Parameter Names:\n**For Google Calendar creation, use EXACT parameter names (case-sensitive):**\n- Use `start` (NOT Start)\n- Use `end` (NOT End)  \n- Use `description` (NOT Description)\n\n**For Gmail tools, use lowercase:**\n- Use `message_id` (NOT Message_ID)\n- Use `message` (NOT Message)\n\n**For Google Tasks, use lowercase:**\n- Use `title` (NOT Title)\n- Use `notes` (NOT Notes)\n- Use `task_id` (NOT Task_ID)\n\n## DATE OUTPUT FORMATTING:\nWhen displaying dates and times to the user in your responses:\n- ALWAYS format dates as: MM/DD/YY h:mmA (e.g., 12/25/25 2:30PM, 01/05/26 9:00AM)\n- Use 12-hour format with AM/PM\n- No leading zeros on hours (use 9:00AM not 09:00AM)\n- Include leading zeros on months/days (use 01/05 not 1/5)\n- When showing just dates without times, use MM/DD/YY format (e.g., 12/25/25)\n- When showing multiple events, maintain consistent formatting throughout the response\n\nExample output to user:\n\"You have 3 events tomorrow (12/26/25):\n1. Team meeting - 12/26/25 9:00AM\n2. Lunch with client - 12/26/25 12:30PM  \n3. Project review - 12/26/25 3:00PM\"\n\n---\n\n**Always aim to anticipate the user's needs and make their workflow as efficient as possible through smart option suggestions.**"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1440,
+        -432
+      ],
+      "id": "e54a6ff0-41a6-4578-837a-a19f3fa6da05",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1280,
+        -112
+      ],
+      "id": "bf148416-b5a0-4e36-a3b8-aa3fc5c4ef81",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "yqu837tmpZ1LSJI2",
+          "name": "OpenAI Ron"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Set Ai Input').item.json.chat_id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1424,
+        -112
+      ],
+      "id": "42174b64-4825-4e5a-803f-ee743206f529",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Retrieve important unread email messages for the last 2 days.",
+        "operation": "getAll",
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "simple": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Simplify', ``, 'boolean') }}",
+        "filters": {
+          "labelIds": [
+            "IMPORTANT"
+          ],
+          "readStatus": "unread",
+          "receivedAfter": "={{ $now.minus(2, 'days') }}"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        2032,
+        -112
+      ],
+      "id": "8c094db7-bd18-4847-9d4a-f54f44a111df",
+      "name": "Get many messages in Gmail",
+      "webhookId": "8d6a45f9-607d-4de7-9801-2a6513a4bed7",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dTWlxhrf3w3AVUZO",
+          "name": "Ron Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Mark a message as read in Gmail. Use the id from Gmail found in the Get many messages in Gmail tool.",
+        "operation": "markAsRead",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', `Use the id from Gmail found in the Get many messages in Gmail tool.`, 'string') }}"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        1872,
+        -112
+      ],
+      "id": "e746bc78-42fc-4041-a183-591eba389795",
+      "name": "Mark a message as read in Gmail",
+      "webhookId": "eb40d462-40ff-462b-9dae-e328a5b73b61",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dTWlxhrf3w3AVUZO",
+          "name": "Ron Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        1584,
+        -112
+      ],
+      "id": "caac7092-d7aa-4607-9d08-356975f5e3d5",
+      "name": "Reply to a message in Gmail",
+      "webhookId": "118d52a0-cf08-4de9-8289-470b9c8bc219",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dTWlxhrf3w3AVUZO",
+          "name": "Ron Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "ron@702auctions.com",
+          "mode": "list",
+          "cachedResultName": "ron@702auctions.com"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', `Starting time of the event. `, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', `Ending time of the event`, 'string') }}",
+        "useDefaultReminders": false,
+        "additionalFields": {
+          "description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Description', `Description of the event being scheduled`, 'string') }}",
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', `The title of the event being scheduled`, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        2352,
+        -112
+      ],
+      "id": "4fc80d15-a44c-4aad-a6de-253eb4d93e03",
+      "name": "Create an event in Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "DpeuCeX3lxygMCDs",
+          "name": "ron@702"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "ron@702auctions.com",
+          "mode": "list",
+          "cachedResultName": "ron@702auctions.com"
+        },
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', `return all events.`, 'boolean') }}",
+        "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('After', `Earliest date of the event. Leave blank to return all past events. `, 'string') }}",
+        "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Before', `latest date of the event. Leave blank to return all future events. `, 'string') }}",
+        "options": {
+          "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query', `query for searching events`, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        2512,
+        -112
+      ],
+      "id": "be368bf4-00fc-466d-9421-12a85b2bcdc7",
+      "name": "Get many events in Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "DpeuCeX3lxygMCDs",
+          "name": "ron@702"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "value": "ron@702auctions.com",
+          "mode": "list",
+          "cachedResultName": "ron@702auctions.com"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', `the id of the event in the response from Get many events in Google Calendar or Create an event in Google Calendar`, 'string') }}",
+        "useDefaultReminders": false,
+        "updateFields": {
+          "description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Description', `description of the event`, 'string') }}",
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', `Summary of the event`, 'string') }}"
+        },
+        "remindersUi": {
+          "remindersValues": [
+            {
+              "method": "email",
+              "minutes": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('remindersValues0_Minutes_Before', `How many minutes before the event should the reminder be sent`, 'number') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        2672,
+        -112
+      ],
+      "id": "05c0a9de-92c5-44b3-849d-ed4c49a57b7a",
+      "name": "Update an event in Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "DpeuCeX3lxygMCDs",
+          "name": "ron@702"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "task": "MDE5MDM3NTM4MDAxNzA2MTk2Mjc6MDow",
+        "title": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Title', ``, 'string') }}",
+        "additionalFields": {
+          "dueDate": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Due_Date', ``, 'string') }}",
+          "notes": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Notes', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleTasksTool",
+      "typeVersion": 1,
+      "position": [
+        2832,
+        -112
+      ],
+      "id": "856113db-f042-4002-abfb-f266ef50f8ff",
+      "name": "Create a task in Google Tasks",
+      "credentials": {
+        "googleTasksOAuth2Api": {
+          "id": "env14Pc7znKZYWZU",
+          "name": "Google Tasks account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Mark tasks complete using the id of response retrieved from Get incomplete tasks in Google Tasks tool",
+        "operation": "update",
+        "task": "MDE5MDM3NTM4MDAxNzA2MTk2Mjc6MDow",
+        "taskId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Task_ID', `the id of response retrieved from Get incomplete tasks in Google Tasks tool`, 'string') }}",
+        "updateFields": {
+          "completed": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Completion_Date', ``, 'string') }}",
+          "notes": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Notes', ``, 'string') }}",
+          "status": "completed",
+          "title": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Title', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleTasksTool",
+      "typeVersion": 1,
+      "position": [
+        3168,
+        -112
+      ],
+      "id": "ff21dc61-ddee-4330-9f7a-7302afe192e7",
+      "name": "Mark task complete in Google Tasks",
+      "credentials": {
+        "googleTasksOAuth2Api": {
+          "id": "env14Pc7znKZYWZU",
+          "name": "Google Tasks account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Get a message in Gmail. Use the id from the response in Get many messages in Gmail tool",
+        "operation": "get",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', `the ID from the response in the Get many messages in Gmail tool`, 'string') }}",
+        "simple": false,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        2192,
+        -112
+      ],
+      "id": "ca304b7e-d4bf-49df-97cd-c76a79185e64",
+      "name": "Get a details of a specific email in Gmail",
+      "webhookId": "7651ebd4-018a-408d-a1c6-c5ba08ecb3c1",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dTWlxhrf3w3AVUZO",
+          "name": "Ron Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        48
+      ],
+      "id": "352cd306-c57d-4ed4-8718-0b5dd0d1d2d4",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        1232,
+        48
+      ],
+      "id": "2276fe0c-c2e8-4682-b84b-5075800999c7",
+      "name": "Think"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        48
+      ],
+      "id": "e9e4c667-2bb6-40b9-bd70-a4d67de9b013",
+      "name": "Wikipedia"
+    },
+    {
+      "parameters": {
+        "options": {
+          "gl": "us",
+          "google_domain": "google.com",
+          "hl": "en"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        1456,
+        48
+      ],
+      "id": "0ac3a622-7f72-4822-969a-739ec73d1dfa",
+      "name": "Search Google",
+      "credentials": {
+        "serpApi": {
+          "id": "v6Zx13hgseAxGn5N",
+          "name": "SerpAPI account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Get a list of tasks in Google Tasks. Return completed also with show completed tasks true.",
+        "operation": "getAll",
+        "task": "MDE5MDM3NTM4MDAxNzA2MTk2Mjc6MDow",
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "additionalFields": {
+          "dueMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Due_Min', `Date and time due Minimum. Leave blank to return all past events. `, 'string') }}",
+          "dueMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Due_Max', `Date and time due Maximum. Leave blank to return all future events. `, 'string') }}",
+          "showCompleted": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Show_Completed', `show completed tasks as well as incomplete tasks. `, 'boolean') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleTasksTool",
+      "typeVersion": 1,
+      "position": [
+        2992,
+        -112
+      ],
+      "id": "7cb74d5c-2b42-47a9-8d69-c03731658e4e",
+      "name": "Get tasks in Google Tasks",
+      "credentials": {
+        "googleTasksOAuth2Api": {
+          "id": "env14Pc7znKZYWZU",
+          "name": "Google Tasks account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        1712,
+        -112
+      ],
+      "id": "236a5de6-932a-4d97-9aa1-ce7b247dc9ba",
+      "name": "Send a message in Gmail",
+      "webhookId": "118d52a0-cf08-4de9-8289-470b9c8bc219",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dTWlxhrf3w3AVUZO",
+          "name": "Ron Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Setup Requirements for Telegram Personal Assistant Bot\n\n## Required Accounts & API Keys\n\n### 1. Telegram Bot Token\n- Go to @BotFather on Telegram\n- Send `/newbot` and follow prompts\n- Copy the bot token\n\n### 2. OpenAI API Key\n- Get from: https://platform.openai.com/api-keys\n- Requires active billing/credits\n\n### 3. Google Cloud Console Setup\n**One-time setup at https://console.cloud.google.com**\n\nCreate a project and enable these APIs:\n- Gmail API\n- Google Calendar API  \n- Google Tasks API\n\nCreate OAuth 2.0 Credentials:\n- Application type: Web application\n- Add authorized redirect URI from n8n (shown when creating credential)\n- Copy Client ID and Client Secret for each service\n\n### 4. Optional: SerpAPI Key\n- For Google search functionality\n- Get from: https://serpapi.com/\n- Free tier: 100 searches/month\n\n## n8n Credential Setup\n\nCreate these credentials in n8n:\n\n1. **Telegram**: Add bot token\n2. **OpenAI**: Add API key\n3. **Gmail OAuth2**: Add Client ID & Secret, then authorize\n4. **Google Calendar OAuth2**: Add Client ID & Secret, then authorize\n5. **Google Tasks OAuth2**: Add Client ID & Secret, then authorize\n6. **SerpAPI** (optional): Add API key\n\n## Important Gmail Note\nThe bot fetches emails labeled as \"IMPORTANT\" from the last 2 days. Adjust the label in the Gmail node if needed.\n\n## Test the Bot\nSend \"Hello\" to your Telegram bot - should return a daily summary with emails, calendar events, and tasks.",
+        "height": 1232,
+        "width": 816,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -512,
+        -2576
+      ],
+      "typeVersion": 1,
+      "id": "1f6547cf-664c-4277-9e90-d9ed37f17f71",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 12
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        624,
+        -320
+      ],
+      "id": "3ff70353-c25a-4bc6-953f-884480b74327",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "587eae9c-78bf-4ed5-81c1-5a0c984ab640",
+              "name": "message.chat.id",
+              "value": 7593680215,
+              "type": "number"
+            },
+            {
+              "id": "9b2551e3-e4d8-41b3-b71e-33808cc296e8",
+              "name": "message.text",
+              "value": "Hello.",
+              "type": "string"
+            },
+            {
+              "id": "ad263ba3-7fa2-4da6-b2a4-379cb2c38e88",
+              "name": "message.from.is_bot",
+              "value": true,
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        864,
+        -320
+      ],
+      "id": "04d74423-7244-4c21-a9ca-2af84ff4b152",
+      "name": "Set Chat ID"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "251ce34b-3dea-4dee-a1d7-56b2e1ce96e1",
+              "name": "=message",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "b92ea583-a98a-4350-a414-3dde09d4daa7",
+              "name": "schedule",
+              "value": "={{ $json.message.from.is_bot }}",
+              "type": "boolean"
+            },
+            {
+              "id": "3a62df68-1192-4e98-ad17-57f3478e8ae8",
+              "name": "chat_id",
+              "value": "={{ $json.message.chat.id }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1184,
+        -432
+      ],
+      "id": "8c5c7b04-4775-495f-aa04-f9f5a284c6de",
+      "name": "Set Ai Input"
+    },
+    {
+      "parameters": {
+        "content": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n## Set the chat ID here after the first manual message. It can be found in the telegram trigger node.",
+        "height": 432,
+        "width": 208,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        816,
+        -336
+      ],
+      "typeVersion": 1,
+      "id": "547d1eda-913a-4bd9-b184-471bfb3975ca",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Ai Input').item.json.chat_id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "reply_to_message_id": "={{ $('Set Ai Input').item.json.chat_id }}"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1808,
+        -432
+      ],
+      "id": "cc9481f3-ce10-46bb-a820-04e8a2fa8be4",
+      "name": "Respond to Telegram",
+      "webhookId": "cee80e06-a4b0-40c9-86bc-9dc7a0d5bcf9",
+      "credentials": {
+        "telegramApi": {
+          "id": "0m0YZ5HsBWG8XLmu",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Telegram Trigger": [
+      {
+        "json": {
+          "update_id": 468252889,
+          "message": {
+            "message_id": 69,
+            "from": {
+              "id": 7593680215,
+              "is_bot": false,
+              "first_name": "Ron",
+              "last_name": "Williams",
+              "language_code": "en"
+            },
+            "chat": {
+              "id": 7593680215,
+              "first_name": "Ron",
+              "last_name": "Williams",
+              "type": "private"
+            },
+            "date": 1758320103,
+            "text": "1"
+          }
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-09-20T00:59:04.181Z",
+      "updatedAt": "2025-09-20T00:59:04.181Z",
+      "role": "workflow:owner",
+      "workflowId": "fujUxvDGc1LWf7EY",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2025-09-19T22:39:34.237Z",
+      "updatedAt": "2025-09-19T22:39:34.237Z",
+      "id": "uc3S19qnc1EUYAFx",
+      "name": "telegram"
+    }
+  ],
+  "triggerCount": 0,
+  "updatedAt": "2025-09-20T00:59:04.177Z",
+  "versionId": "372ff8c1-e07d-4319-9f35-69460f25b9d1"
+}
