@@ -1,0 +1,49 @@
+{
+  "active": false,
+  "connections": {},
+  "createdAt": "2025-08-10T10:40:59.058Z",
+  "id": "roLfCxjSTkHrXJJv",
+  "isArchived": false,
+  "meta": null,
+  "name": "Omi - Assist v1",
+  "nodes": [
+    {
+      "parameters": {
+        "multipleMethods": true,
+        "httpMethod": [
+          "POST",
+          "GET"
+        ],
+        "path": "omi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "071cad7f-8b44-48b0-bb54-be2a2550c276",
+      "name": "Webhook",
+      "webhookId": "f7f0ea06-4d53-4a2f-8ca7-e46a38d51881"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-08-10T10:40:59.061Z",
+      "updatedAt": "2025-08-10T10:40:59.061Z",
+      "role": "workflow:owner",
+      "workflowId": "roLfCxjSTkHrXJJv",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-08-12T01:57:57.000Z",
+  "versionId": "b63cbfef-56f6-4c48-8c38-1a42fa769fc7"
+}
