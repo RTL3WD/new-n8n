@@ -1,0 +1,534 @@
+{
+  "active": true,
+  "connections": {
+    "gpt-4o": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CreateEvent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Google Calendar MCP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeleteEvent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Google Calendar MCP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SearchEvent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Google Calendar MCP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "UpdateEvent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Google Calendar MCP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendar MCP": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-04-25T19:11:33.742Z",
+  "id": "KedpZxNIiNT42Jv6",
+  "isArchived": false,
+  "meta": {
+    "templateId": "3569"
+  },
+  "name": "Build an MCP Server with Google Calendar",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "",
+        "height": 140,
+        "width": 2720,
+        "color": 2
+      },
+      "id": "4be79e3f-3e83-4432-b23f-4e4e9cac171b",
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        380,
+        240
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "# Learn How to Build a MCP Server with Google Calendar",
+        "height": 80,
+        "width": 960,
+        "color": 2
+      },
+      "id": "439a0233-c8ec-4ea5-8630-0f6e62c76bef",
+      "name": "Sticky Note9",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1260,
+        260
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "# Introduce\n\nThis tutorial focuses on guiding users through the process of deploying MCP service with Google Calendar. By following this step - by - step guide, you'll be able to leverage the powerful features of MCP Server with Google Calendar, such as creating, reading, updating, and deleting events.",
+        "height": 280,
+        "width": 620,
+        "color": 7
+      },
+      "id": "08996f0a-4a2d-438f-a8d7-aca78968d33f",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        380,
+        440
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "# Author\n![SunGuannan](https://avatars.githubusercontent.com/u/176571840?v=4)\n### SunGuannan\nFreelance consultant from China, specializing in automations and data analysis. I work with select clients, addressing their toughest projects.\n\nFor business inquiries, email me at sguann2023@gmail.com.\n",
+        "height": 760,
+        "width": 620,
+        "color": 6
+      },
+      "id": "0f866ad6-d1af-4732-be64-8c97af7e55ac",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        380,
+        800
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Step1: Google Calendar tools require credentials\nIf you don't have your Google Credentials set up in n8n yet, watch [this](https://www.youtube.com/watch?v=3Ai1EPznlAc) video to learn how to do it.\n\nIf you are using n8n Cloud plans, it's very intuitive to setup and you may not even need the tutorial.",
+        "width": 620,
+        "color": 5
+      },
+      "id": "4e2cdec7-8d04-40a7-9270-0f408ebf2efb",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1040,
+        440
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Step 2: Create MCP Server Trigger and activate\nLog in to n8n and create a new workflow. On the new workflow page, click “Add First Step” to open a searchable menu of nodes and triggers. \n\nType “MCP Server Trigger” in the search bar and select it from the results to start your workflow. \n\nThis sets up how n8n receives events from the MCP Server, laying the groundwork for integrating Google Calendar into your automation. ",
+        "height": 220,
+        "width": 620,
+        "color": 5
+      },
+      "id": "0a3941f5-959f-499c-b5a6-b2b66b203b1e",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1040,
+        620
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "automatestpete@gmail.com",
+          "mode": "list",
+          "cachedResultName": "automatestpete@gmail.com"
+        },
+        "limit": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Limit', ``, 'number') }}",
+        "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('After', ``, 'string') }}",
+        "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Before', ``, 'string') }}",
+        "options": {}
+      },
+      "id": "42800020-7ed3-4419-9847-d2a751aa3071",
+      "name": "SearchEvent",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "position": [
+        1140,
+        1300
+      ],
+      "typeVersion": 1.3,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "automatestpete@gmail.com",
+          "mode": "list",
+          "cachedResultName": "automatestpete@gmail.com"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "additionalFields": {
+          "description": "={{ $fromAI(\"event_description\", \"The event description\", \"string\") }}",
+          "summary": "={{ $fromAI(\"event_title\", \"The event title\", \"string\") }}"
+        }
+      },
+      "id": "5d2bce57-f77d-4fd1-9342-d81107a6009d",
+      "name": "CreateEvent",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "position": [
+        1260,
+        1300
+      ],
+      "typeVersion": 1.3,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "value": "automatestpete@gmail.com",
+          "mode": "list",
+          "cachedResultName": "automatestpete@gmail.com"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', ``, 'string') }}",
+        "updateFields": {
+          "description": "={{ $fromAI(\"event_description\", \"The event description\", \"string\") }}",
+          "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+          "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+          "summary": "={{ $fromAI(\"event_title\", \"The event title\", \"string\") }}"
+        }
+      },
+      "id": "dbebec9c-fecc-4154-ba77-cfbb519ba40a",
+      "name": "UpdateEvent",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "position": [
+        1380,
+        1300
+      ],
+      "typeVersion": 1.3,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "automatestpete@gmail.com",
+          "mode": "list",
+          "cachedResultName": "automatestpete@gmail.com"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', ``, 'string') }}",
+        "options": {}
+      },
+      "id": "24ef1fd5-29dc-4208-a33b-5337307d01e0",
+      "name": "DeleteEvent",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "position": [
+        1500,
+        1300
+      ],
+      "typeVersion": 1.3,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "my-calendar"
+      },
+      "id": "ec4aa55d-c6ee-4990-9c51-6ee1892600dd",
+      "name": "Google Calendar MCP",
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "position": [
+        1140,
+        1100
+      ],
+      "webhookId": "f9d9d5ea-6f83-42c8-ae50-ee6c71789bca",
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Step 3: Incorporate Google Calendar Tools\nAfter creating the MCP Server Trigger, rename it to \"Google Calendar MCP \" for clarity. \n\nClick \"Tools\" and type \"Google Calendar\" in the search bar to find tools for various Google Calendar operations. \n\nYou can add multiple tools, each for a specific task. For example, \"Get Many\" retrieves multiple events, \"Create\" makes new ones, \"Update\" modifies existing events, and \"Delete\" removes them. Use these tools to build customized, efficient workflows for your Google Calendar data. ",
+        "height": 600,
+        "width": 620,
+        "color": 5
+      },
+      "id": "7e49bc5e-c3c1-47b3-8a0a-8f3b91ad954b",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1040,
+        860
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Step 4: Copy Your MCP Server Trigger URL and Activate Your Workflow\nDouble - click on the \"Google Calendar MCP\" node. On the node detail page, you'll locate the production URL, which might look something like \"https://xxx/mcp/my - calendar/sse\". Make sure to copy this URL as it will be used later in your workflow setup.\n\nAfter obtaining the URL, save the workflow. Then, check the \"Inactive\" button to activate the trigger. \n![Inactive](https://1.gravatar.com/userimage/264834967/9a4d54537ef20427192f47fd8e413814?size=256)\n![Active](https://1.gravatar.com/userimage/264834967/01bf3678cce04b3428586c908beb9954?size=256)\nOnce activated, your workflow will start listening for events from the MCP Server, enabling seamless integration with the Google Calendar service.",
+        "height": 580,
+        "width": 620,
+        "color": 5
+      },
+      "id": "6a86eb61-0e1f-4de1-a77f-0470fe1cd3ec",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1040,
+        1480
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Step 5: Create a New Workflow for AI Agent\nAt this stage, you're required to create a new workflow. Once the new workflow interface is open, click on the \"Add First Step\" option. In the list of available nodes and triggers that appears, search for and select the \"on Chat Message\" option to add it to your workflow. This sets the initial trigger for your AI-Agent-related workflow.",
+        "height": 140,
+        "width": 620,
+        "color": 4
+      },
+      "id": "aed25c42-78e1-4984-8831-768e2bbe6888",
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1700,
+        440
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Step 6: Add AI Agent Node\nAfter successfully creating the Chat Messages Trigger, you can proceed to add an \"AI Agent\" node right after it. Double - click on this newly added \"AI Agent\" node to open its configuration panel.\n\nIn the configuration, you'll need to add a specific option. Under the System Message field, enter the following text: \"You are a helpful assistant. Current datetime is {{ $now.toString() }}\". This message provides the AI with the current date and time, which can be useful for context in various interactions.\n\nNext, select an appropriate Large Language Model (LLM) from the available options. This model will be responsible for handling the chat and delivering events.\n\nTo enable continuous and context - aware conversations, add memory to the Agent. This allows the AI Agent to remember previous interactions, providing a more seamless and engaging chat experience.\n\nFinally, search for and add the \"MCP Client\" tool. In the SSE Endpoint section of the \"MCP Client\" configuration, paste the URL that you copied in Step 4. This step connects the AI Agent workflow to the MCP Server, enabling data flow and interaction between the two. ",
+        "height": 1060,
+        "width": 620,
+        "color": 4
+      },
+      "id": "214dbba6-dffe-4c43-8c14-77babd52107f",
+      "name": "Sticky Note10",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1700,
+        600
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a helpful assistant.\nCurrent datetime is {{ $now.toString() }}",
+          "returnIntermediateSteps": true
+        }
+      },
+      "id": "7ba10d96-e1cc-456d-9174-c848524466dd",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        1960,
+        1060
+      ],
+      "typeVersion": 1.8
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "2d577167-74d2-4966-8c39-79477787ed68",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "position": [
+        1760,
+        1060
+      ],
+      "webhookId": "7b02318f-1c6b-4f2a-9a4f-b17fa69ea680",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {},
+      "id": "0c5f70f5-5156-42f1-90ab-1f294f2fa2d9",
+      "name": "Simple Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "position": [
+        2060,
+        1280
+      ],
+      "typeVersion": 1.3
+    },
+    {
+      "parameters": {
+        "sseEndpoint": "https://n8n727.aspworkplace.com/mcp/my-calendar/sse"
+      },
+      "id": "cf747bc2-9c08-4f8f-9408-135e17ef0d3d",
+      "name": "Calendar MCP",
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "position": [
+        2180,
+        1280
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Why model 4o? 👆\nAfter testing 4o-mini it had some difficulties handling the calendar requests, while the 4o model handled it with ease.\n\nDepending on your prompt and tools, 4o-mini might be able to work well too, but it requires further testing.",
+        "height": 240,
+        "color": 7
+      },
+      "id": "8891a5de-e35f-4367-bfb7-0e54ce4452be",
+      "name": "Sticky Note11",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1760,
+        1400
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "# Let's Try!\n\n![create](https://0.gravatar.com/userimage/264834967/5dfab90301432c344990fafb166546e1?size=256)\n\n![create-finish](https://0.gravatar.com/userimage/264834967/7126b569dd9868c056f9ad3a23be2a25?size=256)",
+        "height": 520,
+        "width": 740,
+        "color": 6
+      },
+      "id": "f5d9ddb5-5957-4d22-8d85-a1c08eb813d8",
+      "name": "Sticky Note12",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2360,
+        440
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "id": "31b467cd-1d70-4c05-ae14-9f9e455cd55c",
+      "name": "gpt-4o",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        1920,
+        1280
+      ],
+      "typeVersion": 1.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Enjoy It! 😊 😊 😊 ",
+        "height": 80,
+        "width": 740,
+        "color": 7
+      },
+      "id": "007f0f3f-e7ca-4ea8-acba-cfde3bd8d1dd",
+      "name": "Sticky Note13",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2360,
+        1000
+      ],
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "settings": {},
+  "shared": [
+    {
+      "createdAt": "2025-04-25T19:11:33.747Z",
+      "updatedAt": "2025-04-25T19:11:33.747Z",
+      "role": "workflow:owner",
+      "workflowId": "KedpZxNIiNT42Jv6",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 2,
+  "updatedAt": "2025-04-25T19:14:39.000Z",
+  "versionId": "39b6f260-305f-4f12-8781-0ffcc0b7a47d"
+}
