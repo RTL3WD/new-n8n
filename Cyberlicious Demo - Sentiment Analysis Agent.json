@@ -37,6 +37,7 @@
   },
   "createdAt": "2025-01-16T12:02:18.532Z",
   "id": "pZ5cZ0dnxSDFXCx2",
+  "isArchived": false,
   "meta": null,
   "name": "Cyberlicious Demo - Sentiment Analysis Agent",
   "nodes": [
@@ -108,9 +109,18 @@
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "createdAt": "2025-01-16T12:02:18.537Z",
+      "updatedAt": "2025-01-16T12:02:18.537Z",
+      "role": "workflow:owner",
+      "workflowId": "pZ5cZ0dnxSDFXCx2",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": null,
   "tags": [],
-  "triggerCount": 2,
+  "triggerCount": 1,
   "updatedAt": "2025-01-16T12:20:13.000Z",
   "versionId": "b22dfd0c-97e6-43df-9f36-0d518302cbcd"
 }
