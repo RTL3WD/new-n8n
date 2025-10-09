@@ -99,6 +99,7 @@
   },
   "createdAt": "2024-11-09T12:43:39.665Z",
   "id": "U5zTQCoQNeYqOX9t",
+  "isArchived": false,
   "meta": null,
   "name": "NoCoDB Agent",
   "nodes": [
@@ -356,6 +357,15 @@
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "createdAt": "2024-11-09T12:43:39.676Z",
+      "updatedAt": "2024-11-09T12:43:39.676Z",
+      "role": "workflow:owner",
+      "workflowId": "U5zTQCoQNeYqOX9t",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": null,
   "tags": [
     {
