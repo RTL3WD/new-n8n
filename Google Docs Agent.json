@@ -1,15 +1,10 @@
 {
   "active": false,
   "connections": {
-    "Execute Workflow Trigger": {
+    "AI Agent": {
       "main": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        [],
+        []
       ]
     },
     "OpenAI Chat Model": {
@@ -23,58 +18,40 @@
         ]
       ]
     },
-    "Window Buffer Memory": {
-      "ai_memory": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_memory",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Create Doc": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Update Doc": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "AI Agent": {
+    "Execute Workflow Trigger": {
       "main": [
         [
           {
-            "node": "Edit Fields",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Edit Fields1",
+            "node": "AI Agent",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Date Time Tool": {
+    "Create Google Docs": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Google Docs": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Google Docs": {
       "ai_tool": [
         [
           {
@@ -86,8 +63,8 @@
       ]
     }
   },
-  "createdAt": "2024-11-09T03:30:25.926Z",
-  "id": "QImsyPywkhNJTCXk",
+  "createdAt": "2025-03-08T15:58:56.034Z",
+  "id": "XfZDY4gWyn9PqDzo",
   "isArchived": false,
   "meta": {
     "templateCredsSetupCompleted": true
@@ -97,31 +74,22 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "={{ $json.query }}",
+        "text": "={{ JSON.stringify($json.query) }}",
         "options": {
-          "systemMessage": "You are a helpful assistant. Your purpose is to take the input you've received and document it in google docs. Be sure to always use the date time tool so you can put the date and time before putting it below the title of every document."
+          "systemMessage": "=You are a helpful assistant capable of managing email communications using the provided tools. You have access to the following tools:\n\nGet Unread Messages: Use this tool to retrieve a list of unread email messages. Specify the 'Limit' parameter to control the number of messages retrieved (default is 10).\n\nGet Message: Use this tool to retrieve a specific email message by its 'MessageId'.\n\nSend Message: Use this tool to send an email to specified recipients. You'll need to provide 'SendTo' (recipient's email address), 'Subject', and 'Text' (body of the email).\n\nMark Message Read: Use this tool to mark a specific email message as read using its 'MessageId'.\n\nCreate Label: Use this tool to create a new label in the email account. Provide the 'Label' name.\n\nGet All Labels: Use this tool to retrieve all labels available in the email account.\n\nGet Label: Use this tool to retrieve details of a specific label by its 'LabelId'.\n\nCreate Draft: Use this tool to create a draft email message. Provide 'Subject' and 'Message'.\n\nGet Drafts: Use this tool to retrieve all draft messages.\n\nGet Draft: Use this tool to retrieve a specific draft message by its 'DraftId'.\n\nGuidelines:\n\nUnderstanding User Requests: Carefully analyze the user's input to determine the required action—whether it's sending an email, retrieving messages, managing drafts, or handling labels.\n\nParameter Extraction: Extract relevant details from the user's request, such as email addresses, subjects, message content, 'MessageId's, 'DraftId's, 'LabelId's, and label names.\n\nTool Invocation: Call the appropriate tool(s) with the correct parameters based on the user's request.\n\nCommunication Style: Provide clear and concise responses to the user, confirming the actions taken or informing them of any issues.\n\nPrivacy and Security: Ensure that sensitive information, such as email addresses and message content, is handled securely and communicated appropriately.\n\nExamples:\n\nSending an Email:\n\nUser Request: \"Send an email to jane.doe@example.com with the subject 'Meeting Reminder' and the message 'Don't forget about our meeting tomorrow at 10 AM.'\"\nAction: Use the Send Message tool with 'SendTo' as 'jane.doe@example.com', 'Subject' as 'Meeting Reminder', and 'Text' as the message content.\nRetrieving Unread Messages:\n\nUser Request: \"Show me my latest unread emails.\"\nAction: Use the Get Unread Messages tool, possibly specifying a 'Limit' if the user wants a certain number of messages.\nMarking an Email as Read:\n\nUser Request: \"Mark the email from john.smith@example.com as read.\"\nAction: Use the Get Unread Messages tool to find the 'MessageId' of the email from 'john.smith@example.com', then use the Mark Message Read tool with that 'MessageId'.\nCreating a Draft:\n\nUser Request: \"Create a draft email to mike.brown@example.com with the subject 'Project Update' and the message 'Here's the latest update on the project...'\"\nAction: Use the Create Draft tool with the specified 'Subject' and 'Message'.",
+          "returnIntermediateSteps": true
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [
-        220,
-        0
+        -260,
+        220
       ],
-      "id": "ea1e3f78-2034-4400-bf8c-a1f102de907e",
+      "id": "b9e99c02-58b1-4137-b0a4-ad9ce65d6958",
       "name": "AI Agent",
+      "alwaysOutputData": false,
       "onError": "continueErrorOutput"
-    },
-    {
-      "parameters": {},
-      "type": "n8n-nodes-base.executeWorkflowTrigger",
-      "typeVersion": 1,
-      "position": [
-        0,
-        0
-      ],
-      "id": "8381b4e1-c5ef-4f28-b6e3-9b0a998855a5",
-      "name": "Execute Workflow Trigger"
     },
     {
       "parameters": {
@@ -130,10 +98,10 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1,
       "position": [
-        40,
-        280
+        -460,
+        560
       ],
-      "id": "359a9365-ac1f-4259-bd64-31272d44063c",
+      "id": "67891353-c9f2-4956-875f-57ec1467b46f",
       "name": "OpenAI Chat Model",
       "credentials": {
         "openAiApi": {
@@ -143,33 +111,49 @@
       }
     },
     {
-      "parameters": {
-        "sessionIdType": "customKey",
-        "sessionKey": "={{ $('Execute Workflow Trigger').item.json.sessionId }}",
-        "contextWindowLength": 15
-      },
-      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
-      "typeVersion": 1.2,
+      "parameters": {},
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
       "position": [
-        200,
-        280
+        -500,
+        220
       ],
-      "id": "56fd1fd2-acc3-49d9-bc36-7139e6827091",
-      "name": "Window Buffer Memory"
+      "id": "50a59694-3f6b-4f05-ac41-aa666a60311d",
+      "name": "Execute Workflow Trigger"
     },
     {
       "parameters": {
-        "folderId": "default",
-        "title": "={{ $fromAI(\"title\") }}"
+        "folderId": "1Pe9imn8BKypYJ5CbZZd1MGEAFMQe2vEA",
+        "title": "={{ $fromAI(\"docTitle\",\"The title of the google doc\",\"string\") }}"
       },
       "type": "n8n-nodes-base.googleDocsTool",
       "typeVersion": 2,
       "position": [
-        620,
-        280
+        -300,
+        560
       ],
-      "id": "fbb37d14-6108-492f-a75d-f4993b4e1cb2",
-      "name": "Create Doc",
+      "id": "09b4ac6b-f944-4038-bd4a-3dec6b881eef",
+      "name": "Create Google Docs",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "vf3EWQqMHWE96oFt",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $fromAI(\"docId\",\"The docID of the google doc to retrieve\",\"string\") }}"
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        -140,
+        560
+      ],
+      "id": "c15bbe13-27e6-4072-8336-beb8ff83e8dc",
+      "name": "Read Google Docs",
       "credentials": {
         "googleDocsOAuth2Api": {
           "id": "vf3EWQqMHWE96oFt",
@@ -180,12 +164,12 @@
     {
       "parameters": {
         "operation": "update",
-        "documentURL": "={{ $fromAI(\"docId\") }}",
+        "documentURL": "={{ $fromAI(\"docId\",\"The doc ID of the google doc to retrieve to update\",\"string\") }}",
         "actionsUi": {
           "actionFields": [
             {
               "action": "insert",
-              "text": "={{ $fromAI(\"text\") }}"
+              "text": "={{ $fromAI(\"docText\",\"The content to add to the google doc\",\"string\") }}"
             }
           ]
         }
@@ -193,99 +177,29 @@
       "type": "n8n-nodes-base.googleDocsTool",
       "typeVersion": 2,
       "position": [
-        760,
-        280
+        20,
+        560
       ],
-      "id": "3f2c793e-605a-4b7f-b049-bd015be5d22c",
-      "name": "Update Doc",
+      "id": "9ac9371b-97f6-4b4e-bac1-b5b20765115e",
+      "name": "Update Google Docs",
       "credentials": {
         "googleDocsOAuth2Api": {
           "id": "vf3EWQqMHWE96oFt",
           "name": "Google Docs account"
         }
       }
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "39b734db-1cd2-46c0-92d2-3bb9e4556d51",
-              "name": "response",
-              "value": "={{ $json.output }}",
-              "type": "string"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        600,
-        -160
-      ],
-      "id": "81311b3a-dcf0-44ce-b021-c83a4784437f",
-      "name": "Edit Fields"
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "39b734db-1cd2-46c0-92d2-3bb9e4556d51",
-              "name": "response",
-              "value": "={{ $json.output }}",
-              "type": "string"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        600,
-        20
-      ],
-      "id": "f8f93601-64cf-4f36-9866-6c5304fd0539",
-      "name": "Edit Fields1"
-    },
-    {
-      "parameters": {
-        "name": "Date_Time",
-        "description": "Call this tool when you need to get the date or time",
-        "jsCode": "const now = new Date();\nconst options = { timeZone: 'America/New_York', hour12: true };\n\n// Format: MM/DD/YYYY\nconst date = now.toLocaleDateString('en-US', options);\n\n// Format: HH:MM:SS AM/PM\nconst time = now.toLocaleTimeString('en-US', options);\n\nconsole.log(`Current Date: ${date}`);\nconsole.log(`Current Time: ${time}`);\n\n// Return the result in an object format\nreturn `Current Date and Time is ${date} @ ${time}`;"
-      },
-      "type": "@n8n/n8n-nodes-langchain.toolCode",
-      "typeVersion": 1.1,
-      "position": [
-        460,
-        280
-      ],
-      "id": "2762119f-837e-4cf9-8732-94447c527d57",
-      "name": "Date Time Tool"
     }
   ],
-  "pinData": {
-    "Execute Workflow Trigger": [
-      {
-        "json": {
-          "query": "# To-Do List App PRD\nVersion: 1.0\nDate: 2023-10-04\n   \n## Executive Summary\n### Project Overview  \nThe To-Do List App is a web-based application developed using Next.js and MongoDB. It will allow users to create, manage, and organize their tasks efficiently through a user-friendly interface.\n\n### Business Objective  \nThe main objective is to provide a simple and effective task management tool that enhances productivity and helps users keep track of their daily activities.\n\n### Success Metrics  \n- User registration count: At least 500 active users in the first 3 months.\n- User engagement: Average of 10 tasks per user within the first month.\n- Performance: 95% of operations should complete within 2 seconds.\n\n## Product Overview  \n### Product Purpose  \nTo offer a convenient platform for users to manage their tasks, set deadlines, and mark them as complete.\n\n### Target Users  \n- Individuals who need help organizing their daily tasks.\n- Professionals and students managing multiple projects.\n\n### User Problems Solved  \n- Disorganization of tasks leading to missed deadlines.\n- Difficulty in tracking progress on multiple tasks.\n\n### Market Opportunity  \nThe task management software market is rapidly growing with an increasing number of individuals looking for productivity tools. This app will tap into both individuals and professional segments.\n\n## Requirements  \n### Functional Requirements  \n1. Users must be able to create an account and log in.  \n2. Users must be able to add, edit, and delete tasks.  \n3. Users must be able to categorize tasks (e.g., personal, work).\n4. Users must be able to set and edit due dates for tasks.  \n5. Users must be able to mark tasks as complete.  \n\n### Non-Functional Requirements  \n1. The application must be responsive on desktop and mobile devices.  \n2. The application must load in less than 2 seconds.\n\n### Technical Requirements  \n1. Next.js framework must be used for the front-end.\n2. MongoDB must be used for the database solution.\n\n### Compliance Requirements  \n1. The app must comply with data protection regulations (GDPR) if users from the EU are expected.  \n\n### Performance Requirements  \n1. The application must handle up to 1000 concurrent users.\n\n## Features  \n### Core Features  \n1. User Authentication (Sign up and Login).\n2. Task Management (Create, Edit, Delete, and Mark Complete).\n3. Task Categories.\n4. Due Dates and Reminders.\n\n### Feature Priority  \n- High: User Authentication, Core Task Management features.\n- Medium: Task Categories, Due Dates.\n\n### Feature Dependencies  \n- User authentication must be implemented before task management features.\n\n### Future Considerations  \n- Potential addition of reminders and notifications for tasks.\n- Integration with calendar apps for syncing task deadlines.\n\n## User Experience  \n### User Flows  \n1. User Signs Up ➔ User Authenticated ➔ User creates tasks ➔ User sets due dates.\n\n### Critical User Journeys  \n- First-time user creating an account and adding their first task.\n- Returning user editing their existing tasks.\n\n### User Interface Requirements  \n- Simple and clean design.\n- Intuitive navigation.\n\n### Accessibility Requirements  \n- Must comply with the WCAG 2.1 standards.\n\n## Technical Considerations  \n### System Architecture Requirements  \n- Client-Server architecture hosted on a cloud service.\n   \n### Integration Requirements  \n- Integration with MongoDB for data storage.\n\n### Security Requirements  \n- All user passwords must be hashed.\n- Secure API endpoint configuration.\n\n### Scalability Requirements  \n- Ability to scale horizontally with increased user load.\n\n## Constraints and Limitations  \n### Technical Constraints  \n- Performance limitations due to the choice of MongoDB.\n   \n### Business Constraints  \n- Limited budget for initial development phases.\n\n### Resource Constraints  \n- Development team size and expertise in Next.js and MongoDB.\n\n### Timeline Constraints  \n- The application must be launched within 3 months of project initiation.\n\n## Success Criteria  \n### Key Performance Indicators  \n- User acquisition metrics.\n- User retention rates.\n\n### Quality Metrics  \n- Bug counts per release should not exceed 5.\n\n### Acceptance Criteria  \n- All functional requirements must be met before the final product launch.\n\n# To Do List App Feature Requirements\nVersion: 1.1\nDate: 2023-10-08\n\n## Features Overview  \nThis document outlines the feature requirements for the To Do List App, focusing on User Authentication, Task Management, Task Categories, Due Dates, and Reminders. The priorities assigned to each feature are also included.\n\n## 1. Feature Requirements\n\n### 1.1 User Authentication (High Priority)  \n- **FR-01**: Users must be able to create an account with a unique username and password.\n- **FR-02**: Users must be able to log in using their credentials.\n- **FR-03**: The system must implement password recovery functionality for users who forget their passwords.\n- **FR-04**: Users must have the option to log out securely.\n\n### 1.2 Task Management (High Priority)  \n- **FR-05**: Users must be able to create new tasks with the following details:\n  - Title (mandatory)\n  - Description (optional)\n  - Task Category (optional)\n  - Due Date (optional)\n  - Reminders (optional)\n- **FR-06**: Users must be able to edit existing tasks.\n- **FR-07**: Users must be able to mark tasks as complete or incomplete.\n- **FR-08**: Users must be able to delete tasks from their to-do list.\n- **FR-09**: Users must be able to view a list of all tasks with options to filter by completion status (e.g., all tasks, completed tasks, pending tasks).\n\n### 1.3 Task Categories (Medium Priority)  \n- **FR-10**: Users must be able to create and manage task categories (e.g., Work, Personal, Shopping).\n- **FR-11**: Users must be able to assign a category to a task upon creation or editing.\n- **FR-12**: Users must be able to view tasks based on selected categories.\n\n### 1.4 Due Dates (High Priority)  \n- **FR-13**: Users must be able to set a due date for tasks during creation or editing.\n- **FR-14**: The task overview must display upcoming due dates for easy tracking.\n\n### 1.5 Reminders (High Priority)  \n- **FR-15**: Users must be able to set reminders for tasks based on the due date.\n- **FR-16**: Reminders must notify the user before the due date via the following methods:\n  - In-app notifications\n  - Email notifications (if email is provided during registration)\n- **FR-17**: Users must have the ability to customize reminder timing (e.g., 1 day before, 1 hour before).\n\n## 2. Feature Dependencies  \n- **User Authentication** must be implemented first before any other features, as users need accounts to manage tasks.\n- All task-related features (Task Management, Task Categories, Due Dates, Reminders) depend on successful user authentication to ensure security and personalization.",
-          "sessionId": "test-0b4678d6-3354-4d4b-8324-a5dee9a7921c"
-        }
-      }
-    ]
-  },
+  "pinData": {},
   "settings": {
     "executionOrder": "v1"
   },
   "shared": [
     {
-      "createdAt": "2024-11-09T03:30:25.943Z",
-      "updatedAt": "2024-11-09T03:30:25.943Z",
+      "createdAt": "2025-03-08T15:58:56.044Z",
+      "updatedAt": "2025-03-08T15:58:56.044Z",
       "role": "workflow:owner",
-      "workflowId": "QImsyPywkhNJTCXk",
+      "workflowId": "XfZDY4gWyn9PqDzo",
       "projectId": "WCIiaWERZpaZ5IaT"
     }
   ],
@@ -296,15 +210,9 @@
       "updatedAt": "2024-11-09T12:37:16.991Z",
       "id": "0yhZAGhpC1N7u9OS",
       "name": "Worker Agent"
-    },
-    {
-      "createdAt": "2024-11-09T12:37:31.178Z",
-      "updatedAt": "2024-11-09T12:37:31.178Z",
-      "id": "a994HhJ4xFZtoW1n",
-      "name": "Utils Agent"
     }
   ],
   "triggerCount": 0,
-  "updatedAt": "2025-01-31T02:47:24.000Z",
-  "versionId": "373b337b-5f2c-47d8-a67a-e1da6bc9df2d"
+  "updatedAt": "2025-03-08T16:03:34.000Z",
+  "versionId": "eda9ba00-7d99-4731-9ecb-cdfac4091993"
 }
