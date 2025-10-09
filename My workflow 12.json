@@ -37,6 +37,7 @@
   },
   "createdAt": "2024-11-26T15:18:43.066Z",
   "id": "NEXNBUl197AOl5kJ",
+  "isArchived": false,
   "meta": null,
   "name": "My workflow 12",
   "nodes": [
@@ -131,6 +132,15 @@
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "createdAt": "2024-11-26T15:18:43.074Z",
+      "updatedAt": "2024-11-26T15:18:43.074Z",
+      "role": "workflow:owner",
+      "workflowId": "NEXNBUl197AOl5kJ",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
