@@ -89,6 +89,7 @@
   },
   "createdAt": "2024-10-29T01:35:41.694Z",
   "id": "0GBsMXPDEqbloEbY",
+  "isArchived": false,
   "meta": {
     "templateCredsSetupCompleted": true
   },
@@ -319,6 +320,15 @@
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "createdAt": "2024-10-29T01:35:41.700Z",
+      "updatedAt": "2024-10-29T01:35:41.700Z",
+      "role": "workflow:owner",
+      "workflowId": "0GBsMXPDEqbloEbY",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": {
     "node:Schedule Trigger": {
       "recurrenceRules": []
