@@ -1,0 +1,81 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-08-11T15:27:14.234Z",
+  "id": "3g5QSH8lB2SFFD1g",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "My workflow 26",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d3e762cc-12de-41fd-9b99-ebcea1671e8f",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "fromEmail": "automatestpete@gmail.com",
+        "toEmail": "rob@n8n.io",
+        "subject": "SMTP Test",
+        "emailFormat": "text",
+        "text": "SMTP Test",
+        "options": {
+          "appendAttribution": true
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "c16a244a-10af-4da8-946d-63145e38d3b0",
+      "name": "Send email",
+      "webhookId": "8cfdbb2d-d4f1-4afb-8433-79ce3bd4c185",
+      "credentials": {
+        "smtp": {
+          "id": "gKk0QaA46fB8rVna",
+          "name": "SMTP account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-08-11T15:27:14.237Z",
+      "updatedAt": "2025-08-11T15:27:14.237Z",
+      "role": "workflow:owner",
+      "workflowId": "3g5QSH8lB2SFFD1g",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-08-11T15:27:14.234Z",
+  "versionId": "3971f753-3d2b-484a-b65c-180be03434b3"
+}
