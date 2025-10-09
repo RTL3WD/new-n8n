@@ -88,7 +88,10 @@
   },
   "createdAt": "2024-11-09T03:30:25.926Z",
   "id": "QImsyPywkhNJTCXk",
-  "meta": null,
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
   "name": "Google Docs Agent",
   "nodes": [
     {
@@ -277,6 +280,15 @@
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "createdAt": "2024-11-09T03:30:25.943Z",
+      "updatedAt": "2024-11-09T03:30:25.943Z",
+      "role": "workflow:owner",
+      "workflowId": "QImsyPywkhNJTCXk",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": null,
   "tags": [
     {
@@ -293,6 +305,6 @@
     }
   ],
   "triggerCount": 0,
-  "updatedAt": "2024-11-09T12:37:33.000Z",
-  "versionId": "4336d12f-6d5d-4b07-ae65-a753ff5726ab"
+  "updatedAt": "2025-01-31T02:47:24.000Z",
+  "versionId": "373b337b-5f2c-47d8-a67a-e1da6bc9df2d"
 }
