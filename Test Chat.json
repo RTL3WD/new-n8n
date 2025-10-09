@@ -15,6 +15,7 @@
   },
   "createdAt": "2024-11-09T12:52:17.604Z",
   "id": "ZEj7pBzdfmZElCaG",
+  "isArchived": false,
   "meta": null,
   "name": "Test Chat",
   "nodes": [
@@ -68,6 +69,15 @@
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "createdAt": "2024-11-09T12:52:17.608Z",
+      "updatedAt": "2024-11-09T12:52:17.608Z",
+      "role": "workflow:owner",
+      "workflowId": "ZEj7pBzdfmZElCaG",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
