@@ -1,0 +1,40 @@
+{
+  "active": false,
+  "connections": {},
+  "createdAt": "2025-08-11T20:12:28.016Z",
+  "id": "7WV8tJ24ZEEqOJT9",
+  "isArchived": false,
+  "meta": null,
+  "name": "My workflow 27",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-start.start",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "2fece64c-218f-48a1-a4ad-fd4cdf540250",
+      "name": "Start"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-08-11T20:12:28.021Z",
+      "updatedAt": "2025-08-11T20:12:28.021Z",
+      "role": "workflow:owner",
+      "workflowId": "7WV8tJ24ZEEqOJT9",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-08-11T20:12:28.016Z",
+  "versionId": "036dada2-0472-4264-9661-f5359ce6f993"
+}
