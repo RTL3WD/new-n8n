@@ -1,0 +1,381 @@
+{
+  "active": true,
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "MD to JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MD to JSON": {
+      "main": [
+        [
+          {
+            "node": "NocoDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NocoDB": {
+      "main": [
+        [
+          {
+            "node": "Link New Record to Idea NocoDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-03-25T14:47:39.435Z",
+  "id": "oyNa16e62jTvhzSt",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "NocoDB Confirmed Events Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "5d6fae29-8a29-483e-adf9-3a5f64b4503b",
+        "options": {
+          "allowedOrigins": "nocodb.aspworkplace.com"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "20b18604-83e8-472a-a4bc-70deea6b21c8",
+      "name": "Webhook",
+      "webhookId": "5d6fae29-8a29-483e-adf9-3a5f64b4503b"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ JSON.stringify($json.eventData) }}",
+        "options": {
+          "systemMessage": "=You are an AI assistant specialized in creating detailed and engaging meetup event descriptions for the NextGen Tech & AI of St. Pete Meetup group. Your task is to expand on the provided input data to create a comprehensive, professional, and engaging event listing.\n\n## About the Meetup Group\nNextGen Tech & AI of St. Pete is a community passionate about exploring the intersection of technology and society. The group discusses the latest advancements in artificial intelligence, virtual reality, and other cutting-edge technologies, focusing on their impact on our world. They host monthly meetups featuring guest speakers, workshops, and networking events to keep members on the cutting edge of innovation. The group welcomes tech enthusiasts, developers, entrepreneurs, and anyone curious about the future of technology.\n\n## Your Task\nWhen provided with basic event information in JSON format, you will generate a complete meetup event listing that includes:\n1. **Title**: An engaging, descriptive title that clearly communicates the event's focus.\n2. **Date and Time**: Use EXACTLY the start date and time provided in the input. Format it clearly with day of week, date, month, year, and time.\n3. **Duration**: Use EXACTLY the duration provided in the input. Do not modify it.\n4. **Description**: An expanded, compelling description that:\n   - Explains the purpose and value of the event\n   - Highlights key learning objectives\n   - Contextualizes the topic within broader tech trends\n   - Includes relevant comparisons or statistics when appropriate\n   - Uses a conversational yet professional tone\n   - Incorporates 2-3 targeted questions to spark interest\n5. **Topic Tags**: 5-8 relevant tags that will help with discoverability.\n6. **Agenda**: A detailed timeline of the event formatted as a single string with rich text (markdown), including:\n   - Introduction/welcome\n   - Main presentation sections with specific subtopics\n   - Q&A session\n   - Networking opportunity\n   - Wrap-up\n   - IMPORTANT: The agenda timeline MUST start at the exact start time provided in the input and MUST end at a time that matches the duration provided. For example, if start time is 21:30 and duration is 1:00, the agenda should run from 9:30 PM to 10:30 PM.\n\n## Guidelines\n- Keep the target audience in mind (based on the skill level indicated in the input)\n- Focus on concrete benefits and takeaways for attendees\n- Emphasize the practical applications of the technology being discussed\n- For technical topics, balance depth with accessibility\n- Include a call-to-action encouraging registration\n- Highlight opportunities for networking and community building\n- When appropriate, mention if materials or preparation are needed\n- IMPORTANT: Do not change the Start Date Time or Duration provided in the input - use these values exactly as they are given\n- IMPORTANT: Ensure the agenda timeline starts at the exact event start time and spans the exact duration provided\n\n## Format\nStructure your response as a complete meetup event listing in JSON format with the following required keys:\n- Title: The engaging, descriptive title for the event\n- DateTime: The starting time of the event (formatted as a readable string) using EXACTLY the start date and time provided in the input\n- Duration: Use EXACTLY the duration value provided in the input (formatted as hh:mm)\n- Description: The expanded, compelling description of the event\n- Agenda: A single string containing the detailed timeline of the event with rich text formatting (using markdown or similar formatting within the string). The timeline MUST begin at the event start time and end at a time that respects the duration.\n- TopicTags: A string of 5-8 relevant tags for discoverability, comma-separated\n\nThe final output should be comprehensive yet concise, professional yet engaging, and should accurately reflect the group's focus on the intersection of technology and society.\n\n## Example Input\n```json\n{\n\"Id\":11,\n\"CreatedAt\":\"2025-03-25 15:07:17+00:00\",\n\"UpdatedAt\":\"2025-03-25 15:15:56+00:00\",\n\"nc_order\":11,\n\"Title\":\"My Business Starting Tech Stack with Coolify\",\n\"Skill Level\":\"Beginner\",\n\"Start Date Time\":\"2025-04-08 21:30:00+00:00\",\n\"Duration\": \"1:00\",\n\"Description\":\"This meetup should be about opening / starting / early stages of business tech stack. It should review coolify and demonstrate it's viability and strengths for growth for a SMB.It should also demonstrate the cost effectiveness of coolify in comparison to signing up for multiple SaaS products at start.\",\n\"Topic Status\":\"Submitted\",\n\"Target Audience\":\"Target audience description\"\n}\n```\n\n## Example Output\n\n```json\n{\n  \"Title\": \"Building Your Startup Tech Stack: Coolify as a Cost-Effective Foundation for Growth\",\n  \"DateTime\": \"Tuesday, April 8, 2025, 9:30 PM\",\n  \"Duration\": \"1:00\",\n  \"Description\": \"Are you launching a new business and overwhelmed by the multitude of technology options? Join us for an insightful session on building a scalable, cost-effective tech foundation for your startup or small business using Coolify – an open-source, self-hosted alternative to multiple SaaS products.\\n\\nIn today's competitive business landscape, choosing the right technology stack can make or break your early-stage company. With limited resources and countless SaaS options, entrepreneurs often find themselves oversubscribed to expensive services that create tech debt before they even achieve product-market fit. This meetup will demonstrate how Coolify can provide a versatile, affordable foundation for your business operations.\\n\\nYou'll learn how this powerful self-hosted platform can replace multiple paid services, significantly reducing your monthly technology expenses while maintaining professional-grade functionality. We'll explore real-world implementation examples and discuss how this approach can scale alongside your business growth.\\n\\nIs your current tech stack draining your startup budget? Are you curious about the long-term advantages of self-hosted solutions over SaaS subscriptions? How can modern DevOps tools like Coolify give small businesses an edge in the market?\\n\\nThis beginner-friendly session is perfect for entrepreneurs, small business owners, and tech enthusiasts looking to optimize their business operations without breaking the bank.\",\n  \"Agenda\": \"**9:30 - 9:40 PM**: Welcome & Introduction\\n- Brief overview of NextGen Tech & AI of St. Pete\\n- Introduction to the evening's topic and speaker\\n\\n**9:40 - 10:00 PM**: Coolify Fundamentals\\n- What is Coolify and how it fits into a business tech stack\\n- Core features and capabilities comparison with popular SaaS alternatives\\n- Real-world cost comparison analysis\\n\\n**10:00 - 10:15 PM**: Practical Implementation\\n- Live demonstration of setting up key business services\\n- Integration strategies with other essential tools\\n- Scaling considerations for growing businesses\\n\\n**10:15 - 10:25 PM**: Q&A Session\\n- Open forum for questions about implementation, costs, and capabilities\\n\\n**10:25 - 10:30 PM**: Wrap-up & Networking\\n- Closing remarks and preview of upcoming events\\n- Additional networking opportunity\",\n  \"TopicTags\": \"StartupTech, SelfHosted, CostEffectiveIT, Coolify, OpenSource, SMBTechnology, BusinessInfrastructure, DevOps\",\n  \"AdditionalInfo\": {\n    \"WhatToBring\": [\n      \"A laptop if you'd like to follow along with the demonstration\",\n      \"Questions about your specific business tech needs\",\n      \"Business cards for networking\"\n    ],\n    \"CallToAction\": \"Space is limited for this valuable session. Secure your spot today to learn how you can build a robust tech foundation for your business while keeping costs under control!\"\n  }\n}\n```"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        440,
+        0
+      ],
+      "id": "593c5e0f-57df-439c-a968-a6df6ee739d7",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        220
+      ],
+      "id": "e79154ec-43b3-4d3a-8973-ee0a97d05241",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://nocodb.aspworkplace.com/api/v2/tables/m8fe5tlbh4kw4i2/links/cw1zn0zl7bg0rfj/records/{{ $json.Id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "xc-token",
+              "value": "RdAt__K7TaPa9qvX7a0RyvM-qZkSgnUZbRevvC_D"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"Id\": {{ $('Webhook').item.json.body.data.rows[0].Id }}\n  }\n]",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1256,
+        0
+      ],
+      "id": "c84ec984-3784-4877-805e-6e2ae05066ef",
+      "name": "Link New Record to Idea NocoDB"
+    },
+    {
+      "parameters": {
+        "content": "# Workflow\n\n1. Receive webhook event from Nocodb containing Meetup concept\n\n2. Agent generates Meetup details from webhook for Meetup specific details\n\n3. Markdown to JSON\n\n4. Create Noco Record\n\n5. Link new Record to original record\n\n",
+        "height": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -300,
+        -100
+      ],
+      "typeVersion": 1,
+      "id": "ddb8c6a9-75d7-45b7-a177-465bcbbb67ee",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "jsCode": "/**\n * Converts a string that appears to contain JSON to an actual JSON object\n * For use in n8n Code node\n * @param {string} inputString - The string potentially containing JSON\n * @returns {object|null} - Parsed JSON object or null if parsing failed\n */\nfunction convertStringToJson(inputString) {\n  try {\n    // Step 1: Try to find content within code blocks (removing the backtick markers)\n    const codeBlockRegex = /```(?:json)?\\s*([\\s\\S]*?)\\s*```/;\n    const codeBlockMatch = inputString.match(codeBlockRegex);\n    \n    // Extract the potential JSON string from the code block or use the original string\n    let jsonString = codeBlockMatch ? codeBlockMatch[1] : inputString;\n    \n    // Step 2: Remove any leading/trailing non-JSON content\n    // Look for the first '{' and last '}'\n    const firstBrace = jsonString.indexOf('{');\n    const lastBrace = jsonString.lastIndexOf('}');\n    \n    if (firstBrace !== -1 && lastBrace !== -1) {\n      jsonString = jsonString.substring(firstBrace, lastBrace + 1);\n    }\n    \n    // Step 3: Handle trailing commas that would cause JSON.parse to fail\n    jsonString = jsonString.replace(/,(\\s*[}\\]])/g, '$1');\n    \n    // Step 4: Parse the cleaned JSON string\n    return JSON.parse(jsonString);\n  } catch (error) {\n    console.error('Error parsing JSON:', error);\n    return null;\n  }\n}\n\n// n8n Code node execution - process the input items\nconst items = [];\n\n// Process each input item\nfor (const item of $input.all()) {\n  try {\n    // Get the input string from the item (assumes the JSON string is in a field called 'data')\n    // Adjust this to match your actual data structure\n    const inputString = item.json.data || item.json.output || item.json.string || JSON.stringify(item.json);\n    \n    // Convert string to JSON\n    const jsonObject = convertStringToJson(inputString);\n    \n    if (jsonObject) {\n      // Create a new item with the parsed JSON\n      items.push({\n        json: jsonObject\n      });\n    } else {\n      // If parsing failed, pass through the original item with an error flag\n      item.json.parseError = true;\n      items.push(item);\n    }\n  } catch (error) {\n    // Handle any errors\n    console.log('Error processing item:', error.message);\n    item.json.error = error.message;\n    items.push(item);\n  }\n}\n\n// Return the processed items\nreturn items;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        820,
+        0
+      ],
+      "id": "a435f367-8ddc-42de-a3a3-6d6da9516350",
+      "name": "MD to JSON"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "pgi0t7qbh4xlrxt",
+        "table": "m8fe5tlbh4kw4i2",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Title",
+              "fieldValue": "={{ $json.Title }}"
+            },
+            {
+              "fieldName": "Date Time",
+              "fieldValue": "={{ $json.DateTime }}"
+            },
+            {
+              "fieldName": "Duration",
+              "fieldValue": "={{ $json.Duration }}"
+            },
+            {
+              "fieldName": "Description",
+              "fieldValue": "={{ $json.Description }}"
+            },
+            {
+              "fieldName": "Topic Tags",
+              "fieldValue": "={{ $json.TopicTags }}"
+            },
+            {
+              "fieldName": "Agenda",
+              "fieldValue": "={{ $json.Agenda }}"
+            },
+            {
+              "fieldName": "Skill Level",
+              "fieldValue": "={{ $('Webhook').item.json.body.data.rows[0]['Skill Level'] }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1036,
+        0
+      ],
+      "id": "b9344207-6d3f-4d7b-ae46-976ddc402b9b",
+      "name": "NocoDB",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "mZ1bN8fBGJ1SO75T",
+          "name": "NoCoDB Internal"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6f551e1f-33d1-4805-a2a2-84c250b67565",
+              "name": "eventData.Id",
+              "value": "={{ $json.body.data.rows[0].Id }}",
+              "type": "number"
+            },
+            {
+              "id": "0f547b28-be20-46f1-8bec-cdd4ff705491",
+              "name": "eventData.Title",
+              "value": "={{ $json.body.data.rows[0].Title }}",
+              "type": "string"
+            },
+            {
+              "id": "90f6fe6a-6678-488c-be07-73b7cd56571c",
+              "name": "eventData.Date",
+              "value": "={{ $json.body.data.rows[0].Date.split(\" \")[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "6ff9ed46-8d5d-451f-bf52-4f66f1252f5c",
+              "name": "eventData.Duration",
+              "value": "={{ $json.body.data.rows[0].Duration }}",
+              "type": "number"
+            },
+            {
+              "id": "c9320ef2-8c74-4552-8889-bc0f8d902275",
+              "name": "eventData.Time",
+              "value": "={{ $json.body.data.rows[0].Time.split(\" \")[1] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ],
+      "id": "3f8f7c91-3515-4085-8a26-190d6fcd7b08",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n727.aspworkplace.com",
+            "user-agent": "axios/1.8.2",
+            "content-length": "1518",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "x-forwarded-for": "192.168.176.1",
+            "x-forwarded-host": "n8n727.aspworkplace.com",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "713be61c884b",
+            "x-real-ip": "192.168.176.1"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "type": "records.after.update",
+            "id": "ce2bcf6b-65c3-40ea-b3ab-8091231842f9",
+            "data": {
+              "table_id": "m9jqqsyqze4pdg6",
+              "table_name": "Event Ideas",
+              "previous_rows": [
+                {
+                  "Id": 11,
+                  "CreatedAt": "2025-03-25 15:07:17+00:00",
+                  "UpdatedAt": "2025-03-25 19:04:07+00:00",
+                  "nc_order": 11,
+                  "Title": "My Business Starting Tech Stack with Coolify",
+                  "Skill Level": "Beginner",
+                  "Date": "2025-04-08 21:30:00+00:00",
+                  "Duration": 3600,
+                  "Description": "This meetup should be about opening / starting / early stages of business tech stack. It should review coolify and demonstrate it's viability and strengths for growth for a SMB.It should also demonstrate the cost effectiveness of coolify in comparison to signing up for multiple SaaS products at start.",
+                  "Topic Status": "Submitted",
+                  "Target Audience": null,
+                  "Record Id": 11,
+                  "Time": "1999-01-01 17:30:00-05:00",
+                  "Confirmed Event": null
+                }
+              ],
+              "rows": [
+                {
+                  "Id": 11,
+                  "CreatedAt": "2025-03-25 15:07:17+00:00",
+                  "UpdatedAt": "2025-03-25 19:04:23+00:00",
+                  "nc_order": 11,
+                  "Title": "My Business Starting Tech Stack with Coolify",
+                  "Skill Level": "Beginner",
+                  "Date": "2025-04-08 21:30:00+00:00",
+                  "Duration": 3600,
+                  "Description": "This meetup should be about opening / starting / early stages of business tech stack. It should review coolify and demonstrate it's viability and strengths for growth for a SMB.It should also demonstrate the cost effectiveness of coolify in comparison to signing up for multiple SaaS products at start.",
+                  "Topic Status": "Agreed",
+                  "Target Audience": null,
+                  "Record Id": 11,
+                  "Time": "1999-01-01 17:30:00-05:00",
+                  "Confirmed Event": null
+                }
+              ]
+            }
+          },
+          "webhookUrl": "https://n8n727.aspworkplace.com/webhook-test/5d6fae29-8a29-483e-adf9-3a5f64b4503b",
+          "executionMode": "test"
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-03-25T14:47:39.439Z",
+      "updatedAt": "2025-03-25T14:47:39.439Z",
+      "role": "workflow:owner",
+      "workflowId": "oyNa16e62jTvhzSt",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-03-25T19:08:58.000Z",
+  "versionId": "955061b7-926d-45c3-9f1f-bf0d0178c61f"
+}
