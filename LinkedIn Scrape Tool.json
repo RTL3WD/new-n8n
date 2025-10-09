@@ -114,6 +114,7 @@
   },
   "createdAt": "2024-11-11T20:40:59.949Z",
   "id": "m35JYD8Izp8UhuZv",
+  "isArchived": false,
   "meta": null,
   "name": "LinkedIn Scrape Tool",
   "nodes": [
@@ -353,6 +354,15 @@
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "createdAt": "2024-11-11T20:40:59.954Z",
+      "updatedAt": "2024-11-11T20:40:59.954Z",
+      "role": "workflow:owner",
+      "workflowId": "m35JYD8Izp8UhuZv",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
