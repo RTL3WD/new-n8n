@@ -82,6 +82,7 @@
   },
   "createdAt": "2024-12-27T18:23:50.910Z",
   "id": "1TkSSfGbJxlVrUMy",
+  "isArchived": false,
   "meta": null,
   "name": "WPRC Nextdoor Agent",
   "nodes": [
@@ -384,6 +385,15 @@
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "createdAt": "2024-12-27T18:23:50.914Z",
+      "updatedAt": "2024-12-27T18:23:50.914Z",
+      "role": "workflow:owner",
+      "workflowId": "1TkSSfGbJxlVrUMy",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
