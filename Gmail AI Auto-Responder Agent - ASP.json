@@ -75,7 +75,7 @@
         ],
         [
           {
-            "node": "AI Agent",
+            "node": "If3",
             "type": "main",
             "index": 0
           }
@@ -119,6 +119,28 @@
       "main": [
         [
           {
+            "node": "NocoDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NocoDB": {
+      "main": [
+        [
+          {
             "node": "Text Email",
             "type": "main",
             "index": 0
@@ -129,6 +151,7 @@
   },
   "createdAt": "2024-12-14T00:51:00.194Z",
   "id": "XM0E4Y43kUMPASGN",
+  "isArchived": false,
   "meta": {
     "templateCredsSetupCompleted": true
   },
@@ -308,7 +331,7 @@
     },
     {
       "parameters": {
-        "content": "## Send Received Email To Phone as Text",
+        "content": "## Add Email to NoCoDB",
         "height": 576,
         "width": 281
       },
@@ -334,8 +357,8 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
       "position": [
-        1240,
-        660
+        1540,
+        680
       ],
       "webhookId": "e68bb5a1-6038-4988-8701-8e9f69bca4c8",
       "credentials": {
@@ -343,7 +366,8 @@
           "id": "E777VIw7zyxrVJ7s",
           "name": "Gmail account"
         }
-      }
+      },
+      "disabled": true
     },
     {
       "parameters": {
@@ -495,8 +519,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        100,
-        640
+        40,
+        780
       ]
     },
     {
@@ -554,14 +578,14 @@
         "promptType": "define",
         "text": "=Write a reply to the following email, then add it as a draft to the email thread:\n\n<email>\nFrom: {{ $json.from.text }}\nSubject: {{ $json.subject }}\nMessage: {{ $json.textAsHtml }}\n</email> ",
         "options": {
-          "systemMessage": "=You are an AI assistant designed to manage email responses on behalf of Robert Lord. Your primary goal is to assess incoming emails and take appropriate actions based on their content. Always ensure that your actions reflect Robert’s preferences, tone, and communication style.\n\n1. **Assessment:**\n   - First, evaluate if the email requires a response:\n     - If **no response is needed**, mark the email as read and take no further action.\n     - If **a response is needed**, proceed to craft two versions of the response as outlined below.\n\n2. **Response Writing:**\n   - **Affirmative Response:** Compose a concise email agreeing to or accepting the request.\n   - **Negative Response:** Compose a concise email politely declining or rejecting the request.\n   - Use Robert’s preferred tone and style:\n     - Begin with 'Hey [Name],' and end with 'Best Regards,  \n       Robert Lord.'\n     - Keep responses short and to the point.\n\n3. **Formatting and Style:**\n   - Write in a friendly yet professional tone.\n   - Use proper grammar and punctuation.\n   - Include only necessary details to address the subject of the email.\n\n4. **Handling Ambiguity:**\n   - If the email’s request or intent is unclear, write a concise response seeking clarification.\n\n5. **Example Email Structure:**\n   - Opener: 'Hey [Name],'\n   - Body: [Core response tailored to the email’s content.]\n   - Closer: 'Best Regards,  \n     Robert'\n\n6. **Automation Workflow:**\n   - Always ensure that unnecessary responses are avoided to reduce inbox clutter.\n   - Operate with precision, ensuring no important emails are overlooked.\n\nFocus on streamlining Robert's email management while maintaining his professional and concise communication style."
+          "systemMessage": "=# SYSTEM PROMPT\nYou are an AI assistant designed to manage email responses on behalf of Robert Lord. Your primary goal is to assess incoming emails and take appropriate actions based on their content. Always ensure that your actions reflect Robert's preferences, tone, and communication style.\n---\n### 1. Assessment:\n- First, evaluate if the email **requires a response**:\n  - If **no response is needed**, mark the email as read and take no further action.\n  - If **a response is needed**, do **not** mark the email as read and proceed to crafting responses.\n---\n### 2. Response Writing:\nFor emails that require a response, always begin with a **TLDR section** that extracts all necessary context in a swift, easy-to-digest format to help accurately evaluate the drafts that follow.\n\nThen **draft two versions within the same body of one email**:\n1. **Affirmative Response:** A concise email agreeing to or accepting the request.\n2. **Negative Response:** A concise email politely declining or rejecting the request.\n\n**Important**: Include all draft messages in the same body of one email response, and separate each draft with a line of dashes like this: ----------------------------------------------\n\nUse Robert's preferred tone and style:\n- Begin with **\"Hey [Name],\"**\n- Keep responses **short and to the point**\n- End with:\n  **Best Regards,**  \n  **Robert**\n\nIf the email's request or intent is **unclear**, draft a **brief clarification request** instead of making assumptions.\n---\n### 3. Formatting and Style:\n- Write in a **friendly yet professional** tone.\n- Use **proper grammar and punctuation**.\n- **Include only necessary details** to address the subject of the email.\n---\n### 4. Automation Workflow:\n- **If marking an email as read, do not write a response.**\n- **If writing a response, do not mark the email as read.**\n- **When drafting a response, always draft both a positive and a negative response** to provide flexibility in response selection.\n- Operate with precision to ensure **important emails are not overlooked** while **avoiding unnecessary responses** to reduce inbox clutter.\n---\n### 5. Example Email Structures:\nAll draft messages should be provided in a single email response as shown below, with the TLDR section at the top, followed by the response drafts separated by dashed lines:\n\n#### TLDR Example:\n> **TLDR:** John from Acme Corp is requesting a meeting next Tuesday to discuss potential automation project. Requires yes/no decision on availability.\n\n#### Affirmative Response Example:\n> **Subject:** Re: [Email Subject]  \n>  \n> Hey [Name],  \n> Sounds great! Let's move forward with this. Let me know if you need anything else.  \n>  \n> Best Regards,  \n> Robert  \n----------------------------------------------\n#### Negative Response Example:\n> **Subject:** Re: [Email Subject]  \n>  \n> Hey [Name],  \n> Appreciate you reaching out, but I won't be able to take this on. Let me know if there's anything else I can help with.  \n>  \n> Best Regards,  \n> Robert  \n----------------------------------------------\n#### Clarification Request Example:\n> **Subject:** Re: [Email Subject]  \n>  \n> Hey [Name],  \n> Could you clarify a bit on this? Want to make sure I'm understanding correctly.  \n>  \n> Best Regards,  \n> Robert"
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [
-        520,
-        660
+        760,
+        680
       ],
       "id": "01ba4ad0-cda8-44f8-8bc3-64239ed2036d",
       "name": "AI Agent"
@@ -574,7 +598,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
       "typeVersion": 1.2,
       "position": [
-        540,
+        660,
         940
       ],
       "id": "ee997dd7-d5f4-4acf-bfdd-d28ff4d8f232",
@@ -594,7 +618,7 @@
       "type": "n8n-nodes-base.gmailTool",
       "typeVersion": 2.1,
       "position": [
-        700,
+        840,
         940
       ],
       "id": "7e56baa6-e779-44b1-8360-163002b7d289",
@@ -620,7 +644,7 @@
       "type": "n8n-nodes-base.gmailTool",
       "typeVersion": 2.1,
       "position": [
-        840,
+        1000,
         940
       ],
       "id": "247f4aba-9875-4778-9483-71865a4c7030",
@@ -641,8 +665,8 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
       "position": [
-        120,
-        980
+        180,
+        620
       ],
       "id": "1804d65d-d47e-4664-8f4a-ba70301fcb76",
       "name": "Gmail",
@@ -653,23 +677,102 @@
           "name": "Gmail account"
         }
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3a7d50ce-f5ae-442f-ada8-13f41d975234",
+              "leftValue": "={{ $json.headers.subject }}",
+              "rightValue": "Invitation",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        800
+      ],
+      "id": "25c62ee1-a68b-48de-bbea-d6521228e7bf",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "content": "## Send Received Email To Phone as Text",
+        "height": 576,
+        "width": 281
+      },
+      "id": "65a0209b-85dc-4b9c-b8f7-81c5e062e7c0",
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1460,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "ps8ksp5iokesc44",
+        "table": "mzuglifncxg7777"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1240,
+        680
+      ],
+      "id": "8ed06edf-690c-412c-881b-25fdf0df5c5c",
+      "name": "NocoDB",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "mZ1bN8fBGJ1SO75T",
+          "name": "NoCoDB Internal"
+        }
+      },
+      "disabled": true
     }
   ],
   "pinData": {},
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "createdAt": "2024-12-14T00:51:00.201Z",
+      "updatedAt": "2024-12-14T00:51:00.201Z",
+      "role": "workflow:owner",
+      "workflowId": "XM0E4Y43kUMPASGN",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": {
     "node:Gmail is Received": {
-      "lastTimeChecked": 1738232755,
+      "lastTimeChecked": 1759968006,
       "possibleDuplicates": [
-        "194b6c68a56c4cdc",
-        "194b6bf24f64fa27"
+        "199c64495478cb5f"
       ]
     }
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2025-01-20T20:18:49.000Z",
-  "versionId": "6a976d34-42c7-40da-acf2-7546671e73fa"
+  "updatedAt": "2025-03-28T15:41:19.000Z",
+  "versionId": "1e9d569b-03fe-4997-890c-90e1741c2970"
 }
