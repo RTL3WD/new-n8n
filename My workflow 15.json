@@ -59,6 +59,7 @@
   },
   "createdAt": "2025-01-02T20:20:28.437Z",
   "id": "HQO5r09bXLXucOJS",
+  "isArchived": false,
   "meta": null,
   "name": "My workflow 15",
   "nodes": [
@@ -258,6 +259,15 @@
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "createdAt": "2025-01-02T20:20:28.441Z",
+      "updatedAt": "2025-01-02T20:20:28.441Z",
+      "role": "workflow:owner",
+      "workflowId": "HQO5r09bXLXucOJS",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
