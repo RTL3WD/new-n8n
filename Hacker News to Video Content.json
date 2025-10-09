@@ -415,6 +415,7 @@
   },
   "createdAt": "2024-11-20T21:08:33.799Z",
   "id": "sSdFi9km6xXlI1c0",
+  "isArchived": false,
   "meta": {
     "templateId": "2557"
   },
@@ -1423,6 +1424,15 @@
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "createdAt": "2024-11-20T21:08:33.802Z",
+      "updatedAt": "2024-11-20T21:08:33.802Z",
+      "role": "workflow:owner",
+      "workflowId": "sSdFi9km6xXlI1c0",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
