@@ -1,0 +1,2340 @@
+{
+  "active": true,
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Suggested Keywords",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a video": {
+      "main": [
+        [
+          {
+            "node": "duration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many videos": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get many videos",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get many videos1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Suggested Keywords": {
+      "main": [
+        [
+          {
+            "node": "Shortlisted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Shortlisted": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a channel": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "duration": {
+      "main": [
+        [
+          {
+            "node": "Get a channel",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Budget Gate": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Create or update a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Get a video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many videos1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Budget Gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-09-22T22:39:08.327Z",
+  "id": "UrgIoSkv7MgfDM1Z",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Youtube keyword analyzer",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Youtube Research Agent",
+        "formDescription": "Research trading YouTube videos related to a topic and get suggestions for a video",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Topic"
+            },
+            {
+              "fieldLabel": "Since",
+              "fieldType": "date"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -1184,
+        448
+      ],
+      "id": "0c1c2613-c476-434b-8ba6-47011d0e828a",
+      "name": "On form submission",
+      "webhookId": "6c8e6ae1-ae93-4e82-8f51-eff54b13ce05"
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "get",
+        "videoId": "={{ $json.id.videoId }}",
+        "part": [
+          "contentDetails",
+          "id",
+          "snippet",
+          "statistics",
+          "topicDetails"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        1184,
+        448
+      ],
+      "id": "6e9df826-c58c-4c4e-a4d2-d37a89d00382",
+      "name": "Get a video",
+      "executeOnce": false,
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "zeuJ1nSpjwXgxyvZ",
+          "name": "YouTube account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "limit": 8,
+        "filters": {
+          "publishedAfter": "={{ $('On form submission').item.json.Since }}",
+          "q": "={{ $json.keyword }}"
+        },
+        "options": {
+          "order": "relevance"
+        }
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        640,
+        352
+      ],
+      "id": "488a07dc-8a19-44cb-923c-96784ce505c5",
+      "name": "Get many videos",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "zeuJ1nSpjwXgxyvZ",
+          "name": "YouTube account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -288,
+        448
+      ],
+      "id": "ebeb6949-c253-4d2d-8a40-6655c064a16f",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "jsCode": "/**\n * n8n Code node — SINGLE OUTPUT (universal, NON-install intent)\n * Input:  $('On form submission').first().json.Topic\n * Output: 1 summary item + K shortlist items (strongest only)\n *\n * Notes:\n * - Excludes install/setup/deploy/devops-y terms by default (EXCLUDE_REGEX)\n * - No brand baked in; base tokens come from Topic (REQUIRE_BASE_TERM keeps relevance)\n */\n\nconst PICK              = 12;   // final shortlist size\nconst CONCURRENCY       = 6;\nconst JITTER_MS         = 40;\n\nlet   QUICK_FLOOR       = 0.55; // discard weak suggestions\nconst REQUIRE_BASE_TERM = true; // keep suggestions that contain at least one base token\n\n// ----- Universal EXCLUDES (install/setup/devops/admin-y stuff) -----\nconst EXCLUDE_REGEX = /\\b(install|setup|set[-\\s]?up|deploy|deployment|configure|provision|self[-\\s]?host|local|docker|compose|kubernetes|k8s|helm|reverse\\s?proxy|coolify|nginx|systemd|service|ssl|tls|certificate|homebrew|brew|node\\s?js|pip|apt|yum|choco|wsl|wsl2)\\b/i;\n\n// (Optional) quality guards\nconst MIN_LEN = 3;              // min characters for a suggestion\nconst MAX_LEN = 100;            // max characters\nconst MAX_WORDS = 16;           // avoid very long queries\n\n// ---------- helpers ----------\nconst canon = (s) =>\n  String(s || '')\n    .toLowerCase()\n    .replace(/[^\\p{L}\\p{N}\\s]+/gu, ' ')\n    .replace(/\\s+/g, ' ')\n    .trim();\n\nconst tokenize = (s) => (canon(s).match(/\\p{L}[\\p{L}\\p{N}\\+\\.-]*/gu) || []);\n\nconst includesAny = (s, arr) => arr.some(t => s.includes(t.toLowerCase()));\n\nfunction significantBaseTokens(topic) {\n  const stop = new Set([\n    'how','to','for','and','or','the','a','an','in','on','of','with','by','from','at','vs',\n    'tutorial','guide','best','top','ideas','2025','2024','2023','beginner','advanced','pro',\n  ]);\n  return tokenize(topic).filter(t => t.length >= 3 && !stop.has(t));\n}\n\nasync function fetchSuggest(q) {\n  const url = `https://suggestqueries.google.com/complete/search?client=youtube&ds=yt&q=${encodeURIComponent(q)}`;\n  try {\n    const res = await this.helpers.httpRequest({ method:'GET', url, json:false, headers:{'User-Agent':'n8n'} });\n    const text = typeof res === 'string' ? res : String(res);\n    const start = text.indexOf('['), end = text.lastIndexOf(']');\n    if (start === -1 || end === -1) return { query:q, suggestions:[] };\n    let arr;\n    try { arr = JSON.parse(text.slice(start, end + 1)); } catch { return { query:q, suggestions:[] }; }\n    const query = Array.isArray(arr) ? arr[0] : q;\n    const listRaw = Array.isArray(arr?.[1]) ? arr[1] : [];\n    const suggestions = [];\n    for (let i = 0; i < listRaw.length; i++) {\n      const s = typeof listRaw[i] === 'string' ? listRaw[i] : (Array.isArray(listRaw[i]) ? listRaw[i][0] : '');\n      if (s) suggestions.push({ text:s, rank:i+1 });\n    }\n    return { query, suggestions };\n  } catch {\n    return { query:q, suggestions:[] };\n  }\n}\n\n// Modest permutation set (keeps calls low but explores)\nfunction* permutations(base) {\n  yield base; // exact\n  // expand with a–m then 0–3 (light exploration)\n  for (const ch of 'abcdefghijklm') yield `${base} ${ch}`;\n  for (const d of '0123') yield `${base} ${d}`;\n  // semantic modifiers that are NOT install-y (learning/usage oriented)\n  const mods = ['ideas', 'examples', 'beginner', 'tutorial', 'tips', 'tricks', 'automation', 'workflow', 'project', 'use cases', 'shorts'];\n  for (const m of mods) yield `${base} ${m}`;\n}\n\nasync function runPool(tasks, limit) {\n  const out = new Array(tasks.length);\n  let i = 0;\n  const workers = Array.from({ length: Math.min(limit, tasks.length) }, async () => {\n    while (i < tasks.length) {\n      const idx = i++;\n      out[idx] = await tasks[idx]();\n      await new Promise(r => setTimeout(r, JITTER_MS));\n    }\n  });\n  await Promise.all(workers);\n  return out;\n}\n\n// ---------- main ----------\nconst baseInput = ($('On form submission').first().json.Topic || '').trim();\nif (!baseInput) {\n  return [{ json: { stream: 'error', message: 'Missing keyword Topic from On form submission' } }];\n}\nconst base = canon(baseInput);\nconst baseTokens = significantBaseTokens(baseInput);\n\n// Build & fetch\nconst queries = Array.from(permutations(base));\nconst tasks = queries.map(q => () => fetchSuggest.call(this, q));\nconst results = await runPool(tasks, CONCURRENCY);\n\n// Aggregate\nconst byQuery = {};\nconst stats = new Map(); // canonical text -> {count,sumRank,firstQuery,originals:Set}\nlet totalOccurrences = 0;\nlet maxRankObserved = 0;\n\nfor (const r of results) {\n  if (!r || !r.suggestions) continue;\n  byQuery[r.query] = r.suggestions.map(o => o.text);\n\n  for (const { text, rank } of r.suggestions) {\n    const tCanon = canon(text);\n    if (!tCanon) continue;\n\n    // ---- Universal filters ----\n    if (tCanon.length < MIN_LEN || tCanon.length > MAX_LEN) continue;\n    if ((tCanon.split(' ').length) > MAX_WORDS) continue;\n    if (EXCLUDE_REGEX.test(tCanon)) continue; // drop install/setup/devops\n    if (REQUIRE_BASE_TERM && baseTokens.length && !includesAny(tCanon, baseTokens)) continue;\n\n    const prev = stats.get(tCanon) || { count:0, sumRank:0, firstQuery:r.query, originals:new Set() };\n    prev.count += 1;\n    prev.sumRank += rank;\n    prev.originals.add(text);\n    stats.set(tCanon, prev);\n    totalOccurrences += 1;\n    if (rank > maxRankObserved) maxRankObserved = rank;\n  }\n}\n\n// Compute scores\nlet weightedAvgRank = 0;\nconst detailed = [];\nfor (const [textCanon, { count, sumRank, firstQuery, originals }] of stats.entries()) {\n  const avgRank = sumRank / count;\n  weightedAvgRank += sumRank;\n  const rankScore = 1 - (avgRank / (maxRankObserved || 10)); // 0–1\n  const occurrences = count;\n  const quickScore = 0.7*rankScore + 0.3*Math.min(1, occurrences/5);\n\n  // shortest original for display\n  const display = Array.from(originals).sort((a,b)=>a.length-b.length)[0] || textCanon;\n\n  detailed.push({\n    text: display,\n    textCanon,\n    occurrences,\n    avgRank: +avgRank.toFixed(3),\n    rankScore: +rankScore.toFixed(3),\n    quickScore: +quickScore.toFixed(3),\n    firstSeenQuery: firstQuery,\n  });\n}\nweightedAvgRank = totalOccurrences ? (weightedAvgRank / totalOccurrences) : 0;\nconst overallRankScore = maxRankObserved ? +(1 - (weightedAvgRank / maxRankObserved)).toFixed(3) : 0;\n\n// Filter by quality floor + diversity\nlet shortlistedMap = detailed\n  .filter(r => r.quickScore >= QUICK_FLOOR)\n  .reduce((acc, r) => {\n    // Diversity: drop near-dupes differing only by numbers/years\n    const stem = r.textCanon\n      .replace(/\\b(20\\d{2}|19\\d{2})\\b/g, '')\n      .replace(/\\b(v?\\d+(\\.\\d+)*)\\b/g, '')\n      .trim();\n    if (!acc.has(stem)) acc.set(stem, r);\n    return acc;\n  }, new Map());\n\nlet shortlisted = Array.from(shortlistedMap.values())\n  .sort((a,b) => b.quickScore - a.quickScore)\n  .slice(0, PICK);\n\n// Soft backfill if too few (without re-introducing install-y terms)\nconst MIN_TARGET = 8;\nif (shortlisted.length < MIN_TARGET) {\n  const have = new Set(shortlisted.map(x => x.textCanon));\n  const pool = detailed\n    .filter(r => r.quickScore >= 0.42)      // softer floor\n    .sort((a,b) => b.quickScore - a.quickScore);\n  for (const cand of pool) {\n    if (have.has(cand.textCanon)) continue;\n    // re-apply core excludes & base relevance\n    if (EXCLUDE_REGEX.test(cand.textCanon)) continue;\n    if (REQUIRE_BASE_TERM && baseTokens.length && !includesAny(cand.textCanon, baseTokens)) continue;\n    shortlisted.push(cand);\n    have.add(cand.textCanon);\n    if (shortlisted.length >= Math.min(PICK, MIN_TARGET)) break;\n  }\n}\n\n// Build output (single stream)\nconst itemsOut = [];\n\n// Summary\nitemsOut.push({\n  json: {\n    stream: 'summary',\n    keyword: baseInput,\n    canon: base,\n    suggestBreadth: stats.size,\n    avgRank: +weightedAvgRank.toFixed(3),\n    rankScore: overallRankScore,\n    requested: queries.length,\n    params: {\n      PICK, QUICK_FLOOR, REQUIRE_BASE_TERM, CONCURRENCY,\n      excludes: 'install/setup/devops terms',\n    },\n    // debug fields (optional):\n    // suggestionsDetailed: detailed.sort((a,b)=>b.quickScore-a.quickScore),\n    // byQuery,\n  }\n});\n\n// Shortlist (for deep YT querying)\nfor (const r of shortlisted) {\n  itemsOut.push({\n    json: {\n      stream: 'shortlist',\n      keyword: r.text,\n      rankScore: r.rankScore,\n      occurrences: r.occurrences,\n      avgRank: r.avgRank,\n      quickScore: r.quickScore,\n      source: 'autosuggest',\n      parentTopic: baseInput, // keep original Topic for grouping downstream\n    }\n  });\n}\n\nreturn itemsOut;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -960,
+        448
+      ],
+      "id": "b9d5616d-fd17-43a7-9071-a04e1294ce8e",
+      "name": "Suggested Keywords"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "12f5f4fc-7b8d-48e4-8707-5a0f50fd2d4d",
+              "leftValue": "={{ $json.stream }}",
+              "rightValue": "shortlist",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -736,
+        448
+      ],
+      "id": "e305e3c1-faf5-41c2-bc85-5ac8a0e3e7ac",
+      "name": "Shortlisted"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Code node — Global Budget Gate (shape-robust)\n\n// ---------- knobs ----------\nconst MAX_GLOBAL        = 60;\nconst MIN_PER_KEYWORD   = 2;\nconst MAX_PER_KEYWORD   = 10;\nconst MIN_VPD_BASELINE  = 0.5;     // ignore very cold unless fresh\nconst MAX_AGE_DAYS_HARD = 1095;    // drop if also cold (>3y)\nconst STRONG_VPD_BONUS  = 12;\nconst QS_WEIGHT         = 20;\nconst CHANNEL_REPEAT_PENALTY = 0.85;\n\n// ---------- helpers ----------\nconst num = (v,d=0)=>{ const n=Number(v); return Number.isFinite(n)?n:d; };\nconst daysSince = (iso)=>{ const d=new Date(iso||0); return isNaN(d)?9e9:Math.max(0,(Date.now()-d)/86400000); };\nconst canon = (s)=> String(s||'').toLowerCase().replace(/[^\\p{L}\\p{N}\\s]+/gu,' ').replace(/\\s+/g,' ').trim();\n\nfunction getKwKey(x){ return (x.keyword?.keyword || x.keyword || x.parentTopic || '(unknown)').toString(); }\nfunction ensureGate(it){ it.json.gate = it.json.gate || { index:0, priority:0, passBasic:true, keepPerKeyword:false, keepGlobal:false, reason:[] }; if (!Array.isArray(it.json.gate.reason)) it.json.gate.reason=[]; return it.json.gate; }\n\n// ---- Normalize any input row to a *video* (or null if not a video) ----\nfunction asVideoRow(it){\n  const j = it.json || {};\n\n  // 1) Already-normalized (your own shape)\n  if (j.id && j.title && (j.publishedAt || j.video?.publishedAt)) {\n    return {\n      id: j.id,\n      title: j.title,\n      publishedAt: j.publishedAt || j.video?.publishedAt || null,\n      views: num(j.views ?? j.video?.views, 0),\n      likeCount: num(j.likeCount ?? j.video?.likeCount, 0),\n      commentCount: num(j.commentCount ?? j.video?.commentCount, 0),\n      durationSeconds: num(j.durationSeconds ?? j.video?.durationSeconds, 0),\n      channel: j.channel || { Id: j.channelId || null, Name: j.channelTitle || null, subscriberCount: num(j.subscriberCount, 0) },\n      keyword: j.keyword,\n      parentTopic: j.parentTopic || j.keyword?.parentTopic,\n      quickScore: num(j.quickScore ?? j.keyword?.quickScore, 0),\n      viewsPerDay: num(j.viewsPerDay ?? j.video?.viewsPerDay, NaN),\n      _src: 'normalized',\n      _it: it\n    };\n  }\n\n  // 2) videos.list shape\n  if (j.kind === 'youtube#video' || (j.snippet && j.statistics && j.contentDetails && j.id)) {\n    return {\n      id: j.id,\n      title: j.snippet?.title || '',\n      publishedAt: j.snippet?.publishedAt || null,\n      views: num(j.statistics?.viewCount, 0),\n      likeCount: num(j.statistics?.likeCount, 0),\n      commentCount: num(j.statistics?.commentCount, 0),\n      durationSeconds: (()=>{\n        const m = (j.contentDetails?.duration || '').match(/PT(?:(\\d+)H)?(?:(\\d+)M)?(?:(\\d+)S)?/);\n        if (!m) return 0; const h=+m[1]||0, mm=+m[2]||0, s=+m[3]||0; return h*3600+mm*60+s;\n      })(),\n      channel: { Id: j.snippet?.channelId, Name: j.snippet?.channelTitle, subscriberCount: num(j.channel?.subscriberCount, 0) },\n      keyword: j.keyword,\n      parentTopic: j.parentTopic || j.keyword?.parentTopic,\n      quickScore: num(j.quickScore ?? j.keyword?.quickScore, 0),\n      viewsPerDay: NaN,\n      _src: 'videos.list',\n      _it: it\n    };\n  }\n\n  // 3) search.list shape (must be a VIDEO, not channel/playlist)\n  if (j.id?.kind === 'youtube#video' && j.id?.videoId) {\n    return {\n      id: j.id.videoId,\n      title: j.snippet?.title || '',\n      publishedAt: j.snippet?.publishedAt || null,\n      views: num(j.statistics?.viewCount, 0),\n      likeCount: num(j.statistics?.likeCount, 0),\n      commentCount: num(j.statistics?.commentCount, 0),\n      durationSeconds: 0,\n      channel: { Id: j.snippet?.channelId, Name: j.snippet?.channelTitle, subscriberCount: num(j.channel?.subscriberCount, 0) },\n      keyword: j.keyword,\n      parentTopic: j.parentTopic || j.keyword?.parentTopic,\n      quickScore: num(j.quickScore ?? j.keyword?.quickScore, 0),\n      viewsPerDay: NaN,\n      _src: 'search.list',\n      _it: it\n    };\n  }\n\n  // 4) channel/playlist or unknown — skip\n  // e.g., your snippet shows kind: youtube#channel → ignore\n  return null;\n}\n\nfunction computeVpdFallback(v){\n  const age = Math.max(1, Math.floor(daysSince(v.publishedAt)) || 1);\n  const vpdRaw = num(v.viewsPerDay, NaN);\n  return (Number.isFinite(vpdRaw) && vpdRaw > 0) ? vpdRaw : (num(v.views,0) / age);\n}\n\nfunction priority(v){\n  const vpd = computeVpdFallback(v);\n  const age = daysSince(v.publishedAt);\n  const recencyScore = Math.max(0, (180 - age) / 180);\n  const qs = num(v.quickScore, 0);\n  let p = (vpd * 0.6) + (recencyScore * 40 * 0.2);\n  if (vpd >= STRONG_VPD_BONUS) p += 5;\n  if (qs) p += qs * QS_WEIGHT;\n  return +p.toFixed(2);\n}\nfunction getChannelId(v){ return v.channel?.Id || v.channel?.id || v.channelId || ''; }\n\n// ---------- 0) Normalize & keep best per video.id ----------\nconst bestById = new Map();\nfor (const it of items){\n  const v = asVideoRow(it);\n  if (!v || !v.id) continue;\n\n  // hard drop (very old & cold)\n  const age = daysSince(v.publishedAt);\n  const vpd = computeVpdFallback(v);\n  if (age > MAX_AGE_DAYS_HARD && vpd < MIN_VPD_BASELINE) continue;\n\n  const prev = bestById.get(v.id);\n  if (!prev || priority(v) > priority(prev.v)) bestById.set(v.id, { v, it });\n}\n\n// ---------- 1) Group by keyword ----------\nconst byKw = new Map();\nfor (const { v, it } of bestById.values()){\n  const kw = getKwKey(v) || '(unknown)';\n  if (!byKw.has(kw)) byKw.set(kw, []);\n  byKw.get(kw).push({ v, it });\n}\n\n// ---------- 2) Per-keyword ranking with channel diversity penalty ----------\nfunction rankWithinKeyword(arr){\n  const seenChannels = new Set();\n  const scored = arr.map(({v,it}) => {\n    let p = priority(v);\n    const ch = getChannelId(v);\n    if (ch && seenChannels.has(ch)) p *= CHANNEL_REPEAT_PENALTY;\n    return { v, it, p };\n  });\n  scored.sort((a,b)=> b.p - a.p);\n  const ordered = [];\n  const used = new Set();\n  for (const s of scored){\n    const ch = getChannelId(s.v);\n    if (ch && used.has(ch)) { ordered.push(s); }\n    else { ordered.push(s); if (ch) used.add(ch); }\n  }\n  return ordered;\n}\n\n// ---------- 3) Build floors and pool ----------\nconst floor = [];\nconst pool  = [];\nfor (const [kw, arr] of byKw.entries()){\n  const ranked = rankWithinKeyword(arr);\n  const floorCount = Math.min(MIN_PER_KEYWORD, ranked.length);\n  for (let i=0; i<floorCount; i++) floor.push(ranked[i].it);\n  for (let i=floorCount; i<ranked.length; i++) pool.push({ kw, it: ranked[i].it });\n}\n\n// ---------- 4) Fill globally ----------\nconst keptPerKw = new Map();\nconst kwOf = (it)=> getKwKey(asVideoRow(it)?.v || it.json || {});\nfor (const it of floor){ const kw = kwOf(it); keptPerKw.set(kw, (keptPerKw.get(kw)||0)+1); }\n\nfunction pOf(it){ const v = asVideoRow(it); return v ? priority(v) : -1e9; }\npool.sort((a,b)=> pOf(b.it) - pOf(a.it));\n\nconst final = [...floor];\nfor (const {kw, it} of pool){\n  if (final.length >= MAX_GLOBAL) break;\n  const count = keptPerKw.get(kw) || 0;\n  if (count >= MAX_PER_KEYWORD) continue;\n  final.push(it);\n  keptPerKw.set(kw, count+1);\n}\n\n// ---------- 5) Tag everything ----------\nconst keptIds = new Set(final.map(it => (asVideoRow(it)||{}).id).filter(Boolean));\n\nfor (const it of items){\n  const g = ensureGate(it);\n  const v = asVideoRow(it);\n  if (!v) {\n    g.keepGlobal = false;\n    g.bucket = 'cut';\n    g.reason.push('not a video');\n    continue;\n  }\n  v.viewsPerDay = computeVpdFallback(v);\n  g.priority = priority(v);\n  g.keepGlobal = keptIds.has(v.id);\n  g.bucket = g.keepGlobal ? 'keep' : 'cut';\n  if (!g.keepGlobal){\n    const age = daysSince(v.publishedAt);\n    if (age > MAX_AGE_DAYS_HARD && v.viewsPerDay < MIN_VPD_BASELINE) g.reason.push('very old & cold');\n  }\n}\n\n// Return all (tagged). Downstream, filter keepGlobal==true if desired.\nreturn items;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        592,
+        144
+      ],
+      "id": "3b7fc793-8747-4575-b06a-fd23e108689a",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3c0277ab-3adb-4aad-a66f-539a4b4ce411",
+              "leftValue": "={{ $json.needFetch }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1184,
+        752
+      ],
+      "id": "9c9ae586-cfdc-4136-bf0e-3bf8e32e2708",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "channelId": "={{ $json.channelId }}",
+        "part": [
+          "topicDetails",
+          "statistics",
+          "id",
+          "snippet"
+        ]
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        1632,
+        288
+      ],
+      "id": "fecb0255-e413-4e44-af4d-3b58028dac80",
+      "name": "Get a channel",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "zeuJ1nSpjwXgxyvZ",
+          "name": "YouTube account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "function iso8601ToSeconds(iso) {\n  const m = (iso || '').match(/PT(?:(\\d+)H)?(?:(\\d+)M)?(?:(\\d+)S)?/);\n  if (!m) return 0;\n  const h = parseInt(m[1] || '0', 10);\n  const mm = parseInt(m[2] || '0', 10);\n  const s = parseInt(m[3] || '0', 10);\n  return h*3600 + mm*60 + s;\n}\n\nconst SHORT_210 = 210; // 3:30\nconst SHORT_60  = 60;\n\nconst store = $getWorkflowStaticData('global');\nstore.videoCache = store.videoCache || {};\n\nconst now = Date.now();\nconst out = [];\n\nfor (const item of items) {\n  const id = item.json.id || item.json.videoId;\n  const sn = item.json.snippet || {};\n  const cd = item.json.contentDetails || {};\n  const st = item.json.statistics || {};\n\n  const secs = iso8601ToSeconds(cd.duration);\n  const publishedAt = (sn.publishedAt || '').slice(0, 10);\n  const ageDays = Math.max(\n    1,\n    Math.floor((Date.now() - new Date(publishedAt || '1970-01-01').getTime()) / 86400000)\n  );\n\n  const views = Number(st.viewCount || 0);\n  const viewsPerDay = views / ageDays;\n\n  // passthrough from upstream if present (so later nodes can use it)\n  const passthruKeys = [\n    'keyword','parentTopic','rankScore','quickScore','source','query'\n  ];\n  const passthru = {};\n  for (const k of passthruKeys) {\n    if (item.json[k] !== undefined) passthru[k] = item.json[k];\n  }\n\n  const normalized = {\n    id,\n    title: sn.title || '',\n    channelId: sn.channelId || '',\n    publishedAt,\n    durationSeconds: secs,\n    isUltraShort: secs <= SHORT_60,\n    isShort: secs <= SHORT_210,\n    views,\n    viewsPerDay: Number.isFinite(viewsPerDay) ? +viewsPerDay.toFixed(2) : 0,\n    lastFetched: now,\n    ...passthru,\n  };\n\n  store.videoCache[id] = normalized; // upsert cache\n  out.push({ json: normalized });\n}\n\nreturn out;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1408,
+        448
+      ],
+      "id": "55e386b3-ff6b-4f2b-ba4c-ceb59324357b",
+      "name": "duration"
+    },
+    {
+      "parameters": {
+        "maxItems": 12
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -512,
+        448
+      ],
+      "id": "182a2845-ed26-4bdb-a555-fc68427e32ff",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Code node — Pre-keyword Gate (light prune + tagging, NO global caps)\n\nconst SOFT_PER_KEYWORD = 20;   // keep at most this many per keyword branch\nconst MAX_AGE_DAYS_HARD = 730; // drop if older than 2y AND cold\nconst COLD_VPD_FLOOR = 0.2;    // if below and very old, drop\n\nconst num = (v,d=0)=>{ const n=Number(v); return Number.isFinite(n)?n:d; };\nconst daysSince = (iso)=>{ const d=new Date(iso||0); return isNaN(d)?9e9:Math.max(0,(Date.now()-d)/86400000); };\nconst canon = (s)=> String(s||'').toLowerCase().replace(/[^\\p{L}\\p{N}\\s]+/gu,' ').replace(/\\s+/g,' ').trim();\n\nfunction priority(x){\n  // simple, fast priority; your global gate will do the “real” budget allocation\n  const vpd = num(x.viewsPerDay, 0);\n  const age = daysSince(x.publishedAt);\n  const recency = Math.max(0, (180 - age) / 180); // ~6 months scale\n  const qs = num(x.quickScore, 0);\n  let p = (vpd * 0.6) + (recency * 40 * 0.2); // recency scaled into ~0–40\n  if (vpd >= 12) p += 5;                      // small bump for strong momentum\n  if (qs) p += qs * 20;                       // boost from autosuggest quality\n  return +p.toFixed(2);\n}\n\nconst byId = new Map();\nfor (const it of items) {\n  const x = { ...(it.json||{}) };\n\n  // guard: must have id & title\n  const id = x.id || x.video?.id;\n  const title = x.title || x.video?.title || '';\n  if (!id || !title) continue;\n\n  // unify fields\n  x.title = title;\n  x.publishedAt = x.publishedAt || x.video?.publishedAt || null;\n  x.views = num(x.views ?? x.video?.views, 0);\n  x.likeCount = num(x.likeCount ?? x.video?.likeCount, 0);\n  x.commentCount = num(x.commentCount ?? x.video?.commentCount, 0);\n  x.durationSeconds = num(x.durationSeconds ?? x.video?.durationSeconds, 0);\n\n  // compute VPD fallback\n  const ageDays = Math.max(1, Math.floor(daysSince(x.publishedAt)) || 1);\n  const vpdRaw = num(x.viewsPerDay ?? x.video?.viewsPerDay, NaN);\n  x.viewsPerDay = Number.isFinite(vpdRaw) && vpdRaw > 0 ? vpdRaw : (x.views / ageDays);\n\n  // attach quickScore if only on keyword payload\n  x.quickScore = num(x.quickScore ?? x.keyword?.quickScore, 0);\n\n  // hard drop: very old AND cold\n  if (ageDays > MAX_AGE_DAYS_HARD && x.viewsPerDay < COLD_VPD_FLOOR) continue;\n\n  // prefer higher priority if same id seen\n  const prev = byId.get(id);\n  if (!prev || priority(x) > priority(prev)) byId.set(id, x);\n}\n\n// sort by priority, de-dupe near-duplicate titles per keyword\nconst arr = Array.from(byId.values());\nconst seenTitleStem = new Set();\nconst sorted = arr\n  .sort((a,b) => priority(b) - priority(a))\n  .filter(v => {\n    const kw = (v.keyword?.keyword || v.keyword || v.parentTopic || '(unknown)').toString();\n    const stem = `${kw}::${canon(v.title).replace(/\\b(20\\d{2}|19\\d{2}|v?\\d+(\\.\\d+)*)\\b/g,'')}`;\n    if (seenTitleStem.has(stem)) return false;\n    seenTitleStem.add(stem);\n    return true;\n  })\n  .slice(0, SOFT_PER_KEYWORD)\n  .map((x, idx) => ({\n    json: {\n      ...x,\n      gate: {\n        index: idx,\n        priority: priority(x),\n        passBasic: true,\n        keepPerKeyword: true,   // tagged as kept for this keyword branch\n        keepGlobal: false,      // global gate decides later\n        reason: []\n      },\n      _gate_meta: { id: x.id, key: (x.keyword?.keyword || x.keyword || '(unknown)') }\n    }\n  }));\n\nreturn sorted;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2240,
+        528
+      ],
+      "id": "a846f10a-96f0-4e45-a096-95cf6446383d",
+      "name": "Budget Gate"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(it => {\n  const j = it.json;\n  return {\n    json: {\n      keyword: j.keyword,\n      winnerTitle: j.winner?.title,\n      winnerUrl: j.winner?.url,\n      groupStats: j.groupStats,\n      recommend: j.recommend,\n      keywordFit: j.keywordFit,\n      parentTopic: j.parentTopic\n    }\n  }\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        848,
+        144
+      ],
+      "id": "91b107e9-2bc8-45b7-9a0e-a0b80d5d3ef8",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You will receive grouped keyword analysis data for YouTube topics.  \nThe **system prompt** already defines the schema, rules, and formatting requirements.  \nThis user prompt is lean — it simply injects the data and reminds you of the task.\n\n---\n\n## Prompt\n\nHere is the grouped keyword data:\n\n```json\n{{ $('Code1').item.json }}\n```\n\nUsing the system rules, generate up to **5 recommendations** strictly following the schema defined in the system prompt.  \n\n- Always return a **single valid JSON array** (no markdown, no extra text).  \n- Maximum of 5 items.  \n- Each item must follow the schema defined in the system prompt.  ",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a senior YouTube content strategist.  \nInput: an array of keyword groups with fields like `keyword`, `groupStats`, `winner`, `contenders`, `recommend`, `keywordFit`.  \nOutput: up to **5** production-ready recommendations optimized for discovery, click-through, retention, and execution speed.\n\n---\n\n## Objectives (in order)\n1) Pick topics with the highest likelihood of **traffic + retention** based on provided metrics.  \n2) Package them for **SEO + CTR** (tight titles, powerful thumbnail hooks).  \n3) Provide **filmable outlines** with chapters and copy-paste assets (commands, common errors, links placeholders).  \n4) Make the output **Airtable-friendly JSON**, strictly matching the schema.\n\n---\n\n## Decision Heuristics (apply to each keyword group)\nScore candidate topics using:\n- **Demand/Momentum**: higher `viewsPerDay` (VPD) among winner/contenders → stronger.  \n- **Recency**: higher `recencyScore` and recent `publishedAt` → fresher opportunity.  \n- **Engagement Gap**: high `erScore` but low VPD → underserved; good target.  \n- **Coverage Gap**: same winner across multiple keywords → room to beat with better packaging/English/clarity.  \n- **Keyword Fit**: higher `keywordFit.rankScore` and `keywordFit.quickScore` → better search intent.  \n- **Duration Fit**: align with `groupStats.medianDurationSeconds`:  \n  - ≤ 240s → Quick Start; 8–12 min if breadth needed; 12–20 min for deep+troubleshooting.  \n- **Channel Authority**: if winners are low-authority channels but rank well → underserved niche (good).  \nCombine into an internal **priorityScore** (0–100). Prefer topics with: strong intent, freshness, visible gaps, and executable differentiators (Docker, Coolify, macOS/Windows variants, troubleshooting).\n\n---\n\n## Packaging Rules\n- **Title**: ≤ 70 chars, includes strongest query term(s); promise an outcome/time; avoid brackets spam.  \n- **Thumbnail text**: ≤ 4 words, punchy, no jargon, no quotes; different from title; conveys *result* or *speed*.  \n- **Chapters**: 7–10, each with a clear action/outcome; include **Troubleshooting** and **FAQ/Links** near the end.  \n- **Assets** (in outline): provide code blocks (shell/PowerShell/docker compose), env samples, and a list of common errors + fixes.  \n- **Angle**: match recommended `format` and `angle` but refine if data suggests a better variant (OS-specific, Docker vs. Node, Reverse proxy/Coolify).  \n- **Localize**: default to English; note if top winner is non-English (differentiator).\n\n---\n\n## Output Format (STRICT JSON ARRAY; max 5 items)\nEach item MUST match this schema exactly:\n\n```json\n{\n  \"keyword\": \"string\",\n  \"priorityScore\": 0,\n  \"recommendedTitle\": \"string (<=70 chars)\",\n  \"thumbnailIdea\": \"string (<=4 words)\",\n  \"format\": \"one of: Quick Start (3–5m) | Complete Install (8–12m) | Deep Dive + Troubleshooting (12–20m)\",\n  \"angle\": \"short phrase describing the specific angle\",\n  \"outline\": [\n    { \"chapter\": \"Intro (Hook)\", \"details\": \"what value in 10–15s; who it's for; outcome\" },\n    { \"chapter\": \"Prereqs\", \"details\": \"OS, Docker/Node versions, homebrew, links placeholders\" },\n    { \"chapter\": \"Step 1\", \"details\": \"…\" },\n    { \"chapter\": \"Step 2\", \"details\": \"…\" },\n    { \"chapter\": \"Step 3\", \"details\": \"…\" },\n    { \"chapter\": \"Troubleshooting\", \"details\": \"3–6 common errors with fixes; include commands\" },\n    { \"chapter\": \"FAQ & Links\", \"details\": \"FAQ bullets; links placeholders; next video CTA\" }\n  ],\n  \"assets\": {\n    \"commands\": [\n      \"code or command snippet 1\",\n      \"code or command snippet 2\"\n    ],\n    \"envSample\": \"inline .env sample if relevant\",\n    \"commonErrors\": [\n      { \"error\": \"short name\", \"fix\": \"one-line fix; add command if relevant\" }\n    ]\n  },\n  \"notes\": \"why this should win; what to emphasize; differentiation vs. top results\"\n}\n```\n\n**Rules:**\n- Always return an **array** (even if only 1 item).  \n- **No markdown**, no trailing commas, no comments in JSON.  \n- Escape newlines inside strings with `\\\\n`.  \n- `priorityScore` is an integer 0–100 you compute from the heuristics (higher = better).  \n- If multiple groups map to the same video angle, merge into one rec with the **best title** and mention overlapping keywords in `notes`.\n\n---\n\n## Outline Templates (use/adapt as needed)\n- **Quick Start (3–5m)**: Hook → Prereqs → 3 Steps to working instance → Verify → Troubleshooting (1–2 fast fixes) → CTA.  \n- **Complete Install (8–12m)**: Hook → Prereqs → Docker Compose (or Node) setup → Env & Volumes → Reverse Proxy (optional) → Verify → Troubleshooting (3–4) → FAQ & Links.  \n- **Deep Dive + Troubleshooting (12–20m)**: Hook → Path A (Docker) → Path B (Node) → Reverse Proxy + SSL → Auth & Backups → Performance Tips → Troubleshooting (5–8) → FAQ & Links.\n\n---\n\n## Content Guardrails\n- Prefer **Docker Compose** for local installs; include **Coolify** reverse proxy if angle says so.  \n- Include **OS variants** when useful (macOS Apple Silicon, Windows/WSL, Linux).  \n- Avoid vague steps (“configure stuff”); show exact commands/filenames.  \n- Don’t invent versions; use placeholders like `<VERSION>` where unknown.  \n- If winners are non-English or long/rambling, emphasize **clarity, speed, English voiceover** as differentiation.\n\n---\n\n## Example (style only; not prescriptive)\n```json\n[\n  {\n    \"keyword\": \"n8n local install\",\n    \"priorityScore\": 87,\n    \"recommendedTitle\": \"Install n8n Locally with Docker (Mac/Windows) in 10 Minutes\",\n    \"thumbnailIdea\": \"Up in 10\",\n    \"format\": \"Complete Install (8–12m)\",\n    \"angle\": \"Docker Compose + optional Coolify reverse proxy\",\n    \"outline\": [\n      {\"chapter\":\"Intro (Hook)\",\"details\":\"Spin up n8n locally fast; Mac/Windows covered; copy-paste commands.\"},\n      {\"chapter\":\"Prereqs\",\"details\":\"Docker Desktop; Docker Compose; optional Coolify; links.\"},\n      {\"chapter\":\"Step 1\",\"details\":\"Create project folder; docker-compose.yml; volumes.\"},\n      {\"chapter\":\"Step 2\",\"details\":\"ENV: N8N_HOST, PORT, WEBHOOK_URL; sample .env.\"},\n      {\"chapter\":\"Step 3\",\"details\":\"docker compose up -d; access UI; create first workflow.\"},\n      {\"chapter\":\"Reverse Proxy (Optional)\",\"details\":\"Coolify quick setup; domain, SSL.\"},\n      {\"chapter\":\"Troubleshooting\",\"details\":\"Port in use; permissions; env not loaded; container restart loop.\"},\n      {\"chapter\":\"FAQ & Links\",\"details\":\"Where to store credentials; backups; docs; next video CTA.\"}\n    ],\n    \"assets\":{\n      \"commands\":[\n        \"mkdir n8n && cd n8n\",\n        \"docker compose up -d\",\n        \"docker compose logs -f n8n\"\n      ],\n      \"envSample\":\"N8N_PORT=5678\\\\nN8N_HOST=localhost\\\\nWEBHOOK_URL=http://localhost:5678/\",\n      \"commonErrors\":[\n        {\"error\":\"EACCES volume\",\"fix\":\"Run with correct user or chmod target dir (demo command).\"},\n        {\"error\":\"Port 5678 busy\",\"fix\":\"Change N8N_PORT in .env and compose; restart.\"}\n      ]\n    },\n    \"notes\":\"Winner is non-English; opportunity for concise English guide with clear copy-paste setup.\"\n  }\n]\n```\n\n---\n\n## If Input Is Empty or Low-Signal\nReturn **1** recommendation with a general but high-intent install angle and note the limitation in `notes`.\n\n---\n\n## Final Validation\n- Ensure array length ≤ **5**.  \n- Titles ≤ **70 chars**.  \n- Thumbnail text ≤ **4 words**.  \n- 7–10 chapters.  \n- JSON parses without errors."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1408,
+        -672
+      ],
+      "id": "94465128-38d8-4c43-80b3-3e8bb1348d97",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1184,
+        -176
+      ],
+      "id": "8b59a59c-6448-4355-a6e9-c10228a74518",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "yqu837tmpZ1LSJI2",
+          "name": "OpenAI Ron"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[\n  {\n    \"keyword\": \"n8n local install\",\n    \"priorityScore\": 87,\n    \"recommendedTitle\": \"Install n8n Locally with Docker (Mac/Windows) in 10 Minutes\",\n    \"thumbnailIdea\": \"Up in 10\",\n    \"format\": \"Complete Install (8–12m)\",\n    \"angle\": \"Docker Compose + optional Coolify reverse proxy\",\n    \"outline\": [\n      { \"chapter\": \"Intro (Hook)\", \"details\": \"Why local n8n; what you’ll get in 10 min; who it’s for.\" },\n      { \"chapter\": \"Prereqs\", \"details\": \"Docker Desktop; Docker Compose; optional Coolify; links placeholders.\" },\n      { \"chapter\": \"Step 1\", \"details\": \"Create project folder; add docker-compose.yml; bind volumes.\" },\n      { \"chapter\": \"Step 2\", \"details\": \"Create .env with N8N_PORT, N8N_HOST, WEBHOOK_URL; explain each.\" },\n      { \"chapter\": \"Step 3\", \"details\": \"docker compose up -d; verify at http://localhost:<port>.\" },\n      { \"chapter\": \"Reverse Proxy (Optional)\", \"details\": \"Coolify quick setup; domain and SSL; basic security tips.\" },\n      { \"chapter\": \"Troubleshooting\", \"details\": \"Ports in use; .env not loaded; container restart loop; permissions.\" },\n      { \"chapter\": \"FAQ & Links\", \"details\": \"Backups; credential storage; docs; next video CTA.\" }\n    ],\n    \"assets\": {\n      \"commands\": [\n        \"mkdir n8n && cd n8n\",\n        \"docker compose up -d\",\n        \"docker compose logs -f n8n\"\n      ],\n      \"envSample\": \"N8N_PORT=5678\\\\nN8N_HOST=localhost\\\\nWEBHOOK_URL=http://localhost:5678/\",\n      \"commonErrors\": [\n        { \"error\": \"Port 5678 busy\", \"fix\": \"Change N8N_PORT in .env and compose; restart containers.\" },\n        { \"error\": \"EACCES on volume\", \"fix\": \"Ensure proper permissions or run with correct user mapping.\" }\n      ]\n    },\n    \"notes\": \"Winner video is non-English; ship concise English guide with copy-paste assets and better chapters.\"\n  },\n  {\n    \"keyword\": \"n8n docker\",\n    \"priorityScore\": 82,\n    \"recommendedTitle\": \"Run n8n with Docker Compose (Production-Ready Basics)\",\n    \"thumbnailIdea\": \"Compose Fast\",\n    \"format\": \"Deep Dive + Troubleshooting (12–20m)\",\n    \"angle\": \"Compose file + volumes + env + healthchecks\",\n    \"outline\": [\n      { \"chapter\": \"Intro (Hook)\", \"details\": \"Stable local n8n in minutes; production-minded defaults.\" },\n      { \"chapter\": \"Prereqs\", \"details\": \"Docker, Compose, folder layout; links placeholders.\" },\n      { \"chapter\": \"Step 1\", \"details\": \"Write docker-compose.yml with n8n + Postgres; explain services.\" },\n      { \"chapter\": \"Step 2\", \"details\": \"Bind volumes; persistence strategy; basic backups.\" },\n      { \"chapter\": \"Step 3\", \"details\": \"ENV vars (N8N_HOST, WEBHOOK_URL, EXECUTIONS_MODE); when to change.\" },\n      { \"chapter\": \"Healthchecks\", \"details\": \"Add healthcheck to n8n + db; restart policies.\" },\n      { \"chapter\": \"Troubleshooting\", \"details\": \"DB connection errors; migrations; container restarts; network issues.\" },\n      { \"chapter\": \"FAQ & Links\", \"details\": \"Where to store secrets; scaling; docs; next steps (reverse proxy).\" }\n    ],\n    \"assets\": {\n      \"commands\": [\n        \"docker compose up -d\",\n        \"docker compose ps\",\n        \"docker compose logs -f n8n\"\n      ],\n      \"envSample\": \"DB_TYPE=postgresdb\\\\nDB_POSTGRESDB_HOST=db\\\\nDB_POSTGRESDB_DATABASE=n8n\\\\nDB_POSTGRESDB_USER=n8n\\\\nDB_POSTGRESDB_PASSWORD=<PASSWORD>\",\n      \"commonErrors\": [\n        { \"error\": \"DB init fails\", \"fix\": \"Check DB_* envs; ensure db service is up; add depends_on.\" },\n        { \"error\": \"Webhook mismatch\", \"fix\": \"Set correct N8N_HOST/WEBHOOK_URL; restart stack.\" }\n      ]\n    },\n    \"notes\": \"Position as ‘production-ready basics’; differentiate with healthchecks and persistence best practices.\"\n  }\n]\n",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1472,
+        -432
+      ],
+      "id": "75764a58-d4f0-4167-bfad-3d8c7492f4cd",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1712,
+        -224
+      ],
+      "id": "ad052b23-b163-47e6-9637-ad73fd4e42d4",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "yqu837tmpZ1LSJI2",
+          "name": "OpenAI Ron"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1616,
+        48
+      ],
+      "id": "105c3179-431f-4c1e-9728-e69aa12ba446",
+      "name": "Create or update a record"
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "limit": 8,
+        "filters": {
+          "publishedAfter": "={{ $('On form submission').item.json.Since }}",
+          "q": "={{ $json.keyword }}"
+        },
+        "options": {
+          "order": "date"
+        }
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        640,
+        544
+      ],
+      "id": "b0f8404c-a79d-4cde-8cd8-41dee44693c8",
+      "name": "Get many videos1",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "zeuJ1nSpjwXgxyvZ",
+          "name": "YouTube account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "id.videoId",
+        "joinMode": "keepEverything",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        960,
+        448
+      ],
+      "id": "9a0eb5c4-6c3f-4032-964a-77b3de6fcf7a",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "advanced": true,
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "id",
+              "field2": "channelId"
+            }
+          ]
+        },
+        "joinMode": "enrichInput2",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1872,
+        432
+      ],
+      "id": "4691a551-2cea-4751-a11d-ca5c520bdf20",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node — Normalize to real videos ONLY (drop channels/playlists and fix IDs)\n\nconst num = (v,d=0)=>{ const n=Number(v); return Number.isFinite(n)?n:d; };\nconst daysSince = (iso)=>{ const d=new Date(iso||0); return isNaN(d)?9e9:Math.max(0,(Date.now()-d)/86400000); };\nconst isoToSecs = (iso) => {\n  const m = (iso || '').match(/PT(?:(\\d+)H)?(?:(\\d+)M)?(?:(\\d+)S)?/);\n  if (!m) return 0; const h=+m[1]||0, mm=+m[2]||0, s=+m[3]||0; return h*3600+mm*60+s;\n};\nconst isVideoId = (s)=> typeof s === 'string' && /^[A-Za-z0-9_-]{11}$/.test(s);\n\n// Try to extract a videoId from any shape\nfunction getVideoId(j){\n  if (isVideoId(j?.video?.id)) return j.video.id;                // your normalized video\n  if (j?.id?.kind === 'youtube#video' && isVideoId(j.id.videoId)) return j.id.videoId; // search.list\n  if (isVideoId(j?.id) && j?.kind === 'youtube#video') return j.id;                     // videos.list (rare shape in n8n)\n  if (isVideoId(j?._gate_meta?.id)) return j._gate_meta.id;       // you carried it earlier\n  return null;\n}\n\nfunction pick(obj, ...paths){\n  for (const p of paths){\n    const v = p.split('.').reduce((a,k)=>a?.[k], obj);\n    if (v !== undefined && v !== null && v !== '') return v;\n  }\n  return undefined;\n}\n\nconst out = [];\nfor (const it of items){\n  const j = it.json || {};\n  const videoId = getVideoId(j);\n  if (!videoId) continue;                       // not a video → skip\n\n  // guard against channel/playlist kinds\n  if (j.kind && j.kind !== 'youtube#video') {\n    // sometimes search.list rows don’t carry kind at top-level; rely on videoId presence instead\n    // if kind explicitly says channel/playlist, skip\n    continue;\n  }\n\n  const title         = pick(j, 'video.title', 'snippet.title', 'title') || '';\n  const publishedAt   = pick(j, 'video.publishedAt', 'snippet.publishedAt', 'publishedAt') || null;\n  const durationSecs  = num(pick(j, 'video.durationSeconds'), 0) || isoToSecs(pick(j, 'contentDetails.duration'));\n  const views         = num(pick(j, 'video.views', 'statistics.viewCount', 'views'), 0);\n  const likeCount     = num(pick(j, 'video.likeCount', 'statistics.likeCount', 'likeCount'), 0);\n  const commentCount  = num(pick(j, 'video.commentCount', 'statistics.commentCount', 'commentCount'), 0);\n  const channelId     = pick(j, 'video.channelId', 'snippet.channelId', 'channelId') || pick(j, 'channel.Id', 'channel.id');\n  const channelName   = pick(j, 'channel.Name', 'snippet.channelTitle', 'channelTitle');\n  const subs          = num(pick(j, 'channel.subscriberCount', 'statistics.subscriberCount'), 0);\n\n  const keyword       = pick(j, 'keyword.keyword', 'keyword') || null;\n  const parentTopic   = pick(j, 'keyword.parentTopic', 'parentTopic') || null;\n  const quickScore    = num(pick(j, 'quickScore', 'keyword.quickScore'), 0);\n  const viewsPerDayIn = num(pick(j, 'video.viewsPerDay', 'viewsPerDay'), NaN);\n  const ageDays       = Math.max(1, Math.floor(daysSince(publishedAt)) || 1);\n  const viewsPerDay   = Number.isFinite(viewsPerDayIn) && viewsPerDayIn > 0 ? viewsPerDayIn : (views / ageDays);\n\n  out.push({\n    json: {\n      // canonical video shape downstream\n      id: videoId,\n      title,\n      channelId: channelId || undefined,\n      channel: { Id: channelId || undefined, Name: channelName || undefined, subscriberCount: subs },\n      publishedAt,\n      durationSeconds: durationSecs,\n      views,\n      likeCount,\n      commentCount,\n      viewsPerDay,\n      quickScore,\n      keyword,\n      parentTopic,\n\n      // keep any existing gate tag, but reset bucket; the global gate will decide\n      gate: {\n        ...(j.gate || {}),\n        keepGlobal: false,\n        bucket: 'pending'\n      },\n\n      // helpful provenance (optional)\n      _src: j._src || 'normalized',\n    }\n  });\n}\n\nreturn out;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        256,
+        256
+      ],
+      "id": "f0305c06-3274-4c47-9a7a-dab1cadbbea6",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2448,
+        528
+      ],
+      "id": "567b2fd8-30c5-4d34-8c03-2b203a60fe26",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {
+    "On form submission": [
+      {
+        "json": {
+          "Topic": "n8n",
+          "Since": "2025-09-15",
+          "submittedAt": "2025-09-23T01:39:50.870+02:00",
+          "formMode": "test"
+        }
+      }
+    ],
+    "Get a channel": [
+      {
+        "json": {
+          "kind": "youtube#channel",
+          "etag": "xtpt2nQcmDZJmrCLy9fSb2MneUY",
+          "id": "UCkjoHfkLEy7ZT4bA2myJ8xA",
+          "snippet": {
+            "title": "GreatStack",
+            "description": "Welcome to “GreatStack” (formerly Easy Tutorials).\n\nMy name is Avinash and I'm a Software Developer with several years of experience in web development. I like to teach aspiring web developers at \"GreatStack\" how to code and get their dream job.\n\nPlease subscribe to my channel for the upcoming tutorials.\n\nThank You :)\n\nChannel managed by: Avinash & Team GreatStack\n\nEnquiry: avinashdm@outlook.com",
+            "customUrl": "@greatstackdev",
+            "publishedAt": "2015-03-24T19:21:04Z",
+            "thumbnails": {
+              "default": {
+                "url": "https://yt3.ggpht.com/SxtxAT2eoNsERZyC-2Q9t3YhFC0IPhlaYOFA8rciY3BkhfoR9VPAx5n8A8L6QNG3vjFXSsB7rQ=s88-c-k-c0x00ffffff-no-rj",
+                "width": 88,
+                "height": 88
+              },
+              "medium": {
+                "url": "https://yt3.ggpht.com/SxtxAT2eoNsERZyC-2Q9t3YhFC0IPhlaYOFA8rciY3BkhfoR9VPAx5n8A8L6QNG3vjFXSsB7rQ=s240-c-k-c0x00ffffff-no-rj",
+                "width": 240,
+                "height": 240
+              },
+              "high": {
+                "url": "https://yt3.ggpht.com/SxtxAT2eoNsERZyC-2Q9t3YhFC0IPhlaYOFA8rciY3BkhfoR9VPAx5n8A8L6QNG3vjFXSsB7rQ=s800-c-k-c0x00ffffff-no-rj",
+                "width": 800,
+                "height": 800
+              }
+            },
+            "localized": {
+              "title": "GreatStack",
+              "description": "Welcome to “GreatStack” (formerly Easy Tutorials).\n\nMy name is Avinash and I'm a Software Developer with several years of experience in web development. I like to teach aspiring web developers at \"GreatStack\" how to code and get their dream job.\n\nPlease subscribe to my channel for the upcoming tutorials.\n\nThank You :)\n\nChannel managed by: Avinash & Team GreatStack\n\nEnquiry: avinashdm@outlook.com"
+            },
+            "country": "IN"
+          },
+          "statistics": {
+            "viewCount": "110282285",
+            "subscriberCount": "1190000",
+            "hiddenSubscriberCount": false,
+            "videoCount": "661"
+          },
+          "topicDetails": {
+            "topicIds": [
+              "/m/01k8wb",
+              "/m/07c1v",
+              "/m/019_rr"
+            ],
+            "topicCategories": [
+              "https://en.wikipedia.org/wiki/Knowledge",
+              "https://en.wikipedia.org/wiki/Technology",
+              "https://en.wikipedia.org/wiki/Lifestyle_(sociology)"
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "kind": "youtube#channel",
+          "etag": "1Mnp5l1sNj9FffVwk6nUAOSauMo",
+          "id": "UCfJT_eYDTmDE-ovKaxVE1ig",
+          "snippet": {
+            "title": "Kevin Stratvert",
+            "description": "Learn how to do anything, with high-quality how-to videos. I teach millions of students around the world every month across YouTube, Instagram, TikTok, and other social media platforms to help them master technology, achieve more at work, and succeed at school. I've been featured on CNBC, Fast Company, GeekWire, and Windows Central. I'm an ex-Microsoft Product Manager and now a full-time education content creator.\n\n📩 NEWSLETTER\nGet the top tech tips and tricks delivered to your inbox each week: https://kevinstratvert.com/newsletter/\n\n🙏 REQUEST VIDEOS\nhttps://forms.gle/BDrTNUoxheEoMLGt5\n\n💻 OFFICIAL WEBSITE\nhttp://www.kevinstratvert.com\n\n🪙 SUPPORT THE CHANNEL\nSupport the channel with your Amazon purchases: https://amzn.to/3kCP2yz (Disclosure: this link gives me a small commission to support videos on this channel. The price to you is the same.)\n",
+            "customUrl": "@kevinstratvert",
+            "publishedAt": "2007-01-08T00:08:18Z",
+            "thumbnails": {
+              "default": {
+                "url": "https://yt3.ggpht.com/ytc/AIdro_lr4ES_dIDpNgSSrKh-AibkIGYafS2IaX2D1aA_8j_-QeIG=s88-c-k-c0x00ffffff-no-rj",
+                "width": 88,
+                "height": 88
+              },
+              "medium": {
+                "url": "https://yt3.ggpht.com/ytc/AIdro_lr4ES_dIDpNgSSrKh-AibkIGYafS2IaX2D1aA_8j_-QeIG=s240-c-k-c0x00ffffff-no-rj",
+                "width": 240,
+                "height": 240
+              },
+              "high": {
+                "url": "https://yt3.ggpht.com/ytc/AIdro_lr4ES_dIDpNgSSrKh-AibkIGYafS2IaX2D1aA_8j_-QeIG=s800-c-k-c0x00ffffff-no-rj",
+                "width": 800,
+                "height": 800
+              }
+            },
+            "localized": {
+              "title": "Kevin Stratvert",
+              "description": "Learn how to do anything, with high-quality how-to videos. I teach millions of students around the world every month across YouTube, Instagram, TikTok, and other social media platforms to help them master technology, achieve more at work, and succeed at school. I've been featured on CNBC, Fast Company, GeekWire, and Windows Central. I'm an ex-Microsoft Product Manager and now a full-time education content creator.\n\n📩 NEWSLETTER\nGet the top tech tips and tricks delivered to your inbox each week: https://kevinstratvert.com/newsletter/\n\n🙏 REQUEST VIDEOS\nhttps://forms.gle/BDrTNUoxheEoMLGt5\n\n💻 OFFICIAL WEBSITE\nhttp://www.kevinstratvert.com\n\n🪙 SUPPORT THE CHANNEL\nSupport the channel with your Amazon purchases: https://amzn.to/3kCP2yz (Disclosure: this link gives me a small commission to support videos on this channel. The price to you is the same.)\n"
+            },
+            "country": "US"
+          },
+          "statistics": {
+            "viewCount": "583698818",
+            "subscriberCount": "3870000",
+            "hiddenSubscriberCount": false,
+            "videoCount": "1096"
+          },
+          "topicDetails": {
+            "topicIds": [
+              "/m/019_rr",
+              "/m/07c1v",
+              "/m/01k8wb"
+            ],
+            "topicCategories": [
+              "https://en.wikipedia.org/wiki/Lifestyle_(sociology)",
+              "https://en.wikipedia.org/wiki/Technology",
+              "https://en.wikipedia.org/wiki/Knowledge"
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "kind": "youtube#channel",
+          "etag": "h3RXJKfMWlaH5-88PLOu6rZJlRw",
+          "id": "UCyX9pFV7H3MP-ZcVikprSRQ",
+          "snippet": {
+            "title": "SenDoesReviews",
+            "description": "I upload review videos, showcasing tools and products I use everyday :)",
+            "customUrl": "@sendoesreviews",
+            "publishedAt": "2013-06-05T05:43:55Z",
+            "thumbnails": {
+              "default": {
+                "url": "https://yt3.ggpht.com/Kh8MpvPpCOjnwqgzQUAiCjxqS9zSr1tO-fp19crHOSsP19DvyLPpEzpE6tasHsLZoMpN-k8TTDw=s88-c-k-c0x00ffffff-no-rj",
+                "width": 88,
+                "height": 88
+              },
+              "medium": {
+                "url": "https://yt3.ggpht.com/Kh8MpvPpCOjnwqgzQUAiCjxqS9zSr1tO-fp19crHOSsP19DvyLPpEzpE6tasHsLZoMpN-k8TTDw=s240-c-k-c0x00ffffff-no-rj",
+                "width": 240,
+                "height": 240
+              },
+              "high": {
+                "url": "https://yt3.ggpht.com/Kh8MpvPpCOjnwqgzQUAiCjxqS9zSr1tO-fp19crHOSsP19DvyLPpEzpE6tasHsLZoMpN-k8TTDw=s800-c-k-c0x00ffffff-no-rj",
+                "width": 800,
+                "height": 800
+              }
+            },
+            "localized": {
+              "title": "SenDoesReviews",
+              "description": "I upload review videos, showcasing tools and products I use everyday :)"
+            }
+          },
+          "statistics": {
+            "viewCount": "781946",
+            "subscriberCount": "10900",
+            "hiddenSubscriberCount": false,
+            "videoCount": "95"
+          },
+          "topicDetails": {
+            "topicIds": [
+              "/m/019_rr",
+              "/m/07c1v",
+              "/g/120y8l81",
+              "/m/01k8wb"
+            ],
+            "topicCategories": [
+              "https://en.wikipedia.org/wiki/Lifestyle_(sociology)",
+              "https://en.wikipedia.org/wiki/Technology",
+              "https://en.wikipedia.org/wiki/Business",
+              "https://en.wikipedia.org/wiki/Knowledge"
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "kind": "youtube#channel",
+          "etag": "YN_d2BvpWuR5Q3iWXYGqggAujRs",
+          "id": "UCpWS2Gmt0N31th-vdIizPJQ",
+          "snippet": {
+            "title": "Astro K Joseph",
+            "description": "Hey, I’m Astro, an entrepreneur making a living out of the Internet.\n\nI have been into digital entrepreneurship since 2014 (Yes, you heard that right) and started making a consistent income in 2016. I run a bunch of blogs that make 6 figure income every month!\n\nHere, in this channel, I document my journey and learnings to help you push the limits and make a living from the Internet.\n\nI cover videos on entrepreneurship, business, AI, productivity, freelancing, digital nomadism and more.\n",
+            "customUrl": "@astrokj",
+            "publishedAt": "2021-11-04T18:37:59.572329Z",
+            "thumbnails": {
+              "default": {
+                "url": "https://yt3.ggpht.com/ZdviMvLmPlquS-qpmo8WQGGB586jtqvF2PhlkhEa4smg3TsPlYmqh54YrBXdFw5CS1w4qu5CLA=s88-c-k-c0x00ffffff-no-rj",
+                "width": 88,
+                "height": 88
+              },
+              "medium": {
+                "url": "https://yt3.ggpht.com/ZdviMvLmPlquS-qpmo8WQGGB586jtqvF2PhlkhEa4smg3TsPlYmqh54YrBXdFw5CS1w4qu5CLA=s240-c-k-c0x00ffffff-no-rj",
+                "width": 240,
+                "height": 240
+              },
+              "high": {
+                "url": "https://yt3.ggpht.com/ZdviMvLmPlquS-qpmo8WQGGB586jtqvF2PhlkhEa4smg3TsPlYmqh54YrBXdFw5CS1w4qu5CLA=s800-c-k-c0x00ffffff-no-rj",
+                "width": 800,
+                "height": 800
+              }
+            },
+            "localized": {
+              "title": "Astro K Joseph",
+              "description": "Hey, I’m Astro, an entrepreneur making a living out of the Internet.\n\nI have been into digital entrepreneurship since 2014 (Yes, you heard that right) and started making a consistent income in 2016. I run a bunch of blogs that make 6 figure income every month!\n\nHere, in this channel, I document my journey and learnings to help you push the limits and make a living from the Internet.\n\nI cover videos on entrepreneurship, business, AI, productivity, freelancing, digital nomadism and more.\n"
+            },
+            "country": "IN"
+          },
+          "statistics": {
+            "viewCount": "4309919",
+            "subscriberCount": "58900",
+            "hiddenSubscriberCount": false,
+            "videoCount": "261"
+          },
+          "topicDetails": {
+            "topicIds": [
+              "/m/01k8wb",
+              "/m/07c1v",
+              "/m/019_rr"
+            ],
+            "topicCategories": [
+              "https://en.wikipedia.org/wiki/Knowledge",
+              "https://en.wikipedia.org/wiki/Technology",
+              "https://en.wikipedia.org/wiki/Lifestyle_(sociology)"
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "kind": "youtube#channel",
+          "etag": "pJ5kiJzpe0N58SGPLvEBFp0iaQo",
+          "id": "UCRP6kYnjzVw7JC37_q3LO5g",
+          "snippet": {
+            "title": "Stefan | AI Guides",
+            "description": "Welcome to Stefan AI Guides! Your go-to resource for mastering n8n workflow automation. I break down complex automation tasks into easy-to-follow tutorials, covering everything from beginner-friendly workflows to advanced integrations. Whether you're looking to automate your business processes, connect APIs, or build powerful no-code solutions, you'll find practical, step-by-step guides that actually work.\nNew tutorials every week featuring real-world automation scenarios, troubleshooting tips, and the latest n8n features. Subscribe to transform how you work with automation!\n🔧 Beginner to Advanced Tutorials\n⚡ Real-World Automation Solutions\n🎯 Step-by-Step Walkthroughs\n💡 Tips & Troubleshooting\n",
+            "customUrl": "@stefanaiguides",
+            "publishedAt": "2025-08-22T03:04:24.255628Z",
+            "thumbnails": {
+              "default": {
+                "url": "https://yt3.ggpht.com/o7kfEHN78n2Kt70UDbA97Q8AzpelUYIUYuc8jFq65jvmyxP2m_0P9KbShRtfdjalrEbPe3dyMA=s88-c-k-c0x00ffffff-no-rj",
+                "width": 88,
+                "height": 88
+              },
+              "medium": {
+                "url": "https://yt3.ggpht.com/o7kfEHN78n2Kt70UDbA97Q8AzpelUYIUYuc8jFq65jvmyxP2m_0P9KbShRtfdjalrEbPe3dyMA=s240-c-k-c0x00ffffff-no-rj",
+                "width": 240,
+                "height": 240
+              },
+              "high": {
+                "url": "https://yt3.ggpht.com/o7kfEHN78n2Kt70UDbA97Q8AzpelUYIUYuc8jFq65jvmyxP2m_0P9KbShRtfdjalrEbPe3dyMA=s800-c-k-c0x00ffffff-no-rj",
+                "width": 800,
+                "height": 800
+              }
+            },
+            "localized": {
+              "title": "Stefan | AI Guides",
+              "description": "Welcome to Stefan AI Guides! Your go-to resource for mastering n8n workflow automation. I break down complex automation tasks into easy-to-follow tutorials, covering everything from beginner-friendly workflows to advanced integrations. Whether you're looking to automate your business processes, connect APIs, or build powerful no-code solutions, you'll find practical, step-by-step guides that actually work.\nNew tutorials every week featuring real-world automation scenarios, troubleshooting tips, and the latest n8n features. Subscribe to transform how you work with automation!\n🔧 Beginner to Advanced Tutorials\n⚡ Real-World Automation Solutions\n🎯 Step-by-Step Walkthroughs\n💡 Tips & Troubleshooting\n"
+            }
+          },
+          "statistics": {
+            "viewCount": "4180",
+            "subscriberCount": "54",
+            "hiddenSubscriberCount": false,
+            "videoCount": "10"
+          },
+          "topicDetails": {
+            "topicIds": [
+              "/m/019_rr",
+              "/m/07c1v",
+              "/m/01k8wb"
+            ],
+            "topicCategories": [
+              "https://en.wikipedia.org/wiki/Lifestyle_(sociology)",
+              "https://en.wikipedia.org/wiki/Technology",
+              "https://en.wikipedia.org/wiki/Knowledge"
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "kind": "youtube#channel",
+          "etag": "-MywK_EmU6O_t84XDuonzl-ZbvY",
+          "id": "UCndJsCumRxIZJ2W_i8y9dxw",
+          "snippet": {
+            "title": "Ahmad | AI Automation",
+            "description": "ABOUT 🙋‍♂️\nHey everyone, my name is Ahmad, and I’ve always been passionate about building my own tools, but programming used to feel intimidating. I’m constantly seeking ways to automate different aspects of my life to save time and eliminate inefficiencies. Join me on this journey as I learn, create, and share automation solutions that make life simpler and more productive.\n\n📝 Get all my Make.com, n8n & ComfyUI workflows in one place!👇\nhttps://aiautokit.io/yt1\n\n📈 Subscribe to my AI/Automation Newsletter!👇\nhttps://aiautokit.io/news\n\n✉️ Business inquiries!👇\nahmad@aiautokit.io\n\nPROGRAMS I USE ⤵️\n🤖 n8n.io 👉 https://aiautokit.io/n8n\n🛠️ Make.com 👉 https://aiautokit.io/make\n🤖 Apify.com 👉 https://aiautokit.io/apify\n🖼️ Placid.app 👉 https://aiautokit.io/placid\n🔍 DataForSeo.com 👉 https://aiautokit.io/dataforseo\n\nPlease like, subscribe, and leave me a comment if you have a specific question! Thanks.\n\n#automation #aiautomation #make #n8n #comfyui \n",
+            "customUrl": "@aiautomationkit",
+            "publishedAt": "2012-06-05T06:14:28Z",
+            "thumbnails": {
+              "default": {
+                "url": "https://yt3.ggpht.com/pCxfsIdjB47tIYGtMCwGj5VQIv0wjXy5hUpNfuDBShaWon6Wg0s5OVTkom5OPX4fUIFFQM_Nfw=s88-c-k-c0x00ffffff-no-rj",
+                "width": 88,
+                "height": 88
+              },
+              "medium": {
+                "url": "https://yt3.ggpht.com/pCxfsIdjB47tIYGtMCwGj5VQIv0wjXy5hUpNfuDBShaWon6Wg0s5OVTkom5OPX4fUIFFQM_Nfw=s240-c-k-c0x00ffffff-no-rj",
+                "width": 240,
+                "height": 240
+              },
+              "high": {
+                "url": "https://yt3.ggpht.com/pCxfsIdjB47tIYGtMCwGj5VQIv0wjXy5hUpNfuDBShaWon6Wg0s5OVTkom5OPX4fUIFFQM_Nfw=s800-c-k-c0x00ffffff-no-rj",
+                "width": 800,
+                "height": 800
+              }
+            },
+            "localized": {
+              "title": "Ahmad | AI Automation",
+              "description": "ABOUT 🙋‍♂️\nHey everyone, my name is Ahmad, and I’ve always been passionate about building my own tools, but programming used to feel intimidating. I’m constantly seeking ways to automate different aspects of my life to save time and eliminate inefficiencies. Join me on this journey as I learn, create, and share automation solutions that make life simpler and more productive.\n\n📝 Get all my Make.com, n8n & ComfyUI workflows in one place!👇\nhttps://aiautokit.io/yt1\n\n📈 Subscribe to my AI/Automation Newsletter!👇\nhttps://aiautokit.io/news\n\n✉️ Business inquiries!👇\nahmad@aiautokit.io\n\nPROGRAMS I USE ⤵️\n🤖 n8n.io 👉 https://aiautokit.io/n8n\n🛠️ Make.com 👉 https://aiautokit.io/make\n🤖 Apify.com 👉 https://aiautokit.io/apify\n🖼️ Placid.app 👉 https://aiautokit.io/placid\n🔍 DataForSeo.com 👉 https://aiautokit.io/dataforseo\n\nPlease like, subscribe, and leave me a comment if you have a specific question! Thanks.\n\n#automation #aiautomation #make #n8n #comfyui \n"
+            },
+            "country": "US"
+          },
+          "statistics": {
+            "viewCount": "285456",
+            "subscriberCount": "13100",
+            "hiddenSubscriberCount": false,
+            "videoCount": "153"
+          },
+          "topicDetails": {
+            "topicIds": [
+              "/m/019_rr",
+              "/m/07c1v",
+              "/m/01k8wb"
+            ],
+            "topicCategories": [
+              "https://en.wikipedia.org/wiki/Lifestyle_(sociology)",
+              "https://en.wikipedia.org/wiki/Technology",
+              "https://en.wikipedia.org/wiki/Knowledge"
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "kind": "youtube#channel",
+          "etag": "vWz1QyE-VSjapKmGNx9oFL4LtRw",
+          "id": "UCZw_mKFPJMpvIWKWWwWpuVA",
+          "snippet": {
+            "title": "Create a Pro Website",
+            "description": "🎯 Ready to build a website for your business, blog, or portfolio? You're in the right place.\n\nOn this channel, we create easy-to-follow tutorials that teach you how to build stunning websites—without writing a single line of code. Whether you're launching a personal brand, starting a business, or creating websites for clients to earn income, we’ve got you covered.\n\n💡 What you’ll learn here:\n✅ How to build websites using beginner-friendly tools like WordPress\n✅ Step-by-step guides for business, blog, and portfolio sites\n✅ Tips on making money with your website\n✅ Real examples of how entrepreneurs succeed online\n\nI also break down exactly how people are turning simple websites into real income—and how you can too.\n\nSubscribe for more tutorials, tips, and inspiration to help you launch your website and grow online.\n\nSubscriber Milestones:\n100 Subs - Jun 13, 2018\n1000 Subs - Nov 2, 2018\n10,000 Subs - July 23rd, 2019\n100,000 Subs - January 2, 2020\n1,000,000 Subs",
+            "customUrl": "@createaprowebsite",
+            "publishedAt": "2018-05-18T01:14:03Z",
+            "thumbnails": {
+              "default": {
+                "url": "https://yt3.ggpht.com/d7Sfka48x0K-Q4VQ0PGu0cZRdjN54YSLUgR9Bmg8IM3V8vPw6XRwp5H2KyhgqLCwac5omhXrlw=s88-c-k-c0x00ffffff-no-rj",
+                "width": 88,
+                "height": 88
+              },
+              "medium": {
+                "url": "https://yt3.ggpht.com/d7Sfka48x0K-Q4VQ0PGu0cZRdjN54YSLUgR9Bmg8IM3V8vPw6XRwp5H2KyhgqLCwac5omhXrlw=s240-c-k-c0x00ffffff-no-rj",
+                "width": 240,
+                "height": 240
+              },
+              "high": {
+                "url": "https://yt3.ggpht.com/d7Sfka48x0K-Q4VQ0PGu0cZRdjN54YSLUgR9Bmg8IM3V8vPw6XRwp5H2KyhgqLCwac5omhXrlw=s800-c-k-c0x00ffffff-no-rj",
+                "width": 800,
+                "height": 800
+              }
+            },
+            "localized": {
+              "title": "Create a Pro Website",
+              "description": "🎯 Ready to build a website for your business, blog, or portfolio? You're in the right place.\n\nOn this channel, we create easy-to-follow tutorials that teach you how to build stunning websites—without writing a single line of code. Whether you're launching a personal brand, starting a business, or creating websites for clients to earn income, we’ve got you covered.\n\n💡 What you’ll learn here:\n✅ How to build websites using beginner-friendly tools like WordPress\n✅ Step-by-step guides for business, blog, and portfolio sites\n✅ Tips on making money with your website\n✅ Real examples of how entrepreneurs succeed online\n\nI also break down exactly how people are turning simple websites into real income—and how you can too.\n\nSubscribe for more tutorials, tips, and inspiration to help you launch your website and grow online.\n\nSubscriber Milestones:\n100 Subs - Jun 13, 2018\n1000 Subs - Nov 2, 2018\n10,000 Subs - July 23rd, 2019\n100,000 Subs - January 2, 2020\n1,000,000 Subs"
+            },
+            "country": "US"
+          },
+          "statistics": {
+            "viewCount": "25878921",
+            "subscriberCount": "447000",
+            "hiddenSubscriberCount": false,
+            "videoCount": "223"
+          },
+          "topicDetails": {
+            "topicIds": [
+              "/m/01k8wb",
+              "/m/019_rr",
+              "/m/07c1v",
+              "/g/120y8l81"
+            ],
+            "topicCategories": [
+              "https://en.wikipedia.org/wiki/Knowledge",
+              "https://en.wikipedia.org/wiki/Lifestyle_(sociology)",
+              "https://en.wikipedia.org/wiki/Technology",
+              "https://en.wikipedia.org/wiki/Business"
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "kind": "youtube#channel",
+          "etag": "Xo27Om-WCiaOiNnUtGmEshhF9qA",
+          "id": "UCgHDngFV50KmbqF_6-K8XhA",
+          "snippet": {
+            "title": "Code With Aarohi",
+            "description": "This is a place where you can find detailed tutorials on Data Science, Data Analysis, Artificial Intelligence, Machine Learning, Deep Learning and computer vision with proper implementation of every topic.\n\nEmail:  aarohisingla1987@gmail.com\n\nSubscribe to my channel to get latest videos on emerging technologies.",
+            "customUrl": "@codewithaarohi",
+            "publishedAt": "2016-04-12T15:27:43Z",
+            "thumbnails": {
+              "default": {
+                "url": "https://yt3.ggpht.com/H9sOgiQBI3RNRGz6MVzqXV-A9bEKOXKBBCL2BY_lImjeV-1z3OTOPmm-EiZLn1A37Lz5zXaBcw=s88-c-k-c0x00ffffff-no-rj",
+                "width": 88,
+                "height": 88
+              },
+              "medium": {
+                "url": "https://yt3.ggpht.com/H9sOgiQBI3RNRGz6MVzqXV-A9bEKOXKBBCL2BY_lImjeV-1z3OTOPmm-EiZLn1A37Lz5zXaBcw=s240-c-k-c0x00ffffff-no-rj",
+                "width": 240,
+                "height": 240
+              },
+              "high": {
+                "url": "https://yt3.ggpht.com/H9sOgiQBI3RNRGz6MVzqXV-A9bEKOXKBBCL2BY_lImjeV-1z3OTOPmm-EiZLn1A37Lz5zXaBcw=s800-c-k-c0x00ffffff-no-rj",
+                "width": 800,
+                "height": 800
+              }
+            },
+            "localized": {
+              "title": "Code With Aarohi",
+              "description": "This is a place where you can find detailed tutorials on Data Science, Data Analysis, Artificial Intelligence, Machine Learning, Deep Learning and computer vision with proper implementation of every topic.\n\nEmail:  aarohisingla1987@gmail.com\n\nSubscribe to my channel to get latest videos on emerging technologies."
+            },
+            "country": "IN"
+          },
+          "statistics": {
+            "viewCount": "4991987",
+            "subscriberCount": "51300",
+            "hiddenSubscriberCount": false,
+            "videoCount": "341"
+          },
+          "topicDetails": {
+            "topicIds": [
+              "/m/019_rr",
+              "/m/01k8wb",
+              "/m/07c1v"
+            ],
+            "topicCategories": [
+              "https://en.wikipedia.org/wiki/Lifestyle_(sociology)",
+              "https://en.wikipedia.org/wiki/Knowledge",
+              "https://en.wikipedia.org/wiki/Technology"
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "kind": "youtube#channel",
+          "etag": "PWvbxq_o9CO1gAza1jEA_0KQTi4",
+          "id": "UC4P-y2WYvVAUUmcAZNI03Bw",
+          "snippet": {
+            "title": "SW Automation",
+            "description": "Hi, we’re Sil & Stef, and we’re passionate about helping people learn how to leverage AI & automation to save time, work smarter, and scale without limits.\n\nAs the founders of SW Automation, we’ve built a thriving community and educational platform that makes AI and automation accessible, from your first simple automation to advanced AI agents. We believe that powerful AI tools should be within reach for everyone, no matter your technical background.\n\nThrough SW Automation+, our membership program, we guide beginners, entrepreneurs, and freelancers in building automation systems that:\n\n→ Cut costs\n→ Eliminate repetitive work\n→ Integrate seamlessly with multiple software products\n→ Increase productivity and efficiency\n→ Unlock new revenue streams without increasing headcount\n\nOur greatest satisfaction comes from seeing members free up hours of their weeks, improve their lives, and create new opportunities using the systems we help them create.\n\nGet in touch: info@swautomation.io\n",
+            "customUrl": "@swautomation",
+            "publishedAt": "2025-02-14T19:55:38.996765Z",
+            "thumbnails": {
+              "default": {
+                "url": "https://yt3.ggpht.com/Qf2TszOLnEEoZQyIP-pKygzvCnFhEOF2Eral1GDrk4WIKKDfq5Nu8Y60UdIpiy4nDUbsR8DjRQ=s88-c-k-c0x00ffffff-no-rj",
+                "width": 88,
+                "height": 88
+              },
+              "medium": {
+                "url": "https://yt3.ggpht.com/Qf2TszOLnEEoZQyIP-pKygzvCnFhEOF2Eral1GDrk4WIKKDfq5Nu8Y60UdIpiy4nDUbsR8DjRQ=s240-c-k-c0x00ffffff-no-rj",
+                "width": 240,
+                "height": 240
+              },
+              "high": {
+                "url": "https://yt3.ggpht.com/Qf2TszOLnEEoZQyIP-pKygzvCnFhEOF2Eral1GDrk4WIKKDfq5Nu8Y60UdIpiy4nDUbsR8DjRQ=s800-c-k-c0x00ffffff-no-rj",
+                "width": 800,
+                "height": 800
+              }
+            },
+            "localized": {
+              "title": "SW Automation",
+              "description": "Hi, we’re Sil & Stef, and we’re passionate about helping people learn how to leverage AI & automation to save time, work smarter, and scale without limits.\n\nAs the founders of SW Automation, we’ve built a thriving community and educational platform that makes AI and automation accessible, from your first simple automation to advanced AI agents. We believe that powerful AI tools should be within reach for everyone, no matter your technical background.\n\nThrough SW Automation+, our membership program, we guide beginners, entrepreneurs, and freelancers in building automation systems that:\n\n→ Cut costs\n→ Eliminate repetitive work\n→ Integrate seamlessly with multiple software products\n→ Increase productivity and efficiency\n→ Unlock new revenue streams without increasing headcount\n\nOur greatest satisfaction comes from seeing members free up hours of their weeks, improve their lives, and create new opportunities using the systems we help them create.\n\nGet in touch: info@swautomation.io\n"
+            },
+            "country": "NL"
+          },
+          "statistics": {
+            "viewCount": "177502",
+            "subscriberCount": "3380",
+            "hiddenSubscriberCount": false,
+            "videoCount": "72"
+          },
+          "topicDetails": {
+            "topicIds": [
+              "/m/019_rr",
+              "/m/07c1v",
+              "/m/01k8wb"
+            ],
+            "topicCategories": [
+              "https://en.wikipedia.org/wiki/Lifestyle_(sociology)",
+              "https://en.wikipedia.org/wiki/Technology",
+              "https://en.wikipedia.org/wiki/Knowledge"
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "kind": "youtube#channel",
+          "etag": "MViWRZC5masORnM4MMDyxAVvPLY",
+          "id": "UChv0QUGAwUnt3Ayu_BdP6kw",
+          "snippet": {
+            "title": "God of Prompt",
+            "description": "I share the best AI prompts, workflows, & tools every wednesday. Follow along.\n\nGet your AI superpowers before your competitors do → http://godofprompt.ai\n\n#ai #godofprompt #ChatGPT #openai #midjourney #dalle #aipromptengineering #aiprompts\n",
+            "customUrl": "@god-of-prompt",
+            "publishedAt": "2025-02-24T01:53:02.948309Z",
+            "thumbnails": {
+              "default": {
+                "url": "https://yt3.ggpht.com/8WY-SWI_hcvJBlhGIImZVCB0UzRSTxcxJgCHKB6VtRW2-cD1ZPLkWoCjUzhH4PotIJLhfEMiuw=s88-c-k-c0x00ffffff-no-rj",
+                "width": 88,
+                "height": 88
+              },
+              "medium": {
+                "url": "https://yt3.ggpht.com/8WY-SWI_hcvJBlhGIImZVCB0UzRSTxcxJgCHKB6VtRW2-cD1ZPLkWoCjUzhH4PotIJLhfEMiuw=s240-c-k-c0x00ffffff-no-rj",
+                "width": 240,
+                "height": 240
+              },
+              "high": {
+                "url": "https://yt3.ggpht.com/8WY-SWI_hcvJBlhGIImZVCB0UzRSTxcxJgCHKB6VtRW2-cD1ZPLkWoCjUzhH4PotIJLhfEMiuw=s800-c-k-c0x00ffffff-no-rj",
+                "width": 800,
+                "height": 800
+              }
+            },
+            "localized": {
+              "title": "God of Prompt",
+              "description": "I share the best AI prompts, workflows, & tools every wednesday. Follow along.\n\nGet your AI superpowers before your competitors do → http://godofprompt.ai\n\n#ai #godofprompt #ChatGPT #openai #midjourney #dalle #aipromptengineering #aiprompts\n"
+            }
+          },
+          "statistics": {
+            "viewCount": "30723",
+            "subscriberCount": "541",
+            "hiddenSubscriberCount": false,
+            "videoCount": "41"
+          },
+          "topicDetails": {
+            "topicIds": [
+              "/m/019_rr",
+              "/m/07c1v",
+              "/m/0bzvm2",
+              "/m/02jjt",
+              "/m/01k8wb"
+            ],
+            "topicCategories": [
+              "https://en.wikipedia.org/wiki/Lifestyle_(sociology)",
+              "https://en.wikipedia.org/wiki/Technology",
+              "https://en.wikipedia.org/wiki/Video_game_culture",
+              "https://en.wikipedia.org/wiki/Entertainment",
+              "https://en.wikipedia.org/wiki/Knowledge"
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "kind": "youtube#channel",
+          "etag": "0y_vqgD4xYHbc-ZgrmUBQggWOpM",
+          "id": "UC2FVKBtJvW0gAX8ik0S6ccw",
+          "snippet": {
+            "title": "The A.I. Coders",
+            "description": "\nThe A.I. Coders: Code your future.\n\nTech wizards and coding alchemists, welcome! Forget channels, The A.I. Coders is a portal where lines of code forge a digital utopia. We crack open the latest tech like treasure chests, revealing the secrets of AI, machine learning, blockchain, and beyond.\n\nNewbie or Jedi Master? We've got your back (and keyboard). Dive into beginner-friendly tutorials that turn Python, Java, and JavaScript into child's play.\n\nCoding's not just about semicolons, it's about magic. We smash tech jargon walls, transforming complex concepts into bite-sized knowledge nuggets. Imagine AI as your bestie – that's The A.I. Coders' power.\n\nBut you're not alone in this code cave. Join our vibrant community of tech enthusiasts where questions get answered, ideas spark, and projects come alive. We're all about collaboration, support, and pushing the boundaries of what's possible.\n\nShare, Subscribe and Like to get Empowered with A.I.\n",
+            "customUrl": "@theaicoders",
+            "publishedAt": "2013-04-04T18:56:37Z",
+            "thumbnails": {
+              "default": {
+                "url": "https://yt3.ggpht.com/64wNrRQcNlczFa1__fNIeLd3pwbr_bWTzoA8NomdxYD3-WzhFttUIfPL46mF_qL36oPftVVckQ=s88-c-k-c0x00ffffff-no-rj",
+                "width": 88,
+                "height": 88
+              },
+              "medium": {
+                "url": "https://yt3.ggpht.com/64wNrRQcNlczFa1__fNIeLd3pwbr_bWTzoA8NomdxYD3-WzhFttUIfPL46mF_qL36oPftVVckQ=s240-c-k-c0x00ffffff-no-rj",
+                "width": 240,
+                "height": 240
+              },
+              "high": {
+                "url": "https://yt3.ggpht.com/64wNrRQcNlczFa1__fNIeLd3pwbr_bWTzoA8NomdxYD3-WzhFttUIfPL46mF_qL36oPftVVckQ=s800-c-k-c0x00ffffff-no-rj",
+                "width": 800,
+                "height": 800
+              }
+            },
+            "defaultLanguage": "en",
+            "localized": {
+              "title": "The A.I. Coders",
+              "description": "\nThe A.I. Coders: Code your future.\n\nTech wizards and coding alchemists, welcome! Forget channels, The A.I. Coders is a portal where lines of code forge a digital utopia. We crack open the latest tech like treasure chests, revealing the secrets of AI, machine learning, blockchain, and beyond.\n\nNewbie or Jedi Master? We've got your back (and keyboard). Dive into beginner-friendly tutorials that turn Python, Java, and JavaScript into child's play.\n\nCoding's not just about semicolons, it's about magic. We smash tech jargon walls, transforming complex concepts into bite-sized knowledge nuggets. Imagine AI as your bestie – that's The A.I. Coders' power.\n\nBut you're not alone in this code cave. Join our vibrant community of tech enthusiasts where questions get answered, ideas spark, and projects come alive. We're all about collaboration, support, and pushing the boundaries of what's possible.\n\nShare, Subscribe and Like to get Empowered with A.I.\n"
+            },
+            "country": "PK"
+          },
+          "statistics": {
+            "viewCount": "4129",
+            "subscriberCount": "163",
+            "hiddenSubscriberCount": false,
+            "videoCount": "41"
+          },
+          "topicDetails": {
+            "topicIds": [
+              "/m/07c1v",
+              "/m/01k8wb",
+              "/m/019_rr"
+            ],
+            "topicCategories": [
+              "https://en.wikipedia.org/wiki/Technology",
+              "https://en.wikipedia.org/wiki/Knowledge",
+              "https://en.wikipedia.org/wiki/Lifestyle_(sociology)"
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "kind": "youtube#channel",
+          "etag": "c9WMeqpwIU3oW_R_4Aj32MKMRps",
+          "id": "UCQlzrJpTzujgpzHAwFTxAjQ",
+          "snippet": {
+            "title": "Hugo Wong",
+            "description": "6 Figure/mo agency Owner. Now teaching people how to make $5-10k a month selling AI to businesses\n\nSUBSCRIBE TO MY CHANNEL!\n",
+            "customUrl": "@thehugowong",
+            "publishedAt": "2020-01-18T04:40:42.891163Z",
+            "thumbnails": {
+              "default": {
+                "url": "https://yt3.ggpht.com/an4Fj5ZJgYllnJxAua_Y_Fr3AhttqPDiQCpKZEEO4PNNfmHaXuQgAQa8-Ef2Ad8cmVstXZQCAw=s88-c-k-c0x00ffffff-no-rj",
+                "width": 88,
+                "height": 88
+              },
+              "medium": {
+                "url": "https://yt3.ggpht.com/an4Fj5ZJgYllnJxAua_Y_Fr3AhttqPDiQCpKZEEO4PNNfmHaXuQgAQa8-Ef2Ad8cmVstXZQCAw=s240-c-k-c0x00ffffff-no-rj",
+                "width": 240,
+                "height": 240
+              },
+              "high": {
+                "url": "https://yt3.ggpht.com/an4Fj5ZJgYllnJxAua_Y_Fr3AhttqPDiQCpKZEEO4PNNfmHaXuQgAQa8-Ef2Ad8cmVstXZQCAw=s800-c-k-c0x00ffffff-no-rj",
+                "width": 800,
+                "height": 800
+              }
+            },
+            "localized": {
+              "title": "Hugo Wong",
+              "description": "6 Figure/mo agency Owner. Now teaching people how to make $5-10k a month selling AI to businesses\n\nSUBSCRIBE TO MY CHANNEL!\n"
+            },
+            "country": "CA"
+          },
+          "statistics": {
+            "viewCount": "358132",
+            "subscriberCount": "6590",
+            "hiddenSubscriberCount": false,
+            "videoCount": "191"
+          },
+          "topicDetails": {
+            "topicIds": [
+              "/m/019_rr",
+              "/g/120y8l81",
+              "/m/01k8wb"
+            ],
+            "topicCategories": [
+              "https://en.wikipedia.org/wiki/Lifestyle_(sociology)",
+              "https://en.wikipedia.org/wiki/Business",
+              "https://en.wikipedia.org/wiki/Knowledge"
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "kind": "youtube#channel",
+          "etag": "GIG2GZhGV9bHNJiVXgovEi3-XjY",
+          "id": "UCvPgxqY90VdYRt17spBvzHA",
+          "snippet": {
+            "title": "Bernard",
+            "description": "Welcome to my channel! Your go-to source for mastering the world of Artificial Intelligence. We break down the latest in AI agents, automation, essential AI tools, and top AI news. Whether you're an aspiring AI enthusiast or a business owner looking to leverage AI for growth, subscribe now to stay ahead in the AI revolution!",
+            "customUrl": "@bernard_ai",
+            "publishedAt": "2013-07-15T19:50:19Z",
+            "thumbnails": {
+              "default": {
+                "url": "https://yt3.ggpht.com/gfxuOS5eaSkUvcpzPn9bVjJYvYyaH9y2HWYIlQHJzfO8Hk_0y-vIegDUlqH1PZQXkMkAGFDosg=s88-c-k-c0x00ffffff-no-rj",
+                "width": 88,
+                "height": 88
+              },
+              "medium": {
+                "url": "https://yt3.ggpht.com/gfxuOS5eaSkUvcpzPn9bVjJYvYyaH9y2HWYIlQHJzfO8Hk_0y-vIegDUlqH1PZQXkMkAGFDosg=s240-c-k-c0x00ffffff-no-rj",
+                "width": 240,
+                "height": 240
+              },
+              "high": {
+                "url": "https://yt3.ggpht.com/gfxuOS5eaSkUvcpzPn9bVjJYvYyaH9y2HWYIlQHJzfO8Hk_0y-vIegDUlqH1PZQXkMkAGFDosg=s800-c-k-c0x00ffffff-no-rj",
+                "width": 800,
+                "height": 800
+              }
+            },
+            "localized": {
+              "title": "Bernard",
+              "description": "Welcome to my channel! Your go-to source for mastering the world of Artificial Intelligence. We break down the latest in AI agents, automation, essential AI tools, and top AI news. Whether you're an aspiring AI enthusiast or a business owner looking to leverage AI for growth, subscribe now to stay ahead in the AI revolution!"
+            },
+            "country": "US"
+          },
+          "statistics": {
+            "viewCount": "20866",
+            "subscriberCount": "38",
+            "hiddenSubscriberCount": false,
+            "videoCount": "54"
+          },
+          "topicDetails": {
+            "topicIds": [
+              "/m/019_rr",
+              "/m/07c1v",
+              "/m/01k8wb"
+            ],
+            "topicCategories": [
+              "https://en.wikipedia.org/wiki/Lifestyle_(sociology)",
+              "https://en.wikipedia.org/wiki/Technology",
+              "https://en.wikipedia.org/wiki/Knowledge"
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "kind": "youtube#channel",
+          "etag": "pvYzczjkO9QGX_mbrAA4f0_CPvI",
+          "id": "UCBrKH4PFz06xCHEWd1k9VBQ",
+          "snippet": {
+            "title": "GenAI Unplugged",
+            "description": "AI Automation for Everyone 🚀\n\nWelcome to GenAI Unplugged, your go-to hub for AI-driven automation! Learn to build intelligent, no-code workflows using n8n, Zapier, Make.com, Relevance AI, Airtable, and more—without coding.\n\n🔹 What You’ll Learn:\n✅ AI-powered workflows for content, emails, approvals, and data automation\n✅ Real-world AI automation with n8n, Zapier, Make, Relevance AI, Airtable, etc..\n✅ Build smart AI workflows, automate business process, smart chatbots, auto-email responders, automated content creation, workflow optimizations, and much more...\n\n🎯 Who’s This For?\n🚀 Entrepreneurs, agencies, freelancers, tech enthusiasts or anyone eager to scale with AI-powered automations and free up time.\n\n📌 Join Us & Build Smarter AI Automations! Subscribe for hands-on demos, workflow templates, and expert automation strategies.\n\n👉 New Videos Weekly | Full AI Automation Courses | No-Code AI Solutions | n8n Full Course | n8n Tutorials\n\n🚀 Start Automating Smarter Today!\n",
+            "customUrl": "@genaiunplugged",
+            "publishedAt": "2024-11-24T03:32:13.194364Z",
+            "thumbnails": {
+              "default": {
+                "url": "https://yt3.ggpht.com/LuPStZfKic2RqdphqND7y3OiIWvb5hQFNo6OUJqpSdU3MwC37NM_WWpnjA9zOo-RbHRcFUJ63NQ=s88-c-k-c0x00ffffff-no-rj",
+                "width": 88,
+                "height": 88
+              },
+              "medium": {
+                "url": "https://yt3.ggpht.com/LuPStZfKic2RqdphqND7y3OiIWvb5hQFNo6OUJqpSdU3MwC37NM_WWpnjA9zOo-RbHRcFUJ63NQ=s240-c-k-c0x00ffffff-no-rj",
+                "width": 240,
+                "height": 240
+              },
+              "high": {
+                "url": "https://yt3.ggpht.com/LuPStZfKic2RqdphqND7y3OiIWvb5hQFNo6OUJqpSdU3MwC37NM_WWpnjA9zOo-RbHRcFUJ63NQ=s800-c-k-c0x00ffffff-no-rj",
+                "width": 800,
+                "height": 800
+              }
+            },
+            "localized": {
+              "title": "GenAI Unplugged",
+              "description": "AI Automation for Everyone 🚀\n\nWelcome to GenAI Unplugged, your go-to hub for AI-driven automation! Learn to build intelligent, no-code workflows using n8n, Zapier, Make.com, Relevance AI, Airtable, and more—without coding.\n\n🔹 What You’ll Learn:\n✅ AI-powered workflows for content, emails, approvals, and data automation\n✅ Real-world AI automation with n8n, Zapier, Make, Relevance AI, Airtable, etc..\n✅ Build smart AI workflows, automate business process, smart chatbots, auto-email responders, automated content creation, workflow optimizations, and much more...\n\n🎯 Who’s This For?\n🚀 Entrepreneurs, agencies, freelancers, tech enthusiasts or anyone eager to scale with AI-powered automations and free up time.\n\n📌 Join Us & Build Smarter AI Automations! Subscribe for hands-on demos, workflow templates, and expert automation strategies.\n\n👉 New Videos Weekly | Full AI Automation Courses | No-Code AI Solutions | n8n Full Course | n8n Tutorials\n\n🚀 Start Automating Smarter Today!\n"
+            },
+            "country": "US"
+          },
+          "statistics": {
+            "viewCount": "7837",
+            "subscriberCount": "261",
+            "hiddenSubscriberCount": false,
+            "videoCount": "26"
+          },
+          "topicDetails": {
+            "topicIds": [
+              "/m/019_rr",
+              "/m/07c1v",
+              "/m/01k8wb"
+            ],
+            "topicCategories": [
+              "https://en.wikipedia.org/wiki/Lifestyle_(sociology)",
+              "https://en.wikipedia.org/wiki/Technology",
+              "https://en.wikipedia.org/wiki/Knowledge"
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "kind": "youtube#channel",
+          "etag": "1j4wEd8IsQwrEPWQf1EzwKp8zEg",
+          "id": "UCGPZd5-pURvHdeHW5jvvJeA",
+          "snippet": {
+            "title": "Automation Unfiltered",
+            "description": "Making Automation Easy for Businesses\n\n\n\n",
+            "customUrl": "@arhaanzayne",
+            "publishedAt": "2025-05-15T04:48:28.09871Z",
+            "thumbnails": {
+              "default": {
+                "url": "https://yt3.ggpht.com/fGFRU9vjLchsvYlGwiKmGeRExshE3bbveJlBaMeSG_ZDQptwk9VMqtA3NK4BSp0dkPLnSDlcBbs=s88-c-k-c0x00ffffff-no-rj",
+                "width": 88,
+                "height": 88
+              },
+              "medium": {
+                "url": "https://yt3.ggpht.com/fGFRU9vjLchsvYlGwiKmGeRExshE3bbveJlBaMeSG_ZDQptwk9VMqtA3NK4BSp0dkPLnSDlcBbs=s240-c-k-c0x00ffffff-no-rj",
+                "width": 240,
+                "height": 240
+              },
+              "high": {
+                "url": "https://yt3.ggpht.com/fGFRU9vjLchsvYlGwiKmGeRExshE3bbveJlBaMeSG_ZDQptwk9VMqtA3NK4BSp0dkPLnSDlcBbs=s800-c-k-c0x00ffffff-no-rj",
+                "width": 800,
+                "height": 800
+              }
+            },
+            "localized": {
+              "title": "Automation Unfiltered",
+              "description": "Making Automation Easy for Businesses\n\n\n\n"
+            },
+            "country": "IN"
+          },
+          "statistics": {
+            "viewCount": "20",
+            "subscriberCount": "30",
+            "hiddenSubscriberCount": false,
+            "videoCount": "6"
+          },
+          "topicDetails": {
+            "topicIds": [
+              "/m/019_rr",
+              "/m/07c1v",
+              "/m/01k8wb"
+            ],
+            "topicCategories": [
+              "https://en.wikipedia.org/wiki/Lifestyle_(sociology)",
+              "https://en.wikipedia.org/wiki/Technology",
+              "https://en.wikipedia.org/wiki/Knowledge"
+            ]
+          }
+        }
+      },
+      {
+        "json": {
+          "kind": "youtube#channel",
+          "etag": "QfympSnKf6z9y6IbG28HVmuntSI",
+          "id": "UCiMbxxKNKF4ZEqgn3bMe7EA",
+          "snippet": {
+            "title": "How To Tutor",
+            "description": "Welcome to How To Tutor — your shortcut to mastering tech, apps, and everything in between.\nWe create fast, step-by-step tutorials that help you solve real problems using the apps, tools, and platforms you use every day.\n\nWhether you're trying to set up a crypto wallet, customize your Instagram, use a new SaaS platform, or simply fix a tech issue — we’ve got you covered.\n\n🔍 What You'll Learn:\n• App walkthroughs (Instagram, YouTube, WhatsApp, Snapchat etc)\n• Crypto & Web3 tools (MetaMask, Phantom, Coinbase etc)\n• SaaS & business tools (Canva, Zoom, Notion, Wix etc)\n• Fixes, how-tos, and digital hacks for everyday users\n\n🚀 Why Subscribe?\n• Fast, beginner-friendly tutorials\n• No fluff — just clear, actionable steps\n• Fresh uploads every day\n• Always updated for the latest tech in 2025\n\n💡 Your digital life made easier. Start learning smarter — with How To Tutor.\n",
+            "customUrl": "@howtotutoryt",
+            "publishedAt": "2024-03-13T03:54:02.913303Z",
+            "thumbnails": {
+              "default": {
+                "url": "https://yt3.ggpht.com/PARHv-5Yuc4k9EExHgTagMdjgkUnavbmtSiIu5BVc1Crl2wHeytqozCRWliM5p7zHQijfXkcrhw=s88-c-k-c0x00ffffff-no-rj",
+                "width": 88,
+                "height": 88
+              },
+              "medium": {
+                "url": "https://yt3.ggpht.com/PARHv-5Yuc4k9EExHgTagMdjgkUnavbmtSiIu5BVc1Crl2wHeytqozCRWliM5p7zHQijfXkcrhw=s240-c-k-c0x00ffffff-no-rj",
+                "width": 240,
+                "height": 240
+              },
+              "high": {
+                "url": "https://yt3.ggpht.com/PARHv-5Yuc4k9EExHgTagMdjgkUnavbmtSiIu5BVc1Crl2wHeytqozCRWliM5p7zHQijfXkcrhw=s800-c-k-c0x00ffffff-no-rj",
+                "width": 800,
+                "height": 800
+              }
+            },
+            "localized": {
+              "title": "How To Tutor",
+              "description": "Welcome to How To Tutor — your shortcut to mastering tech, apps, and everything in between.\nWe create fast, step-by-step tutorials that help you solve real problems using the apps, tools, and platforms you use every day.\n\nWhether you're trying to set up a crypto wallet, customize your Instagram, use a new SaaS platform, or simply fix a tech issue — we’ve got you covered.\n\n🔍 What You'll Learn:\n• App walkthroughs (Instagram, YouTube, WhatsApp, Snapchat etc)\n• Crypto & Web3 tools (MetaMask, Phantom, Coinbase etc)\n• SaaS & business tools (Canva, Zoom, Notion, Wix etc)\n• Fixes, how-tos, and digital hacks for everyday users\n\n🚀 Why Subscribe?\n• Fast, beginner-friendly tutorials\n• No fluff — just clear, actionable steps\n• Fresh uploads every day\n• Always updated for the latest tech in 2025\n\n💡 Your digital life made easier. Start learning smarter — with How To Tutor.\n"
+            },
+            "country": "US"
+          },
+          "statistics": {
+            "viewCount": "616010",
+            "subscriberCount": "9510",
+            "hiddenSubscriberCount": false,
+            "videoCount": "4842"
+          },
+          "topicDetails": {
+            "topicIds": [
+              "/m/01k8wb",
+              "/m/07c1v",
+              "/m/019_rr"
+            ],
+            "topicCategories": [
+              "https://en.wikipedia.org/wiki/Knowledge",
+              "https://en.wikipedia.org/wiki/Technology",
+              "https://en.wikipedia.org/wiki/Lifestyle_(sociology)"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-09-22T22:39:08.330Z",
+      "updatedAt": "2025-09-22T22:39:08.330Z",
+      "role": "workflow:owner",
+      "workflowId": "UrgIoSkv7MgfDM1Z",
+      "projectId": "fUja7PZjiQMQFmQp"
+    }
+  ],
+  "staticData": {
+    "global": {
+      "videoCache": {
+        "z4oJuYRz_Fo": {
+          "id": "z4oJuYRz_Fo",
+          "title": "How to Install and Update N8N Locally in 2025 (The Easy Way)",
+          "channelId": "UCloCjpFkjlNb_5Gz_bsg3uw",
+          "publishedAt": "2025-09-18",
+          "durationSeconds": 703,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 183,
+          "viewsPerDay": 45.75,
+          "lastFetched": 1758580773028
+        },
+        "i5KY2hln8Xo": {
+          "id": "i5KY2hln8Xo",
+          "title": "How to Install n8n Locally with DDEV | n8n Tutorial",
+          "channelId": "UCfgfOBsL5HXNe_dOv7mDQ9g",
+          "publishedAt": "2025-09-18",
+          "durationSeconds": 142,
+          "isUltraShort": false,
+          "isShort": true,
+          "views": 14,
+          "viewsPerDay": 3.5,
+          "lastFetched": 1758580773028
+        },
+        "xm3DsynMWS8": {
+          "id": "xm3DsynMWS8",
+          "title": "The Simplest Way To Setup N8N with Docker & Ngrok on Local",
+          "channelId": "UCp5X3h7gYJVUGXLC1SVxYXA",
+          "publishedAt": "2025-09-15",
+          "durationSeconds": 576,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 68,
+          "viewsPerDay": 9.71,
+          "lastFetched": 1758580773028
+        },
+        "eaO22tZdUuk": {
+          "id": "eaO22tZdUuk",
+          "title": "Run N8N Locally On Your Raspberry PI - Free",
+          "channelId": "UCdke4j9l4qJPiaFPiFNBsUA",
+          "publishedAt": "2025-09-22",
+          "durationSeconds": 1246,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 14,
+          "viewsPerDay": 14,
+          "lastFetched": 1758580773028
+        },
+        "Ufad0tseH_A": {
+          "id": "Ufad0tseH_A",
+          "title": "Cómo instalar n8n en LOCAL - Ejecuciones infinitas completamente gratis",
+          "channelId": "UCWpGnaeyh0nmB-ltvp6FxIg",
+          "publishedAt": "2025-09-18",
+          "durationSeconds": 217,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 94,
+          "viewsPerDay": 23.5,
+          "lastFetched": 1758580773028
+        },
+        "7EqnxmcSJo4": {
+          "id": "7EqnxmcSJo4",
+          "title": "06. How to Run n8n Locally with Docker | n8n",
+          "channelId": "UCIp49Xpjh-2swhp8S-s2k2A",
+          "publishedAt": "2025-09-16",
+          "durationSeconds": 3634,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 148,
+          "viewsPerDay": 24.67,
+          "lastFetched": 1758580773028
+        },
+        "zaK6GmYjiu8": {
+          "id": "zaK6GmYjiu8",
+          "title": "How to Run N8N in Local (SELF HOST) Machine 🤔? Step by Step Breakdown - Tamil | AI Coach John",
+          "channelId": "UCmCAY_mStg1POKUWgMg-aGQ",
+          "publishedAt": "2025-09-19",
+          "durationSeconds": 1806,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 2954,
+          "viewsPerDay": 984.67,
+          "lastFetched": 1758580773028
+        },
+        "MuOdyh4jBu8": {
+          "id": "MuOdyh4jBu8",
+          "title": "Learn how to set up LLM in N8N for free and without tokens.",
+          "channelId": "UC049Fxq_q9v6qkocs5--2xA",
+          "publishedAt": "2025-09-15",
+          "durationSeconds": 285,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 11,
+          "viewsPerDay": 1.57,
+          "lastFetched": 1758580773028
+        },
+        "ikHebG4eWN4": {
+          "id": "ikHebG4eWN4",
+          "title": "The ultimate beginner's guide to n8n      #n8n #Automation #AI #ArtificialIntelligence #workflow",
+          "channelId": "UCmTyDwP1_NOS-_K2WZUK6KA",
+          "publishedAt": "2025-09-21",
+          "durationSeconds": 777,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 23,
+          "viewsPerDay": 23,
+          "lastFetched": 1758580773028
+        },
+        "PDk1kD9C3wQ": {
+          "id": "PDk1kD9C3wQ",
+          "title": "How to have a local AI model in LM Studio step by step",
+          "channelId": "UC049Fxq_q9v6qkocs5--2xA",
+          "publishedAt": "2025-09-15",
+          "durationSeconds": 82,
+          "isUltraShort": false,
+          "isShort": true,
+          "views": 78,
+          "viewsPerDay": 11.14,
+          "lastFetched": 1758580773028
+        },
+        "teFxv9kvTR8": {
+          "id": "teFxv9kvTR8",
+          "title": "n8n Tutorial for Beginners #1: Free Automations Without Limits (Free Zapier Alternative)",
+          "channelId": "UCUevUDRxTDJCoG1KxQveXag",
+          "publishedAt": "2025-09-15",
+          "durationSeconds": 462,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 49,
+          "viewsPerDay": 7,
+          "lastFetched": 1758580773028
+        },
+        "Iipp8louSOg": {
+          "id": "Iipp8louSOg",
+          "title": "How to have a local AI model in LM Studio step by step",
+          "channelId": "UC049Fxq_q9v6qkocs5--2xA",
+          "publishedAt": "2025-09-15",
+          "durationSeconds": 82,
+          "isUltraShort": false,
+          "isShort": true,
+          "views": 842,
+          "viewsPerDay": 120.29,
+          "lastFetched": 1758580773028
+        },
+        "wjyc9J7kMdg": {
+          "id": "wjyc9J7kMdg",
+          "title": "N8N Complete Course - Part 2 | Locally Host n8n completely ",
+          "channelId": "UCq4bhMebi-ZEqn0Nopn9TCA",
+          "publishedAt": "2025-09-18",
+          "durationSeconds": 64,
+          "isUltraShort": false,
+          "isShort": true,
+          "views": 9,
+          "viewsPerDay": 2.25,
+          "lastFetched": 1758580773028
+        },
+        "Au29lewfctw": {
+          "id": "Au29lewfctw",
+          "title": "AI Automation Series: Lesson 5 - How to Install Ngrok & Telegram Bot",
+          "channelId": "UCVyFmbaE_AwO_JU37WU1f3w",
+          "publishedAt": "2025-09-16",
+          "durationSeconds": 1346,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 3,
+          "viewsPerDay": 0.5,
+          "lastFetched": 1758580773028
+        },
+        "jvnbmdHJ0SQ": {
+          "id": "jvnbmdHJ0SQ",
+          "title": "Intro to n8n: Beginner’s Guide to AI Workflows",
+          "channelId": "UC1Zl1AqTFWA7wi_rJ9UzfIQ",
+          "publishedAt": "2025-09-17",
+          "durationSeconds": 998,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 51,
+          "viewsPerDay": 10.2,
+          "lastFetched": 1758580773028
+        },
+        "4Jz1rUEoE4I": {
+          "id": "4Jz1rUEoE4I",
+          "title": "N8N MCP with DOCKER LOCAL and FAST/EASY",
+          "channelId": "UC049Fxq_q9v6qkocs5--2xA",
+          "publishedAt": "2025-09-22",
+          "durationSeconds": 385,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 1,
+          "viewsPerDay": 1,
+          "lastFetched": 1758580773028
+        },
+        "vF8FWmzRd5M": {
+          "id": "vF8FWmzRd5M",
+          "title": "TARS Agent: Powerful AI Operating System Can Automate ALL Computer Tasks! (Opensource)",
+          "channelId": "UC2WmuBuFq6gL08QYG-JjXKw",
+          "publishedAt": "2025-09-15",
+          "durationSeconds": 485,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 13801,
+          "viewsPerDay": 1971.57,
+          "lastFetched": 1758580773028
+        },
+        "A8uAl1wiJBA": {
+          "id": "A8uAl1wiJBA",
+          "title": "My AI agents scrape Google Maps to make $$ in BORING businesses",
+          "channelId": "UCPjNBjflYl0-HQtUvOx0Ibw",
+          "publishedAt": "2025-09-19",
+          "durationSeconds": 1645,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 54794,
+          "viewsPerDay": 18264.67,
+          "lastFetched": 1758580773028
+        },
+        "Q7VV_iZoPjU": {
+          "id": "Q7VV_iZoPjU",
+          "title": "Stop Playing Guessing Games! Master API Tracking with n8n",
+          "channelId": "UCjoZl6u5cvXPEB6HIZIXQpw",
+          "publishedAt": "2025-09-19",
+          "durationSeconds": 856,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 173,
+          "viewsPerDay": 57.67,
+          "lastFetched": 1758580773028
+        },
+        "MUp7PQd53is": {
+          "id": "MUp7PQd53is",
+          "title": "HOW TO HAVE N8N MCP WITH DOCKER easy and fast",
+          "channelId": "UC049Fxq_q9v6qkocs5--2xA",
+          "publishedAt": "2025-09-22",
+          "durationSeconds": 168,
+          "isUltraShort": false,
+          "isShort": true,
+          "views": 0,
+          "viewsPerDay": 0,
+          "lastFetched": 1758580773028
+        },
+        "3b6cIQOMxBU": {
+          "id": "3b6cIQOMxBU",
+          "title": "N8N vs Zapier vs Make: Lo que NADIE te cuenta (Masterclass Automatizaciones 2025)",
+          "channelId": "UC6Q6YkVh9aNLujHwob0MpXQ",
+          "publishedAt": "2025-09-22",
+          "durationSeconds": 1501,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 85,
+          "viewsPerDay": 85,
+          "lastFetched": 1758580778442
+        },
+        "mrCnNO8vXws": {
+          "id": "mrCnNO8vXws",
+          "title": "The Truth About Automation Pricing: n8n vs Make vs Zapier (Comparison)",
+          "channelId": "UC5gFNvI3inYoW-ZDgWhEhJw",
+          "publishedAt": "2025-09-16",
+          "durationSeconds": 537,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 21,
+          "viewsPerDay": 3.5,
+          "lastFetched": 1758580778442
+        },
+        "bxEe0l7elGg": {
+          "id": "bxEe0l7elGg",
+          "title": "N8N vs Make vs OttoKit Honest Review (Best Zapier Alternative in 2025)",
+          "channelId": "UC6aLwtydDZXvkxIfPOTRiuQ",
+          "publishedAt": "2025-09-17",
+          "durationSeconds": 410,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 434,
+          "viewsPerDay": 86.8,
+          "lastFetched": 1758580778442
+        },
+        "JfpAp7nWLtU": {
+          "id": "JfpAp7nWLtU",
+          "title": "Google Opal Review: New AI Automation Tool vs n8n, Zapier, Make",
+          "channelId": "UC1kMU4-I3UEj7BFQalGxwvA",
+          "publishedAt": "2025-09-16",
+          "durationSeconds": 443,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 118,
+          "viewsPerDay": 19.67,
+          "lastFetched": 1758580778442
+        },
+        "Q9Lam3YIKjU": {
+          "id": "Q9Lam3YIKjU",
+          "title": "N8n vs make vs zapier Cuál es la mejor para tu negocio o profesion?",
+          "channelId": "UCvFg4g9K8IUn-YlOB1WG1eQ",
+          "publishedAt": "2025-09-18",
+          "durationSeconds": 837,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 30,
+          "viewsPerDay": 7.5,
+          "lastFetched": 1758580778442
+        },
+        "-uvFCbEvU-0": {
+          "id": "-uvFCbEvU-0",
+          "title": "AI Platforms vs. Workflow Engines: The Difference You Need to Know Now",
+          "channelId": "UCYILLv3cmqwngszWWpNv_Sw",
+          "publishedAt": "2025-09-15",
+          "durationSeconds": 1115,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 1001,
+          "viewsPerDay": 143,
+          "lastFetched": 1758580778442
+        },
+        "r7kPDXNmVfI": {
+          "id": "r7kPDXNmVfI",
+          "title": "NEW Sim AI Just WRECKED N8N (100% FREE Alternative)",
+          "channelId": "UClNDjGWDRbZES-CqhcQc5sQ",
+          "publishedAt": "2025-09-20",
+          "durationSeconds": 581,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 12670,
+          "viewsPerDay": 6335,
+          "lastFetched": 1758580778442
+        },
+        "qn99KaiStDY": {
+          "id": "qn99KaiStDY",
+          "title": "Jakie narzędzie do AUTOMATYZACJI wybrać w 2025, żeby nie przepłacić? (n8n vs make vs zapier)",
+          "channelId": "UCD7xzypHmCAj3I_kwHHobOg",
+          "publishedAt": "2025-09-19",
+          "durationSeconds": 671,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 192,
+          "viewsPerDay": 64,
+          "lastFetched": 1758580778442
+        },
+        "F7CB_tOm-bs": {
+          "id": "F7CB_tOm-bs",
+          "title": "Build Your First AI AGENT for FREE (NO CODING) | Create Your First AI Agent in 15 MIN | Bharath",
+          "channelId": "UCxG8TcCN20GGIooIFLDlVJA",
+          "publishedAt": "2025-09-21",
+          "durationSeconds": 2430,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 162,
+          "viewsPerDay": 162,
+          "lastFetched": 1758580778442
+        },
+        "huariiK4_us": {
+          "id": "huariiK4_us",
+          "title": "I Tried 325 AI Tools, These Are The Best.",
+          "channelId": "UCKtumk72QC3XBb_VWSMQAHg",
+          "publishedAt": "2025-09-15",
+          "durationSeconds": 829,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 14128,
+          "viewsPerDay": 2018.29,
+          "lastFetched": 1758580778442
+        },
+        "g7zlWb4vHic": {
+          "id": "g7zlWb4vHic",
+          "title": "Stop Building Pointless Automations For Your Business (Do This Instead)",
+          "channelId": "UCH90MY0Oq8rd-l5pi-Dq5TA",
+          "publishedAt": "2025-09-19",
+          "durationSeconds": 727,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 42,
+          "viewsPerDay": 14,
+          "lastFetched": 1758580778442
+        },
+        "zClfnVF4O3U": {
+          "id": "zClfnVF4O3U",
+          "title": "The 2 Skills That Matter More Than n8n for AI Success 2025",
+          "channelId": "UC9SWO4gsJgxmuUT0yTBKZtg",
+          "publishedAt": "2025-09-17",
+          "durationSeconds": 912,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 532,
+          "viewsPerDay": 106.4,
+          "lastFetched": 1758580778442
+        },
+        "PhhTE8A9qJA": {
+          "id": "PhhTE8A9qJA",
+          "title": "I Replaced Repetitive Work with These 6 FREE AI Automations (No Coding!)",
+          "channelId": "UCimn27fEh6XKoFi7wLjzT8Q",
+          "publishedAt": "2025-09-18",
+          "durationSeconds": 178,
+          "isUltraShort": false,
+          "isShort": true,
+          "views": 234,
+          "viewsPerDay": 58.5,
+          "lastFetched": 1758580778442
+        },
+        "lpvZQKREskk": {
+          "id": "lpvZQKREskk",
+          "title": "AI Agents vs Workflows: Which One Should You Choose?",
+          "channelId": "UCFlzajVv85qdx_WJfbcjhVw",
+          "publishedAt": "2025-09-16",
+          "durationSeconds": 30,
+          "isUltraShort": true,
+          "isShort": true,
+          "views": 1048,
+          "viewsPerDay": 174.67,
+          "lastFetched": 1758580778442
+        },
+        "BykPoHuIKW8": {
+          "id": "BykPoHuIKW8",
+          "title": "You Learned AI Automation, so WHAT'S NEXT?",
+          "channelId": "UCwyuO13lj4xsyjFwRSZoULA",
+          "publishedAt": "2025-09-15",
+          "durationSeconds": 706,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 978,
+          "viewsPerDay": 139.71,
+          "lastFetched": 1758580778442
+        },
+        "FhcAhymbDmU": {
+          "id": "FhcAhymbDmU",
+          "title": "Google’s FREE AI Agent Builder (Opal) Could Replace Zapier 👀",
+          "channelId": "UCUevUDRxTDJCoG1KxQveXag",
+          "publishedAt": "2025-09-18",
+          "durationSeconds": 27,
+          "isUltraShort": true,
+          "isShort": true,
+          "views": 644,
+          "viewsPerDay": 161,
+          "lastFetched": 1758580778442
+        },
+        "LFu1b3OG8G0": {
+          "id": "LFu1b3OG8G0",
+          "title": "👉 ¡El SECRETO de la Automatización! 🚀 Cómo N8n, Make y Zapier están cambiando los negocios con IA",
+          "channelId": "UCq8ry0iECGBsQmGlvk6lZbg",
+          "publishedAt": "2025-09-17",
+          "durationSeconds": 1281,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 8,
+          "viewsPerDay": 1.6,
+          "lastFetched": 1758580778442
+        },
+        "iIzE-fd5ALM": {
+          "id": "iIzE-fd5ALM",
+          "title": "How to Make Automation Workflows with a Chat #ai #n8n #gumloop #automation",
+          "channelId": "UCbhSQKQLW1b52_CGnroy8Ng",
+          "publishedAt": "2025-09-15",
+          "durationSeconds": 33,
+          "isUltraShort": true,
+          "isShort": true,
+          "views": 740,
+          "viewsPerDay": 105.71,
+          "lastFetched": 1758580778442
+        },
+        "IMwLExspNgE": {
+          "id": "IMwLExspNgE",
+          "title": "AI Agents vs Workflows: Which One Should You Choose?",
+          "channelId": "UCFlzajVv85qdx_WJfbcjhVw",
+          "publishedAt": "2025-09-15",
+          "durationSeconds": 1083,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 266,
+          "viewsPerDay": 38,
+          "lastFetched": 1758580778442
+        },
+        "fFUn_xIX5Bs": {
+          "id": "fFUn_xIX5Bs",
+          "title": "Make vs Zapier | Qual Melhor para Automatizar? Automação com IA na PRÁTICA",
+          "channelId": "UChACFuCLyoMZyedbcKBFDxw",
+          "publishedAt": "2025-09-17",
+          "durationSeconds": 1746,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 64,
+          "viewsPerDay": 12.8,
+          "lastFetched": 1758580778442
+        },
+        "c4srKFMGOVo": {
+          "id": "c4srKFMGOVo",
+          "title": "How To Use n8n For FREE (n8n Tutorial)",
+          "channelId": "UCtevzRsHEKhs-RK8pAqwSyQ",
+          "publishedAt": "2025-09-22",
+          "durationSeconds": 1353,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 743,
+          "viewsPerDay": 743,
+          "lastFetched": 1758580783451
+        },
+        "Ob6ptTDEJ9Y": {
+          "id": "Ob6ptTDEJ9Y",
+          "title": "N8N Tutorial For Beginners 2025 (COMPLETE GUIDE)",
+          "channelId": "UCyX9pFV7H3MP-ZcVikprSRQ",
+          "publishedAt": "2025-09-22",
+          "durationSeconds": 997,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 1416,
+          "viewsPerDay": 1416,
+          "lastFetched": 1758580783451
+        },
+        "_5ud3vEV3_M": {
+          "id": "_5ud3vEV3_M",
+          "title": "Build Your First AI Agent with WhatsApp & n8n | Doctor Appointment Booking using n8n AI Agent",
+          "channelId": "UCkjoHfkLEy7ZT4bA2myJ8xA",
+          "publishedAt": "2025-09-22",
+          "durationSeconds": 8004,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 3502,
+          "viewsPerDay": 3502,
+          "lastFetched": 1758580783451
+        },
+        "sSQRQJZ9jeY": {
+          "id": "sSQRQJZ9jeY",
+          "title": "NEW Sim AI DESTROYS N8N? (FREE!) 🤯",
+          "channelId": "UCGpsgNbzdF7BECCVbB1COHw",
+          "publishedAt": "2025-09-21",
+          "durationSeconds": 890,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 4660,
+          "viewsPerDay": 4660,
+          "lastFetched": 1758580783451
+        },
+        "NwzojkHv-b8": {
+          "id": "NwzojkHv-b8",
+          "title": "N8N Masterclass: Master n8n and Build your first AI Agent within 3 Hours",
+          "channelId": "UCO4EKwP2xiwyaHwxNfqRYiQ",
+          "publishedAt": "2025-09-19",
+          "durationSeconds": 8078,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 935,
+          "viewsPerDay": 311.67,
+          "lastFetched": 1758580783451
+        },
+        "BDO8-zwdkDs": {
+          "id": "BDO8-zwdkDs",
+          "title": "n8n Split Out Node Explained: Step-by-Step Guide",
+          "channelId": "UCKq-lHnyradGRmFClX_ACMw",
+          "publishedAt": "2025-09-19",
+          "durationSeconds": 1075,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 289,
+          "viewsPerDay": 96.33,
+          "lastFetched": 1758580783451
+        },
+        "8ADnqkkM5a4": {
+          "id": "8ADnqkkM5a4",
+          "title": "3 Easy Steps To SECURE n8n Workflows #n8n #techtok #enterpriseai",
+          "channelId": "UC8F7X90NDmMr1mGx8897r_A",
+          "publishedAt": "2025-09-16",
+          "durationSeconds": 102,
+          "isUltraShort": false,
+          "isShort": true,
+          "views": 3869,
+          "viewsPerDay": 644.83,
+          "lastFetched": 1758580783451
+        },
+        "kbiWe93nFMk": {
+          "id": "kbiWe93nFMk",
+          "title": "This Voice AI Agent Can Handle EVERYTHING | n8n + ElevenLabs (FREE Template)",
+          "channelId": "UC2b2wgxm0vFjQfJJ0iRcFRw",
+          "publishedAt": "2025-09-20",
+          "durationSeconds": 1160,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 4487,
+          "viewsPerDay": 2243.5,
+          "lastFetched": 1758580783451
+        },
+        "AlAqbiAD_Nc": {
+          "id": "AlAqbiAD_Nc",
+          "title": "How To Connect Telegram To n8n in 60 Seconds (Step-by-Step Tutorial)",
+          "channelId": "UCQlzrJpTzujgpzHAwFTxAjQ",
+          "publishedAt": "2025-09-20",
+          "durationSeconds": 60,
+          "isUltraShort": true,
+          "isShort": true,
+          "views": 57,
+          "viewsPerDay": 28.5,
+          "lastFetched": 1758580783451
+        },
+        "lZ-OiJHAdd8": {
+          "id": "lZ-OiJHAdd8",
+          "title": "Automate Social Media Posts with n8n (Step-by-Step Tutorial)",
+          "channelId": "UCbNIC-svDbtUOH2qsLnPQPg",
+          "publishedAt": "2025-09-20",
+          "durationSeconds": 175,
+          "isUltraShort": false,
+          "isShort": true,
+          "views": 1622,
+          "viewsPerDay": 811,
+          "lastFetched": 1758580783451
+        },
+        "j3q2_iJe0qU": {
+          "id": "j3q2_iJe0qU",
+          "title": "n8n AI Agent Tutorial For Beginners",
+          "channelId": "UCTs3VX60I6EKrrwdkgrwCGQ",
+          "publishedAt": "2025-09-16",
+          "durationSeconds": 36,
+          "isUltraShort": true,
+          "isShort": true,
+          "views": 2405,
+          "viewsPerDay": 400.83,
+          "lastFetched": 1758580783451
+        },
+        "d3bWvva6ucw": {
+          "id": "d3bWvva6ucw",
+          "title": "n8n-mcp + Claude Code = prompt to workflow INSANITY?",
+          "channelId": "UCoy6cTJ7Tg0dqS-DI-_REsA",
+          "publishedAt": "2025-09-16",
+          "durationSeconds": 889,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 3449,
+          "viewsPerDay": 574.83,
+          "lastFetched": 1758580783451
+        },
+        "3dHR0aNY3cM": {
+          "id": "3dHR0aNY3cM",
+          "title": "How To Build an App Using ONLY AI | Base44 + n8n Beginner Tutorial | Vibe Coding",
+          "channelId": "UC2b2wgxm0vFjQfJJ0iRcFRw",
+          "publishedAt": "2025-09-19",
+          "durationSeconds": 1356,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 5949,
+          "viewsPerDay": 1983,
+          "lastFetched": 1758580783451
+        },
+        "-RHi9WaArfA": {
+          "id": "-RHi9WaArfA",
+          "title": "Build a $1M Instagram AI Sales Agent (Manychat & N8N)",
+          "channelId": "UCntGhimQ0cQCMIYQizseVFg",
+          "publishedAt": "2025-09-21",
+          "durationSeconds": 1155,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 864,
+          "viewsPerDay": 864,
+          "lastFetched": 1758580783451
+        },
+        "OYuT5ZxAbnU": {
+          "id": "OYuT5ZxAbnU",
+          "title": "Seedream Just Automated AI Motion Graphics at 4k 60fps - Here's How (n8n no code automation 🥚)",
+          "channelId": "UCgscS8mBsQZ5sFRkJIFWD7Q",
+          "publishedAt": "2025-09-16",
+          "durationSeconds": 1106,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 13164,
+          "viewsPerDay": 2194,
+          "lastFetched": 1758580783451
+        },
+        "UrxVYF7sfrI": {
+          "id": "UrxVYF7sfrI",
+          "title": "This AI Automation uses Telegram and Nano Banana to stage your home in any style #n8n tutorial",
+          "channelId": "UC5_2We-HeVdEeHcIyfmMHOg",
+          "publishedAt": "2025-09-15",
+          "durationSeconds": 33,
+          "isUltraShort": true,
+          "isShort": true,
+          "views": 11809,
+          "viewsPerDay": 1687,
+          "lastFetched": 1758580783451
+        },
+        "8KJ8QHo1t24": {
+          "id": "8KJ8QHo1t24",
+          "title": "Unlock Lightning-Fast n8n Workflows with Parallel Processing & Subworkflows",
+          "channelId": "UCN9kvWCDywqRPHG5SjKTEBA",
+          "publishedAt": "2025-09-20",
+          "durationSeconds": 378,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 1842,
+          "viewsPerDay": 921,
+          "lastFetched": 1758580783451
+        },
+        "det7nZOKO2U": {
+          "id": "det7nZOKO2U",
+          "title": "n8n Workflow Automation (Beginner’s Guide)",
+          "channelId": "UChv0QUGAwUnt3Ayu_BdP6kw",
+          "publishedAt": "2025-09-17",
+          "durationSeconds": 963,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 404,
+          "viewsPerDay": 80.8,
+          "lastFetched": 1758580783451
+        },
+        "e8OnUqMq6Tg": {
+          "id": "e8OnUqMq6Tg",
+          "title": "Watch My WhatsApp AI (built with n8n) Answer Any Question Instantly!",
+          "channelId": "UCNHsQs5f8ZXuqLuQYjbsrgw",
+          "publishedAt": "2025-09-18",
+          "durationSeconds": 49,
+          "isUltraShort": true,
+          "isShort": true,
+          "views": 1175,
+          "viewsPerDay": 293.75,
+          "lastFetched": 1758580783451
+        },
+        "f0Q35O5IaCc": {
+          "id": "f0Q35O5IaCc",
+          "title": "n8n Tutorial for Beginners: How to Build AI Automations for FREE | FULL Tutorial",
+          "channelId": "UCpWS2Gmt0N31th-vdIizPJQ",
+          "publishedAt": "2025-09-18",
+          "durationSeconds": 2059,
+          "isUltraShort": false,
+          "isShort": false,
+          "views": 1610,
+          "viewsPerDay": 402.5,
+          "lastFetched": 1758580783451
+        }
+      }
+    }
+  },
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-09-25T18:28:38.000Z",
+  "versionId": "07d10891-9760-4b8f-be64-e911c6c02ebb"
+}
