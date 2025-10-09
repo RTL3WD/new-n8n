@@ -48,6 +48,7 @@
   },
   "createdAt": "2024-11-11T18:39:08.097Z",
   "id": "pJEM7Ai5t87MrsRP",
+  "isArchived": false,
   "meta": null,
   "name": "Google Search Agent",
   "nodes": [
@@ -135,6 +136,15 @@
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "createdAt": "2024-11-11T18:39:08.103Z",
+      "updatedAt": "2024-11-11T18:39:08.103Z",
+      "role": "workflow:owner",
+      "workflowId": "pJEM7Ai5t87MrsRP",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
