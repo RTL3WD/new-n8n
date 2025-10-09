@@ -48,6 +48,7 @@
   },
   "createdAt": "2024-11-12T17:12:00.647Z",
   "id": "lPvnOq13dtq7VZvJ",
+  "isArchived": false,
   "meta": null,
   "name": "Check In Supervisor Agent",
   "nodes": [
@@ -160,6 +161,15 @@
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "createdAt": "2024-11-12T17:12:00.664Z",
+      "updatedAt": "2024-11-12T17:12:00.664Z",
+      "role": "workflow:owner",
+      "workflowId": "lPvnOq13dtq7VZvJ",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
