@@ -125,6 +125,7 @@
   },
   "createdAt": "2024-09-21T14:19:37.149Z",
   "id": "xLQLCt9C1FblN6D3",
+  "isArchived": false,
   "meta": {
     "templateCredsSetupCompleted": true
   },
@@ -554,9 +555,18 @@
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "createdAt": "2024-09-21T14:19:37.163Z",
+      "updatedAt": "2024-09-21T14:19:37.163Z",
+      "role": "workflow:owner",
+      "workflowId": "xLQLCt9C1FblN6D3",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": null,
   "tags": [],
-  "triggerCount": 2,
+  "triggerCount": 1,
   "updatedAt": "2024-10-29T14:48:08.000Z",
   "versionId": "c19d1897-24af-428e-a02c-d09edbfe3acd"
 }
