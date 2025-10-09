@@ -154,6 +154,7 @@
   },
   "createdAt": "2024-11-08T17:54:46.584Z",
   "id": "GwAaB5OYLCjfoHcv",
+  "isArchived": false,
   "meta": null,
   "name": "Email Agent",
   "nodes": [
@@ -486,6 +487,15 @@
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "createdAt": "2024-11-08T17:54:46.591Z",
+      "updatedAt": "2024-11-08T17:54:46.591Z",
+      "role": "workflow:owner",
+      "workflowId": "GwAaB5OYLCjfoHcv",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": null,
   "tags": [
     {
