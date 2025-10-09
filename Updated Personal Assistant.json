@@ -66,10 +66,22 @@
           }
         ]
       ]
+    },
+    "Google Docs Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Personal AI Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2024-12-03T15:27:54.914Z",
   "id": "uD9bXbjnvWV8MTRd",
+  "isArchived": false,
   "meta": null,
   "name": "Updated Personal Assistant",
   "nodes": [
@@ -218,6 +230,34 @@
       ],
       "id": "1da384bd-e309-4d3c-86d5-5bdc82fd6438",
       "name": "Personal AI Assistant"
+    },
+    {
+      "parameters": {
+        "name": "Google_Docs_Agent",
+        "description": "Call this agent when you need to interact with google docs",
+        "workflowId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "XfZDY4gWyn9PqDzo",
+          "cachedResultName": "Email Agent copy"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        1060,
+        680
+      ],
+      "id": "7896cbef-2bd4-4bf0-9975-88e41b8d6952",
+      "name": "Google Docs Agent"
     }
   ],
   "pinData": {},
@@ -226,9 +266,18 @@
     "timezone": "America/New_York",
     "callerPolicy": "workflowsFromSameOwner"
   },
+  "shared": [
+    {
+      "createdAt": "2024-12-03T15:27:54.920Z",
+      "updatedAt": "2024-12-03T15:27:54.920Z",
+      "role": "workflow:owner",
+      "workflowId": "uD9bXbjnvWV8MTRd",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2024-12-03T15:34:27.000Z",
-  "versionId": "9ea30ae6-8488-4816-8f95-38d0fa478e46"
+  "updatedAt": "2025-03-08T16:05:34.000Z",
+  "versionId": "40c66774-597c-4eee-924b-5d4def4fb2fa"
 }
