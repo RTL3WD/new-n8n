@@ -59,6 +59,7 @@
   },
   "createdAt": "2025-01-07T19:44:58.679Z",
   "id": "ZMgfvZnnq1twDLWI",
+  "isArchived": false,
   "meta": null,
   "name": "Cyberlicious Demo - Google Sheets Agent",
   "nodes": [
@@ -177,9 +178,18 @@
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "createdAt": "2025-01-07T19:44:58.683Z",
+      "updatedAt": "2025-01-07T19:44:58.683Z",
+      "role": "workflow:owner",
+      "workflowId": "ZMgfvZnnq1twDLWI",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": null,
   "tags": [],
-  "triggerCount": 2,
+  "triggerCount": 1,
   "updatedAt": "2025-01-16T16:07:46.000Z",
   "versionId": "0170c256-6627-43de-9fe1-350eec925c97"
 }
