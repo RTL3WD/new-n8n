@@ -26,6 +26,7 @@
   },
   "createdAt": "2025-01-08T21:34:47.872Z",
   "id": "3jNBNTFfPD5ukUNE",
+  "isArchived": false,
   "meta": null,
   "name": "BRD Agent",
   "nodes": [
@@ -84,6 +85,15 @@
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "createdAt": "2025-01-08T21:34:47.877Z",
+      "updatedAt": "2025-01-08T21:34:47.877Z",
+      "role": "workflow:owner",
+      "workflowId": "3jNBNTFfPD5ukUNE",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
