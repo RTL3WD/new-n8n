@@ -1,0 +1,146 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Generate test data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate test data": {
+      "main": [
+        [
+          {
+            "node": "Transform data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transform data": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-08-08T20:55:27.417Z",
+  "id": "fbtgvc1E2q97P7ZR",
+  "isArchived": false,
+  "meta": null,
+  "name": "My workflow 25",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "f75e6dd3-2943-4b10-aea6-c8bd43d85b4f",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "category": "randomData"
+      },
+      "id": "0a590510-ab9f-47cf-966e-60ebe699158f",
+      "name": "Generate test data",
+      "type": "n8n-nodes-base.debugHelper",
+      "typeVersion": 1,
+      "position": [
+        224,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{\n  json: {\n    users: $input.all().map(e => {\n      return {\n        id: e.json.uid,\n        name: `${e.json.firstname} ${e.json.lastname}`\n      }\n    })\n  }\n}];"
+      },
+      "id": "396bd34c-5669-4f47-a965-2adc8c51f237",
+      "name": "Transform data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "users",
+        "options": {}
+      },
+      "id": "0b751c0d-18ff-489c-ad77-915eee55953c",
+      "name": "Split Out",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        672,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "fields": {
+          "values": [
+            {
+              "name": "email",
+              "stringValue": "={{ $('Generate test data').item.json.email }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4f6fefc9-705f-4a3a-af1b-48d15f043cb2",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        880,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-08-08T20:55:27.423Z",
+      "updatedAt": "2025-08-08T20:55:27.423Z",
+      "role": "workflow:owner",
+      "workflowId": "fbtgvc1E2q97P7ZR",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-08-08T20:55:27.417Z",
+  "versionId": "b42f3a05-aa53-493d-ab9c-6d46b253841f"
+}
