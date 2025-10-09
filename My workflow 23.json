@@ -1,0 +1,121 @@
+{
+  "active": false,
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-07-12T00:51:26.310Z",
+  "id": "RJDwThje4roG6MBC",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "My workflow 23",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "9b958ee9-ecff-4485-ad9c-6b8c1fd523f0",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a1192c66-7c41-48d8-a43e-5e6d604c2eb1",
+      "name": "Webhook",
+      "webhookId": "9b958ee9-ecff-4485-ad9c-6b8c1fd523f0"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d907ed43-1ff9-41d5-ab77-8f65c6299325",
+              "name": "response",
+              "value": "webhook successful",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ],
+      "id": "ab15fac4-b629-43e3-8be4-6ff7700100fe",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://khhzwqikcdknjcxhotnq.supabase.co/functions/v1/receive-webhook-response",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"execution_id\": \"\",\n  \"status\": \"completed\",\n  \"result\": \"Your workflow result data here\",\n  \"additional_data\": {}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        0
+      ],
+      "id": "9acdcbce-b51b-4b5c-a8e5-cbe119a7447f",
+      "name": "HTTP Request"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-07-12T00:51:26.317Z",
+      "updatedAt": "2025-07-12T00:51:26.317Z",
+      "role": "workflow:owner",
+      "workflowId": "RJDwThje4roG6MBC",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-07-12T20:32:33.000Z",
+  "versionId": "46a146a0-d0de-4c7c-ba34-b9288845d63b"
+}
