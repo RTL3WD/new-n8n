@@ -1,0 +1,119 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Generate test data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate test data": {
+      "main": [
+        [
+          {
+            "node": "Transform data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transform data": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "createdAt": "2025-03-03T16:00:34.409Z",
+  "id": "AwxfLT70vM7p5Z01",
+  "isArchived": false,
+  "meta": null,
+  "name": "My workflow 22",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "c2a698a4-99af-445e-a85a-19b51fbc8cf2",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "category": "randomData"
+      },
+      "id": "1bc5b23a-49c6-4d5f-8745-630ec8d726a9",
+      "name": "Generate test data",
+      "type": "n8n-nodes-base.debugHelper",
+      "typeVersion": 1,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{\n  json: {\n    users: $input.all().map(e => {\n      return {\n        id: e.json.uid,\n        name: `${e.json.firstname} ${e.json.lastname}`,\n        email: e.json.email\n      }\n    })\n  }\n}];"
+      },
+      "id": "715a7898-6c59-4847-b143-f380870cdd68",
+      "name": "Transform data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "users",
+        "options": {}
+      },
+      "id": "2f9ca294-2504-4704-9f47-c3cdddbddecd",
+      "name": "Split Out",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        700,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-03-03T16:00:34.411Z",
+      "updatedAt": "2025-03-03T16:00:34.411Z",
+      "role": "workflow:owner",
+      "workflowId": "AwxfLT70vM7p5Z01",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-03-03T16:46:34.000Z",
+  "versionId": "adc9212e-556e-4cd4-a4e6-c58fa92b0d4e"
+}
