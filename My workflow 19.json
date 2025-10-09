@@ -1,0 +1,765 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Sitemap to scrape",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "XML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "XML": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vector Store Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Vector Store Tool",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store1": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Vector Store Tool",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sitemap to scrape": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-01-30T12:55:57.955Z",
+  "id": "iQAV7z6zjBfTyfxE",
+  "isArchived": false,
+  "meta": null,
+  "name": "My workflow 19",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "4a7eb325-6f84-4630-80b0-8c0dc54d707e",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {}
+      },
+      "id": "1afc6e8d-e28d-4f7d-83a1-80acffe0e60c",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "88d20027-5231-424a-80ee-f4c3ccd1b456",
+      "name": "XML",
+      "type": "n8n-nodes-base.xml",
+      "typeVersion": 1,
+      "position": [
+        680,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "urlset.url",
+        "options": {}
+      },
+      "id": "8d12bf90-2b6b-4e92-9723-4aabf4dbd4c5",
+      "name": "Split Out",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        880,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "c29dc24f-511d-42f8-b6af-5f0d7f76ae68",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1400,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://crawl4ai.702market.com/api/v1/crawl/basic",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "url",
+              "value": "={{ $json.loc }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "48c18479-9ae5-490b-bcd5-fe3e4c6ef22a",
+      "name": "HTTP Request1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1660,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.output.cleaned_markdown }}",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "title",
+                "value": "={{ $json.output.metadata.title}}"
+              },
+              {
+                "name": "url",
+                "value": "={{ $json.output.metadata.url}}"
+              },
+              {
+                "name": "content",
+                "value": "={{ $json.output.metadata.content}}"
+              },
+              {
+                "name": "word_count",
+                "value": "={{ $json.output.metadata.word_count}}"
+              },
+              {
+                "name": "section_count",
+                "value": "={{ $json.output.metadata.section_count}}"
+              },
+              {
+                "name": "character_count",
+                "value": "={{ $json.output.metadata.character_count}}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "54a277dc-5ddd-49af-8b7b-4d3c4b936cf9",
+      "name": "Default Data Loader",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        2360,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "separator": "={{ $json.output.separator || \"\" }}",
+        "chunkSize": "={{ $json.output.chunk_size }}",
+        "chunkOverlap": "={{ $json.output.overlap_size }}"
+      },
+      "id": "faf1eb07-1bcb-4b6b-8f84-bb6d62515a79",
+      "name": "Character Text Splitter",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        2460,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "e5ba7292-0f2e-497b-87c1-5e9cb3f9de8f",
+      "name": "Embeddings OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        2180,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "e612c544-6586-4eee-97f9-83a1ab9fe99c",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -240,
+        620
+      ],
+      "webhookId": "0949763f-f3f7-46bf-8676-c050d92e6966"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "54ca7031-f16f-40fe-9f83-af2f4ddfa673",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        60,
+        860
+      ]
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 20
+      },
+      "id": "451306bc-2eda-40b0-9a15-5174e695bd0a",
+      "name": "Postgres Chat Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        200,
+        860
+      ]
+    },
+    {
+      "parameters": {
+        "name": "pydantic_ai_docs",
+        "description": "Retrieves data related to Pydantic AI using their documentation."
+      },
+      "id": "b8891217-2734-4053-a007-144bcb805236",
+      "name": "Vector Store Tool",
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        340,
+        860
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "f971c27f-bed5-4fe3-a093-8fce6977f538",
+      "name": "Embeddings OpenAI1",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        40,
+        1220
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "4ac74fdd-3add-43eb-9015-c0c436a2e826",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        520,
+        1060
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "id": "e56615ad-2c90-4a3e-b0b5-917c16a36635",
+      "name": "Supabase Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        2260,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "91e7ac17-8d99-4ae7-9422-77f0d5f92908",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        120,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "id": "3ba63a38-8951-453e-8744-d490912e74d7",
+      "name": "Supabase Vector Store1",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        120,
+        1060
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ce386319-1b5d-4347-af8e-8e2c0987bd90",
+              "leftValue": "={{ $json.loc }}",
+              "rightValue": "docs",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1080,
+        240
+      ],
+      "id": "f81c3bd5-f2c3-4c86-8f53-a11d844967f9",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "19ee4de0-448a-4f00-8969-b205b4cb429e",
+              "name": "url",
+              "value": "https://www.windmill.dev/sitemap.xml",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        120,
+        240
+      ],
+      "id": "235462bf-f8dd-4203-bf53-33072f0c7a33",
+      "name": "Sitemap to scrape"
+    },
+    {
+      "parameters": {
+        "content": "## Update URL for the sitemap you would like to scrape. ",
+        "height": 500,
+        "width": 340,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8870bbad-c62c-4adc-9293-5955db0363da",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Chat Flow",
+        "height": 840,
+        "width": 660,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        540
+      ],
+      "id": "12ec885b-bdbc-41ae-8137-3c4d766f8c29",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Trigger with test workflow",
+        "height": 360,
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -340,
+        140
+      ],
+      "id": "69ded437-0cb9-408b-91f5-35729766b31d",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Trigger with Chat",
+        "height": 360,
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -340,
+        540
+      ],
+      "id": "4e0e556c-c018-41a5-a87b-81e047922877",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Extract urls from sitemap",
+        "height": 360,
+        "width": 960,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        360,
+        140
+      ],
+      "id": "d9f8ae81-7c5b-4696-ac9d-f85f4eadfeb2",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Get markdown from each url",
+        "height": 360,
+        "width": 480,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1340,
+        140
+      ],
+      "id": "e51957dc-c335-438f-8d4d-a71aa06edf52",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## Vectorize Data and upload to Supabase\n",
+        "height": 740,
+        "width": 840,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        140
+      ],
+      "id": "ef604ddf-db02-4cc4-ba18-99a08d40a2c0",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        2000,
+        500
+      ],
+      "id": "84aa1645-2faf-45e6-a896-31b2e411bbe4",
+      "name": "OpenAI Chat Model2"
+    },
+    {
+      "parameters": {
+        "text": "=You are an AI text processor designed to analyze markdown documentation and determine the optimal chunking strategy for text embeddings in n8n.\n\n## 1. Extract Clean Text\n\nProcess the input markdown by:\n\n- Removing unnecessary markdown artifacts (navigation links, repeated headers, footers, redundant images)\n- Retaining essential elements:\n  - Section titles\n  - Paragraphs\n  - Code blocks\n  - Tables\n  - Lists\n\n## 2. Determine Text Splitter Settings for n8n\n\n### Separator Selection\n\nChoose the best separator:\n\n- `\"\\n\\n\"` (double newlines) for structured documents\n- `\"\\n\"` (single newlines) if no double newlines exist\n- `\". \"` if text has no newlines but is sentence-based\n\n### Chunk Size Configuration\n\nDetermine chunk size dynamically:\n\n- **800-1000 characters per chunk** for long sections\n- **300-600 characters per chunk** for short sections\n\n### Overlap Settings\n\n- Use an overlap of **10-20%** of chunk size to maintain context\n\n## 3. Generate Global Metadata\n\nCreate a **single metadata object** containing:\n\n- `title`: The main title of the document (from first `#` heading or inferred from context)\n- `url`: The main documentation link if available\n- `content`: A summary of the document\n- `word_count`: Total word count\n- `character_count`: Total character count\n- `section_count`: Number of sections\n\n## 4. Output JSON Requirements\n\n- **DO NOT include Markdown formatting (e.g., triple backticks)**\n- **DO NOT include any extra text before or after the JSON**\n- **Ensure the JSON follows the schema strictly**\n- **DO NOT include trailing commas or invalid syntax**\n\n### Required JSON Format\n\n```json\n{\n    \"cleaned_markdown\": \"Extracted and cleaned markdown content\",\n    \"separator\": \"\\n\\n\",\n    \"chunk_size\": 800,\n    \"overlap_size\": 120,\n    \"metadata\": {\n        \"title\": \"Windmill Documentation\",\n        \"content\": \"This section talks about browser automation...\",\n        \"url\": \"{{ $json.url }}\",\n        \"word_count\": 14500,\n        \"character_count\": 98000,\n        \"section_count\": 42\n    }\n}\n```\n\n## Input Data\n\n- *`url`*: {{ $json.url }}\n- `markdown`: {{ $json.markdown }}\n\n## Strict Requirements\n\n1. **Output MUST be valid JSON with NO extra characters**\n2. **Every required field must be present**\n3. **Ensure correct data types for numbers (integers, not strings)**\n4. **No extra text before or after JSON output**",
+        "schemaType": "fromJson",
+        "jsonSchemaExample": "{\n    \"cleaned_markdown\": \"Extracted and cleaned markdown content\",\n    \"separator\": \"\\n\\n\",\n    \"chunk_size\": 800,\n    \"overlap_size\": 120,\n    \"metadata\": {\n        \"title\": \"Windmill Documentation\",\n        \"content\": \"This section talks about browser automation...\",\n        \"url\": \"{{ $json.url }}\",\n        \"word_count\": 14500,\n        \"character_count\": 98000,\n        \"section_count\": 42\n    }\n}",
+        "options": {
+          "systemPromptTemplate": "You are an AI text processor specialized in markdown content analysis. Your goal is to extract structured information, determine optimal chunking strategies, and output metadata for embeddings.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1,
+      "position": [
+        1900,
+        240
+      ],
+      "id": "884d0491-2d39-4f3f-8350-640624612cd8",
+      "name": "Information Extractor",
+      "retryOnFail": true,
+      "onError": "continueErrorOutput"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-01-30T12:55:57.962Z",
+      "updatedAt": "2025-01-30T12:55:57.962Z",
+      "role": "workflow:owner",
+      "workflowId": "iQAV7z6zjBfTyfxE",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-01-30T12:55:57.955Z",
+  "versionId": "a111f59f-bf37-41ca-b19d-9599716fc7c3"
+}
