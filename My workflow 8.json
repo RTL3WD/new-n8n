@@ -15,6 +15,7 @@
   },
   "createdAt": "2024-11-18T02:50:15.692Z",
   "id": "AxlrdIawUGHAW8Rt",
+  "isArchived": false,
   "meta": null,
   "name": "My workflow 8",
   "nodes": [
@@ -66,6 +67,15 @@
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "createdAt": "2024-11-18T02:50:15.697Z",
+      "updatedAt": "2024-11-18T02:50:15.697Z",
+      "role": "workflow:owner",
+      "workflowId": "AxlrdIawUGHAW8Rt",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
