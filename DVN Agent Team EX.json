@@ -3,6 +3,7 @@
   "connections": {},
   "createdAt": "2025-01-28T20:11:37.576Z",
   "id": "Pvfh01yhTpoMlHr8",
+  "isArchived": false,
   "meta": null,
   "name": "DVN Agent Team EX",
   "nodes": [],
@@ -10,6 +11,15 @@
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "createdAt": "2025-01-28T20:11:37.581Z",
+      "updatedAt": "2025-01-28T20:11:37.581Z",
+      "role": "workflow:owner",
+      "workflowId": "Pvfh01yhTpoMlHr8",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
