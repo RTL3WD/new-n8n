@@ -1,0 +1,28 @@
+{
+  "active": false,
+  "connections": {},
+  "createdAt": "2025-04-29T21:44:22.501Z",
+  "id": "UjDfi5Qojb4hfs93",
+  "isArchived": false,
+  "meta": null,
+  "name": "MCP Demo",
+  "nodes": [],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-04-29T21:44:22.507Z",
+      "updatedAt": "2025-04-29T21:44:22.507Z",
+      "role": "workflow:owner",
+      "workflowId": "UjDfi5Qojb4hfs93",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-04-29T21:44:22.501Z",
+  "versionId": "836be036-5bfd-482e-8829-b1fafbc887d1"
+}
