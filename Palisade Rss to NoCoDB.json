@@ -78,6 +78,7 @@
   },
   "createdAt": "2025-01-03T15:47:14.592Z",
   "id": "CQ8Abu2nXlQpOGX8",
+  "isArchived": false,
   "meta": null,
   "name": "Palisade Rss to NoCoDB",
   "nodes": [
@@ -263,9 +264,18 @@
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "createdAt": "2025-01-03T15:47:14.597Z",
+      "updatedAt": "2025-01-03T15:47:14.597Z",
+      "role": "workflow:owner",
+      "workflowId": "CQ8Abu2nXlQpOGX8",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": {
     "node:RSS Feed Trigger": {
-      "lastItemDate": "2025-01-17T00:00:00.000Z"
+      "lastItemDate": "2025-07-14T00:00:00.000Z"
     },
     "node:Research Feed Trigger": {
       "lastItemDate": "2024-12-24T05:00:00.000Z"
