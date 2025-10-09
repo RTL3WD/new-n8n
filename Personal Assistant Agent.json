@@ -70,6 +70,7 @@
   },
   "createdAt": "2024-11-08T16:06:41.388Z",
   "id": "zfNhepbHXhFPMrO5",
+  "isArchived": false,
   "meta": null,
   "name": "Personal Assistant Agent",
   "nodes": [
@@ -226,9 +227,18 @@
     "timezone": "America/New_York",
     "callerPolicy": "workflowsFromSameOwner"
   },
+  "shared": [
+    {
+      "createdAt": "2024-11-08T16:06:41.397Z",
+      "updatedAt": "2024-11-08T16:06:41.397Z",
+      "role": "workflow:owner",
+      "workflowId": "zfNhepbHXhFPMrO5",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": null,
   "tags": [],
-  "triggerCount": 2,
+  "triggerCount": 1,
   "updatedAt": "2024-12-03T15:19:56.000Z",
   "versionId": "1a9cd389-2640-4647-86f3-3837c9827828"
 }
