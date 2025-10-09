@@ -1,0 +1,194 @@
+{
+  "active": true,
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-02-01T15:25:04.257Z",
+  "id": "1cQA1c7GLtjEhtBC",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "My workflow 20",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ce3e431b-760e-4fff-8561-b39dfad6537f",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "94781bd0-7b2c-42a2-9c43-b3ece1356c2c",
+      "name": "Webhook",
+      "webhookId": "ce3e431b-760e-4fff-8561-b39dfad6537f"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://crawl4ai.aspworkplace.com/api/v1/crawl/basic",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "url",
+              "value": "={{ $json.body.url }}"
+            },
+            {
+              "name": "headless",
+              "value": "true"
+            },
+            {
+              "name": "viewport_width",
+              "value": "1280"
+            },
+            {
+              "name": "viewport_height",
+              "value": "800"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "6f218b07-4869-4d79-8885-bc4391026c83",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        680,
+        0
+      ],
+      "id": "4098d70d-3921-4b04-8114-d508d3c3f90d",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d92a62e0-cff9-4d40-b206-63f5c65991ed",
+              "name": "content",
+              "value": "={{ $json.markdown }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        0
+      ],
+      "id": "afc68998-4c3b-4d64-823c-1bd4430296f2",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n727.aspworkplace.com",
+            "user-agent": "node",
+            "content-length": "29",
+            "accept": "*/*",
+            "accept-encoding": "br, gzip, deflate",
+            "accept-language": "*",
+            "content-type": "application/json",
+            "sec-fetch-mode": "cors",
+            "x-forwarded-for": "192.168.176.1",
+            "x-forwarded-host": "n8n727.aspworkplace.com",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "713be61c884b",
+            "x-real-ip": "192.168.176.1"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "url": "https://www.gradio.app/guides/quickstart"
+          },
+          "webhookUrl": "https://n8n727.aspworkplace.com/webhook/ce3e431b-760e-4fff-8561-b39dfad6537f",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-02-01T15:25:04.262Z",
+      "updatedAt": "2025-02-01T15:25:04.262Z",
+      "role": "workflow:owner",
+      "workflowId": "1cQA1c7GLtjEhtBC",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-02-26T14:50:51.000Z",
+  "versionId": "52b96fb6-e73c-4173-933c-f23ad562d4f7"
+}
