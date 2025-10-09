@@ -64,6 +64,7 @@
   },
   "createdAt": "2024-12-29T01:34:25.587Z",
   "id": "W2nccXQEJyCGZAcm",
+  "isArchived": false,
   "meta": null,
   "name": "Daily News Research Agent",
   "nodes": [
@@ -217,6 +218,15 @@
   "settings": {
     "executionOrder": "v1"
   },
+  "shared": [
+    {
+      "createdAt": "2024-12-29T01:34:25.591Z",
+      "updatedAt": "2024-12-29T01:34:25.591Z",
+      "role": "workflow:owner",
+      "workflowId": "W2nccXQEJyCGZAcm",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
   "staticData": {
     "node:Schedule Trigger": {
       "recurrenceRules": []
