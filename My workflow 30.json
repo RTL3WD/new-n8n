@@ -1,0 +1,709 @@
+{
+  "active": true,
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get many messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "VIP",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Action/Today",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Meetings",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Finance/Receipts",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Finance/Invoices",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Logistics/Shipping",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Travel/Reservations",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Newsletters",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sales/Cold",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Security/Accounts",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Personal/Family",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Manual",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sales/Cold": {
+      "main": [
+        [
+          {
+            "node": "Mark a message as read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finance/Receipts": {
+      "main": [
+        [
+          {
+            "node": "Mark a message as read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Logistics/Shipping": {
+      "main": [
+        [
+          {
+            "node": "Mark a message as read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Newsletters": {
+      "main": [
+        [
+          {
+            "node": "Mark a message as read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Security/Accounts": {
+      "main": [
+        []
+      ]
+    },
+    "Get many messages": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "createdAt": "2025-10-03T22:15:49.997Z",
+  "id": "9ut98JMBUC4jo9xG",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "My workflow 30",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {
+          "q": "has:nouserlabels",
+          "readStatus": "unread"
+        }
+      },
+      "id": "5c896472-5d28-4fbf-89e4-2dc172e01b39",
+      "name": "Gmail Trigger",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "position": [
+        -64,
+        1248
+      ],
+      "typeVersion": 1.3,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dTWlxhrf3w3AVUZO",
+          "name": "Ron Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "=subject: {{ $json.Subject }}\nfrom: {{ $json.From }}\nsnippet: {{ $json.snippet }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "VIP",
+              "description": "From known important senders (boss, key clients, family) or urgent terms for known contacts."
+            },
+            {
+              "category": "Action/Today",
+              "description": "Needs my response or action within 24h (questions, approvals, tasks)."
+            },
+            {
+              "category": "Meetings",
+              "description": "Mentions meeting, call, zoom, invite, reschedule, calendar, agenda, minutes."
+            },
+            {
+              "category": "Finance/Receipts",
+              "description": "Order confirmations, receipts, payment confirmations."
+            },
+            {
+              "category": "Finance/Invoices",
+              "description": "Invoices, bills due, statements requiring payment."
+            },
+            {
+              "category": "Logistics/Shipping",
+              "description": "Shipment, tracking, delivered, out for delivery, RMA."
+            },
+            {
+              "category": "Travel/Reservations",
+              "description": "Flight, hotel, car rental, ticket, reservation, itinerary."
+            },
+            {
+              "category": "Newsletters",
+              "description": "Mass-mailers, promotions, marketing blasts, unsubscribe footer present."
+            },
+            {
+              "category": "Sales/Cold",
+              "description": "Unsolicited pitches or sales outreach with generic personalization."
+            },
+            {
+              "category": "Security/Accounts",
+              "description": "Password, verification code, suspicious sign-in, account alert."
+            },
+            {
+              "category": "Personal/Family",
+              "description": "Friends/family, school, non-work personal matters."
+            },
+            {
+              "category": "Other",
+              "description": "Anything that doesn't fit the categories above."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a4a2cce7-7268-40c0-a77e-f922cb938671",
+      "name": "Text Classifier",
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "position": [
+        576,
+        992
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "id": "8f4ac262-f88e-4903-9225-cafdd72119cf",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        848,
+        1520
+      ],
+      "typeVersion": 1.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "yqu837tmpZ1LSJI2",
+          "name": "OpenAI Ron"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "addLabels",
+        "threadId": "={{ $json.threadId }}",
+        "labelIds": [
+          "IMPORTANT",
+          "YELLOW_STAR",
+          "Label_3188440493407931741"
+        ]
+      },
+      "id": "eda67bad-a7f0-4057-a2ad-e28725ef92c7",
+      "name": "VIP",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        1536,
+        160
+      ],
+      "webhookId": "f69cb642-4f22-4d3a-8107-af33f3760576",
+      "typeVersion": 2.1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dTWlxhrf3w3AVUZO",
+          "name": "Ron Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "addLabels",
+        "threadId": "={{ $json.threadId }}",
+        "labelIds": [
+          "Label_3296705192126286138"
+        ]
+      },
+      "id": "9ddd9b29-98be-4173-971c-a6b199a017ba",
+      "name": "Sales/Cold",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        1536,
+        1632
+      ],
+      "webhookId": "0a6b8d61-f922-4462-b8b3-26bb6d6aec27",
+      "typeVersion": 2.1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dTWlxhrf3w3AVUZO",
+          "name": "Ron Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "addLabels",
+        "threadId": "={{ $json.threadId }}",
+        "labelIds": [
+          "YELLOW_STAR",
+          "Label_5124138033859810890"
+        ]
+      },
+      "id": "b706d081-8fb3-47b1-855c-fb362bbf2ab1",
+      "name": "Meetings",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        1536,
+        512
+      ],
+      "webhookId": "f69cb642-4f22-4d3a-8107-af33f3760576",
+      "typeVersion": 2.1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dTWlxhrf3w3AVUZO",
+          "name": "Ron Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "addLabels",
+        "threadId": "={{ $json.threadId }}",
+        "labelIds": [
+          "Label_321131495545501110"
+        ]
+      },
+      "id": "fe497216-6e4c-4a2f-8df3-2bf6c48263f8",
+      "name": "Action/Today",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        1536,
+        320
+      ],
+      "typeVersion": 2.1,
+      "webhookId": "fcdbcd70-e168-4b94-a786-3a679d37ea43",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dTWlxhrf3w3AVUZO",
+          "name": "Ron Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "addLabels",
+        "threadId": "={{ $json.threadId }}",
+        "labelIds": [
+          "Label_941151852325184611"
+        ]
+      },
+      "id": "f347f86f-c90b-47cc-a4ea-6c5703a62de2",
+      "name": "Finance/Receipts",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        1536,
+        688
+      ],
+      "typeVersion": 2.1,
+      "webhookId": "87767d90-72d8-42fb-99b5-685f340e49cf",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dTWlxhrf3w3AVUZO",
+          "name": "Ron Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "addLabels",
+        "threadId": "={{ $json.threadId }}",
+        "labelIds": [
+          "Label_1493831069728584084"
+        ]
+      },
+      "id": "dac08f0e-37c4-4ba8-9fa7-1a0d6ab2daba",
+      "name": "Finance/Invoices",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        1536,
+        880
+      ],
+      "typeVersion": 2.1,
+      "webhookId": "f337030b-fb3d-4c31-bee9-effd63fecf0a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dTWlxhrf3w3AVUZO",
+          "name": "Ron Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "addLabels",
+        "threadId": "={{ $json.threadId }}",
+        "labelIds": [
+          "Label_5512654777224065292"
+        ]
+      },
+      "id": "da87c0ec-e7b6-4783-a0dc-89d0d0c26425",
+      "name": "Logistics/Shipping",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        1536,
+        1072
+      ],
+      "typeVersion": 2.1,
+      "webhookId": "af48b63b-29fc-4e0d-8c83-555c3d268f6e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dTWlxhrf3w3AVUZO",
+          "name": "Ron Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "addLabels",
+        "threadId": "={{ $json.threadId }}",
+        "labelIds": [
+          "Label_1171357819530058065"
+        ]
+      },
+      "id": "31602471-8530-47a3-8a1d-fb3e7f195229",
+      "name": "Travel/Reservations",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        1536,
+        1264
+      ],
+      "typeVersion": 2.1,
+      "webhookId": "018f1865-7d2d-45e5-bed6-c04cc696d20e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dTWlxhrf3w3AVUZO",
+          "name": "Ron Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "addLabels",
+        "threadId": "={{ $json.threadId }}",
+        "labelIds": [
+          "Label_8"
+        ]
+      },
+      "id": "900b1e58-ff89-448b-a810-1429821c1035",
+      "name": "Newsletters",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        1536,
+        1456
+      ],
+      "typeVersion": 2.1,
+      "webhookId": "4bb16f41-9398-4fc0-8178-5dc0e423e74b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dTWlxhrf3w3AVUZO",
+          "name": "Ron Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "addLabels",
+        "threadId": "={{ $json.threadId }}",
+        "labelIds": [
+          "Label_822194177237632243",
+          "IMPORTANT"
+        ]
+      },
+      "id": "72743978-bd07-4ff9-ab6f-6fe077a1e8fa",
+      "name": "Security/Accounts",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        1536,
+        1824
+      ],
+      "typeVersion": 2.1,
+      "webhookId": "db9c3bef-fb57-40e1-8285-82c405a94efe",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dTWlxhrf3w3AVUZO",
+          "name": "Ron Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "addLabels",
+        "threadId": "={{ $json.threadId }}",
+        "labelIds": [
+          "Label_1885392231504285506"
+        ]
+      },
+      "id": "a96c5879-0463-4ee2-9777-81963578f6a1",
+      "name": "Personal/Family",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        1536,
+        2016
+      ],
+      "typeVersion": 2.1,
+      "webhookId": "fb39e9e4-fb87-4161-bee7-0ce1f0a0cedd",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dTWlxhrf3w3AVUZO",
+          "name": "Ron Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2096,
+        1072
+      ],
+      "id": "fac75c84-8bf3-4d05-9276-c4fd3cc12bff",
+      "name": "Mark a message as read",
+      "webhookId": "ede99626-125c-434d-9ca5-9dde8fb7c723",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dTWlxhrf3w3AVUZO",
+          "name": "Ron Gmail"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 200,
+        "filters": {
+          "q": "has:nouserlabels",
+          "readStatus": "unread"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        352,
+        1152
+      ],
+      "id": "b1522d36-8c03-4fbf-bddf-ebe980cf5d5d",
+      "name": "Get many messages",
+      "webhookId": "170eba37-8464-453f-98b5-298465c2e445",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dTWlxhrf3w3AVUZO",
+          "name": "Ron Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 4
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -48,
+        1040
+      ],
+      "id": "03e0747e-63ff-4b66-b7b1-6e7984350b3f",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "addLabels",
+        "threadId": "={{ $json.threadId }}",
+        "labelIds": [
+          "Label_4234146746667842154"
+        ]
+      },
+      "id": "9a231954-3ec3-4292-b92c-6805c46a055b",
+      "name": "Manual",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        1536,
+        2208
+      ],
+      "typeVersion": 2.1,
+      "webhookId": "fb39e9e4-fb87-4161-bee7-0ce1f0a0cedd",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dTWlxhrf3w3AVUZO",
+          "name": "Ron Gmail"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-10-03T22:15:50.001Z",
+      "updatedAt": "2025-10-03T22:15:50.001Z",
+      "role": "workflow:owner",
+      "workflowId": "9ut98JMBUC4jo9xG",
+      "projectId": "fUja7PZjiQMQFmQp"
+    }
+  ],
+  "staticData": {
+    "node:Gmail Trigger": {
+      "Gmail Trigger": {
+        "lastTimeChecked": 1759969634,
+        "possibleDuplicates": [
+          "199c5ea3353e4966"
+        ]
+      }
+    },
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
+  "tags": [],
+  "triggerCount": 2,
+  "updatedAt": "2025-10-04T14:34:10.000Z",
+  "versionId": "1442916c-e8b8-4162-81a7-0513b5441487"
+}
