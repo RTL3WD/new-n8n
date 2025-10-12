@@ -1,0 +1,177 @@
+{
+  "active": true,
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-10-12T20:11:33.450Z",
+  "id": "lVGEFr8LQ2ushIsD",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Link to Text",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "basicAuth",
+        "formTitle": "Link to Text",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Link",
+              "placeholder": "n8n.io",
+              "requiredField": true
+            }
+          ]
+        },
+        "responseMode": "lastNode",
+        "options": {
+          "appendAttribution": true,
+          "path": "link-to-text"
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8bbaa5d5-07bf-4502-9cb0-1a943dd18f05",
+      "name": "On form submission",
+      "webhookId": "ba1ad0a9-26df-45de-8bd2-18b3b6e14947",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "1kUCUcI9Ceb8T7sX",
+          "name": "Rob - N8n"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.Link }}",
+        "options": {
+          "systemMessage": "=You are an assistant that automatically emails links for later reference.\n\nREQUIRED BEHAVIOR:\n- When a user shares a URL, immediately send an email via Gmail\n- Email format:\n  * To: 7029084316@vtext.com\n  * Subject: Brief title based on link content\n  * Body: [URL]\\n\\n[Description in ≤200 chars]\n  \nAlways confirm the email was sent.\n",
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "30bd5194-9fa7-4d98-a4a0-bb25cf059bf9",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        192,
+        224
+      ],
+      "id": "eca0aa0c-6c02-4ef6-b04d-f6fb9cc198ed",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account - rtl3?"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "7029084316@vtext.com",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        368,
+        224
+      ],
+      "id": "bb8be560-16b6-4c6b-af04-79edb14c37bc",
+      "name": "Send a message in Gmail",
+      "webhookId": "b9ae0537-afb3-4b6d-83f9-fde995b755b4",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "On form submission": [
+      {
+        "json": {
+          "Link": "https://www.amazon.com/Plugable-Monitors-DisplayLink-Thunderbolt-UD-7400PD/dp/B0DPGM58S1",
+          "submittedAt": "2025-10-12T22:15:48.782+02:00",
+          "formMode": "test"
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-10-12T20:11:33.452Z",
+      "updatedAt": "2025-10-12T20:11:33.452Z",
+      "role": "workflow:owner",
+      "workflowId": "lVGEFr8LQ2ushIsD",
+      "projectId": "WCIiaWERZpaZ5IaT"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-10-12T20:32:02.000Z",
+  "versionId": "c3a5b0fe-6493-4607-b3b7-93b7e48a4023"
+}
