@@ -1,0 +1,3164 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "7ea7a801-b448-4238-a7f4-0154dee02968",
+    "workflowId": "PgtTftGYFuLwBZLm",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "46347bad-5a2b-435c-aa33-ecd14dfe3643",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.2,
+        "position": [
+          -800,
+          256
+        ],
+        "id": "e196fa1a-cb78-47e0-80c7-7f08e59139fc",
+        "name": "Webhook",
+        "webhookId": "46347bad-5a2b-435c-aa33-ecd14dfe3643"
+      },
+      {
+        "parameters": {
+          "jsCode": "// ===== Booking rules: edit here =====\nconst CFG = {\n  tz: 'America/New_York',\n  workdays: [1, 2, 3, 4, 5], // Mon=1 ... Sun=7\n  openTime: '09:00',\n  closeTime: '17:00', // Calls must end by this time\n  bufferMinutes: 15,\n  minNoticeHours: 4,\n  maxDaysOut: 30,\n  noChangesWithinHours: 24,\n  slotStepMinutes: 30,\n  allowedDurations: [30, 60],\n  defaultDuration: 30,\n  maxRangeDays: 7,\n  alternativesDaysAhead: 3,\n  meetingTitle: 'AdvancedAI.tech Discovery Call',\n  tag: 'AdvancedAI.tech Receptionist',\n};\n// ====================================\n\nconst raw = $input.first().json;\nconst body =\n  raw.body && typeof raw.body === 'object'\n    ? raw.body\n    : raw;\n\nconst action = String(body.action || '')\n  .trim()\n  .toLowerCase();\n\nconst now = DateTime.now().setZone(CFG.tz);\nconst errors = [];\n\nconst clean = value =>\n  value === undefined || value === null\n    ? ''\n    : String(value).trim();\n\nconst esc = value =>\n  String(value || '')\n    .replace(/&/g, '&amp;')\n    .replace(/</g, '&lt;')\n    .replace(/>/g, '&gt;');\n\n// ===== DATE AND TIME HELPERS =====\n\nfunction parseDate(value) {\n  const text = clean(value);\n\n  if (!text) return null;\n\n  const match = text.match(/^(\\d{4})-(\\d{2})-(\\d{2})/);\n\n  if (!match) return null;\n\n  const date = DateTime.fromISO(\n    `${match[1]}-${match[2]}-${match[3]}`,\n    { zone: CFG.tz }\n  );\n\n  return date.isValid\n    ? date.startOf('day')\n    : null;\n}\n\n// Parses a full ISO timestamp (e.g. 2026-10-27T09:00:00).\n// Timestamps without an offset are treated as Eastern.\nfunction parseDateTime(value) {\n  const text = clean(value);\n\n  if (!/^\\d{4}-\\d{2}-\\d{2}T\\d{1,2}:\\d{2}/.test(text)) {\n    return null;\n  }\n\n  const dt = DateTime.fromISO(text, { zone: CFG.tz });\n\n  return dt.isValid\n    ? dt.setZone(CFG.tz).set({\n        second: 0,\n        millisecond: 0,\n      })\n    : null;\n}\n\nfunction parseTime(value) {\n  const text = clean(value)\n    .toLowerCase()\n    .replace(/\\./g, '')\n    .replace(/\\s+/g, ' ');\n\n  const match = text.match(\n    /^(\\d{1,2})(?::?(\\d{2}))?\\s?(am|pm|a|p)?$/\n  );\n\n  if (!match) return null;\n\n  let hour = Number(match[1]);\n  const minute = Number(match[2] || 0);\n  const period = match[3];\n\n  if (period) {\n    if (hour < 1 || hour > 12) return null;\n\n    if (period[0] === 'p' && hour !== 12) {\n      hour += 12;\n    }\n\n    if (period[0] === 'a' && hour === 12) {\n      hour = 0;\n    }\n  }\n\n  if (hour > 23 || minute > 59) {\n    return null;\n  }\n\n  return {\n    h: hour,\n    mi: minute,\n  };\n}\n\nfunction parseStart(input) {\n  // Accept a complete ISO timestamp.\n  const fullStart = parseDateTime(input.start);\n\n  if (fullStart) {\n    return fullStart;\n  }\n\n  // Accept either \"time\" or \"start_time\".\n  const date = parseDate(input.date);\n\n  const time = parseTime(\n    input.time || input.start_time\n  );\n\n  if (!date || !time) {\n    return null;\n  }\n\n  return date.set({\n    hour: time.h,\n    minute: time.mi,\n    second: 0,\n    millisecond: 0,\n  });\n}\n\n// ===== NORMALIZE COMMON FIELDS =====\n\nlet duration = parseInt(\n  body.duration_minutes ?? body.duration,\n  10\n);\n\nif (!CFG.allowedDurations.includes(duration)) {\n  duration = CFG.defaultDuration;\n}\n\n// Accept both the original and webhook field names.\nconst name = clean(\n  body.name || body.caller_name\n);\n\nconst email = clean(body.email)\n  .toLowerCase()\n  .replace(/\\s+/g, '');\n\nconst emailOk =\n  /^[^@\\s]+@[^@\\s]+\\.[a-z]{2,}$/i.test(email);\n\nconst phone = clean(body.phone)\n  .replace(/\\D/g, '');\n\nconst topic = clean(\n  body.topic || body.topics\n);\n\nconst company = clean(body.company);\n\nconst eventId = clean(\n  body.event_id || body.eventId\n);\n\n// Build the event title and replace supported placeholders.\nconst requestedEventTitle = clean(\n  body.event_title || body.eventTitle\n);\n\nconst eventTitle = (\n  requestedEventTitle || CFG.meetingTitle\n)\n  .replace(/\\{caller_name\\}/gi, name)\n  .replace(/\\{name\\}/gi, name)\n  .replace(/\\{company\\}/gi, company);\n\n// ===== BASE OUTPUT =====\n\nconst out = {\n  route: 'invalid',\n  action,\n  cfg: CFG,\n  now: now.toISO(),\n  timezone: CFG.tz,\n  duration,\n  name,\n  email,\n  phone,\n  topic,\n  company,\n  event_id: eventId,\n  event_title: eventTitle,\n  safe: {\n    name: esc(name),\n    email: esc(email),\n    phone: esc(phone || 'not given'),\n    topic: esc(topic || 'not given'),\n    company: esc(company || 'not given'),\n    event_title: esc(eventTitle),\n  },\n};\n\n// ===== ACTION VALIDATION =====\n\nif (action === 'check_availability') {\n  // Full timestamps for the search window, if sent.\n  const afterDT =\n    parseDateTime(body.after) ||\n    parseDateTime(body.requested_after);\n\n  const beforeDT =\n    parseDateTime(body.before) ||\n    parseDateTime(body.requested_before);\n\n  // Date can come from date, start_date, or the after timestamp.\n  const from =\n    parseDate(body.date) ||\n    parseDate(body.start_date) ||\n    (afterDT ? afterDT.startOf('day') : null) ||\n    (beforeDT ? beforeDT.startOf('day') : null);\n\n  if (!from) {\n    errors.push(\n      'date is required (YYYY-MM-DD), ' +\n      'or after/before as ISO timestamps'\n    );\n  } else {\n    let to =\n      parseDate(body.end_date) ||\n      (beforeDT ? beforeDT.startOf('day') : null) ||\n      from;\n\n    if (to < from) {\n      to = from;\n    }\n\n    if (\n      to.diff(from, 'days').days >\n      CFG.maxRangeDays - 1\n    ) {\n      to = from.plus({\n        days: CFG.maxRangeDays - 1,\n      });\n    }\n\n    out.range_start = from.toISODate();\n    out.range_end = to.toISODate();\n    out.timeMin = from.toISO();\n    out.timeMax = to.endOf('day').toISO();\n\n    // Optional time window: full timestamps win,\n    // otherwise fall back to plain time fields.\n    if (afterDT) {\n      out.requested_after = afterDT.toISO();\n    } else {\n      const requestedAfterTime = parseTime(\n        body.after_time ||\n        body.requested_after ||\n        body.start_time ||\n        body.time\n      );\n\n      if (requestedAfterTime) {\n        out.requested_after = from\n          .set({\n            hour: requestedAfterTime.h,\n            minute: requestedAfterTime.mi,\n            second: 0,\n            millisecond: 0,\n          })\n          .toISO();\n      }\n    }\n\n    if (beforeDT) {\n      out.requested_before = beforeDT.toISO();\n    } else {\n      const requestedBeforeTime = parseTime(\n        body.before_time ||\n        body.requested_before ||\n        body.end_time\n      );\n\n      if (requestedBeforeTime) {\n        out.requested_before = to\n          .set({\n            hour: requestedBeforeTime.h,\n            minute: requestedBeforeTime.mi,\n            second: 0,\n            millisecond: 0,\n          })\n          .toISO();\n      }\n    }\n  }\n} else if (action === 'find_booking') {\n  if (!email && !phone && !name) {\n    errors.push(\n      'email, phone, or name is required'\n    );\n  }\n\n  out.query = email || phone || name;\n\n  out.timeMin = now\n    .minus({ hours: 1 })\n    .toISO();\n\n  out.timeMax = now\n    .plus({\n      days: CFG.maxDaysOut + 30,\n    })\n    .toISO();\n} else if (\n  action === 'book' ||\n  action === 'reschedule'\n) {\n  const start = parseStart(body);\n\n  if (!start) {\n    errors.push(\n      'date (YYYY-MM-DD) and time/start_time ' +\n      '(HH:MM, Eastern) are required'\n    );\n  }\n\n  if (action === 'book') {\n    if (!name) {\n      errors.push('name or caller_name is required');\n    }\n  } else if (!eventId) {\n    errors.push(\n      'event_id is required (get it from find_booking)'\n    );\n  }\n\n  if (!emailOk) {\n    errors.push('a valid email is required');\n  }\n\n  if (start) {\n    const end = start.plus({\n      minutes: duration,\n    });\n\n    out.start = start.toISO();\n    out.end = end.toISO();\n\n    out.timeMin = start\n      .startOf('day')\n      .toISO();\n\n    out.timeMax = start\n      .plus({\n        days: CFG.alternativesDaysAhead,\n      })\n      .endOf('day')\n      .toISO();\n  }\n} else if (action === 'cancel') {\n  if (!eventId) {\n    errors.push(\n      'event_id is required (get it from find_booking)'\n    );\n  }\n\n  if (!emailOk) {\n    errors.push('a valid email is required');\n  }\n} else {\n  errors.push(\n    'unknown action; use check_availability, ' +\n    'find_booking, book, reschedule, or cancel'\n  );\n}\n\n// ===== RESPONSE =====\n\nout.errors = errors;\n\nif (errors.length === 0) {\n  out.route = action;\n\n  out.response = {\n    status: 'ok',\n    errors: [],\n    message: 'Request normalized successfully.',\n  };\n} else {\n  // out.route = 'invalid';\n  out.route = action;\n\n  out.response = {\n    status: 'invalid_request',\n    errors,\n    message:\n      'Missing or unclear details: ' +\n      errors.join('; ') +\n      '.',\n  };\n}\n\nreturn [{ json: out }];"
+        },
+        "id": "edd30ec3-9707-4816-badc-9c87a5a167e0",
+        "name": "Normalize",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -512,
+          256
+        ],
+        "notes": "Booking rules live in CFG at the top. Validates input per action."
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "r1",
+                      "leftValue": "={{ $json.route }}",
+                      "operator": {
+                        "operation": "equals",
+                        "type": "string"
+                      },
+                      "rightValue": "check_availability"
+                    }
+                  ],
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  }
+                },
+                "renameOutput": true,
+                "outputKey": "check_availability"
+              },
+              {
+                "conditions": {
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "r2",
+                      "leftValue": "={{ $json.route }}",
+                      "operator": {
+                        "operation": "equals",
+                        "type": "string"
+                      },
+                      "rightValue": "find_booking"
+                    }
+                  ],
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  }
+                },
+                "renameOutput": true,
+                "outputKey": "find_booking"
+              },
+              {
+                "conditions": {
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "r3",
+                      "leftValue": "={{ $json.route }}",
+                      "operator": {
+                        "operation": "equals",
+                        "type": "string"
+                      },
+                      "rightValue": "book"
+                    }
+                  ],
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  }
+                },
+                "renameOutput": true,
+                "outputKey": "book"
+              },
+              {
+                "conditions": {
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "r4",
+                      "leftValue": "={{ $json.route }}",
+                      "operator": {
+                        "operation": "equals",
+                        "type": "string"
+                      },
+                      "rightValue": "reschedule"
+                    }
+                  ],
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  }
+                },
+                "renameOutput": true,
+                "outputKey": "reschedule"
+              },
+              {
+                "conditions": {
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "r5",
+                      "leftValue": "={{ $json.route }}",
+                      "operator": {
+                        "operation": "equals",
+                        "type": "string"
+                      },
+                      "rightValue": "cancel"
+                    }
+                  ],
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  }
+                },
+                "renameOutput": true,
+                "outputKey": "cancel"
+              },
+              {
+                "conditions": {
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "r6",
+                      "leftValue": "={{ $json.route }}",
+                      "operator": {
+                        "operation": "equals",
+                        "type": "string"
+                      },
+                      "rightValue": "invalid"
+                    }
+                  ],
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  }
+                },
+                "renameOutput": true,
+                "outputKey": "invalid"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "502f0b80-db4a-4a96-846b-cd323f0bad69",
+        "name": "Route Action",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          -288,
+          192
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "calendar": {
+            "__rl": true,
+            "cachedResultName": "automatestpete@gmail.com",
+            "mode": "list",
+            "value": "automatestpete@gmail.com"
+          },
+          "returnAll": true,
+          "timeMin": "={{ $json.timeMin }}",
+          "timeMax": "={{ $json.timeMax }}",
+          "options": {}
+        },
+        "id": "e0b08be0-5016-4a6c-a245-099d48d109ff",
+        "name": "Get Events (Availability)",
+        "type": "n8n-nodes-base.googleCalendar",
+        "typeVersion": 1.3,
+        "position": [
+          432,
+          16
+        ],
+        "alwaysOutputData": true,
+        "credentials": {
+          "googleCalendarOAuth2Api": {
+            "id": "uN5dopaOLSVA2U6J",
+            "name": "Google Calendar account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// ---- shared slot helpers (same in Check Slot / Check Reschedule) ----\nfunction hm(str, day) { const [h, m] = str.split(':').map(Number); return day.set({ hour: h, minute: m, second: 0, millisecond: 0 }); }\nfunction collectBusy(items, tz) {\n  const busy = [];\n  for (const it of items) {\n    const e = it.json || {};\n    if (!e.id || e.error || e.status === 'cancelled' || e.transparency === 'transparent') continue;\n    if ((e.attendees || []).some(a => a.self && a.responseStatus === 'declined')) continue;\n    let s, en;\n    if (e.start && e.start.dateTime) { s = DateTime.fromISO(e.start.dateTime).setZone(tz); en = DateTime.fromISO(e.end.dateTime).setZone(tz); }\n    else if (e.start && e.start.date) { s = DateTime.fromISO(e.start.date, { zone: tz }); en = DateTime.fromISO(e.end.date, { zone: tz }); }\n    else continue;\n    busy.push({ s, e: en, id: e.id });\n  }\n  return busy;\n}\nfunction slotProblem(start, dur, busy, C, now, excludeId) {\n  const end = start.plus({ minutes: dur });\n  const day = start.startOf('day');\n  if (!C.workdays.includes(start.weekday) || start < hm(C.openTime, day) || end > hm(C.closeTime, day)) return 'outside_hours';\n  if (start < now.plus({ hours: C.minNoticeHours })) return 'too_soon';\n  if (start > now.plus({ days: C.maxDaysOut })) return 'too_far_out';\n  const b = C.bufferMinutes;\n  if (busy.some(x => x.id !== excludeId && x.s < end.plus({ minutes: b }) && x.e > start.minus({ minutes: b }))) return 'conflict';\n  return null;\n}\nfunction freeSlots(fromDay, toDay, dur, busy, C, now, excludeId) {\n  const days = [];\n  for (let d = fromDay.startOf('day'); d <= toDay; d = d.plus({ days: 1 })) {\n    if (!C.workdays.includes(d.weekday)) continue;\n    const times = [];\n    for (let t = hm(C.openTime, d); t.plus({ minutes: dur }) <= hm(C.closeTime, d); t = t.plus({ minutes: C.slotStepMinutes })) {\n      if (!slotProblem(t, dur, busy, C, now, excludeId)) times.push(t);\n    }\n    days.push({ date: d.toISODate(), day_label: d.toFormat('cccc, LLLL d'), open_times: times.map(t => t.toFormat('h:mm a')), open_times_24h: times.map(t => t.toFormat('HH:mm')) });\n  }\n  return days;\n}\n// ---------------------------------------------------------------------\nconst n = $('Normalize').first().json; const C = n.cfg;\nconst now = DateTime.fromISO(n.now).setZone(C.tz);\nconst busy = collectBusy($input.all(), C.tz);\nconst from = DateTime.fromISO(n.range_start, { zone: C.tz });\nconst to = DateTime.fromISO(n.range_end, { zone: C.tz });\nconst days = freeSlots(from, to, n.duration, busy, C, now);\nconst total = days.reduce((a, d) => a + d.open_times.length, 0);\nconst message = total\n  ? days.filter(d => d.open_times.length).map(d => d.day_label + ': ' + d.open_times.slice(0, 6).join(', ') + (d.open_times.length > 6 ? ', and more' : '')).join('. ') + '.'\n  : 'No open times in that range. Calls run weekdays 9 AM to 5 PM Eastern, need at least 4 hours notice, and can be booked up to 30 days out.';\nreturn [{ json: { response: { status: total ? 'ok' : 'no_availability', timezone: 'America/New_York', duration_minutes: n.duration, days, message } } }];"
+        },
+        "id": "7e4af85b-753d-4935-b495-71844cd065de",
+        "name": "Compute Slots",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          656,
+          16
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "calendar": {
+            "__rl": true,
+            "cachedResultName": "automatestpete@gmail.com",
+            "mode": "list",
+            "value": "automatestpete@gmail.com"
+          },
+          "returnAll": true,
+          "timeMin": "={{ $json.timeMin }}",
+          "timeMax": "={{ $json.timeMax }}",
+          "options": {
+            "orderBy": "startTime",
+            "query": "={{ $json.query }}"
+          }
+        },
+        "id": "ecaa8e7e-9571-481f-a05c-031a5d483953",
+        "name": "Search Bookings",
+        "type": "n8n-nodes-base.googleCalendar",
+        "typeVersion": 1.3,
+        "position": [
+          432,
+          208
+        ],
+        "alwaysOutputData": true,
+        "credentials": {
+          "googleCalendarOAuth2Api": {
+            "id": "uN5dopaOLSVA2U6J",
+            "name": "Google Calendar account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const n = $('Normalize').first().json; const C = n.cfg;\nconst now = DateTime.fromISO(n.now).setZone(C.tz);\nconst bookings = [];\nfor (const it of $input.all()) {\n  const e = it.json || {};\n  if (!e.id || e.status === 'cancelled' || !(e.description || '').includes(C.tag)) continue;\n  if (!e.start || !e.start.dateTime) continue;\n  const s = DateTime.fromISO(e.start.dateTime).setZone(C.tz);\n  if (s < now) continue;\n  const pending = (e.summary || '').startsWith('[PENDING]');\n  bookings.push({ event_id: e.id, when: s.toFormat(`cccc, LLLL d 'at' h:mm a`), date: s.toISODate(), time: s.toFormat('HH:mm'), status: pending ? 'pending_approval' : 'confirmed', can_change_by_phone: s > now.plus({ hours: C.noChangesWithinHours }) });\n}\nconst message = bookings.length\n  ? 'Upcoming bookings: ' + bookings.map(b => b.when + (b.status === 'pending_approval' ? `, waiting on Robert's approval` : ', confirmed')).join('; ') + '.'\n  : 'No upcoming bookings found for that caller.';\nreturn [{ json: { response: { status: bookings.length ? 'found' : 'not_found', bookings, message } } }];"
+        },
+        "id": "1fc81e77-96fc-4543-9bd9-77463b7fcee4",
+        "name": "Format Bookings",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          656,
+          208
+        ]
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify($json.response) }}",
+          "options": {}
+        },
+        "id": "46d418cb-2e37-4920-aea2-81ceec1ffca6",
+        "name": "Respond Result",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          880,
+          432
+        ],
+        "notes": "Shared response for every branch that answers immediately."
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "calendar": {
+            "__rl": true,
+            "cachedResultName": "automatestpete@gmail.com",
+            "mode": "list",
+            "value": "automatestpete@gmail.com"
+          },
+          "returnAll": true,
+          "timeMin": "={{ $json.timeMin.slice(0,-6) }}",
+          "timeMax": "={{ $json.timeMax.slice(0,-6) }}",
+          "options": {}
+        },
+        "id": "e84731f6-1a7b-4e40-b527-636e32eb867d",
+        "name": "Get Events (Book)",
+        "type": "n8n-nodes-base.googleCalendar",
+        "typeVersion": 1.3,
+        "position": [
+          -16,
+          528
+        ],
+        "alwaysOutputData": true,
+        "credentials": {
+          "googleCalendarOAuth2Api": {
+            "id": "uN5dopaOLSVA2U6J",
+            "name": "Google Calendar account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// ---- shared slot helpers (same in Compute Slots / Check Reschedule) ----\nfunction hm(str, day) { const [h, m] = str.split(':').map(Number); return day.set({ hour: h, minute: m, second: 0, millisecond: 0 }); }\nfunction collectBusy(items, tz) {\n  const busy = [];\n  for (const it of items) {\n    const e = it.json || {};\n    if (!e.id || e.error || e.status === 'cancelled' || e.transparency === 'transparent') continue;\n    if ((e.attendees || []).some(a => a.self && a.responseStatus === 'declined')) continue;\n    let s, en;\n    if (e.start && e.start.dateTime) { s = DateTime.fromISO(e.start.dateTime).setZone(tz); en = DateTime.fromISO(e.end.dateTime).setZone(tz); }\n    else if (e.start && e.start.date) { s = DateTime.fromISO(e.start.date, { zone: tz }); en = DateTime.fromISO(e.end.date, { zone: tz }); }\n    else continue;\n    busy.push({ s, e: en, id: e.id });\n  }\n  return busy;\n}\nfunction slotProblem(start, dur, busy, C, now, excludeId) {\n  const end = start.plus({ minutes: dur });\n  const day = start.startOf('day');\n  if (!C.workdays.includes(start.weekday) || start < hm(C.openTime, day) || end > hm(C.closeTime, day)) return 'outside_hours';\n  if (start < now.plus({ hours: C.minNoticeHours })) return 'too_soon';\n  if (start > now.plus({ days: C.maxDaysOut })) return 'too_far_out';\n  const b = C.bufferMinutes;\n  if (busy.some(x => x.id !== excludeId && x.s < end.plus({ minutes: b }) && x.e > start.minus({ minutes: b }))) return 'conflict';\n  return null;\n}\nfunction freeSlots(fromDay, toDay, dur, busy, C, now, excludeId) {\n  const days = [];\n  for (let d = fromDay.startOf('day'); d <= toDay; d = d.plus({ days: 1 })) {\n    if (!C.workdays.includes(d.weekday)) continue;\n    const times = [];\n    for (let t = hm(C.openTime, d); t.plus({ minutes: dur }) <= hm(C.closeTime, d); t = t.plus({ minutes: C.slotStepMinutes })) {\n      if (!slotProblem(t, dur, busy, C, now, excludeId)) times.push(t);\n    }\n    days.push({ date: d.toISODate(), day_label: d.toFormat('cccc, LLLL d'), open_times: times.map(t => t.toFormat('h:mm a')), open_times_24h: times.map(t => t.toFormat('HH:mm')) });\n  }\n  return days;\n}\nconst REASONS = { outside_hours: 'That time is outside call hours, weekdays 9 AM to 5 PM Eastern.', too_soon: 'Calls need at least 4 hours notice.', too_far_out: 'Calls can only be booked up to 30 days out.', conflict: 'That time is already taken.' };\nfunction altList(days, max) { return days.flatMap(d => d.open_times_24h.map((t, i) => ({ date: d.date, time: t, spoken: d.day_label + ' at ' + d.open_times[i] }))).slice(0, max); }\n// ---------------------------------------------------------------------\nconst n = $('Normalize').first().json; const C = n.cfg;\nconst now = DateTime.fromISO(n.now).setZone(C.tz);\nconst busy = collectBusy($input.all(), C.tz);\nconst start = DateTime.fromISO(n.start).setZone(C.tz);\nconst end = start.plus({ minutes: n.duration });\nconst when = start.toFormat(`cccc, LLLL d 'at' h:mm a`);\nconst problem = slotProblem(start, n.duration, busy, C, now);\nif (!problem) {\n  return [{ json: { ok: true, start: start.toISO(), end: end.toISO(), when,\n    pending_response: { status: 'pending_approval', when, message: `Request sent to Robert for ${when} Eastern. Once he approves, a calendar invite with a Google Meet link goes to ${n.email}.` } } }];\n}\nconst alts = altList(freeSlots(start, start.plus({ days: C.alternativesDaysAhead }).startOf('day'), n.duration, busy, C, now), 4);\nreturn [{ json: { ok: false, response: { status: 'unavailable', reason: problem, alternatives: alts,\n  message: REASONS[problem] + (alts.length ? ' Open times nearby: ' + alts.map(a => a.spoken).join(', ') + '.' : ' Nothing open in the next few days, try another day.') } } }];"
+        },
+        "id": "f64e825a-b194-46d2-91fe-0083ec759c89",
+        "name": "Check Slot",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          208,
+          528
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "c1",
+                "leftValue": "={{ $json.ok }}",
+                "operator": {
+                  "operation": "true",
+                  "singleValue": true,
+                  "type": "boolean"
+                },
+                "rightValue": ""
+              }
+            ],
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            }
+          },
+          "options": {}
+        },
+        "id": "fdfefa2b-1176-4551-9257-7b2728c3c632",
+        "name": "Slot Free?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          432,
+          528
+        ]
+      },
+      {
+        "parameters": {
+          "calendar": {
+            "__rl": true,
+            "cachedResultName": "automatestpete@gmail.com",
+            "mode": "list",
+            "value": "automatestpete@gmail.com"
+          },
+          "start": "={{ $json.start }}",
+          "end": "={{ $json.end }}",
+          "additionalFields": {
+            "conferenceDataUi": {
+              "conferenceDataValues": {
+                "conferenceSolution": "hangoutsMeet"
+              }
+            },
+            "description": "={{ [$('Normalize').first().json.cfg.tag + ' (voice agent booking)', 'Status: pending approval', '', 'Name: ' + $('Normalize').first().json.name, 'Email: ' + $('Normalize').first().json.email, 'Phone: ' + ($('Normalize').first().json.phone || 'not given'), 'Topic: ' + ($('Normalize').first().json.topic || 'not given')].join('\\n') }}",
+            "sendUpdates": "none",
+            "showMeAs": "opaque",
+            "summary": "=[PENDING] {{ $('Normalize').first().json.cfg.meetingTitle }} – {{ $('Normalize').first().json.name }}"
+          }
+        },
+        "id": "566c7d74-df25-418a-9247-fb985eefcb34",
+        "name": "Create Hold",
+        "type": "n8n-nodes-base.googleCalendar",
+        "typeVersion": 1.3,
+        "position": [
+          656,
+          528
+        ],
+        "credentials": {
+          "googleCalendarOAuth2Api": {
+            "id": "uN5dopaOLSVA2U6J",
+            "name": "Google Calendar account"
+          }
+        },
+        "notes": "Tentative hold: blocks the slot, Meet link attached, no attendees yet so no invite goes out."
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify($('Check Slot').first().json.pending_response) }}",
+          "options": {}
+        },
+        "id": "1349133a-6f67-4589-beb9-ca5ef9a6fc7d",
+        "name": "Respond Book Pending",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          880,
+          624
+        ],
+        "notes": "Answer the voice agent now, then wait for approval in the background."
+      },
+      {
+        "parameters": {
+          "operation": "sendAndWait",
+          "chatId": "5076593768",
+          "message": "=📞 New call request from the voice receptionist\n\nWho: {{ $('Normalize').first().json.safe.name }}\nEmail: {{ $('Normalize').first().json.safe.email }}\nPhone: {{ $('Normalize').first().json.safe.phone }}\nWhen: {{ $('Check Slot').first().json.when }} ET ({{ $('Normalize').first().json.duration }} min)\nTopic: {{ $('Normalize').first().json.safe.topic }}\n\nA tentative hold is on your calendar. Approve to send the invite with a Meet link, or decline to release the slot.",
+          "approvalOptions": {
+            "values": {
+              "approvalType": "double"
+            }
+          },
+          "options": {
+            "appendAttribution": false
+          }
+        },
+        "id": "781a7df2-ca0a-487b-b942-0dde70226869",
+        "name": "Approve Booking",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1104,
+          624
+        ],
+        "webhookId": "00055d40-b343-45aa-af34-e1ad74e4bb5a",
+        "credentials": {
+          "telegramApi": {
+            "id": "GrHxwuhk9SECQo8h",
+            "name": "NanoRob3"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "c2",
+                "leftValue": "={{ $json.data.approved }}",
+                "operator": {
+                  "operation": "true",
+                  "singleValue": true,
+                  "type": "boolean"
+                },
+                "rightValue": ""
+              }
+            ],
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            }
+          },
+          "options": {}
+        },
+        "id": "9962a551-c875-48ea-8853-7bc2e0d1987f",
+        "name": "Booking Approved?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1328,
+          624
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "calendar": {
+            "__rl": true,
+            "cachedResultName": "automatestpete@gmail.com",
+            "mode": "list",
+            "value": "automatestpete@gmail.com"
+          },
+          "eventId": "={{ $('Create Hold').first().json.id }}",
+          "updateFields": {
+            "attendeesUi": {
+              "values": {
+                "attendees": [
+                  "={{ $('Normalize').first().json.email }}"
+                ]
+              }
+            },
+            "description": "={{ ($('Create Hold').first().json.description || '').replace('Status: pending approval', 'Status: confirmed') }}",
+            "sendUpdates": "all",
+            "summary": "={{ $('Normalize').first().json.cfg.meetingTitle }} – {{ $('Normalize').first().json.name }}"
+          }
+        },
+        "id": "9bf56599-7243-42ad-8858-74e90e482ad8",
+        "name": "Confirm Booking",
+        "type": "n8n-nodes-base.googleCalendar",
+        "typeVersion": 1.3,
+        "position": [
+          1552,
+          496
+        ],
+        "credentials": {
+          "googleCalendarOAuth2Api": {
+            "id": "uN5dopaOLSVA2U6J",
+            "name": "Google Calendar account"
+          }
+        },
+        "notes": "Adds the caller as attendee and sends the invite (Meet link already on the event)."
+      },
+      {
+        "parameters": {
+          "chatId": "5076593768",
+          "text": "=✅ Confirmed: {{ $('Normalize').first().json.safe.name }} on {{ $('Check Slot').first().json.when }} ET. Invite with Meet link sent to {{ $('Normalize').first().json.safe.email }}.",
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "id": "6ad2f926-cbab-4c6a-9175-6e27ad34f35a",
+        "name": "TG Booking Confirmed",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1776,
+          496
+        ],
+        "webhookId": "f550d862-67fe-4866-ab91-da59618d4f83",
+        "credentials": {
+          "telegramApi": {
+            "id": "GrHxwuhk9SECQo8h",
+            "name": "NanoRob3"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "delete",
+          "calendar": {
+            "__rl": true,
+            "cachedResultName": "automatestpete@gmail.com",
+            "mode": "list",
+            "value": "automatestpete@gmail.com"
+          },
+          "eventId": "={{ $('Create Hold').first().json.id }}",
+          "options": {
+            "sendUpdates": "none"
+          }
+        },
+        "id": "1dcaa32f-4929-4b58-8348-7c7e228f38c0",
+        "name": "Delete Hold",
+        "type": "n8n-nodes-base.googleCalendar",
+        "typeVersion": 1.3,
+        "position": [
+          1552,
+          688
+        ],
+        "credentials": {
+          "googleCalendarOAuth2Api": {
+            "id": "uN5dopaOLSVA2U6J",
+            "name": "Google Calendar account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "5076593768",
+          "text": "=❌ Declined: hold removed for {{ $('Normalize').first().json.safe.name }} ({{ $('Check Slot').first().json.when }} ET). They were told you'd confirm, so follow up at {{ $('Normalize').first().json.safe.email }} / {{ $('Normalize').first().json.safe.phone }}.",
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "id": "4e2d12a9-de23-4300-a795-477953276cc0",
+        "name": "TG Booking Declined",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1776,
+          688
+        ],
+        "webhookId": "14424624-245a-458a-9500-f20d57895859",
+        "credentials": {
+          "telegramApi": {
+            "id": "0m0YZ5HsBWG8XLmu",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "calendar": {
+            "__rl": true,
+            "cachedResultName": "automatestpete@gmail.com",
+            "mode": "list",
+            "value": "automatestpete@gmail.com"
+          },
+          "eventId": "={{ $json.event_id }}",
+          "options": {}
+        },
+        "id": "c1cadfba-a16a-416f-9426-7f0e9d138a5c",
+        "name": "Get Booking (Reschedule)",
+        "type": "n8n-nodes-base.googleCalendar",
+        "typeVersion": 1.3,
+        "position": [
+          -16,
+          816
+        ],
+        "alwaysOutputData": true,
+        "credentials": {
+          "googleCalendarOAuth2Api": {
+            "id": "uN5dopaOLSVA2U6J",
+            "name": "Google Calendar account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "calendar": {
+            "__rl": true,
+            "cachedResultName": "automatestpete@gmail.com",
+            "mode": "list",
+            "value": "automatestpete@gmail.com"
+          },
+          "returnAll": true,
+          "timeMin": "={{ $('Normalize').first().json.timeMin }}",
+          "timeMax": "={{ $('Normalize').first().json.timeMax }}",
+          "options": {}
+        },
+        "id": "b0e07deb-1fe8-478f-a89d-c3458997dbad",
+        "name": "Get Events (Reschedule)",
+        "type": "n8n-nodes-base.googleCalendar",
+        "typeVersion": 1.3,
+        "position": [
+          208,
+          816
+        ],
+        "alwaysOutputData": true,
+        "executeOnce": true,
+        "credentials": {
+          "googleCalendarOAuth2Api": {
+            "id": "uN5dopaOLSVA2U6J",
+            "name": "Google Calendar account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// ---- shared slot helpers (same in Compute Slots / Check Slot) ----\nfunction hm(str, day) { const [h, m] = str.split(':').map(Number); return day.set({ hour: h, minute: m, second: 0, millisecond: 0 }); }\nfunction collectBusy(items, tz) {\n  const busy = [];\n  for (const it of items) {\n    const e = it.json || {};\n    if (!e.id || e.error || e.status === 'cancelled' || e.transparency === 'transparent') continue;\n    if ((e.attendees || []).some(a => a.self && a.responseStatus === 'declined')) continue;\n    let s, en;\n    if (e.start && e.start.dateTime) { s = DateTime.fromISO(e.start.dateTime).setZone(tz); en = DateTime.fromISO(e.end.dateTime).setZone(tz); }\n    else if (e.start && e.start.date) { s = DateTime.fromISO(e.start.date, { zone: tz }); en = DateTime.fromISO(e.end.date, { zone: tz }); }\n    else continue;\n    busy.push({ s, e: en, id: e.id });\n  }\n  return busy;\n}\nfunction slotProblem(start, dur, busy, C, now, excludeId) {\n  const end = start.plus({ minutes: dur });\n  const day = start.startOf('day');\n  if (!C.workdays.includes(start.weekday) || start < hm(C.openTime, day) || end > hm(C.closeTime, day)) return 'outside_hours';\n  if (start < now.plus({ hours: C.minNoticeHours })) return 'too_soon';\n  if (start > now.plus({ days: C.maxDaysOut })) return 'too_far_out';\n  const b = C.bufferMinutes;\n  if (busy.some(x => x.id !== excludeId && x.s < end.plus({ minutes: b }) && x.e > start.minus({ minutes: b }))) return 'conflict';\n  return null;\n}\nfunction freeSlots(fromDay, toDay, dur, busy, C, now, excludeId) {\n  const days = [];\n  for (let d = fromDay.startOf('day'); d <= toDay; d = d.plus({ days: 1 })) {\n    if (!C.workdays.includes(d.weekday)) continue;\n    const times = [];\n    for (let t = hm(C.openTime, d); t.plus({ minutes: dur }) <= hm(C.closeTime, d); t = t.plus({ minutes: C.slotStepMinutes })) {\n      if (!slotProblem(t, dur, busy, C, now, excludeId)) times.push(t);\n    }\n    days.push({ date: d.toISODate(), day_label: d.toFormat('cccc, LLLL d'), open_times: times.map(t => t.toFormat('h:mm a')), open_times_24h: times.map(t => t.toFormat('HH:mm')) });\n  }\n  return days;\n}\nconst REASONS = { outside_hours: 'That time is outside call hours, weekdays 9 AM to 5 PM Eastern.', too_soon: 'Calls need at least 4 hours notice.', too_far_out: 'Calls can only be booked up to 30 days out.', conflict: 'That time is already taken.' };\nfunction altList(days, max) { return days.flatMap(d => d.open_times_24h.map((t, i) => ({ date: d.date, time: t, spoken: d.day_label + ' at ' + d.open_times[i] }))).slice(0, max); }\n// ---------------------------------------------------------------------\nconst n = $('Normalize').first().json; const C = n.cfg;\nconst now = DateTime.fromISO(n.now).setZone(C.tz);\nconst ev = $('Get Booking (Reschedule)').first().json || {};\nconst desc = ev.description || '';\nconst owns = desc.toLowerCase().includes(n.email) || (ev.attendees || []).some(a => (a.email || '').toLowerCase() === n.email);\nif (!ev.id || ev.error || ev.status === 'cancelled' || !desc.includes(C.tag) || !owns || !ev.start || !ev.start.dateTime) {\n  return [{ json: { ok: false, response: { status: 'not_found', message: `I couldn't find a booking under that email. Robert will follow up by email.` } } }];\n}\nconst oldStart = DateTime.fromISO(ev.start.dateTime).setZone(C.tz);\nconst oldEnd = DateTime.fromISO(ev.end.dateTime).setZone(C.tz);\nconst oldWhen = oldStart.toFormat(`cccc, LLLL d 'at' h:mm a`);\nif (oldStart < now.plus({ hours: C.noChangesWithinHours })) {\n  return [{ json: { ok: false, response: { status: 'too_late', message: `That call is less than 24 hours away, so it can't be changed by phone. Robert will reach out directly.` } } }];\n}\nconst dur = Math.round(oldEnd.diff(oldStart, 'minutes').minutes);\nconst busy = collectBusy($input.all(), C.tz);\nconst start = DateTime.fromISO(n.start).setZone(C.tz);\nconst newWhen = start.toFormat(`cccc, LLLL d 'at' h:mm a`);\nconst problem = slotProblem(start, dur, busy, C, now, ev.id);\nif (problem) {\n  const alts = altList(freeSlots(start, start.plus({ days: C.alternativesDaysAhead }).startOf('day'), dur, busy, C, now, ev.id), 4);\n  return [{ json: { ok: false, response: { status: 'unavailable', reason: problem, alternatives: alts, message: REASONS[problem] + (alts.length ? ' Open times nearby: ' + alts.map(a => a.spoken).join(', ') + '.' : ' Nothing open in the next few days, try another day.') } } }];\n}\nreturn [{ json: { ok: true, event_id: ev.id, summary: ev.summary || '', old_when: oldWhen, new_when: newWhen, start: start.toISO(), end: start.plus({ minutes: dur }).toISO(),\n  pending_response: { status: 'pending_approval', message: `Request sent to Robert to move the call from ${oldWhen} to ${newWhen} Eastern. An updated invite goes out once he approves.` } } }];"
+        },
+        "id": "6390ae30-0fef-47ca-8641-c83196c4d983",
+        "name": "Check Reschedule",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          432,
+          816
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "c3",
+                "leftValue": "={{ $json.ok }}",
+                "operator": {
+                  "operation": "true",
+                  "singleValue": true,
+                  "type": "boolean"
+                },
+                "rightValue": ""
+              }
+            ],
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            }
+          },
+          "options": {}
+        },
+        "id": "20258761-8b40-49af-b3b5-8cf20703d20d",
+        "name": "Reschedule OK?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          656,
+          816
+        ]
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify($json.pending_response) }}",
+          "options": {}
+        },
+        "id": "ef6773e1-eeb1-4ff2-9f59-006b63505f2a",
+        "name": "Respond Reschedule Pending",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          880,
+          1008
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "sendAndWait",
+          "chatId": "5076593768",
+          "message": "=🔁 Reschedule request from the voice receptionist\n\nBooking: {{ $('Check Reschedule').first().json.summary }}\nCaller email: {{ $('Normalize').first().json.safe.email }}\nFrom: {{ $('Check Reschedule').first().json.old_when }} ET\nTo: {{ $('Check Reschedule').first().json.new_when }} ET\n\nApprove to move it and send the updated invite.",
+          "approvalOptions": {
+            "values": {
+              "approvalType": "double"
+            }
+          },
+          "options": {
+            "appendAttribution": false
+          }
+        },
+        "id": "1c54b105-3a65-4200-91fa-7c399eb1ac5d",
+        "name": "Approve Reschedule",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1104,
+          1008
+        ],
+        "webhookId": "d36604f0-f996-4172-a0f8-7153e15589f4",
+        "credentials": {
+          "telegramApi": {
+            "id": "0m0YZ5HsBWG8XLmu",
+            "name": "Telegram account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "c4",
+                "leftValue": "={{ $json.data.approved }}",
+                "operator": {
+                  "operation": "true",
+                  "singleValue": true,
+                  "type": "boolean"
+                },
+                "rightValue": ""
+              }
+            ],
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            }
+          },
+          "options": {}
+        },
+        "id": "adafa7f3-544d-423c-becd-d7defb020335",
+        "name": "Reschedule Approved?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1328,
+          1008
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "calendar": {
+            "__rl": true,
+            "cachedResultName": "automatestpete@gmail.com",
+            "mode": "list",
+            "value": "automatestpete@gmail.com"
+          },
+          "eventId": "={{ $('Check Reschedule').first().json.event_id }}",
+          "updateFields": {
+            "end": "={{ $('Check Reschedule').first().json.end }}",
+            "sendUpdates": "all",
+            "start": "={{ $('Check Reschedule').first().json.start }}"
+          }
+        },
+        "id": "444e6428-8fc3-4290-8c10-2ba9842e2b51",
+        "name": "Move Event",
+        "type": "n8n-nodes-base.googleCalendar",
+        "typeVersion": 1.3,
+        "position": [
+          1552,
+          880
+        ],
+        "credentials": {
+          "googleCalendarOAuth2Api": {
+            "id": "uN5dopaOLSVA2U6J",
+            "name": "Google Calendar account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "5076593768",
+          "text": "=✅ Moved to {{ $('Check Reschedule').first().json.new_when }} ET. Updated invite sent.",
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "id": "cd41695f-3946-4100-bfac-e53805e2063e",
+        "name": "TG Reschedule Done",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1776,
+          880
+        ],
+        "webhookId": "ef74f7a7-ed83-4741-a82b-1df976aa2b4e",
+        "credentials": {
+          "telegramApi": {
+            "id": "0m0YZ5HsBWG8XLmu",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "5076593768",
+          "text": "=❌ Reschedule declined. The call stays at {{ $('Check Reschedule').first().json.old_when }} ET. The caller wasn't notified, so follow up at {{ $('Normalize').first().json.safe.email }}.",
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "id": "3b8899a9-adbe-4269-9dce-744d9d5a2746",
+        "name": "TG Reschedule Declined",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1552,
+          1072
+        ],
+        "webhookId": "1f015dcd-abb7-4e3c-8621-684ecb0598dc",
+        "credentials": {
+          "telegramApi": {
+            "id": "0m0YZ5HsBWG8XLmu",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "calendar": {
+            "__rl": true,
+            "cachedResultName": "automatestpete@gmail.com",
+            "mode": "list",
+            "value": "automatestpete@gmail.com"
+          },
+          "eventId": "={{ $json.event_id }}",
+          "options": {}
+        },
+        "id": "17a65448-3cf9-4509-8d5d-a53161c59796",
+        "name": "Get Booking (Cancel)",
+        "type": "n8n-nodes-base.googleCalendar",
+        "typeVersion": 1.3,
+        "position": [
+          -16,
+          1312
+        ],
+        "alwaysOutputData": true,
+        "credentials": {
+          "googleCalendarOAuth2Api": {
+            "id": "uN5dopaOLSVA2U6J",
+            "name": "Google Calendar account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "jsCode": "const n = $('Normalize').first().json; const C = n.cfg;\nconst now = DateTime.fromISO(n.now).setZone(C.tz);\nconst ev = $input.first().json || {};\nconst desc = ev.description || '';\nconst owns = desc.toLowerCase().includes(n.email) || (ev.attendees || []).some(a => (a.email || '').toLowerCase() === n.email);\nif (!ev.id || ev.error || ev.status === 'cancelled' || !desc.includes(C.tag) || !owns || !ev.start || !ev.start.dateTime) {\n  return [{ json: { ok: false, response: { status: 'not_found', message: `I couldn't find a booking under that email. Robert will follow up by email.` } } }];\n}\nconst start = DateTime.fromISO(ev.start.dateTime).setZone(C.tz);\nconst when = start.toFormat(`cccc, LLLL d 'at' h:mm a`);\nif (start < now.plus({ hours: C.noChangesWithinHours })) {\n  return [{ json: { ok: false, response: { status: 'too_late', message: `That call is less than 24 hours away, so it can't be cancelled by phone. Robert will reach out directly.` } } }];\n}\nreturn [{ json: { ok: true, event_id: ev.id, summary: ev.summary || '', when,\n  pending_response: { status: 'pending_approval', message: `Request sent to Robert to cancel the call on ${when} Eastern. A cancellation email goes out once he confirms.` } } }];"
+        },
+        "id": "805d4c7f-3590-4014-916c-3ab83efc9c3d",
+        "name": "Check Cancel",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          208,
+          1312
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "c5",
+                "leftValue": "={{ $json.ok }}",
+                "operator": {
+                  "operation": "true",
+                  "singleValue": true,
+                  "type": "boolean"
+                },
+                "rightValue": ""
+              }
+            ],
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            }
+          },
+          "options": {}
+        },
+        "id": "991e94ca-7cf2-4940-9eaa-6534b89524c3",
+        "name": "Cancel OK?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          432,
+          1312
+        ]
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify($json.pending_response) }}",
+          "options": {}
+        },
+        "id": "ed2d5d02-407d-4707-9f51-dc57c36a87cb",
+        "name": "Respond Cancel Pending",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          656,
+          1392
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "sendAndWait",
+          "chatId": "5076593768",
+          "message": "=🗑 Cancellation request from the voice receptionist\n\nBooking: {{ $('Check Cancel').first().json.summary }}\nWhen: {{ $('Check Cancel').first().json.when }} ET\nCaller email: {{ $('Normalize').first().json.safe.email }}\n\nApprove to cancel and notify the caller.",
+          "approvalOptions": {
+            "values": {
+              "approvalType": "double",
+              "approveLabel": "✅ Cancel it",
+              "disapproveLabel": "❌ Keep it"
+            }
+          },
+          "options": {
+            "appendAttribution": false
+          }
+        },
+        "id": "539a2457-3e5e-4fe4-a13e-4a075bcf6082",
+        "name": "Approve Cancel",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          880,
+          1392
+        ],
+        "webhookId": "84b01a6c-5eca-4974-badd-30af1bc82fdd",
+        "credentials": {
+          "telegramApi": {
+            "id": "0m0YZ5HsBWG8XLmu",
+            "name": "Telegram account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "c6",
+                "leftValue": "={{ $json.data.approved }}",
+                "operator": {
+                  "operation": "true",
+                  "singleValue": true,
+                  "type": "boolean"
+                },
+                "rightValue": ""
+              }
+            ],
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            }
+          },
+          "options": {}
+        },
+        "id": "77d75a71-555f-4d1f-a782-02856fb442ec",
+        "name": "Cancel Approved?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1104,
+          1392
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "delete",
+          "calendar": {
+            "__rl": true,
+            "cachedResultName": "automatestpete@gmail.com",
+            "mode": "list",
+            "value": "automatestpete@gmail.com"
+          },
+          "eventId": "={{ $('Check Cancel').first().json.event_id }}",
+          "options": {
+            "sendUpdates": "all"
+          }
+        },
+        "id": "eed51bc3-341d-4456-93d5-dd7ddeb21729",
+        "name": "Delete Event",
+        "type": "n8n-nodes-base.googleCalendar",
+        "typeVersion": 1.3,
+        "position": [
+          1328,
+          1264
+        ],
+        "credentials": {
+          "googleCalendarOAuth2Api": {
+            "id": "uN5dopaOLSVA2U6J",
+            "name": "Google Calendar account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "5076593768",
+          "text": "=✅ Cancelled the call on {{ $('Check Cancel').first().json.when }} ET. Caller notified.",
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "id": "0e5daf50-524c-4c5f-8587-49cd873e5620",
+        "name": "TG Cancel Done",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1552,
+          1264
+        ],
+        "webhookId": "d8eef1f0-e522-47d2-b9f8-8c656f60cc2e",
+        "credentials": {
+          "telegramApi": {
+            "id": "0m0YZ5HsBWG8XLmu",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "5076593768",
+          "text": "=❌ Kept the call on {{ $('Check Cancel').first().json.when }} ET. The caller wasn't notified, so follow up at {{ $('Normalize').first().json.safe.email }}.",
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "id": "480ddd73-ef01-479e-b04a-b94319c9d594",
+        "name": "TG Cancel Declined",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1328,
+          1456
+        ],
+        "webhookId": "d187aa15-72f6-4a20-a810-823e41c89be4",
+        "credentials": {
+          "telegramApi": {
+            "id": "0m0YZ5HsBWG8XLmu",
+            "name": "Telegram account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Normalize",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Normalize": {
+        "main": [
+          [
+            {
+              "node": "Route Action",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Route Action": {
+        "main": [
+          [
+            {
+              "node": "Get Events (Availability)",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Search Bookings",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Get Events (Book)",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Get Booking (Reschedule)",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Get Booking (Cancel)",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Respond Result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Events (Availability)": {
+        "main": [
+          [
+            {
+              "node": "Compute Slots",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Compute Slots": {
+        "main": [
+          [
+            {
+              "node": "Respond Result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Search Bookings": {
+        "main": [
+          [
+            {
+              "node": "Format Bookings",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Format Bookings": {
+        "main": [
+          [
+            {
+              "node": "Respond Result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Events (Book)": {
+        "main": [
+          [
+            {
+              "node": "Check Slot",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Check Slot": {
+        "main": [
+          [
+            {
+              "node": "Slot Free?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Slot Free?": {
+        "main": [
+          [
+            {
+              "node": "Create Hold",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Respond Result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create Hold": {
+        "main": [
+          [
+            {
+              "node": "Respond Book Pending",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Respond Book Pending": {
+        "main": [
+          [
+            {
+              "node": "Approve Booking",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Approve Booking": {
+        "main": [
+          [
+            {
+              "node": "Booking Approved?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Booking Approved?": {
+        "main": [
+          [
+            {
+              "node": "Confirm Booking",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Delete Hold",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Confirm Booking": {
+        "main": [
+          [
+            {
+              "node": "TG Booking Confirmed",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Delete Hold": {
+        "main": [
+          [
+            {
+              "node": "TG Booking Declined",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Booking (Reschedule)": {
+        "main": [
+          [
+            {
+              "node": "Get Events (Reschedule)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Events (Reschedule)": {
+        "main": [
+          [
+            {
+              "node": "Check Reschedule",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Check Reschedule": {
+        "main": [
+          [
+            {
+              "node": "Reschedule OK?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Reschedule OK?": {
+        "main": [
+          [
+            {
+              "node": "Respond Reschedule Pending",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Respond Result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Respond Reschedule Pending": {
+        "main": [
+          [
+            {
+              "node": "Approve Reschedule",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Approve Reschedule": {
+        "main": [
+          [
+            {
+              "node": "Reschedule Approved?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Reschedule Approved?": {
+        "main": [
+          [
+            {
+              "node": "Move Event",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "TG Reschedule Declined",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Move Event": {
+        "main": [
+          [
+            {
+              "node": "TG Reschedule Done",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Booking (Cancel)": {
+        "main": [
+          [
+            {
+              "node": "Check Cancel",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Check Cancel": {
+        "main": [
+          [
+            {
+              "node": "Cancel OK?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Cancel OK?": {
+        "main": [
+          [
+            {
+              "node": "Respond Cancel Pending",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Respond Result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Respond Cancel Pending": {
+        "main": [
+          [
+            {
+              "node": "Approve Cancel",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Approve Cancel": {
+        "main": [
+          [
+            {
+              "node": "Cancel Approved?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Cancel Approved?": {
+        "main": [
+          [
+            {
+              "node": "Delete Event",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "TG Cancel Declined",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Delete Event": {
+        "main": [
+          [
+            {
+              "node": "TG Cancel Done",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [
+      {
+        "id": "34ac9224-af3d-40d5-9bad-b759a2a409d1",
+        "name": "Intake & routing",
+        "nodeIds": [
+          "edd30ec3-9707-4816-badc-9c87a5a167e0",
+          "502f0b80-db4a-4a96-846b-cd323f0bad69"
+        ],
+        "description": "Validates the Dograh tool call and routes on action"
+      }
+    ],
+    "authors": "Robert Lord",
+    "name": "Version 7ea7a801",
+    "description": "",
+    "autosaved": true,
+    "createdAt": "2026-10-22T16:29:57.559Z",
+    "updatedAt": "2026-10-22T16:30:32.000Z"
+  },
+  "activeVersionId": "7ea7a801-b448-4238-a7f4-0154dee02968",
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Normalize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize": {
+      "main": [
+        [
+          {
+            "node": "Route Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Action": {
+      "main": [
+        [
+          {
+            "node": "Get Events (Availability)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Search Bookings",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Events (Book)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Booking (Reschedule)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Booking (Cancel)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Events (Availability)": {
+      "main": [
+        [
+          {
+            "node": "Compute Slots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compute Slots": {
+      "main": [
+        [
+          {
+            "node": "Respond Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Bookings": {
+      "main": [
+        [
+          {
+            "node": "Format Bookings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Bookings": {
+      "main": [
+        [
+          {
+            "node": "Respond Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Events (Book)": {
+      "main": [
+        [
+          {
+            "node": "Check Slot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Slot": {
+      "main": [
+        [
+          {
+            "node": "Slot Free?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slot Free?": {
+      "main": [
+        [
+          {
+            "node": "Create Hold",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Hold": {
+      "main": [
+        [
+          {
+            "node": "Respond Book Pending",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond Book Pending": {
+      "main": [
+        [
+          {
+            "node": "Approve Booking",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Approve Booking": {
+      "main": [
+        [
+          {
+            "node": "Booking Approved?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Booking Approved?": {
+      "main": [
+        [
+          {
+            "node": "Confirm Booking",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Delete Hold",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Confirm Booking": {
+      "main": [
+        [
+          {
+            "node": "TG Booking Confirmed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Hold": {
+      "main": [
+        [
+          {
+            "node": "TG Booking Declined",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Booking (Reschedule)": {
+      "main": [
+        [
+          {
+            "node": "Get Events (Reschedule)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Events (Reschedule)": {
+      "main": [
+        [
+          {
+            "node": "Check Reschedule",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Reschedule": {
+      "main": [
+        [
+          {
+            "node": "Reschedule OK?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reschedule OK?": {
+      "main": [
+        [
+          {
+            "node": "Respond Reschedule Pending",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond Reschedule Pending": {
+      "main": [
+        [
+          {
+            "node": "Approve Reschedule",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Approve Reschedule": {
+      "main": [
+        [
+          {
+            "node": "Reschedule Approved?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reschedule Approved?": {
+      "main": [
+        [
+          {
+            "node": "Move Event",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "TG Reschedule Declined",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Move Event": {
+      "main": [
+        [
+          {
+            "node": "TG Reschedule Done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Booking (Cancel)": {
+      "main": [
+        [
+          {
+            "node": "Check Cancel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Cancel": {
+      "main": [
+        [
+          {
+            "node": "Cancel OK?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cancel OK?": {
+      "main": [
+        [
+          {
+            "node": "Respond Cancel Pending",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond Cancel Pending": {
+      "main": [
+        [
+          {
+            "node": "Approve Cancel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Approve Cancel": {
+      "main": [
+        [
+          {
+            "node": "Cancel Approved?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cancel Approved?": {
+      "main": [
+        [
+          {
+            "node": "Delete Event",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "TG Cancel Declined",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Event": {
+      "main": [
+        [
+          {
+            "node": "TG Cancel Done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-22T01:00:16.571Z",
+  "id": "PgtTftGYFuLwBZLm",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "name": "Dograh | AdvancedAI.tech Receptionist Tools",
+  "nodeGroups": [
+    {
+      "id": "34ac9224-af3d-40d5-9bad-b759a2a409d1",
+      "name": "Intake & routing",
+      "nodeIds": [
+        "edd30ec3-9707-4816-badc-9c87a5a167e0",
+        "502f0b80-db4a-4a96-846b-cd323f0bad69"
+      ],
+      "description": "Validates the Dograh tool call and routes on action"
+    }
+  ],
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "46347bad-5a2b-435c-aa33-ecd14dfe3643",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        -800,
+        256
+      ],
+      "id": "e196fa1a-cb78-47e0-80c7-7f08e59139fc",
+      "name": "Webhook",
+      "webhookId": "46347bad-5a2b-435c-aa33-ecd14dfe3643"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== Booking rules: edit here =====\nconst CFG = {\n  tz: 'America/New_York',\n  workdays: [1, 2, 3, 4, 5], // Mon=1 ... Sun=7\n  openTime: '09:00',\n  closeTime: '17:00', // Calls must end by this time\n  bufferMinutes: 15,\n  minNoticeHours: 4,\n  maxDaysOut: 30,\n  noChangesWithinHours: 24,\n  slotStepMinutes: 30,\n  allowedDurations: [30, 60],\n  defaultDuration: 30,\n  maxRangeDays: 7,\n  alternativesDaysAhead: 3,\n  meetingTitle: 'AdvancedAI.tech Discovery Call',\n  tag: 'AdvancedAI.tech Receptionist',\n};\n// ====================================\n\nconst raw = $input.first().json;\nconst body =\n  raw.body && typeof raw.body === 'object'\n    ? raw.body\n    : raw;\n\nconst action = String(body.action || '')\n  .trim()\n  .toLowerCase();\n\nconst now = DateTime.now().setZone(CFG.tz);\nconst errors = [];\n\nconst clean = value =>\n  value === undefined || value === null\n    ? ''\n    : String(value).trim();\n\nconst esc = value =>\n  String(value || '')\n    .replace(/&/g, '&amp;')\n    .replace(/</g, '&lt;')\n    .replace(/>/g, '&gt;');\n\n// ===== DATE AND TIME HELPERS =====\n\nfunction parseDate(value) {\n  const text = clean(value);\n\n  if (!text) return null;\n\n  const match = text.match(/^(\\d{4})-(\\d{2})-(\\d{2})/);\n\n  if (!match) return null;\n\n  const date = DateTime.fromISO(\n    `${match[1]}-${match[2]}-${match[3]}`,\n    { zone: CFG.tz }\n  );\n\n  return date.isValid\n    ? date.startOf('day')\n    : null;\n}\n\n// Parses a full ISO timestamp (e.g. 2026-10-27T09:00:00).\n// Timestamps without an offset are treated as Eastern.\nfunction parseDateTime(value) {\n  const text = clean(value);\n\n  if (!/^\\d{4}-\\d{2}-\\d{2}T\\d{1,2}:\\d{2}/.test(text)) {\n    return null;\n  }\n\n  const dt = DateTime.fromISO(text, { zone: CFG.tz });\n\n  return dt.isValid\n    ? dt.setZone(CFG.tz).set({\n        second: 0,\n        millisecond: 0,\n      })\n    : null;\n}\n\nfunction parseTime(value) {\n  const text = clean(value)\n    .toLowerCase()\n    .replace(/\\./g, '')\n    .replace(/\\s+/g, ' ');\n\n  const match = text.match(\n    /^(\\d{1,2})(?::?(\\d{2}))?\\s?(am|pm|a|p)?$/\n  );\n\n  if (!match) return null;\n\n  let hour = Number(match[1]);\n  const minute = Number(match[2] || 0);\n  const period = match[3];\n\n  if (period) {\n    if (hour < 1 || hour > 12) return null;\n\n    if (period[0] === 'p' && hour !== 12) {\n      hour += 12;\n    }\n\n    if (period[0] === 'a' && hour === 12) {\n      hour = 0;\n    }\n  }\n\n  if (hour > 23 || minute > 59) {\n    return null;\n  }\n\n  return {\n    h: hour,\n    mi: minute,\n  };\n}\n\nfunction parseStart(input) {\n  // Accept a complete ISO timestamp.\n  const fullStart = parseDateTime(input.start);\n\n  if (fullStart) {\n    return fullStart;\n  }\n\n  // Accept either \"time\" or \"start_time\".\n  const date = parseDate(input.date);\n\n  const time = parseTime(\n    input.time || input.start_time\n  );\n\n  if (!date || !time) {\n    return null;\n  }\n\n  return date.set({\n    hour: time.h,\n    minute: time.mi,\n    second: 0,\n    millisecond: 0,\n  });\n}\n\n// ===== NORMALIZE COMMON FIELDS =====\n\nlet duration = parseInt(\n  body.duration_minutes ?? body.duration,\n  10\n);\n\nif (!CFG.allowedDurations.includes(duration)) {\n  duration = CFG.defaultDuration;\n}\n\n// Accept both the original and webhook field names.\nconst name = clean(\n  body.name || body.caller_name\n);\n\nconst email = clean(body.email)\n  .toLowerCase()\n  .replace(/\\s+/g, '');\n\nconst emailOk =\n  /^[^@\\s]+@[^@\\s]+\\.[a-z]{2,}$/i.test(email);\n\nconst phone = clean(body.phone)\n  .replace(/\\D/g, '');\n\nconst topic = clean(\n  body.topic || body.topics\n);\n\nconst company = clean(body.company);\n\nconst eventId = clean(\n  body.event_id || body.eventId\n);\n\n// Build the event title and replace supported placeholders.\nconst requestedEventTitle = clean(\n  body.event_title || body.eventTitle\n);\n\nconst eventTitle = (\n  requestedEventTitle || CFG.meetingTitle\n)\n  .replace(/\\{caller_name\\}/gi, name)\n  .replace(/\\{name\\}/gi, name)\n  .replace(/\\{company\\}/gi, company);\n\n// ===== BASE OUTPUT =====\n\nconst out = {\n  route: 'invalid',\n  action,\n  cfg: CFG,\n  now: now.toISO(),\n  timezone: CFG.tz,\n  duration,\n  name,\n  email,\n  phone,\n  topic,\n  company,\n  event_id: eventId,\n  event_title: eventTitle,\n  safe: {\n    name: esc(name),\n    email: esc(email),\n    phone: esc(phone || 'not given'),\n    topic: esc(topic || 'not given'),\n    company: esc(company || 'not given'),\n    event_title: esc(eventTitle),\n  },\n};\n\n// ===== ACTION VALIDATION =====\n\nif (action === 'check_availability') {\n  // Full timestamps for the search window, if sent.\n  const afterDT =\n    parseDateTime(body.after) ||\n    parseDateTime(body.requested_after);\n\n  const beforeDT =\n    parseDateTime(body.before) ||\n    parseDateTime(body.requested_before);\n\n  // Date can come from date, start_date, or the after timestamp.\n  const from =\n    parseDate(body.date) ||\n    parseDate(body.start_date) ||\n    (afterDT ? afterDT.startOf('day') : null) ||\n    (beforeDT ? beforeDT.startOf('day') : null);\n\n  if (!from) {\n    errors.push(\n      'date is required (YYYY-MM-DD), ' +\n      'or after/before as ISO timestamps'\n    );\n  } else {\n    let to =\n      parseDate(body.end_date) ||\n      (beforeDT ? beforeDT.startOf('day') : null) ||\n      from;\n\n    if (to < from) {\n      to = from;\n    }\n\n    if (\n      to.diff(from, 'days').days >\n      CFG.maxRangeDays - 1\n    ) {\n      to = from.plus({\n        days: CFG.maxRangeDays - 1,\n      });\n    }\n\n    out.range_start = from.toISODate();\n    out.range_end = to.toISODate();\n    out.timeMin = from.toISO();\n    out.timeMax = to.endOf('day').toISO();\n\n    // Optional time window: full timestamps win,\n    // otherwise fall back to plain time fields.\n    if (afterDT) {\n      out.requested_after = afterDT.toISO();\n    } else {\n      const requestedAfterTime = parseTime(\n        body.after_time ||\n        body.requested_after ||\n        body.start_time ||\n        body.time\n      );\n\n      if (requestedAfterTime) {\n        out.requested_after = from\n          .set({\n            hour: requestedAfterTime.h,\n            minute: requestedAfterTime.mi,\n            second: 0,\n            millisecond: 0,\n          })\n          .toISO();\n      }\n    }\n\n    if (beforeDT) {\n      out.requested_before = beforeDT.toISO();\n    } else {\n      const requestedBeforeTime = parseTime(\n        body.before_time ||\n        body.requested_before ||\n        body.end_time\n      );\n\n      if (requestedBeforeTime) {\n        out.requested_before = to\n          .set({\n            hour: requestedBeforeTime.h,\n            minute: requestedBeforeTime.mi,\n            second: 0,\n            millisecond: 0,\n          })\n          .toISO();\n      }\n    }\n  }\n} else if (action === 'find_booking') {\n  if (!email && !phone && !name) {\n    errors.push(\n      'email, phone, or name is required'\n    );\n  }\n\n  out.query = email || phone || name;\n\n  out.timeMin = now\n    .minus({ hours: 1 })\n    .toISO();\n\n  out.timeMax = now\n    .plus({\n      days: CFG.maxDaysOut + 30,\n    })\n    .toISO();\n} else if (\n  action === 'book' ||\n  action === 'reschedule'\n) {\n  const start = parseStart(body);\n\n  if (!start) {\n    errors.push(\n      'date (YYYY-MM-DD) and time/start_time ' +\n      '(HH:MM, Eastern) are required'\n    );\n  }\n\n  if (action === 'book') {\n    if (!name) {\n      errors.push('name or caller_name is required');\n    }\n  } else if (!eventId) {\n    errors.push(\n      'event_id is required (get it from find_booking)'\n    );\n  }\n\n  if (!emailOk) {\n    errors.push('a valid email is required');\n  }\n\n  if (start) {\n    const end = start.plus({\n      minutes: duration,\n    });\n\n    out.start = start.toISO();\n    out.end = end.toISO();\n\n    out.timeMin = start\n      .startOf('day')\n      .toISO();\n\n    out.timeMax = start\n      .plus({\n        days: CFG.alternativesDaysAhead,\n      })\n      .endOf('day')\n      .toISO();\n  }\n} else if (action === 'cancel') {\n  if (!eventId) {\n    errors.push(\n      'event_id is required (get it from find_booking)'\n    );\n  }\n\n  if (!emailOk) {\n    errors.push('a valid email is required');\n  }\n} else {\n  errors.push(\n    'unknown action; use check_availability, ' +\n    'find_booking, book, reschedule, or cancel'\n  );\n}\n\n// ===== RESPONSE =====\n\nout.errors = errors;\n\nif (errors.length === 0) {\n  out.route = action;\n\n  out.response = {\n    status: 'ok',\n    errors: [],\n    message: 'Request normalized successfully.',\n  };\n} else {\n  // out.route = 'invalid';\n  out.route = action;\n\n  out.response = {\n    status: 'invalid_request',\n    errors,\n    message:\n      'Missing or unclear details: ' +\n      errors.join('; ') +\n      '.',\n  };\n}\n\nreturn [{ json: out }];"
+      },
+      "id": "edd30ec3-9707-4816-badc-9c87a5a167e0",
+      "name": "Normalize",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -512,
+        256
+      ],
+      "notes": "Booking rules live in CFG at the top. Validates input per action."
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "r1",
+                    "leftValue": "={{ $json.route }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "check_availability"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                }
+              },
+              "renameOutput": true,
+              "outputKey": "check_availability"
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "r2",
+                    "leftValue": "={{ $json.route }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "find_booking"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                }
+              },
+              "renameOutput": true,
+              "outputKey": "find_booking"
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "r3",
+                    "leftValue": "={{ $json.route }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "book"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                }
+              },
+              "renameOutput": true,
+              "outputKey": "book"
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "r4",
+                    "leftValue": "={{ $json.route }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "reschedule"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                }
+              },
+              "renameOutput": true,
+              "outputKey": "reschedule"
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "r5",
+                    "leftValue": "={{ $json.route }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "cancel"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                }
+              },
+              "renameOutput": true,
+              "outputKey": "cancel"
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "r6",
+                    "leftValue": "={{ $json.route }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "invalid"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                }
+              },
+              "renameOutput": true,
+              "outputKey": "invalid"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "502f0b80-db4a-4a96-846b-cd323f0bad69",
+      "name": "Route Action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -288,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "cachedResultName": "automatestpete@gmail.com",
+          "mode": "list",
+          "value": "automatestpete@gmail.com"
+        },
+        "returnAll": true,
+        "timeMin": "={{ $json.timeMin }}",
+        "timeMax": "={{ $json.timeMax }}",
+        "options": {}
+      },
+      "id": "e0b08be0-5016-4a6c-a245-099d48d109ff",
+      "name": "Get Events (Availability)",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        432,
+        16
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ---- shared slot helpers (same in Check Slot / Check Reschedule) ----\nfunction hm(str, day) { const [h, m] = str.split(':').map(Number); return day.set({ hour: h, minute: m, second: 0, millisecond: 0 }); }\nfunction collectBusy(items, tz) {\n  const busy = [];\n  for (const it of items) {\n    const e = it.json || {};\n    if (!e.id || e.error || e.status === 'cancelled' || e.transparency === 'transparent') continue;\n    if ((e.attendees || []).some(a => a.self && a.responseStatus === 'declined')) continue;\n    let s, en;\n    if (e.start && e.start.dateTime) { s = DateTime.fromISO(e.start.dateTime).setZone(tz); en = DateTime.fromISO(e.end.dateTime).setZone(tz); }\n    else if (e.start && e.start.date) { s = DateTime.fromISO(e.start.date, { zone: tz }); en = DateTime.fromISO(e.end.date, { zone: tz }); }\n    else continue;\n    busy.push({ s, e: en, id: e.id });\n  }\n  return busy;\n}\nfunction slotProblem(start, dur, busy, C, now, excludeId) {\n  const end = start.plus({ minutes: dur });\n  const day = start.startOf('day');\n  if (!C.workdays.includes(start.weekday) || start < hm(C.openTime, day) || end > hm(C.closeTime, day)) return 'outside_hours';\n  if (start < now.plus({ hours: C.minNoticeHours })) return 'too_soon';\n  if (start > now.plus({ days: C.maxDaysOut })) return 'too_far_out';\n  const b = C.bufferMinutes;\n  if (busy.some(x => x.id !== excludeId && x.s < end.plus({ minutes: b }) && x.e > start.minus({ minutes: b }))) return 'conflict';\n  return null;\n}\nfunction freeSlots(fromDay, toDay, dur, busy, C, now, excludeId) {\n  const days = [];\n  for (let d = fromDay.startOf('day'); d <= toDay; d = d.plus({ days: 1 })) {\n    if (!C.workdays.includes(d.weekday)) continue;\n    const times = [];\n    for (let t = hm(C.openTime, d); t.plus({ minutes: dur }) <= hm(C.closeTime, d); t = t.plus({ minutes: C.slotStepMinutes })) {\n      if (!slotProblem(t, dur, busy, C, now, excludeId)) times.push(t);\n    }\n    days.push({ date: d.toISODate(), day_label: d.toFormat('cccc, LLLL d'), open_times: times.map(t => t.toFormat('h:mm a')), open_times_24h: times.map(t => t.toFormat('HH:mm')) });\n  }\n  return days;\n}\n// ---------------------------------------------------------------------\nconst n = $('Normalize').first().json; const C = n.cfg;\nconst now = DateTime.fromISO(n.now).setZone(C.tz);\nconst busy = collectBusy($input.all(), C.tz);\nconst from = DateTime.fromISO(n.range_start, { zone: C.tz });\nconst to = DateTime.fromISO(n.range_end, { zone: C.tz });\nconst days = freeSlots(from, to, n.duration, busy, C, now);\nconst total = days.reduce((a, d) => a + d.open_times.length, 0);\nconst message = total\n  ? days.filter(d => d.open_times.length).map(d => d.day_label + ': ' + d.open_times.slice(0, 6).join(', ') + (d.open_times.length > 6 ? ', and more' : '')).join('. ') + '.'\n  : 'No open times in that range. Calls run weekdays 9 AM to 5 PM Eastern, need at least 4 hours notice, and can be booked up to 30 days out.';\nreturn [{ json: { response: { status: total ? 'ok' : 'no_availability', timezone: 'America/New_York', duration_minutes: n.duration, days, message } } }];"
+      },
+      "id": "7e4af85b-753d-4935-b495-71844cd065de",
+      "name": "Compute Slots",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        656,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "cachedResultName": "automatestpete@gmail.com",
+          "mode": "list",
+          "value": "automatestpete@gmail.com"
+        },
+        "returnAll": true,
+        "timeMin": "={{ $json.timeMin }}",
+        "timeMax": "={{ $json.timeMax }}",
+        "options": {
+          "orderBy": "startTime",
+          "query": "={{ $json.query }}"
+        }
+      },
+      "id": "ecaa8e7e-9571-481f-a05c-031a5d483953",
+      "name": "Search Bookings",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        432,
+        208
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const n = $('Normalize').first().json; const C = n.cfg;\nconst now = DateTime.fromISO(n.now).setZone(C.tz);\nconst bookings = [];\nfor (const it of $input.all()) {\n  const e = it.json || {};\n  if (!e.id || e.status === 'cancelled' || !(e.description || '').includes(C.tag)) continue;\n  if (!e.start || !e.start.dateTime) continue;\n  const s = DateTime.fromISO(e.start.dateTime).setZone(C.tz);\n  if (s < now) continue;\n  const pending = (e.summary || '').startsWith('[PENDING]');\n  bookings.push({ event_id: e.id, when: s.toFormat(`cccc, LLLL d 'at' h:mm a`), date: s.toISODate(), time: s.toFormat('HH:mm'), status: pending ? 'pending_approval' : 'confirmed', can_change_by_phone: s > now.plus({ hours: C.noChangesWithinHours }) });\n}\nconst message = bookings.length\n  ? 'Upcoming bookings: ' + bookings.map(b => b.when + (b.status === 'pending_approval' ? `, waiting on Robert's approval` : ', confirmed')).join('; ') + '.'\n  : 'No upcoming bookings found for that caller.';\nreturn [{ json: { response: { status: bookings.length ? 'found' : 'not_found', bookings, message } } }];"
+      },
+      "id": "1fc81e77-96fc-4543-9bd9-77463b7fcee4",
+      "name": "Format Bookings",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        656,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json.response) }}",
+        "options": {}
+      },
+      "id": "46d418cb-2e37-4920-aea2-81ceec1ffca6",
+      "name": "Respond Result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        880,
+        432
+      ],
+      "notes": "Shared response for every branch that answers immediately."
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "cachedResultName": "automatestpete@gmail.com",
+          "mode": "list",
+          "value": "automatestpete@gmail.com"
+        },
+        "returnAll": true,
+        "timeMin": "={{ $json.timeMin.slice(0,-6) }}",
+        "timeMax": "={{ $json.timeMax.slice(0,-6) }}",
+        "options": {}
+      },
+      "id": "e84731f6-1a7b-4e40-b527-636e32eb867d",
+      "name": "Get Events (Book)",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        -16,
+        528
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ---- shared slot helpers (same in Compute Slots / Check Reschedule) ----\nfunction hm(str, day) { const [h, m] = str.split(':').map(Number); return day.set({ hour: h, minute: m, second: 0, millisecond: 0 }); }\nfunction collectBusy(items, tz) {\n  const busy = [];\n  for (const it of items) {\n    const e = it.json || {};\n    if (!e.id || e.error || e.status === 'cancelled' || e.transparency === 'transparent') continue;\n    if ((e.attendees || []).some(a => a.self && a.responseStatus === 'declined')) continue;\n    let s, en;\n    if (e.start && e.start.dateTime) { s = DateTime.fromISO(e.start.dateTime).setZone(tz); en = DateTime.fromISO(e.end.dateTime).setZone(tz); }\n    else if (e.start && e.start.date) { s = DateTime.fromISO(e.start.date, { zone: tz }); en = DateTime.fromISO(e.end.date, { zone: tz }); }\n    else continue;\n    busy.push({ s, e: en, id: e.id });\n  }\n  return busy;\n}\nfunction slotProblem(start, dur, busy, C, now, excludeId) {\n  const end = start.plus({ minutes: dur });\n  const day = start.startOf('day');\n  if (!C.workdays.includes(start.weekday) || start < hm(C.openTime, day) || end > hm(C.closeTime, day)) return 'outside_hours';\n  if (start < now.plus({ hours: C.minNoticeHours })) return 'too_soon';\n  if (start > now.plus({ days: C.maxDaysOut })) return 'too_far_out';\n  const b = C.bufferMinutes;\n  if (busy.some(x => x.id !== excludeId && x.s < end.plus({ minutes: b }) && x.e > start.minus({ minutes: b }))) return 'conflict';\n  return null;\n}\nfunction freeSlots(fromDay, toDay, dur, busy, C, now, excludeId) {\n  const days = [];\n  for (let d = fromDay.startOf('day'); d <= toDay; d = d.plus({ days: 1 })) {\n    if (!C.workdays.includes(d.weekday)) continue;\n    const times = [];\n    for (let t = hm(C.openTime, d); t.plus({ minutes: dur }) <= hm(C.closeTime, d); t = t.plus({ minutes: C.slotStepMinutes })) {\n      if (!slotProblem(t, dur, busy, C, now, excludeId)) times.push(t);\n    }\n    days.push({ date: d.toISODate(), day_label: d.toFormat('cccc, LLLL d'), open_times: times.map(t => t.toFormat('h:mm a')), open_times_24h: times.map(t => t.toFormat('HH:mm')) });\n  }\n  return days;\n}\nconst REASONS = { outside_hours: 'That time is outside call hours, weekdays 9 AM to 5 PM Eastern.', too_soon: 'Calls need at least 4 hours notice.', too_far_out: 'Calls can only be booked up to 30 days out.', conflict: 'That time is already taken.' };\nfunction altList(days, max) { return days.flatMap(d => d.open_times_24h.map((t, i) => ({ date: d.date, time: t, spoken: d.day_label + ' at ' + d.open_times[i] }))).slice(0, max); }\n// ---------------------------------------------------------------------\nconst n = $('Normalize').first().json; const C = n.cfg;\nconst now = DateTime.fromISO(n.now).setZone(C.tz);\nconst busy = collectBusy($input.all(), C.tz);\nconst start = DateTime.fromISO(n.start).setZone(C.tz);\nconst end = start.plus({ minutes: n.duration });\nconst when = start.toFormat(`cccc, LLLL d 'at' h:mm a`);\nconst problem = slotProblem(start, n.duration, busy, C, now);\nif (!problem) {\n  return [{ json: { ok: true, start: start.toISO(), end: end.toISO(), when,\n    pending_response: { status: 'pending_approval', when, message: `Request sent to Robert for ${when} Eastern. Once he approves, a calendar invite with a Google Meet link goes to ${n.email}.` } } }];\n}\nconst alts = altList(freeSlots(start, start.plus({ days: C.alternativesDaysAhead }).startOf('day'), n.duration, busy, C, now), 4);\nreturn [{ json: { ok: false, response: { status: 'unavailable', reason: problem, alternatives: alts,\n  message: REASONS[problem] + (alts.length ? ' Open times nearby: ' + alts.map(a => a.spoken).join(', ') + '.' : ' Nothing open in the next few days, try another day.') } } }];"
+      },
+      "id": "f64e825a-b194-46d2-91fe-0083ec759c89",
+      "name": "Check Slot",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.ok }}",
+              "operator": {
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          }
+        },
+        "options": {}
+      },
+      "id": "fdfefa2b-1176-4551-9257-7b2728c3c632",
+      "name": "Slot Free?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        432,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "cachedResultName": "automatestpete@gmail.com",
+          "mode": "list",
+          "value": "automatestpete@gmail.com"
+        },
+        "start": "={{ $json.start }}",
+        "end": "={{ $json.end }}",
+        "additionalFields": {
+          "conferenceDataUi": {
+            "conferenceDataValues": {
+              "conferenceSolution": "hangoutsMeet"
+            }
+          },
+          "description": "={{ [$('Normalize').first().json.cfg.tag + ' (voice agent booking)', 'Status: pending approval', '', 'Name: ' + $('Normalize').first().json.name, 'Email: ' + $('Normalize').first().json.email, 'Phone: ' + ($('Normalize').first().json.phone || 'not given'), 'Topic: ' + ($('Normalize').first().json.topic || 'not given')].join('\\n') }}",
+          "sendUpdates": "none",
+          "showMeAs": "opaque",
+          "summary": "=[PENDING] {{ $('Normalize').first().json.cfg.meetingTitle }} – {{ $('Normalize').first().json.name }}"
+        }
+      },
+      "id": "566c7d74-df25-418a-9247-fb985eefcb34",
+      "name": "Create Hold",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        656,
+        528
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      },
+      "notes": "Tentative hold: blocks the slot, Meet link attached, no attendees yet so no invite goes out."
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($('Check Slot').first().json.pending_response) }}",
+        "options": {}
+      },
+      "id": "1349133a-6f67-4589-beb9-ca5ef9a6fc7d",
+      "name": "Respond Book Pending",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        880,
+        624
+      ],
+      "notes": "Answer the voice agent now, then wait for approval in the background."
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "5076593768",
+        "message": "=📞 New call request from the voice receptionist\n\nWho: {{ $('Normalize').first().json.safe.name }}\nEmail: {{ $('Normalize').first().json.safe.email }}\nPhone: {{ $('Normalize').first().json.safe.phone }}\nWhen: {{ $('Check Slot').first().json.when }} ET ({{ $('Normalize').first().json.duration }} min)\nTopic: {{ $('Normalize').first().json.safe.topic }}\n\nA tentative hold is on your calendar. Approve to send the invite with a Meet link, or decline to release the slot.",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double"
+          }
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "781a7df2-ca0a-487b-b942-0dde70226869",
+      "name": "Approve Booking",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1104,
+        624
+      ],
+      "webhookId": "00055d40-b343-45aa-af34-e1ad74e4bb5a",
+      "credentials": {
+        "telegramApi": {
+          "id": "GrHxwuhk9SECQo8h",
+          "name": "NanoRob3"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "c2",
+              "leftValue": "={{ $json.data.approved }}",
+              "operator": {
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          }
+        },
+        "options": {}
+      },
+      "id": "9962a551-c875-48ea-8853-7bc2e0d1987f",
+      "name": "Booking Approved?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1328,
+        624
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "cachedResultName": "automatestpete@gmail.com",
+          "mode": "list",
+          "value": "automatestpete@gmail.com"
+        },
+        "eventId": "={{ $('Create Hold').first().json.id }}",
+        "updateFields": {
+          "attendeesUi": {
+            "values": {
+              "attendees": [
+                "={{ $('Normalize').first().json.email }}"
+              ]
+            }
+          },
+          "description": "={{ ($('Create Hold').first().json.description || '').replace('Status: pending approval', 'Status: confirmed') }}",
+          "sendUpdates": "all",
+          "summary": "={{ $('Normalize').first().json.cfg.meetingTitle }} – {{ $('Normalize').first().json.name }}"
+        }
+      },
+      "id": "9bf56599-7243-42ad-8858-74e90e482ad8",
+      "name": "Confirm Booking",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1552,
+        496
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      },
+      "notes": "Adds the caller as attendee and sends the invite (Meet link already on the event)."
+    },
+    {
+      "parameters": {
+        "chatId": "5076593768",
+        "text": "=✅ Confirmed: {{ $('Normalize').first().json.safe.name }} on {{ $('Check Slot').first().json.when }} ET. Invite with Meet link sent to {{ $('Normalize').first().json.safe.email }}.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "6ad2f926-cbab-4c6a-9175-6e27ad34f35a",
+      "name": "TG Booking Confirmed",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1776,
+        496
+      ],
+      "webhookId": "f550d862-67fe-4866-ab91-da59618d4f83",
+      "credentials": {
+        "telegramApi": {
+          "id": "GrHxwuhk9SECQo8h",
+          "name": "NanoRob3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "cachedResultName": "automatestpete@gmail.com",
+          "mode": "list",
+          "value": "automatestpete@gmail.com"
+        },
+        "eventId": "={{ $('Create Hold').first().json.id }}",
+        "options": {
+          "sendUpdates": "none"
+        }
+      },
+      "id": "1dcaa32f-4929-4b58-8348-7c7e228f38c0",
+      "name": "Delete Hold",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1552,
+        688
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "5076593768",
+        "text": "=❌ Declined: hold removed for {{ $('Normalize').first().json.safe.name }} ({{ $('Check Slot').first().json.when }} ET). They were told you'd confirm, so follow up at {{ $('Normalize').first().json.safe.email }} / {{ $('Normalize').first().json.safe.phone }}.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "4e2d12a9-de23-4300-a795-477953276cc0",
+      "name": "TG Booking Declined",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1776,
+        688
+      ],
+      "webhookId": "14424624-245a-458a-9500-f20d57895859",
+      "credentials": {
+        "telegramApi": {
+          "id": "0m0YZ5HsBWG8XLmu",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "calendar": {
+          "__rl": true,
+          "cachedResultName": "automatestpete@gmail.com",
+          "mode": "list",
+          "value": "automatestpete@gmail.com"
+        },
+        "eventId": "={{ $json.event_id }}",
+        "options": {}
+      },
+      "id": "c1cadfba-a16a-416f-9426-7f0e9d138a5c",
+      "name": "Get Booking (Reschedule)",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        -16,
+        816
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "cachedResultName": "automatestpete@gmail.com",
+          "mode": "list",
+          "value": "automatestpete@gmail.com"
+        },
+        "returnAll": true,
+        "timeMin": "={{ $('Normalize').first().json.timeMin }}",
+        "timeMax": "={{ $('Normalize').first().json.timeMax }}",
+        "options": {}
+      },
+      "id": "b0e07deb-1fe8-478f-a89d-c3458997dbad",
+      "name": "Get Events (Reschedule)",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        208,
+        816
+      ],
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ---- shared slot helpers (same in Compute Slots / Check Slot) ----\nfunction hm(str, day) { const [h, m] = str.split(':').map(Number); return day.set({ hour: h, minute: m, second: 0, millisecond: 0 }); }\nfunction collectBusy(items, tz) {\n  const busy = [];\n  for (const it of items) {\n    const e = it.json || {};\n    if (!e.id || e.error || e.status === 'cancelled' || e.transparency === 'transparent') continue;\n    if ((e.attendees || []).some(a => a.self && a.responseStatus === 'declined')) continue;\n    let s, en;\n    if (e.start && e.start.dateTime) { s = DateTime.fromISO(e.start.dateTime).setZone(tz); en = DateTime.fromISO(e.end.dateTime).setZone(tz); }\n    else if (e.start && e.start.date) { s = DateTime.fromISO(e.start.date, { zone: tz }); en = DateTime.fromISO(e.end.date, { zone: tz }); }\n    else continue;\n    busy.push({ s, e: en, id: e.id });\n  }\n  return busy;\n}\nfunction slotProblem(start, dur, busy, C, now, excludeId) {\n  const end = start.plus({ minutes: dur });\n  const day = start.startOf('day');\n  if (!C.workdays.includes(start.weekday) || start < hm(C.openTime, day) || end > hm(C.closeTime, day)) return 'outside_hours';\n  if (start < now.plus({ hours: C.minNoticeHours })) return 'too_soon';\n  if (start > now.plus({ days: C.maxDaysOut })) return 'too_far_out';\n  const b = C.bufferMinutes;\n  if (busy.some(x => x.id !== excludeId && x.s < end.plus({ minutes: b }) && x.e > start.minus({ minutes: b }))) return 'conflict';\n  return null;\n}\nfunction freeSlots(fromDay, toDay, dur, busy, C, now, excludeId) {\n  const days = [];\n  for (let d = fromDay.startOf('day'); d <= toDay; d = d.plus({ days: 1 })) {\n    if (!C.workdays.includes(d.weekday)) continue;\n    const times = [];\n    for (let t = hm(C.openTime, d); t.plus({ minutes: dur }) <= hm(C.closeTime, d); t = t.plus({ minutes: C.slotStepMinutes })) {\n      if (!slotProblem(t, dur, busy, C, now, excludeId)) times.push(t);\n    }\n    days.push({ date: d.toISODate(), day_label: d.toFormat('cccc, LLLL d'), open_times: times.map(t => t.toFormat('h:mm a')), open_times_24h: times.map(t => t.toFormat('HH:mm')) });\n  }\n  return days;\n}\nconst REASONS = { outside_hours: 'That time is outside call hours, weekdays 9 AM to 5 PM Eastern.', too_soon: 'Calls need at least 4 hours notice.', too_far_out: 'Calls can only be booked up to 30 days out.', conflict: 'That time is already taken.' };\nfunction altList(days, max) { return days.flatMap(d => d.open_times_24h.map((t, i) => ({ date: d.date, time: t, spoken: d.day_label + ' at ' + d.open_times[i] }))).slice(0, max); }\n// ---------------------------------------------------------------------\nconst n = $('Normalize').first().json; const C = n.cfg;\nconst now = DateTime.fromISO(n.now).setZone(C.tz);\nconst ev = $('Get Booking (Reschedule)').first().json || {};\nconst desc = ev.description || '';\nconst owns = desc.toLowerCase().includes(n.email) || (ev.attendees || []).some(a => (a.email || '').toLowerCase() === n.email);\nif (!ev.id || ev.error || ev.status === 'cancelled' || !desc.includes(C.tag) || !owns || !ev.start || !ev.start.dateTime) {\n  return [{ json: { ok: false, response: { status: 'not_found', message: `I couldn't find a booking under that email. Robert will follow up by email.` } } }];\n}\nconst oldStart = DateTime.fromISO(ev.start.dateTime).setZone(C.tz);\nconst oldEnd = DateTime.fromISO(ev.end.dateTime).setZone(C.tz);\nconst oldWhen = oldStart.toFormat(`cccc, LLLL d 'at' h:mm a`);\nif (oldStart < now.plus({ hours: C.noChangesWithinHours })) {\n  return [{ json: { ok: false, response: { status: 'too_late', message: `That call is less than 24 hours away, so it can't be changed by phone. Robert will reach out directly.` } } }];\n}\nconst dur = Math.round(oldEnd.diff(oldStart, 'minutes').minutes);\nconst busy = collectBusy($input.all(), C.tz);\nconst start = DateTime.fromISO(n.start).setZone(C.tz);\nconst newWhen = start.toFormat(`cccc, LLLL d 'at' h:mm a`);\nconst problem = slotProblem(start, dur, busy, C, now, ev.id);\nif (problem) {\n  const alts = altList(freeSlots(start, start.plus({ days: C.alternativesDaysAhead }).startOf('day'), dur, busy, C, now, ev.id), 4);\n  return [{ json: { ok: false, response: { status: 'unavailable', reason: problem, alternatives: alts, message: REASONS[problem] + (alts.length ? ' Open times nearby: ' + alts.map(a => a.spoken).join(', ') + '.' : ' Nothing open in the next few days, try another day.') } } }];\n}\nreturn [{ json: { ok: true, event_id: ev.id, summary: ev.summary || '', old_when: oldWhen, new_when: newWhen, start: start.toISO(), end: start.plus({ minutes: dur }).toISO(),\n  pending_response: { status: 'pending_approval', message: `Request sent to Robert to move the call from ${oldWhen} to ${newWhen} Eastern. An updated invite goes out once he approves.` } } }];"
+      },
+      "id": "6390ae30-0fef-47ca-8641-c83196c4d983",
+      "name": "Check Reschedule",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        432,
+        816
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "c3",
+              "leftValue": "={{ $json.ok }}",
+              "operator": {
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          }
+        },
+        "options": {}
+      },
+      "id": "20258761-8b40-49af-b3b5-8cf20703d20d",
+      "name": "Reschedule OK?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        656,
+        816
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json.pending_response) }}",
+        "options": {}
+      },
+      "id": "ef6773e1-eeb1-4ff2-9f59-006b63505f2a",
+      "name": "Respond Reschedule Pending",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        880,
+        1008
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "5076593768",
+        "message": "=🔁 Reschedule request from the voice receptionist\n\nBooking: {{ $('Check Reschedule').first().json.summary }}\nCaller email: {{ $('Normalize').first().json.safe.email }}\nFrom: {{ $('Check Reschedule').first().json.old_when }} ET\nTo: {{ $('Check Reschedule').first().json.new_when }} ET\n\nApprove to move it and send the updated invite.",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double"
+          }
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "1c54b105-3a65-4200-91fa-7c399eb1ac5d",
+      "name": "Approve Reschedule",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1104,
+        1008
+      ],
+      "webhookId": "d36604f0-f996-4172-a0f8-7153e15589f4",
+      "credentials": {
+        "telegramApi": {
+          "id": "0m0YZ5HsBWG8XLmu",
+          "name": "Telegram account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "c4",
+              "leftValue": "={{ $json.data.approved }}",
+              "operator": {
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          }
+        },
+        "options": {}
+      },
+      "id": "adafa7f3-544d-423c-becd-d7defb020335",
+      "name": "Reschedule Approved?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1328,
+        1008
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "cachedResultName": "automatestpete@gmail.com",
+          "mode": "list",
+          "value": "automatestpete@gmail.com"
+        },
+        "eventId": "={{ $('Check Reschedule').first().json.event_id }}",
+        "updateFields": {
+          "end": "={{ $('Check Reschedule').first().json.end }}",
+          "sendUpdates": "all",
+          "start": "={{ $('Check Reschedule').first().json.start }}"
+        }
+      },
+      "id": "444e6428-8fc3-4290-8c10-2ba9842e2b51",
+      "name": "Move Event",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1552,
+        880
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "5076593768",
+        "text": "=✅ Moved to {{ $('Check Reschedule').first().json.new_when }} ET. Updated invite sent.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "cd41695f-3946-4100-bfac-e53805e2063e",
+      "name": "TG Reschedule Done",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1776,
+        880
+      ],
+      "webhookId": "ef74f7a7-ed83-4741-a82b-1df976aa2b4e",
+      "credentials": {
+        "telegramApi": {
+          "id": "0m0YZ5HsBWG8XLmu",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "5076593768",
+        "text": "=❌ Reschedule declined. The call stays at {{ $('Check Reschedule').first().json.old_when }} ET. The caller wasn't notified, so follow up at {{ $('Normalize').first().json.safe.email }}.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "3b8899a9-adbe-4269-9dce-744d9d5a2746",
+      "name": "TG Reschedule Declined",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1552,
+        1072
+      ],
+      "webhookId": "1f015dcd-abb7-4e3c-8621-684ecb0598dc",
+      "credentials": {
+        "telegramApi": {
+          "id": "0m0YZ5HsBWG8XLmu",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "calendar": {
+          "__rl": true,
+          "cachedResultName": "automatestpete@gmail.com",
+          "mode": "list",
+          "value": "automatestpete@gmail.com"
+        },
+        "eventId": "={{ $json.event_id }}",
+        "options": {}
+      },
+      "id": "17a65448-3cf9-4509-8d5d-a53161c59796",
+      "name": "Get Booking (Cancel)",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        -16,
+        1312
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const n = $('Normalize').first().json; const C = n.cfg;\nconst now = DateTime.fromISO(n.now).setZone(C.tz);\nconst ev = $input.first().json || {};\nconst desc = ev.description || '';\nconst owns = desc.toLowerCase().includes(n.email) || (ev.attendees || []).some(a => (a.email || '').toLowerCase() === n.email);\nif (!ev.id || ev.error || ev.status === 'cancelled' || !desc.includes(C.tag) || !owns || !ev.start || !ev.start.dateTime) {\n  return [{ json: { ok: false, response: { status: 'not_found', message: `I couldn't find a booking under that email. Robert will follow up by email.` } } }];\n}\nconst start = DateTime.fromISO(ev.start.dateTime).setZone(C.tz);\nconst when = start.toFormat(`cccc, LLLL d 'at' h:mm a`);\nif (start < now.plus({ hours: C.noChangesWithinHours })) {\n  return [{ json: { ok: false, response: { status: 'too_late', message: `That call is less than 24 hours away, so it can't be cancelled by phone. Robert will reach out directly.` } } }];\n}\nreturn [{ json: { ok: true, event_id: ev.id, summary: ev.summary || '', when,\n  pending_response: { status: 'pending_approval', message: `Request sent to Robert to cancel the call on ${when} Eastern. A cancellation email goes out once he confirms.` } } }];"
+      },
+      "id": "805d4c7f-3590-4014-916c-3ab83efc9c3d",
+      "name": "Check Cancel",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        1312
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "c5",
+              "leftValue": "={{ $json.ok }}",
+              "operator": {
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          }
+        },
+        "options": {}
+      },
+      "id": "991e94ca-7cf2-4940-9eaa-6534b89524c3",
+      "name": "Cancel OK?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        432,
+        1312
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json.pending_response) }}",
+        "options": {}
+      },
+      "id": "ed2d5d02-407d-4707-9f51-dc57c36a87cb",
+      "name": "Respond Cancel Pending",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        656,
+        1392
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "5076593768",
+        "message": "=🗑 Cancellation request from the voice receptionist\n\nBooking: {{ $('Check Cancel').first().json.summary }}\nWhen: {{ $('Check Cancel').first().json.when }} ET\nCaller email: {{ $('Normalize').first().json.safe.email }}\n\nApprove to cancel and notify the caller.",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double",
+            "approveLabel": "✅ Cancel it",
+            "disapproveLabel": "❌ Keep it"
+          }
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "539a2457-3e5e-4fe4-a13e-4a075bcf6082",
+      "name": "Approve Cancel",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        880,
+        1392
+      ],
+      "webhookId": "84b01a6c-5eca-4974-badd-30af1bc82fdd",
+      "credentials": {
+        "telegramApi": {
+          "id": "0m0YZ5HsBWG8XLmu",
+          "name": "Telegram account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "c6",
+              "leftValue": "={{ $json.data.approved }}",
+              "operator": {
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          }
+        },
+        "options": {}
+      },
+      "id": "77d75a71-555f-4d1f-a782-02856fb442ec",
+      "name": "Cancel Approved?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1104,
+        1392
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "cachedResultName": "automatestpete@gmail.com",
+          "mode": "list",
+          "value": "automatestpete@gmail.com"
+        },
+        "eventId": "={{ $('Check Cancel').first().json.event_id }}",
+        "options": {
+          "sendUpdates": "all"
+        }
+      },
+      "id": "eed51bc3-341d-4456-93d5-dd7ddeb21729",
+      "name": "Delete Event",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1328,
+        1264
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "5076593768",
+        "text": "=✅ Cancelled the call on {{ $('Check Cancel').first().json.when }} ET. Caller notified.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "0e5daf50-524c-4c5f-8587-49cd873e5620",
+      "name": "TG Cancel Done",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1552,
+        1264
+      ],
+      "webhookId": "d8eef1f0-e522-47d2-b9f8-8c656f60cc2e",
+      "credentials": {
+        "telegramApi": {
+          "id": "0m0YZ5HsBWG8XLmu",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "5076593768",
+        "text": "=❌ Kept the call on {{ $('Check Cancel').first().json.when }} ET. The caller wasn't notified, so follow up at {{ $('Normalize').first().json.safe.email }}.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "480ddd73-ef01-479e-b04a-b94319c9d594",
+      "name": "TG Cancel Declined",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1328,
+        1456
+      ],
+      "webhookId": "d187aa15-72f6-4a20-a810-823e41c89be4",
+      "credentials": {
+        "telegramApi": {
+          "id": "0m0YZ5HsBWG8XLmu",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n727.aspworkplace.com",
+            "user-agent": "python-httpx/0.28.1",
+            "content-length": "144",
+            "accept": "*/*",
+            "accept-encoding": "gzip, deflate",
+            "content-type": "application/json",
+            "x-forwarded-for": "72.238.162.205",
+            "x-forwarded-host": "n8n727.aspworkplace.com",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "67b5bb2b966a",
+            "x-real-ip": "72.238.162.205"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "timezone": "America/New_York",
+            "duration_minutes": 30,
+            "after": "2026-10-28T09:00:00",
+            "before": "2026-10-28T16:00:00",
+            "action": "check_availability"
+          },
+          "webhookUrl": "https://n8n727.aspworkplace.com/webhook/46347bad-5a2b-435c-aa33-ecd14dfe3643",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true,
+    "timeSavedMode": "fixed",
+    "timezone": "America/New_York",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "PgtTftGYFuLwBZLm",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-10-22T01:00:16.573Z",
+      "updatedAt": "2026-10-22T01:00:16.573Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2026-10-22T16:29:57.557Z",
+  "versionId": "7ea7a801-b448-4238-a7f4-0154dee02968"
+}
