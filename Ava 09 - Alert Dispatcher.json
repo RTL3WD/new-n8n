@@ -1,0 +1,781 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "c1e37632-8352-4d7e-97f6-0f5f297d174c",
+    "workflowId": "OMglHORb5zLpGPGx",
+    "nodes": [
+      {
+        "id": "23ac2414-9afd-4b83-a4fa-6f2c3b371865",
+        "name": "Dispatch Request",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.3,
+        "position": [
+          0,
+          192
+        ],
+        "parameters": {
+          "inputSource": "passthrough"
+        }
+      },
+      {
+        "id": "d15c7a3c-cc8b-4a21-aeb1-a779678bd964",
+        "name": "Claim Due Alerts",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          224,
+          192
+        ],
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT a.id, a.kind, a.urgent, a.text, COALESCE(a.buttons, '[]'::jsonb) AS buttons,\n       jsonb_array_length(COALESCE(a.buttons, '[]'::jsonb)) AS n_buttons,\n       ava.setting('owner_chat_id') #>> '{}' AS owner_chat_id\nFROM ava.claim_due_alerts(20) a",
+          "options": {}
+        },
+        "credentials": {
+          "postgres": {
+            "id": "1RCl2NMd9YUu88EJ",
+            "name": "Coolify Postgres"
+          }
+        },
+        "executeOnce": true
+      },
+      {
+        "id": "8a85382c-1453-4d67-8674-3fa44c41cd33",
+        "name": "Route by Buttons",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          448,
+          176
+        ],
+        "parameters": {
+          "mode": "rules",
+          "rules": {
+            "values": [
+              {
+                "renameOutput": true,
+                "outputKey": "two buttons",
+                "conditions": {
+                  "options": {
+                    "caseSensitive": false,
+                    "leftValue": "",
+                    "typeValidation": "loose"
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.n_buttons }}",
+                      "operator": {
+                        "type": "number",
+                        "operation": "equals"
+                      },
+                      "rightValue": 2
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "renameOutput": true,
+                "outputKey": "three buttons",
+                "conditions": {
+                  "options": {
+                    "caseSensitive": false,
+                    "leftValue": "",
+                    "typeValidation": "loose"
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.n_buttons }}",
+                      "operator": {
+                        "type": "number",
+                        "operation": "equals"
+                      },
+                      "rightValue": 3
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              }
+            ]
+          },
+          "options": {
+            "fallbackOutput": "extra",
+            "renameFallbackOutput": "no buttons"
+          }
+        }
+      },
+      {
+        "id": "60cc3e97-7184-42f1-a885-17a9a0475e53",
+        "name": "Send With Two Buttons",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          672,
+          0
+        ],
+        "parameters": {
+          "resource": "message",
+          "operation": "sendMessage",
+          "chatId": "={{ $json.owner_chat_id }}",
+          "text": "={{ String($json.text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}",
+          "replyMarkup": "inlineKeyboard",
+          "inlineKeyboard": {
+            "rows": [
+              {
+                "row": {
+                  "buttons": [
+                    {
+                      "text": "={{ $json.buttons[0].text }}",
+                      "additionalFields": {
+                        "callback_data": "={{ 'a:' + $json.id + ':' + $json.buttons[0].action }}"
+                      }
+                    },
+                    {
+                      "text": "={{ $json.buttons[1].text }}",
+                      "additionalFields": {
+                        "callback_data": "={{ 'a:' + $json.id + ':' + $json.buttons[1].action }}"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "additionalFields": {
+            "appendAttribution": false,
+            "parse_mode": "HTML",
+            "disable_web_page_preview": true
+          }
+        },
+        "credentials": {
+          "telegramApi": {
+            "id": "GrHxwuhk9SECQo8h",
+            "name": "NanoRob3"
+          }
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000,
+        "webhookId": "1c211c99-bef7-4b4f-89e6-a8b7bde7e659"
+      },
+      {
+        "id": "cfe4491b-d15c-4663-af4b-383c9a28f298",
+        "name": "Save Telegram Message ID",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          896,
+          192
+        ],
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "UPDATE ava.owner_alerts SET telegram_message_id = $1 WHERE id = $2\nRETURNING id AS alert_id, kind, telegram_message_id",
+          "options": {
+            "queryReplacement": "={{ [ $json.result.message_id, $('Claim Due Alerts').item.json.id ] }}"
+          }
+        },
+        "credentials": {
+          "postgres": {
+            "id": "1RCl2NMd9YUu88EJ",
+            "name": "Coolify Postgres"
+          }
+        }
+      },
+      {
+        "id": "315ede3c-25ef-4bda-aa18-2ed8fa48631a",
+        "name": "Send With Three Buttons",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          672,
+          192
+        ],
+        "parameters": {
+          "resource": "message",
+          "operation": "sendMessage",
+          "chatId": "={{ $json.owner_chat_id }}",
+          "text": "={{ String($json.text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}",
+          "replyMarkup": "inlineKeyboard",
+          "inlineKeyboard": {
+            "rows": [
+              {
+                "row": {
+                  "buttons": [
+                    {
+                      "text": "={{ $json.buttons[0].text }}",
+                      "additionalFields": {
+                        "callback_data": "={{ 'a:' + $json.id + ':' + $json.buttons[0].action }}"
+                      }
+                    },
+                    {
+                      "text": "={{ $json.buttons[1].text }}",
+                      "additionalFields": {
+                        "callback_data": "={{ 'a:' + $json.id + ':' + $json.buttons[1].action }}"
+                      }
+                    },
+                    {
+                      "text": "={{ $json.buttons[2].text }}",
+                      "additionalFields": {
+                        "callback_data": "={{ 'a:' + $json.id + ':' + $json.buttons[2].action }}"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "additionalFields": {
+            "appendAttribution": false,
+            "parse_mode": "HTML",
+            "disable_web_page_preview": true
+          }
+        },
+        "credentials": {
+          "telegramApi": {
+            "id": "GrHxwuhk9SECQo8h",
+            "name": "NanoRob3"
+          }
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000,
+        "webhookId": "f6ebacc0-bec9-4cfc-a676-680390957407"
+      },
+      {
+        "id": "77a60777-3c61-41a9-a684-9eb987ea0068",
+        "name": "Send Plain Alert",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          672,
+          384
+        ],
+        "parameters": {
+          "resource": "message",
+          "operation": "sendMessage",
+          "chatId": "={{ $json.owner_chat_id }}",
+          "text": "={{ String($json.text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}",
+          "additionalFields": {
+            "appendAttribution": false,
+            "parse_mode": "HTML",
+            "disable_web_page_preview": true
+          }
+        },
+        "credentials": {
+          "telegramApi": {
+            "id": "GrHxwuhk9SECQo8h",
+            "name": "NanoRob3"
+          }
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000,
+        "webhookId": "e53c53be-0237-4cee-94af-c6df0a73f705"
+      },
+      {
+        "id": "14907838-18a5-4cbf-881e-b6a0e4b34c27",
+        "name": "Sticky Note b039350d",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          192,
+          96
+        ],
+        "parameters": {
+          "content": "## Alert Dispatcher\nSends every owner alert that is due (urgent now, others after quiet hours). Called right after an alert is queued and by the scheduler sweep. Button taps come back as `a:<alert_id>:<action>` and are handled by Owner Actions.",
+          "color": 5,
+          "width": 160,
+          "height": 224
+        }
+      }
+    ],
+    "connections": {
+      "Dispatch Request": {
+        "main": [
+          [
+            {
+              "node": "Claim Due Alerts",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Claim Due Alerts": {
+        "main": [
+          [
+            {
+              "node": "Route by Buttons",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Route by Buttons": {
+        "main": [
+          [
+            {
+              "node": "Send With Two Buttons",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Send With Three Buttons",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Send Plain Alert",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send With Two Buttons": {
+        "main": [
+          [
+            {
+              "node": "Save Telegram Message ID",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send With Three Buttons": {
+        "main": [
+          [
+            {
+              "node": "Save Telegram Message ID",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send Plain Alert": {
+        "main": [
+          [
+            {
+              "node": "Save Telegram Message ID",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Robert Lord (via MCP)",
+    "name": "Initial alert dispatcher",
+    "description": "Created with 8 nodes: Dispatch Request, Claim Due Alerts, Route by Buttons, Send With Two Buttons, Save Telegram Message ID and 3 more",
+    "autosaved": false,
+    "createdAt": "2026-10-14T16:27:37.445Z",
+    "updatedAt": "2026-10-14T16:27:37.445Z"
+  },
+  "activeVersionId": "c1e37632-8352-4d7e-97f6-0f5f297d174c",
+  "connections": {
+    "Dispatch Request": {
+      "main": [
+        [
+          {
+            "node": "Claim Due Alerts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claim Due Alerts": {
+      "main": [
+        [
+          {
+            "node": "Route by Buttons",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Buttons": {
+      "main": [
+        [
+          {
+            "node": "Send With Two Buttons",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send With Three Buttons",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Plain Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send With Two Buttons": {
+      "main": [
+        [
+          {
+            "node": "Save Telegram Message ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send With Three Buttons": {
+      "main": [
+        [
+          {
+            "node": "Save Telegram Message ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Plain Alert": {
+      "main": [
+        [
+          {
+            "node": "Save Telegram Message ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-14T16:27:37.442Z",
+  "id": "OMglHORb5zLpGPGx",
+  "isArchived": false,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "name": "Ava 09 - Alert Dispatcher",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "23ac2414-9afd-4b83-a4fa-6f2c3b371865",
+      "name": "Dispatch Request",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        192
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    },
+    {
+      "id": "d15c7a3c-cc8b-4a21-aeb1-a779678bd964",
+      "name": "Claim Due Alerts",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        224,
+        192
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT a.id, a.kind, a.urgent, a.text, COALESCE(a.buttons, '[]'::jsonb) AS buttons,\n       jsonb_array_length(COALESCE(a.buttons, '[]'::jsonb)) AS n_buttons,\n       ava.setting('owner_chat_id') #>> '{}' AS owner_chat_id\nFROM ava.claim_due_alerts(20) a",
+        "options": {}
+      },
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      },
+      "executeOnce": true
+    },
+    {
+      "id": "8a85382c-1453-4d67-8674-3fa44c41cd33",
+      "name": "Route by Buttons",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        176
+      ],
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "values": [
+            {
+              "renameOutput": true,
+              "outputKey": "two buttons",
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.n_buttons }}",
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    },
+                    "rightValue": 2
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "renameOutput": true,
+              "outputKey": "three buttons",
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.n_buttons }}",
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    },
+                    "rightValue": 3
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "no buttons"
+        }
+      }
+    },
+    {
+      "id": "60cc3e97-7184-42f1-a885-17a9a0475e53",
+      "name": "Send With Two Buttons",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        0
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "sendMessage",
+        "chatId": "={{ $json.owner_chat_id }}",
+        "text": "={{ String($json.text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ $json.buttons[0].text }}",
+                    "additionalFields": {
+                      "callback_data": "={{ 'a:' + $json.id + ':' + $json.buttons[0].action }}"
+                    }
+                  },
+                  {
+                    "text": "={{ $json.buttons[1].text }}",
+                    "additionalFields": {
+                      "callback_data": "={{ 'a:' + $json.id + ':' + $json.buttons[1].action }}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML",
+          "disable_web_page_preview": true
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "GrHxwuhk9SECQo8h",
+          "name": "NanoRob3"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "webhookId": "1c211c99-bef7-4b4f-89e6-a8b7bde7e659"
+    },
+    {
+      "id": "cfe4491b-d15c-4663-af4b-383c9a28f298",
+      "name": "Save Telegram Message ID",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        896,
+        192
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE ava.owner_alerts SET telegram_message_id = $1 WHERE id = $2\nRETURNING id AS alert_id, kind, telegram_message_id",
+        "options": {
+          "queryReplacement": "={{ [ $json.result.message_id, $('Claim Due Alerts').item.json.id ] }}"
+        }
+      },
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      }
+    },
+    {
+      "id": "315ede3c-25ef-4bda-aa18-2ed8fa48631a",
+      "name": "Send With Three Buttons",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        192
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "sendMessage",
+        "chatId": "={{ $json.owner_chat_id }}",
+        "text": "={{ String($json.text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ $json.buttons[0].text }}",
+                    "additionalFields": {
+                      "callback_data": "={{ 'a:' + $json.id + ':' + $json.buttons[0].action }}"
+                    }
+                  },
+                  {
+                    "text": "={{ $json.buttons[1].text }}",
+                    "additionalFields": {
+                      "callback_data": "={{ 'a:' + $json.id + ':' + $json.buttons[1].action }}"
+                    }
+                  },
+                  {
+                    "text": "={{ $json.buttons[2].text }}",
+                    "additionalFields": {
+                      "callback_data": "={{ 'a:' + $json.id + ':' + $json.buttons[2].action }}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML",
+          "disable_web_page_preview": true
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "GrHxwuhk9SECQo8h",
+          "name": "NanoRob3"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "webhookId": "f6ebacc0-bec9-4cfc-a676-680390957407"
+    },
+    {
+      "id": "77a60777-3c61-41a9-a684-9eb987ea0068",
+      "name": "Send Plain Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        384
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "sendMessage",
+        "chatId": "={{ $json.owner_chat_id }}",
+        "text": "={{ String($json.text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML",
+          "disable_web_page_preview": true
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "GrHxwuhk9SECQo8h",
+          "name": "NanoRob3"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "webhookId": "e53c53be-0237-4cee-94af-c6df0a73f705"
+    },
+    {
+      "id": "14907838-18a5-4cbf-881e-b6a0e4b34c27",
+      "name": "Sticky Note b039350d",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        192,
+        96
+      ],
+      "parameters": {
+        "content": "## Alert Dispatcher\nSends every owner alert that is due (urgent now, others after quiet hours). Called right after an alert is queued and by the scheduler sweep. Button taps come back as `a:<alert_id>:<action>` and are handled by Owner Actions.",
+        "color": 5,
+        "width": 160,
+        "height": 224
+      }
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "saveDataSuccessExecution": "none",
+    "errorWorkflow": "MgxgpZ3WBjOI2Lyl"
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "OMglHORb5zLpGPGx",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-10-14T16:27:37.444Z",
+      "updatedAt": "2026-10-14T16:27:37.444Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-10-14T17:46:08.613Z",
+  "versionId": "c1e37632-8352-4d7e-97f6-0f5f297d174c"
+}
