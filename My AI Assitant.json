@@ -1,0 +1,33 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {},
+  "createdAt": "2026-10-14T15:52:49.162Z",
+  "id": "HaPwyKhYQREcrv5R",
+  "isArchived": false,
+  "meta": null,
+  "name": "My AI Assitant",
+  "nodeGroups": [],
+  "nodes": [],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "HaPwyKhYQREcrv5R",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-10-14T15:52:49.164Z",
+      "updatedAt": "2026-10-14T15:52:49.164Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-10-14T15:52:49.162Z",
+  "versionId": "10151647-31d0-4c82-a6f7-d04637b02327"
+}
