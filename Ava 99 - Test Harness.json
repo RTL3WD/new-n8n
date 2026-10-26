@@ -1,0 +1,1042 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Run Test": {
+      "main": [
+        [
+          {
+            "node": "Test Calendar get_busy",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Upsert Test Client",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Find Test Bookings",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Test Ava Message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Inspect Booking Timeline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test Calendar get_busy": {
+      "main": [
+        [
+          {
+            "node": "Test Reply Telegram",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Test Find Slots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert Test Client": {
+      "main": [
+        [
+          {
+            "node": "Test Booking Request",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Link Test Client To My Chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Link Test Client To My Chat": {
+      "main": [
+        [
+          {
+            "node": "Test Approve Tap",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Test Bookings": {
+      "main": [
+        [
+          {
+            "node": "Delete Test Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Test Event": {
+      "main": [
+        [
+          {
+            "node": "Mark Test Bookings Cancelled",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-14T16:21:11.550Z",
+  "id": "OlSzs84Ho8fdY1qz",
+  "isArchived": false,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "name": "Ava 99 - Test Harness",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "e098ed9f-cff8-45a7-bc8a-1347172fc303",
+      "name": "Run Test",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "915a2771-4ea1-4cce-bd36-32e81d007607",
+      "name": "Test Calendar get_busy",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        224,
+        0
+      ],
+      "parameters": {
+        "mode": "once",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "7lia7pC30AeON5CP",
+          "cachedResultName": "Ava 05 - Calendar Adapter"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "operation": "get_busy",
+            "time_min": "={{ $now.setZone('America/New_York').plus(1, 'day').startOf('day').toISO() }}",
+            "time_max": "={{ $now.setZone('America/New_York').plus(7, 'day').endOf('day').toISO() }}",
+            "start": "",
+            "end": "",
+            "summary": "",
+            "description": "",
+            "attendee_email": "",
+            "call_format": "",
+            "event_id": ""
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "operation",
+              "displayName": "operation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "time_min",
+              "displayName": "time_min",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "time_max",
+              "displayName": "time_max",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "start",
+              "displayName": "start",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "end",
+              "displayName": "end",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "attendee_email",
+              "displayName": "attendee_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "call_format",
+              "displayName": "call_format",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "disabled": true
+    },
+    {
+      "id": "ed73b699-58b0-47dd-9ef1-e6f30a3b1a48",
+      "name": "Sticky Note 504ec730",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        192,
+        -96
+      ],
+      "parameters": {
+        "content": "## Ava Test Harness\nManual tests for Ava sub-workflows against real services. Each node calls one sub-workflow with sample inputs. Read-only by default (get_busy).",
+        "color": 3,
+        "width": 160,
+        "height": 224
+      }
+    },
+    {
+      "id": "106eb4bb-419e-4f0c-916a-086c5287f280",
+      "name": "Test Reply Telegram",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        700,
+        0
+      ],
+      "parameters": {
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        },
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "cachedResultName": "Ava 06 - Reply Adapter",
+          "mode": "id",
+          "value": "gSgaG1ldpxS6eyyp"
+        },
+        "workflowInputs": {
+          "attemptToConvertTypes": false,
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "client_id",
+              "id": "client_id",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "channel",
+              "id": "channel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "recipient",
+              "id": "recipient",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "text",
+              "id": "text",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "reply_to",
+              "id": "reply_to",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "thread_ref",
+              "id": "thread_ref",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "author",
+              "id": "author",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {
+            "author": "system",
+            "channel": "telegram",
+            "client_id": "",
+            "recipient": "5076593768",
+            "reply_to": "",
+            "text": "Ava test: reply adapter is working. Symbols like <b> & > should show as plain text.",
+            "thread_ref": ""
+          }
+        }
+      },
+      "disabled": true
+    },
+    {
+      "id": "725bcc38-b666-4905-b48b-4006269067e2",
+      "name": "Test Find Slots",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        700,
+        200
+      ],
+      "parameters": {
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        },
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "cachedResultName": "Ava 07 - Find Open Slots",
+          "mode": "id",
+          "value": "3T8U70fqUfqYzZWi"
+        },
+        "workflowInputs": {
+          "attemptToConvertTypes": false,
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "date_from",
+              "id": "date_from",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "date_to",
+              "id": "date_to",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "duration_min",
+              "id": "duration_min",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "max_slots",
+              "id": "max_slots",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "exclude_booking_id",
+              "id": "exclude_booking_id",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {
+            "date_from": "={{ $now.setZone('America/New_York').plus(1, 'day').toISODate() }}",
+            "date_to": "={{ $now.setZone('America/New_York').plus(3, 'day').toISODate() }}",
+            "duration_min": 60,
+            "exclude_booking_id": "",
+            "max_slots": 6
+          }
+        }
+      },
+      "disabled": true
+    },
+    {
+      "id": "be92bd99-59bb-4a8e-9c05-db6a9afb5b0b",
+      "name": "Upsert Test Client",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        480,
+        400
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "options": {},
+        "query": "WITH existing AS (\n  SELECT id FROM ava.clients WHERE email = 'ava-test@example.com' LIMIT 1\n), ins AS (\n  INSERT INTO ava.clients (name, email, company, found_via)\n  SELECT 'Test Client', 'ava-test@example.com', 'Test Co', 'Test harness'\n  WHERE NOT EXISTS (SELECT 1 FROM existing)\n  RETURNING id\n)\nSELECT id AS client_id FROM ins UNION ALL SELECT id FROM existing"
+      },
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "id": "ed37d7cd-da4f-4045-b59e-d371b0beb597",
+      "name": "Test Booking Request",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        720,
+        400
+      ],
+      "parameters": {
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        },
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "cachedResultName": "Ava 08 - Booking Request",
+          "mode": "id",
+          "value": "X6f87zkwg1NauDVW"
+        },
+        "workflowInputs": {
+          "attemptToConvertTypes": false,
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "client_id",
+              "id": "client_id",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "service",
+              "id": "service",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "start",
+              "id": "start",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "end",
+              "id": "end",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "call_format",
+              "id": "call_format",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "call_phone",
+              "id": "call_phone",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "topic",
+              "id": "topic",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "budget_text",
+              "id": "budget_text",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "timeline_text",
+              "id": "timeline_text",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "notes",
+              "id": "notes",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "channel",
+              "id": "channel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "kind",
+              "id": "kind",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "replaces_booking_id",
+              "id": "replaces_booking_id",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "urgent_words",
+              "id": "urgent_words",
+              "required": false,
+              "type": "boolean"
+            }
+          ],
+          "value": {
+            "budget_text": "$3-5k",
+            "call_format": "meet",
+            "call_phone": "",
+            "channel": "telegram",
+            "client_id": "={{ $json.client_id }}",
+            "end": "={{ $now.setZone('America/New_York').plus(12, 'day').set({ hour: 11, minute: 0, second: 0, millisecond: 0 }).toISO() }}",
+            "kind": "new",
+            "notes": "Created by the Ava test harness. Safe to decline.",
+            "replaces_booking_id": "",
+            "service": "Project scoping",
+            "start": "={{ $now.setZone('America/New_York').plus(12, 'day').set({ hour: 10, minute: 0, second: 0, millisecond: 0 }).toISO() }}",
+            "timeline_text": "this quarter",
+            "topic": "TEST - automate invoice intake from email to accounting",
+            "urgent_words": false
+          }
+        }
+      },
+      "disabled": true
+    },
+    {
+      "id": "a7ceaf56-7a59-4f09-8245-c46bda34cc73",
+      "name": "Link Test Client To My Chat",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        720,
+        600
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "options": {},
+        "query": "INSERT INTO ava.client_identifiers (client_id, channel, identifier)\nSELECT id, 'telegram', '5076593768' FROM ava.clients WHERE email = 'ava-test@example.com'\nON CONFLICT (channel, identifier) DO NOTHING;\nSELECT id AS alert_id FROM ava.owner_alerts WHERE kind = 'approval' AND acted_at IS NULL ORDER BY id DESC LIMIT 1;"
+      },
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "id": "e78f89e4-9ed7-4e7d-905d-3bd598d6a085",
+      "name": "Test Approve Tap",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        960,
+        600
+      ],
+      "parameters": {
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        },
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "cachedResultName": "Ava 10 - Owner Actions",
+          "mode": "id",
+          "value": "BuG8FMtVBs56gLlY"
+        },
+        "workflowInputs": {
+          "attemptToConvertTypes": false,
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "callback_data",
+              "id": "callback_data",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "callback_query_id",
+              "id": "callback_query_id",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {
+            "callback_data": "={{ 'a:' + $json.alert_id + ':approve' }}",
+            "callback_query_id": "test-harness"
+          }
+        }
+      },
+      "disabled": true
+    },
+    {
+      "id": "06009c15-865f-4033-8842-9b00b01acc09",
+      "name": "Find Test Bookings",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        720,
+        800
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "options": {},
+        "query": "SELECT b.id, b.calendar_event_id FROM ava.bookings b JOIN ava.clients c ON c.id = b.client_id\nWHERE c.email = 'ava-test@example.com' AND b.status IN ('approved','pending') AND b.calendar_event_id IS NOT NULL"
+      },
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "id": "0e9b2212-7b18-4459-90e9-adb42b806efb",
+      "name": "Delete Test Event",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        960,
+        800
+      ],
+      "parameters": {
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": true
+        },
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "cachedResultName": "Ava 05 - Calendar Adapter",
+          "mode": "id",
+          "value": "7lia7pC30AeON5CP"
+        },
+        "workflowInputs": {
+          "attemptToConvertTypes": false,
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "operation",
+              "id": "operation",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "time_min",
+              "id": "time_min",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "time_max",
+              "id": "time_max",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "start",
+              "id": "start",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "end",
+              "id": "end",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "summary",
+              "id": "summary",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "description",
+              "id": "description",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "attendee_email",
+              "id": "attendee_email",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "call_format",
+              "id": "call_format",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "event_id",
+              "id": "event_id",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {
+            "attendee_email": "",
+            "call_format": "",
+            "description": "",
+            "end": "",
+            "event_id": "={{ $json.calendar_event_id }}",
+            "operation": "delete_event",
+            "start": "",
+            "summary": "",
+            "time_max": "",
+            "time_min": ""
+          }
+        }
+      },
+      "disabled": true
+    },
+    {
+      "id": "d9f32155-59f0-4d9d-ae9e-03ec5d040cdc",
+      "name": "Mark Test Bookings Cancelled",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1200,
+        800
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "options": {},
+        "query": "UPDATE ava.bookings b SET status = 'cancelled' FROM ava.clients c\nWHERE c.id = b.client_id AND c.email = 'ava-test@example.com' AND b.status IN ('approved','pending')\nRETURNING b.id, b.status"
+      },
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      },
+      "executeOnce": true,
+      "disabled": true
+    },
+    {
+      "id": "dd92721d-cfef-41d3-b4d0-9987152062a8",
+      "name": "Test Ava Message",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        480,
+        1000
+      ],
+      "parameters": {
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        },
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "cachedResultName": "Ava 02 - Core Router",
+          "mode": "id",
+          "value": "cVfGRyYqzfJWwFEt"
+        },
+        "workflowInputs": {
+          "attemptToConvertTypes": false,
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "channel",
+              "id": "channel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "sender_ref",
+              "id": "sender_ref",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "sender_name",
+              "id": "sender_name",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "text",
+              "id": "text",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "external_id",
+              "id": "external_id",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "thread_ref",
+              "id": "thread_ref",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {
+            "channel": "telegram",
+            "external_id": "test-1",
+            "sender_name": "Rob",
+            "sender_ref": "5076593768",
+            "text": "Are you sure 2:00 PM Thursday Oct 22 is taken? Please check that exact time again and request it if it's open.",
+            "thread_ref": ""
+          }
+        }
+      },
+      "disabled": true
+    },
+    {
+      "id": "552b7221-5a97-44c8-b2cd-1b771ba4f14d",
+      "name": "Inspect Booking Timeline",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        480,
+        1200
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "options": {},
+        "query": "WITH b AS (\n  SELECT bk.* FROM ava.bookings bk JOIN ava.clients c ON c.id = bk.client_id\n  WHERE c.email = 'lordrobert92@gmail.com' ORDER BY bk.created_at DESC LIMIT 1\n), ev AS (\n  SELECT m.created_at AS at, 'message ' || m.direction || ' (' || m.author || ')' AS event, left(m.body, 160) AS detail\n  FROM ava.messages m, b\n  WHERE m.client_id = b.client_id AND m.created_at BETWEEN b.requested_at - interval '1 minute' AND COALESCE(b.decided_at, now()) + interval '1 minute'\n  UNION ALL\n  SELECT a.created_at, 'owner alert created (' || a.kind || ', ' || a.status || ')', '' FROM ava.owner_alerts a, b WHERE a.booking_id = b.id\n  UNION ALL\n  SELECT a.sent_at, 'owner alert SENT to Telegram (' || a.kind || ')', 'telegram msg ' || a.telegram_message_id FROM ava.owner_alerts a, b WHERE a.booking_id = b.id AND a.sent_at IS NOT NULL\n  UNION ALL\n  SELECT b.requested_at, 'booking row created (' || b.kind || ', ' || b.status || ')', '' FROM b\n)\nSELECT to_char(at AT TIME ZONE 'America/New_York', 'HH24:MI:SS.MS') AS time_et, event, detail FROM ev ORDER BY at"
+      },
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      },
+      "disabled": false
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "OlSzs84Ho8fdY1qz",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-10-14T16:21:11.552Z",
+      "updatedAt": "2026-10-14T16:21:11.552Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-10-14T18:00:43.613Z",
+  "versionId": "6282a34b-1ee6-43d2-9ec5-e38a63fbeddb"
+}
