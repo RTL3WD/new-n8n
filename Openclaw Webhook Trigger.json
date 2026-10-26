@@ -1,0 +1,58 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {},
+  "createdAt": "2026-03-05T21:28:31.526Z",
+  "id": "zjGB1uBXzyUTWOAHD2wFg",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Openclaw Webhook Trigger",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "openclaw",
+        "authentication": "basicAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "40f08e06-0042-4de3-9f5b-cdc5fbbf0f66",
+      "name": "Webhook",
+      "webhookId": "50723a46-bcbd-4de0-85be-d8ba71238700",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "jRqRSNZmoqDbHj7x",
+          "name": "Kai"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "zjGB1uBXzyUTWOAHD2wFg",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-03-05T21:28:31.528Z",
+      "updatedAt": "2026-03-05T21:28:31.528Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-03-05T21:35:43.080Z",
+  "versionId": "2af8f251-65be-4ffd-9382-b431231c2741"
+}
