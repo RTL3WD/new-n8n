@@ -1,0 +1,315 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Run Import": {
+      "main": [
+        [
+          {
+            "node": "Create Table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Table": {
+      "main": [
+        [
+          {
+            "node": "Read Source Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Source Sheet": {
+      "main": [
+        [
+          {
+            "node": "Read Published",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Published": {
+      "main": [
+        [
+          {
+            "node": "Read Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Review": {
+      "main": [
+        [
+          {
+            "node": "Build Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Batches": {
+      "main": [
+        [
+          {
+            "node": "Upsert Batch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert Batch": {
+      "main": [
+        [
+          {
+            "node": "Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-17T23:58:32.846Z",
+  "id": "GA1McBzV8jDbmsoq",
+  "isArchived": false,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "name": "C360 | Import Source Sheet to Postgres",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "5bb4a60f-d6f6-47de-8e56-7071753d4dad",
+      "name": "Run Import",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "bf388a7c-2126-47e8-9bce-0b1837cfc4ad",
+      "name": "Create Table",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        224,
+        0
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "CREATE SCHEMA IF NOT EXISTS c360;\nCREATE TABLE IF NOT EXISTS c360.businesses (\n  record_key text PRIMARY KEY,\n  source_row int,\n  data jsonb NOT NULL,\n  c360_status text,\n  c360_researched_at timestamptz,\n  refresh_requested boolean NOT NULL DEFAULT false,\n  imported_at timestamptz NOT NULL DEFAULT now()\n);\nCREATE INDEX IF NOT EXISTS businesses_due_idx ON c360.businesses (source_row) WHERE c360_status IS NULL;\nCREATE INDEX IF NOT EXISTS businesses_refresh_idx ON c360.businesses (source_row) WHERE refresh_requested;\nSELECT 1 AS ok;",
+        "options": {}
+      },
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      },
+      "executeOnce": true
+    },
+    {
+      "id": "17889718-0044-4c51-89be-caa25c5752f0",
+      "name": "Read Source Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        448,
+        0
+      ],
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1lrJ_Fk63Gp_Q2ZVICO_MPsuJAB7vFMsykxJar95l36k"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "771439209",
+          "cachedResultName": "unified_list_sunbiz_enriched"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sKITsW661Itsg15I",
+          "name": "Google Sheets account - ASP"
+        }
+      },
+      "executeOnce": true
+    },
+    {
+      "id": "ab5570ed-7a3b-4c21-b24c-ec89a0a277c8",
+      "name": "Read Published",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        672,
+        0
+      ],
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1lrJ_Fk63Gp_Q2ZVICO_MPsuJAB7vFMsykxJar95l36k"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1364757157",
+          "cachedResultName": "Customer360_Results"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sKITsW661Itsg15I",
+          "name": "Google Sheets account - ASP"
+        }
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true
+    },
+    {
+      "id": "59d9ef74-9680-49c0-8fb6-ba5e840abcc4",
+      "name": "Read Review",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        896,
+        0
+      ],
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1lrJ_Fk63Gp_Q2ZVICO_MPsuJAB7vFMsykxJar95l36k"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1006872204",
+          "cachedResultName": "Customer360_Review"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sKITsW661Itsg15I",
+          "name": "Google Sheets account - ASP"
+        }
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true
+    },
+    {
+      "id": "8442dd62-d7b0-44fb-a9db-e8fa7fa00927",
+      "name": "Build Batches",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const published = new Set($('Read Published').all().map(x => x.json.record_key).filter(Boolean));\nconst review = new Set($('Read Review').all().map(x => x.json.record_key).filter(Boolean));\nconst seen = new Map();\n$('Read Source Sheet').all().forEach((x, i) => {\n  const s = x.json;\n  if (!s.name) return;\n  const key = String(s.profile_url || s.sunbiz_document_number || [s.name, s.street, s.city_state_zip].join('|')).trim();\n  if (!key || seen.has(key)) return;\n  const { row_number, c360_refresh_request, ...data } = s;\n  seen.set(key, {\n    record_key: key,\n    source_row: Number(row_number || i + 2),\n    data,\n    c360_status: published.has(key) ? 'AUTO_PUBLISHED' : review.has(key) ? 'PENDING' : null,\n    refresh_requested: String(c360_refresh_request || '').trim().toUpperCase() === 'REFRESH'\n  });\n});\nconst rows = [...seen.values()];\nconst out = [];\nfor (let i = 0; i < rows.length; i += 500) out.push({ json: { batch: i / 500 + 1, count: Math.min(500, rows.length - i), payload: JSON.stringify(rows.slice(i, i + 500)) } });\nreturn out;"
+      }
+    },
+    {
+      "id": "676a2e71-3844-493a-a649-0990aa56c4fc",
+      "name": "Upsert Batch",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1344,
+        0
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO c360.businesses (record_key, source_row, data, c360_status, refresh_requested)\nSELECT r.record_key, r.source_row, r.data, r.c360_status, COALESCE(r.refresh_requested, false)\nFROM jsonb_to_recordset($1::jsonb) AS r(record_key text, source_row int, data jsonb, c360_status text, refresh_requested boolean)\nON CONFLICT (record_key) DO UPDATE SET\n  source_row = EXCLUDED.source_row,\n  data = EXCLUDED.data,\n  c360_status = COALESCE(c360.businesses.c360_status, EXCLUDED.c360_status),\n  refresh_requested = c360.businesses.refresh_requested OR EXCLUDED.refresh_requested\nRETURNING record_key;",
+        "options": {
+          "queryReplacement": "={{ [ $json.payload ] }}"
+        }
+      },
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      }
+    },
+    {
+      "id": "4a6c1659-6b08-415d-8d72-dd94088619cb",
+      "name": "Summary",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1568,
+        0
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT count(*) AS total,\n  count(*) FILTER (WHERE c360_status IS NULL) AS due,\n  count(*) FILTER (WHERE c360_status = 'AUTO_PUBLISHED') AS published,\n  count(*) FILTER (WHERE c360_status = 'PENDING') AS in_review,\n  count(*) FILTER (WHERE refresh_requested) AS refresh_requested\nFROM c360.businesses;",
+        "options": {}
+      },
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      },
+      "executeOnce": true
+    },
+    {
+      "id": "b88434ae-6ad4-4ba1-9a32-d1432ecd6583",
+      "name": "Sticky Note bb069d90",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        672,
+        -32
+      ],
+      "parameters": {
+        "content": "## C360 Source Import\nCopies the Sunbiz/Chamber sheet into Postgres `c360.businesses` so Customer 360 never reads the whole sheet. Safe to rerun any time new rows are added: it upserts, keeps existing status, and carries over REFRESH flags.",
+        "width": 320,
+        "height": 200
+      }
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "GA1McBzV8jDbmsoq",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-10-17T23:58:32.851Z",
+      "updatedAt": "2026-10-17T23:58:32.851Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-10-17T23:58:32.846Z",
+  "versionId": "9943e5da-258d-422d-9f1e-a8cb4705c94d"
+}
