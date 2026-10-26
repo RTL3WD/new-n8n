@@ -1,0 +1,686 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "7dd6687d-cac6-49de-9c59-221ff50f7658",
+    "workflowId": "3T8U70fqUfqYzZWi",
+    "nodes": [
+      {
+        "id": "e32bdef6-de96-41b0-a7ad-7cd5b7158e22",
+        "name": "Slot Request",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.3,
+        "position": [
+          0,
+          0
+        ],
+        "parameters": {
+          "inputSource": "workflowInputs",
+          "workflowInputs": {
+            "values": [
+              {
+                "name": "date_from",
+                "type": "string"
+              },
+              {
+                "name": "date_to",
+                "type": "string"
+              },
+              {
+                "name": "duration_min",
+                "type": "number"
+              },
+              {
+                "name": "max_slots",
+                "type": "number"
+              },
+              {
+                "name": "exclude_booking_id",
+                "type": "string"
+              },
+              {
+                "name": "check_start",
+                "type": "string"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "6ec0279e-ba26-46b0-afa3-5ab9006f0170",
+        "name": "Load Rules",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          272,
+          128
+        ],
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT\n  (SELECT jsonb_object_agg(key, value) FROM ava.settings) AS settings,\n  (SELECT COALESCE(jsonb_agg(jsonb_build_object('id', id, 'start', start_at, 'end', end_at)), '[]'::jsonb)\n     FROM ava.bookings WHERE status IN ('pending', 'approved') AND end_at > now()) AS holds",
+          "options": {}
+        },
+        "credentials": {
+          "postgres": {
+            "id": "1RCl2NMd9YUu88EJ",
+            "name": "Coolify Postgres"
+          }
+        },
+        "executeOnce": true
+      },
+      {
+        "id": "e2ded7ae-37b1-492d-be97-fd9bd013611e",
+        "name": "Search Window",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          496,
+          128
+        ],
+        "parameters": {
+          "mode": "manual",
+          "includeOtherFields": false,
+          "assignments": {
+            "assignments": [
+              {
+                "id": "tmin",
+                "name": "time_min",
+                "value": "={{ DateTime.fromISO($('Slot Request').first().json.date_from || $now.setZone($json.settings.timezone).toISODate(), { zone: $json.settings.timezone }).startOf('day').toISO() }}",
+                "type": "string"
+              },
+              {
+                "id": "tmax",
+                "name": "time_max",
+                "value": "={{ DateTime.fromISO($('Slot Request').first().json.date_to || $('Slot Request').first().json.date_from || $now.setZone($json.settings.timezone).toISODate(), { zone: $json.settings.timezone }).endOf('day').toISO() }}",
+                "type": "string"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "111a9a33-3d92-429f-b475-3b60db7db442",
+        "name": "Get Busy Times",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.4,
+        "position": [
+          800,
+          128
+        ],
+        "parameters": {
+          "mode": "once",
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "7lia7pC30AeON5CP",
+            "cachedResultName": "Ava 05 - Calendar Adapter"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "operation": "get_busy",
+              "time_min": "={{ $json.time_min }}",
+              "time_max": "={{ $json.time_max }}",
+              "start": "",
+              "end": "",
+              "summary": "",
+              "description": "",
+              "attendee_email": "",
+              "call_format": "",
+              "event_id": ""
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "operation",
+                "displayName": "operation",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "time_min",
+                "displayName": "time_min",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "time_max",
+                "displayName": "time_max",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "start",
+                "displayName": "start",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "end",
+                "displayName": "end",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "summary",
+                "displayName": "summary",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "description",
+                "displayName": "description",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "attendee_email",
+                "displayName": "attendee_email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "call_format",
+                "displayName": "call_format",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "event_id",
+                "displayName": "event_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              }
+            ],
+            "attemptToConvertTypes": false
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        }
+      },
+      {
+        "id": "283e1494-c30e-4046-8c33-994cc243acaa",
+        "name": "Compute Open Slots",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1024,
+          128
+        ],
+        "parameters": {
+          "jsCode": "// Inputs: settings (jsonb map), holds (pending/approved bookings), busy (calendar), request params\nconst req = $('Slot Request').first().json;\nconst rules = $('Load Rules').first().json;\nconst s = rules.settings;\nconst holds = rules.holds ?? [];\nconst cal = $input.first().json;\nif (cal.ok === false) {\n  return [{ json: { ok: false, error: 'calendar_unavailable', slots: [] } }];\n}\n\nconst tz = s.timezone;\nconst duration = Number(req.duration_min) === 30 ? 30 : 60;\nconst buffer = Number(s.buffer_minutes ?? 15);\nconst step = 30;\nconst maxSlots = Number(req.max_slots) > 0 ? Number(req.max_slots) : 12;\nconst workDays = s.work_days ?? [1, 2, 3, 4, 5];\nconst [wsH, wsM] = String(s.work_start).split(':').map(Number);\nconst [weH, weM] = String(s.work_end).split(':').map(Number);\n\nconst now = DateTime.now().setZone(tz);\nconst earliest = now.plus({ hours: Number(s.min_notice_hours ?? 4) });\nconst latest = now.plus({ days: Number(s.max_days_out ?? 30) }).endOf('day');\n\nconst fromDay = (req.date_from ? DateTime.fromISO(req.date_from, { zone: tz }) : now).startOf('day');\nconst toDay = (req.date_to ? DateTime.fromISO(req.date_to, { zone: tz }) : fromDay).startOf('day');\n\n// Busy intervals = calendar busy + held bookings (minus the booking being rescheduled)\nconst intervals = [];\nfor (const b of cal.busy ?? []) {\n  intervals.push([DateTime.fromISO(b.start, { zone: tz }), DateTime.fromISO(b.end, { zone: tz })]);\n}\nfor (const h of holds) {\n  if (req.exclude_booking_id && h.id === req.exclude_booking_id) continue;\n  intervals.push([DateTime.fromISO(h.start, { zone: tz }), DateTime.fromISO(h.end, { zone: tz })]);\n}\nconst overlaps = (a0, a1) => intervals.some(([b0, b1]) => a0 < b1 && b0 < a1);\n\nconst slots = [];\nlet rejected = { outside_window: 0, too_soon: 0 };\nfor (let day = fromDay; day <= toDay; day = day.plus({ days: 1 })) {\n  if (day > latest) { rejected.outside_window++; break; }\n  if (!workDays.includes(day.weekday)) continue;\n  const open = day.set({ hour: wsH, minute: wsM, second: 0, millisecond: 0 });\n  const close = day.set({ hour: weH, minute: weM, second: 0, millisecond: 0 });\n  for (let start = open; start.plus({ minutes: duration }) <= close; start = start.plus({ minutes: step })) {\n    const end = start.plus({ minutes: duration });\n    if (start < earliest) { rejected.too_soon++; continue; }\n    if (overlaps(start.minus({ minutes: buffer }), end.plus({ minutes: buffer }))) continue;\n    slots.push({\n      start: start.toISO({ suppressMilliseconds: true }),\n      end: end.toISO({ suppressMilliseconds: true }),\n      label: start.toFormat(\"cccc, LLL d 'at' h:mm a\") + ' ' + start.toFormat('ZZZZ')\n    });\n  }\n}\n\n// Spread the offered slots across the whole range instead of returning the first N (all mornings)\nconst total = slots.length;\nlet offered = slots;\nif (total > maxSlots) {\n  const stepIdx = (total - 1) / (maxSlots - 1);\n  offered = Array.from({ length: maxSlots }, (_, i) => slots[Math.round(i * stepIdx)]);\n}\n\n// Exact time the client asked for: checked against ALL open slots, never just the sample\nlet requested = null;\nif (req.check_start) {\n  const want = DateTime.fromISO(String(req.check_start), { zone: tz });\n  const hit = want.isValid ? slots.find(x => DateTime.fromISO(x.start).toMillis() === want.toMillis()) : null;\n  requested = { start: want.isValid ? want.toISO({ suppressMilliseconds: true }) : String(req.check_start), available: Boolean(hit) };\n  if (hit && !offered.some(x => x.start === hit.start)) offered = [hit, ...offered.slice(0, Math.max(0, maxSlots - 1))];\n}\n\nreturn [{\n  json: {\n    ok: true,\n    duration_min: duration,\n    timezone: tz,\n    checked_from: fromDay.toISODate(),\n    checked_to: toDay.toISODate(),\n    earliest_bookable: earliest.toISO({ suppressMilliseconds: true }),\n    latest_bookable_day: latest.toISODate(),\n    total_open_slots: total,\n    requested_slot_available: requested ? requested.available : null,\n    requested_slot: requested,\n    slots: offered,\n    note: rejected.outside_window > 0 && total === 0\n      ? `That date is past the booking window. The latest bookable day is ${latest.toFormat('cccc, LLL d')}.`\n      : total === 0\n        ? 'No open slots in this range. Offer to check other days.'\n        : 'Spread across the range. If the client prefers a time of day, offer the matching ones; offer 2-3, never all.'\n  }\n}];\n"
+        }
+      },
+      {
+        "id": "c29de93d-746e-45d2-8e5e-ef877320e84a",
+        "name": "Sticky Note a8cdd44f",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          992,
+          32
+        ],
+        "parameters": {
+          "content": "## Find Open Slots\nAll scheduling rules live here, in code, never in the AI prompt: work days and hours, 30/60 min calls, 15 min buffers, 4 h minimum notice, 30 day window. Pending and approved bookings count as busy so two clients can never request the same slot.",
+          "color": 5,
+          "width": 160,
+          "height": 224
+        }
+      }
+    ],
+    "connections": {
+      "Slot Request": {
+        "main": [
+          [
+            {
+              "node": "Load Rules",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Load Rules": {
+        "main": [
+          [
+            {
+              "node": "Search Window",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Search Window": {
+        "main": [
+          [
+            {
+              "node": "Get Busy Times",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Busy Times": {
+        "main": [
+          [
+            {
+              "node": "Compute Open Slots",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [
+      {
+        "id": "6f362570-5838-4c76-9c15-64f0d8d388ce",
+        "name": "Load rules and window",
+        "nodeIds": [
+          "6ec0279e-ba26-46b0-afa3-5ab9006f0170",
+          "e2ded7ae-37b1-492d-be97-fd9bd013611e"
+        ],
+        "description": "Reads settings and held bookings, then builds the calendar search window in the owner timezone."
+      },
+      {
+        "id": "400960e9-c0bc-4a0e-82e4-0d79ecafa224",
+        "name": "Calendar and slot math",
+        "nodeIds": [
+          "111a9a33-3d92-429f-b475-3b60db7db442",
+          "283e1494-c30e-4046-8c33-994cc243acaa"
+        ],
+        "description": "Gets busy times from the calendar adapter and computes bookable slots."
+      }
+    ],
+    "authors": "Robert Lord (via MCP)",
+    "name": "Exact requested-time check",
+    "description": "Updated nodes: Slot Request, Compute Open Slots",
+    "autosaved": false,
+    "createdAt": "2026-10-14T17:59:32.148Z",
+    "updatedAt": "2026-10-14T17:59:32.148Z"
+  },
+  "activeVersionId": "7dd6687d-cac6-49de-9c59-221ff50f7658",
+  "connections": {
+    "Slot Request": {
+      "main": [
+        [
+          {
+            "node": "Load Rules",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Rules": {
+      "main": [
+        [
+          {
+            "node": "Search Window",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Window": {
+      "main": [
+        [
+          {
+            "node": "Get Busy Times",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Busy Times": {
+      "main": [
+        [
+          {
+            "node": "Compute Open Slots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-14T16:24:27.333Z",
+  "id": "3T8U70fqUfqYzZWi",
+  "isArchived": false,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "name": "Ava 07 - Find Open Slots",
+  "nodeGroups": [
+    {
+      "id": "6f362570-5838-4c76-9c15-64f0d8d388ce",
+      "name": "Load rules and window",
+      "nodeIds": [
+        "6ec0279e-ba26-46b0-afa3-5ab9006f0170",
+        "e2ded7ae-37b1-492d-be97-fd9bd013611e"
+      ],
+      "description": "Reads settings and held bookings, then builds the calendar search window in the owner timezone."
+    },
+    {
+      "id": "400960e9-c0bc-4a0e-82e4-0d79ecafa224",
+      "name": "Calendar and slot math",
+      "nodeIds": [
+        "111a9a33-3d92-429f-b475-3b60db7db442",
+        "283e1494-c30e-4046-8c33-994cc243acaa"
+      ],
+      "description": "Gets busy times from the calendar adapter and computes bookable slots."
+    }
+  ],
+  "nodes": [
+    {
+      "id": "e32bdef6-de96-41b0-a7ad-7cd5b7158e22",
+      "name": "Slot Request",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "inputSource": "workflowInputs",
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "date_from",
+              "type": "string"
+            },
+            {
+              "name": "date_to",
+              "type": "string"
+            },
+            {
+              "name": "duration_min",
+              "type": "number"
+            },
+            {
+              "name": "max_slots",
+              "type": "number"
+            },
+            {
+              "name": "exclude_booking_id",
+              "type": "string"
+            },
+            {
+              "name": "check_start",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "6ec0279e-ba26-46b0-afa3-5ab9006f0170",
+      "name": "Load Rules",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        272,
+        128
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  (SELECT jsonb_object_agg(key, value) FROM ava.settings) AS settings,\n  (SELECT COALESCE(jsonb_agg(jsonb_build_object('id', id, 'start', start_at, 'end', end_at)), '[]'::jsonb)\n     FROM ava.bookings WHERE status IN ('pending', 'approved') AND end_at > now()) AS holds",
+        "options": {}
+      },
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      },
+      "executeOnce": true
+    },
+    {
+      "id": "e2ded7ae-37b1-492d-be97-fd9bd013611e",
+      "name": "Search Window",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        496,
+        128
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "tmin",
+              "name": "time_min",
+              "value": "={{ DateTime.fromISO($('Slot Request').first().json.date_from || $now.setZone($json.settings.timezone).toISODate(), { zone: $json.settings.timezone }).startOf('day').toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "tmax",
+              "name": "time_max",
+              "value": "={{ DateTime.fromISO($('Slot Request').first().json.date_to || $('Slot Request').first().json.date_from || $now.setZone($json.settings.timezone).toISODate(), { zone: $json.settings.timezone }).endOf('day').toISO() }}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "111a9a33-3d92-429f-b475-3b60db7db442",
+      "name": "Get Busy Times",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        800,
+        128
+      ],
+      "parameters": {
+        "mode": "once",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "7lia7pC30AeON5CP",
+          "cachedResultName": "Ava 05 - Calendar Adapter"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "operation": "get_busy",
+            "time_min": "={{ $json.time_min }}",
+            "time_max": "={{ $json.time_max }}",
+            "start": "",
+            "end": "",
+            "summary": "",
+            "description": "",
+            "attendee_email": "",
+            "call_format": "",
+            "event_id": ""
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "operation",
+              "displayName": "operation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "time_min",
+              "displayName": "time_min",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "time_max",
+              "displayName": "time_max",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "start",
+              "displayName": "start",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "end",
+              "displayName": "end",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "attendee_email",
+              "displayName": "attendee_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "call_format",
+              "displayName": "call_format",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      }
+    },
+    {
+      "id": "283e1494-c30e-4046-8c33-994cc243acaa",
+      "name": "Compute Open Slots",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1024,
+        128
+      ],
+      "parameters": {
+        "jsCode": "// Inputs: settings (jsonb map), holds (pending/approved bookings), busy (calendar), request params\nconst req = $('Slot Request').first().json;\nconst rules = $('Load Rules').first().json;\nconst s = rules.settings;\nconst holds = rules.holds ?? [];\nconst cal = $input.first().json;\nif (cal.ok === false) {\n  return [{ json: { ok: false, error: 'calendar_unavailable', slots: [] } }];\n}\n\nconst tz = s.timezone;\nconst duration = Number(req.duration_min) === 30 ? 30 : 60;\nconst buffer = Number(s.buffer_minutes ?? 15);\nconst step = 30;\nconst maxSlots = Number(req.max_slots) > 0 ? Number(req.max_slots) : 12;\nconst workDays = s.work_days ?? [1, 2, 3, 4, 5];\nconst [wsH, wsM] = String(s.work_start).split(':').map(Number);\nconst [weH, weM] = String(s.work_end).split(':').map(Number);\n\nconst now = DateTime.now().setZone(tz);\nconst earliest = now.plus({ hours: Number(s.min_notice_hours ?? 4) });\nconst latest = now.plus({ days: Number(s.max_days_out ?? 30) }).endOf('day');\n\nconst fromDay = (req.date_from ? DateTime.fromISO(req.date_from, { zone: tz }) : now).startOf('day');\nconst toDay = (req.date_to ? DateTime.fromISO(req.date_to, { zone: tz }) : fromDay).startOf('day');\n\n// Busy intervals = calendar busy + held bookings (minus the booking being rescheduled)\nconst intervals = [];\nfor (const b of cal.busy ?? []) {\n  intervals.push([DateTime.fromISO(b.start, { zone: tz }), DateTime.fromISO(b.end, { zone: tz })]);\n}\nfor (const h of holds) {\n  if (req.exclude_booking_id && h.id === req.exclude_booking_id) continue;\n  intervals.push([DateTime.fromISO(h.start, { zone: tz }), DateTime.fromISO(h.end, { zone: tz })]);\n}\nconst overlaps = (a0, a1) => intervals.some(([b0, b1]) => a0 < b1 && b0 < a1);\n\nconst slots = [];\nlet rejected = { outside_window: 0, too_soon: 0 };\nfor (let day = fromDay; day <= toDay; day = day.plus({ days: 1 })) {\n  if (day > latest) { rejected.outside_window++; break; }\n  if (!workDays.includes(day.weekday)) continue;\n  const open = day.set({ hour: wsH, minute: wsM, second: 0, millisecond: 0 });\n  const close = day.set({ hour: weH, minute: weM, second: 0, millisecond: 0 });\n  for (let start = open; start.plus({ minutes: duration }) <= close; start = start.plus({ minutes: step })) {\n    const end = start.plus({ minutes: duration });\n    if (start < earliest) { rejected.too_soon++; continue; }\n    if (overlaps(start.minus({ minutes: buffer }), end.plus({ minutes: buffer }))) continue;\n    slots.push({\n      start: start.toISO({ suppressMilliseconds: true }),\n      end: end.toISO({ suppressMilliseconds: true }),\n      label: start.toFormat(\"cccc, LLL d 'at' h:mm a\") + ' ' + start.toFormat('ZZZZ')\n    });\n  }\n}\n\n// Spread the offered slots across the whole range instead of returning the first N (all mornings)\nconst total = slots.length;\nlet offered = slots;\nif (total > maxSlots) {\n  const stepIdx = (total - 1) / (maxSlots - 1);\n  offered = Array.from({ length: maxSlots }, (_, i) => slots[Math.round(i * stepIdx)]);\n}\n\n// Exact time the client asked for: checked against ALL open slots, never just the sample\nlet requested = null;\nif (req.check_start) {\n  const want = DateTime.fromISO(String(req.check_start), { zone: tz });\n  const hit = want.isValid ? slots.find(x => DateTime.fromISO(x.start).toMillis() === want.toMillis()) : null;\n  requested = { start: want.isValid ? want.toISO({ suppressMilliseconds: true }) : String(req.check_start), available: Boolean(hit) };\n  if (hit && !offered.some(x => x.start === hit.start)) offered = [hit, ...offered.slice(0, Math.max(0, maxSlots - 1))];\n}\n\nreturn [{\n  json: {\n    ok: true,\n    duration_min: duration,\n    timezone: tz,\n    checked_from: fromDay.toISODate(),\n    checked_to: toDay.toISODate(),\n    earliest_bookable: earliest.toISO({ suppressMilliseconds: true }),\n    latest_bookable_day: latest.toISODate(),\n    total_open_slots: total,\n    requested_slot_available: requested ? requested.available : null,\n    requested_slot: requested,\n    slots: offered,\n    note: rejected.outside_window > 0 && total === 0\n      ? `That date is past the booking window. The latest bookable day is ${latest.toFormat('cccc, LLL d')}.`\n      : total === 0\n        ? 'No open slots in this range. Offer to check other days.'\n        : 'Spread across the range. If the client prefers a time of day, offer the matching ones; offer 2-3, never all.'\n  }\n}];\n"
+      }
+    },
+    {
+      "id": "c29de93d-746e-45d2-8e5e-ef877320e84a",
+      "name": "Sticky Note a8cdd44f",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        992,
+        32
+      ],
+      "parameters": {
+        "content": "## Find Open Slots\nAll scheduling rules live here, in code, never in the AI prompt: work days and hours, 30/60 min calls, 15 min buffers, 4 h minimum notice, 30 day window. Pending and approved bookings count as busy so two clients can never request the same slot.",
+        "color": 5,
+        "width": 160,
+        "height": 224
+      }
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "errorWorkflow": "MgxgpZ3WBjOI2Lyl"
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "3T8U70fqUfqYzZWi",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-10-14T16:24:27.335Z",
+      "updatedAt": "2026-10-14T16:24:27.335Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-10-14T17:59:32.146Z",
+  "versionId": "7dd6687d-cac6-49de-9c59-221ff50f7658"
+}
