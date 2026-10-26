@@ -1,5 +1,7 @@
 {
-  "active": true,
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
   "connections": {
     "Schedule Trigger": {
       "main": [
@@ -89,11 +91,12 @@
   },
   "createdAt": "2024-10-29T01:35:41.694Z",
   "id": "0GBsMXPDEqbloEbY",
-  "isArchived": false,
+  "isArchived": true,
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "name": "Reddit Feed to NoCoDB",
+  "nodeGroups": [],
   "nodes": [
     {
       "parameters": {
@@ -322,20 +325,25 @@
   },
   "shared": [
     {
-      "createdAt": "2024-10-29T01:35:41.700Z",
-      "updatedAt": "2024-10-29T01:35:41.700Z",
       "role": "workflow:owner",
       "workflowId": "0GBsMXPDEqbloEbY",
-      "projectId": "WCIiaWERZpaZ5IaT"
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2024-10-29T01:35:41.700Z",
+      "updatedAt": "2024-10-29T01:35:41.700Z"
     }
   ],
   "staticData": {
     "node:Schedule Trigger": {
-      "recurrenceRules": []
+      "recurrenceRules": [
+        null
+      ],
+      "recurrenceRuleSignatures": [
+        null
+      ]
     }
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2024-11-02T19:20:46.000Z",
-  "versionId": "48bbaf45-1170-44e4-812b-11e0553b1c9a"
+  "updatedAt": "2026-10-22T01:03:57.000Z",
+  "versionId": "cd2c0187-2a6b-4bf3-afee-8433e3f27f3f"
 }
