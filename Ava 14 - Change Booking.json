@@ -1,0 +1,1427 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "1fe996dd-10b2-49c0-a4d3-3455b1b2e2e6",
+    "workflowId": "cwllOt2g6SFWM5nf",
+    "nodes": [
+      {
+        "id": "dca2f21e-f9c8-44ab-8e3c-34cf044ad79a",
+        "name": "Change Request",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.3,
+        "position": [
+          0,
+          272
+        ],
+        "parameters": {
+          "inputSource": "workflowInputs",
+          "workflowInputs": {
+            "values": [
+              {
+                "name": "action",
+                "type": "string"
+              },
+              {
+                "name": "booking_id",
+                "type": "string"
+              },
+              {
+                "name": "client_id",
+                "type": "string"
+              },
+              {
+                "name": "new_start",
+                "type": "string"
+              },
+              {
+                "name": "new_end",
+                "type": "string"
+              },
+              {
+                "name": "urgent_words",
+                "type": "boolean"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "b8ce94a0-c133-4659-bb9c-344c9ea3594c",
+        "name": "Check Change Rules",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          224,
+          272
+        ],
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT ava.request_booking_change($1, NULLIF($2, '')::uuid, $3::uuid) AS c",
+          "options": {
+            "queryReplacement": "={{ [ ($json.action || '').toLowerCase().includes('cancel') ? 'cancel' : 'reschedule', $json.booking_id ?? '', $json.client_id ] }}"
+          }
+        },
+        "credentials": {
+          "postgres": {
+            "id": "1RCl2NMd9YUu88EJ",
+            "name": "Coolify Postgres"
+          }
+        }
+      },
+      {
+        "id": "14a40441-aea8-473a-b372-31718ff6063e",
+        "name": "Route Outcome",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          448,
+          256
+        ],
+        "parameters": {
+          "mode": "rules",
+          "rules": {
+            "values": [
+              {
+                "renameOutput": true,
+                "outputKey": "cancelled",
+                "conditions": {
+                  "options": {
+                    "caseSensitive": false,
+                    "leftValue": "",
+                    "typeValidation": "strict"
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.c.outcome }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "cancelled"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "renameOutput": true,
+                "outputKey": "reschedule ok",
+                "conditions": {
+                  "options": {
+                    "caseSensitive": false,
+                    "leftValue": "",
+                    "typeValidation": "strict"
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.c.outcome }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "reschedule_ok"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              }
+            ]
+          },
+          "options": {
+            "fallbackOutput": "extra",
+            "renameFallbackOutput": "not allowed or owner decides"
+          }
+        }
+      },
+      {
+        "id": "6cd2bffe-e24a-4804-a392-776a5697a88a",
+        "name": "Has Calendar Event?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          832,
+          80
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose"
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ $json.c.event_id }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          }
+        }
+      },
+      {
+        "id": "840fcb56-6b07-479a-a349-7f51c3cda84f",
+        "name": "Remove Calendar Event",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.4,
+        "position": [
+          1200,
+          0
+        ],
+        "parameters": {
+          "mode": "once",
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "7lia7pC30AeON5CP",
+            "cachedResultName": "Ava 05 - Calendar Adapter"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "operation": "delete_event",
+              "time_min": "",
+              "time_max": "",
+              "start": "",
+              "end": "",
+              "summary": "",
+              "description": "",
+              "attendee_email": "",
+              "call_format": "",
+              "event_id": "={{ $json.c.event_id }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "operation",
+                "displayName": "operation",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "time_min",
+                "displayName": "time_min",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "time_max",
+                "displayName": "time_max",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "start",
+                "displayName": "start",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "end",
+                "displayName": "end",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "summary",
+                "displayName": "summary",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "description",
+                "displayName": "description",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "attendee_email",
+                "displayName": "attendee_email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "call_format",
+                "displayName": "call_format",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "event_id",
+                "displayName": "event_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              }
+            ],
+            "attemptToConvertTypes": false
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        }
+      },
+      {
+        "id": "da8d94e0-db2a-4dea-99fd-9690fbc78c2e",
+        "name": "Send Owner Alert Now",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.4,
+        "position": [
+          1472,
+          320
+        ],
+        "parameters": {
+          "mode": "once",
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "OMglHORb5zLpGPGx",
+            "cachedResultName": "Ava 09 - Alert Dispatcher"
+          },
+          "options": {
+            "waitForSubWorkflow": false
+          }
+        }
+      },
+      {
+        "id": "f3fd141f-e355-4845-a32a-94418f3e4417",
+        "name": "Request Move Approval",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.4,
+        "position": [
+          720,
+          384
+        ],
+        "parameters": {
+          "mode": "once",
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "X6f87zkwg1NauDVW",
+            "cachedResultName": "Ava 08 - Booking Request"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "client_id": "={{ $('Change Request').first().json.client_id }}",
+              "service": "={{ $json.c.service }}",
+              "start": "={{ $('Change Request').first().json.new_start }}",
+              "end": "={{ $('Change Request').first().json.new_end }}",
+              "call_format": "={{ $json.c.call_format }}",
+              "call_phone": "={{ $json.c.call_phone }}",
+              "topic": "={{ $json.c.topic }}",
+              "budget_text": "",
+              "timeline_text": "",
+              "notes": "={{ $json.c.notes }}",
+              "channel": "={{ $json.c.channel }}",
+              "kind": "reschedule",
+              "replaces_booking_id": "={{ $json.c.booking_id }}",
+              "urgent_words": "={{ $('Change Request').first().json.urgent_words ?? false }}",
+              "client_name": "",
+              "client_email": "",
+              "company": "",
+              "found_via": ""
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "client_id",
+                "displayName": "client_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "service",
+                "displayName": "service",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "start",
+                "displayName": "start",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "end",
+                "displayName": "end",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "call_format",
+                "displayName": "call_format",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "call_phone",
+                "displayName": "call_phone",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "topic",
+                "displayName": "topic",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "budget_text",
+                "displayName": "budget_text",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "timeline_text",
+                "displayName": "timeline_text",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "notes",
+                "displayName": "notes",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "channel",
+                "displayName": "channel",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "kind",
+                "displayName": "kind",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "replaces_booking_id",
+                "displayName": "replaces_booking_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "urgent_words",
+                "displayName": "urgent_words",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "boolean"
+              },
+              {
+                "id": "client_name",
+                "displayName": "client_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "client_email",
+                "displayName": "client_email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "company",
+                "displayName": "company",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "found_via",
+                "displayName": "found_via",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              }
+            ],
+            "attemptToConvertTypes": false
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        }
+      },
+      {
+        "id": "ffeb7629-bca4-4c5c-a2a6-89f0709b8324",
+        "name": "Move Result",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          944,
+          384
+        ],
+        "parameters": {
+          "mode": "raw",
+          "jsonOutput": "={{ JSON.stringify({ outcome: $json.ok ? 'reschedule_requested' : ($json.error || 'failed'), ok: $json.ok === true, message: $json.ok ? 'Move request sent to the owner for approval. The original call stays booked until it is approved, and the client will be told automatically.' : ($json.message || 'That time is no longer free. Check open slots again.') }) }}"
+        }
+      },
+      {
+        "id": "7363cecd-1385-4248-8887-92ded00667a2",
+        "name": "Change Result",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1696,
+          320
+        ],
+        "parameters": {
+          "mode": "raw",
+          "jsonOutput": "={{ JSON.stringify({ outcome: $('Check Change Rules').first().json.c.outcome, ok: ['cancelled'].includes($('Check Change Rules').first().json.c.outcome), message: $('Check Change Rules').first().json.c.message }) }}"
+        }
+      },
+      {
+        "id": "a87b5f79-a76b-42b9-9f22-e296ae65fa97",
+        "name": "Sticky Note 968ba8a8",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          192,
+          176
+        ],
+        "parameters": {
+          "content": "## Change Booking\nCalled by Ava's change_booking tool. The database enforces the rules: the booking must belong to this client, and inside the 24h cutoff nothing changes (the owner gets an urgent alert). Cancel removes the calendar event right away; a move goes through the normal approval flow and the original call stands until approved.",
+          "color": 5,
+          "width": 160,
+          "height": 224
+        }
+      }
+    ],
+    "connections": {
+      "Change Request": {
+        "main": [
+          [
+            {
+              "node": "Check Change Rules",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Check Change Rules": {
+        "main": [
+          [
+            {
+              "node": "Route Outcome",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Route Outcome": {
+        "main": [
+          [
+            {
+              "node": "Has Calendar Event?",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Request Move Approval",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Send Owner Alert Now",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Has Calendar Event?": {
+        "main": [
+          [
+            {
+              "node": "Remove Calendar Event",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Send Owner Alert Now",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Remove Calendar Event": {
+        "main": [
+          [
+            {
+              "node": "Send Owner Alert Now",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send Owner Alert Now": {
+        "main": [
+          [
+            {
+              "node": "Change Result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Request Move Approval": {
+        "main": [
+          [
+            {
+              "node": "Move Result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [
+      {
+        "id": "dbc1d305-9cb7-4b8e-8dab-321ad2f16b35",
+        "name": "Move",
+        "nodeIds": [
+          "f3fd141f-e355-4845-a32a-94418f3e4417",
+          "ffeb7629-bca4-4c5c-a2a6-89f0709b8324"
+        ],
+        "description": "Sends the new time to the owner as a reschedule request with the original details."
+      },
+      {
+        "id": "8417e1aa-d6dd-4b75-ac6b-1e306c759e1c",
+        "name": "Notify and answer",
+        "nodeIds": [
+          "da8d94e0-db2a-4dea-99fd-9690fbc78c2e",
+          "7363cecd-1385-4248-8887-92ded00667a2"
+        ],
+        "description": "Sends any queued owner alert now and returns the outcome message to Ava."
+      }
+    ],
+    "authors": "Robert Lord (via MCP)",
+    "name": "Initial change booking",
+    "description": "Created with 10 nodes: Change Request, Check Change Rules, Route Outcome, Has Calendar Event?, Remove Calendar Event and 5 more",
+    "autosaved": false,
+    "createdAt": "2026-10-14T17:49:40.053Z",
+    "updatedAt": "2026-10-14T17:49:40.053Z"
+  },
+  "activeVersionId": "1fe996dd-10b2-49c0-a4d3-3455b1b2e2e6",
+  "connections": {
+    "Change Request": {
+      "main": [
+        [
+          {
+            "node": "Check Change Rules",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Change Rules": {
+      "main": [
+        [
+          {
+            "node": "Route Outcome",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Outcome": {
+      "main": [
+        [
+          {
+            "node": "Has Calendar Event?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Request Move Approval",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Owner Alert Now",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Calendar Event?": {
+      "main": [
+        [
+          {
+            "node": "Remove Calendar Event",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Owner Alert Now",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Calendar Event": {
+      "main": [
+        [
+          {
+            "node": "Send Owner Alert Now",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Owner Alert Now": {
+      "main": [
+        [
+          {
+            "node": "Change Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Request Move Approval": {
+      "main": [
+        [
+          {
+            "node": "Move Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-14T17:49:40.050Z",
+  "id": "cwllOt2g6SFWM5nf",
+  "isArchived": false,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "name": "Ava 14 - Change Booking",
+  "nodeGroups": [
+    {
+      "id": "dbc1d305-9cb7-4b8e-8dab-321ad2f16b35",
+      "name": "Move",
+      "nodeIds": [
+        "f3fd141f-e355-4845-a32a-94418f3e4417",
+        "ffeb7629-bca4-4c5c-a2a6-89f0709b8324"
+      ],
+      "description": "Sends the new time to the owner as a reschedule request with the original details."
+    },
+    {
+      "id": "8417e1aa-d6dd-4b75-ac6b-1e306c759e1c",
+      "name": "Notify and answer",
+      "nodeIds": [
+        "da8d94e0-db2a-4dea-99fd-9690fbc78c2e",
+        "7363cecd-1385-4248-8887-92ded00667a2"
+      ],
+      "description": "Sends any queued owner alert now and returns the outcome message to Ava."
+    }
+  ],
+  "nodes": [
+    {
+      "id": "dca2f21e-f9c8-44ab-8e3c-34cf044ad79a",
+      "name": "Change Request",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        272
+      ],
+      "parameters": {
+        "inputSource": "workflowInputs",
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "action",
+              "type": "string"
+            },
+            {
+              "name": "booking_id",
+              "type": "string"
+            },
+            {
+              "name": "client_id",
+              "type": "string"
+            },
+            {
+              "name": "new_start",
+              "type": "string"
+            },
+            {
+              "name": "new_end",
+              "type": "string"
+            },
+            {
+              "name": "urgent_words",
+              "type": "boolean"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "b8ce94a0-c133-4659-bb9c-344c9ea3594c",
+      "name": "Check Change Rules",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        224,
+        272
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ava.request_booking_change($1, NULLIF($2, '')::uuid, $3::uuid) AS c",
+        "options": {
+          "queryReplacement": "={{ [ ($json.action || '').toLowerCase().includes('cancel') ? 'cancel' : 'reschedule', $json.booking_id ?? '', $json.client_id ] }}"
+        }
+      },
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      }
+    },
+    {
+      "id": "14a40441-aea8-473a-b372-31718ff6063e",
+      "name": "Route Outcome",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        256
+      ],
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "values": [
+            {
+              "renameOutput": true,
+              "outputKey": "cancelled",
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.c.outcome }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "cancelled"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "renameOutput": true,
+              "outputKey": "reschedule ok",
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.c.outcome }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "reschedule_ok"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "not allowed or owner decides"
+        }
+      }
+    },
+    {
+      "id": "6cd2bffe-e24a-4804-a392-776a5697a88a",
+      "name": "Has Calendar Event?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        832,
+        80
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.c.event_id }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "840fcb56-6b07-479a-a349-7f51c3cda84f",
+      "name": "Remove Calendar Event",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        1200,
+        0
+      ],
+      "parameters": {
+        "mode": "once",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "7lia7pC30AeON5CP",
+          "cachedResultName": "Ava 05 - Calendar Adapter"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "operation": "delete_event",
+            "time_min": "",
+            "time_max": "",
+            "start": "",
+            "end": "",
+            "summary": "",
+            "description": "",
+            "attendee_email": "",
+            "call_format": "",
+            "event_id": "={{ $json.c.event_id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "operation",
+              "displayName": "operation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "time_min",
+              "displayName": "time_min",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "time_max",
+              "displayName": "time_max",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "start",
+              "displayName": "start",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "end",
+              "displayName": "end",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "attendee_email",
+              "displayName": "attendee_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "call_format",
+              "displayName": "call_format",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      }
+    },
+    {
+      "id": "da8d94e0-db2a-4dea-99fd-9690fbc78c2e",
+      "name": "Send Owner Alert Now",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        1472,
+        320
+      ],
+      "parameters": {
+        "mode": "once",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "OMglHORb5zLpGPGx",
+          "cachedResultName": "Ava 09 - Alert Dispatcher"
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      }
+    },
+    {
+      "id": "f3fd141f-e355-4845-a32a-94418f3e4417",
+      "name": "Request Move Approval",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        720,
+        384
+      ],
+      "parameters": {
+        "mode": "once",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "X6f87zkwg1NauDVW",
+          "cachedResultName": "Ava 08 - Booking Request"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "client_id": "={{ $('Change Request').first().json.client_id }}",
+            "service": "={{ $json.c.service }}",
+            "start": "={{ $('Change Request').first().json.new_start }}",
+            "end": "={{ $('Change Request').first().json.new_end }}",
+            "call_format": "={{ $json.c.call_format }}",
+            "call_phone": "={{ $json.c.call_phone }}",
+            "topic": "={{ $json.c.topic }}",
+            "budget_text": "",
+            "timeline_text": "",
+            "notes": "={{ $json.c.notes }}",
+            "channel": "={{ $json.c.channel }}",
+            "kind": "reschedule",
+            "replaces_booking_id": "={{ $json.c.booking_id }}",
+            "urgent_words": "={{ $('Change Request').first().json.urgent_words ?? false }}",
+            "client_name": "",
+            "client_email": "",
+            "company": "",
+            "found_via": ""
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "client_id",
+              "displayName": "client_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "service",
+              "displayName": "service",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "start",
+              "displayName": "start",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "end",
+              "displayName": "end",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "call_format",
+              "displayName": "call_format",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "call_phone",
+              "displayName": "call_phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "topic",
+              "displayName": "topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "budget_text",
+              "displayName": "budget_text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "timeline_text",
+              "displayName": "timeline_text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "channel",
+              "displayName": "channel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "kind",
+              "displayName": "kind",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "replaces_booking_id",
+              "displayName": "replaces_booking_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "urgent_words",
+              "displayName": "urgent_words",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "boolean"
+            },
+            {
+              "id": "client_name",
+              "displayName": "client_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "client_email",
+              "displayName": "client_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "found_via",
+              "displayName": "found_via",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      }
+    },
+    {
+      "id": "ffeb7629-bca4-4c5c-a2a6-89f0709b8324",
+      "name": "Move Result",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        944,
+        384
+      ],
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ JSON.stringify({ outcome: $json.ok ? 'reschedule_requested' : ($json.error || 'failed'), ok: $json.ok === true, message: $json.ok ? 'Move request sent to the owner for approval. The original call stays booked until it is approved, and the client will be told automatically.' : ($json.message || 'That time is no longer free. Check open slots again.') }) }}"
+      }
+    },
+    {
+      "id": "7363cecd-1385-4248-8887-92ded00667a2",
+      "name": "Change Result",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1696,
+        320
+      ],
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ JSON.stringify({ outcome: $('Check Change Rules').first().json.c.outcome, ok: ['cancelled'].includes($('Check Change Rules').first().json.c.outcome), message: $('Check Change Rules').first().json.c.message }) }}"
+      }
+    },
+    {
+      "id": "a87b5f79-a76b-42b9-9f22-e296ae65fa97",
+      "name": "Sticky Note 968ba8a8",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        192,
+        176
+      ],
+      "parameters": {
+        "content": "## Change Booking\nCalled by Ava's change_booking tool. The database enforces the rules: the booking must belong to this client, and inside the 24h cutoff nothing changes (the owner gets an urgent alert). Cancel removes the calendar event right away; a move goes through the normal approval flow and the original call stands until approved.",
+        "color": 5,
+        "width": 160,
+        "height": 224
+      }
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "errorWorkflow": "MgxgpZ3WBjOI2Lyl",
+    "timezone": "America/New_York"
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "cwllOt2g6SFWM5nf",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-10-14T17:49:40.052Z",
+      "updatedAt": "2026-10-14T17:49:40.052Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-10-14T17:49:44.141Z",
+  "versionId": "1fe996dd-10b2-49c0-a4d3-3455b1b2e2e6"
+}
