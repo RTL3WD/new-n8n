@@ -1,0 +1,1023 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Restaurant Demo Webhook": {
+      "main": [
+        [
+          {
+            "node": "Normalize Tool Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Tool Request": {
+      "main": [
+        [
+          {
+            "node": "Load Demo Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Demo Settings": {
+      "main": [
+        [
+          {
+            "node": "Load Harbor Slots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Harbor Slots": {
+      "main": [
+        [
+          {
+            "node": "Load Harbor Reservations",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Harbor Reservations": {
+      "main": [
+        [
+          {
+            "node": "Decide Reservation Operation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decide Reservation Operation": {
+      "main": [
+        [
+          {
+            "node": "Route Database Write",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Database Write": {
+      "main": [
+        [
+          {
+            "node": "Save Reservation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Reservation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Save Callback Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare SMS Notifications",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Reservation": {
+      "main": [
+        [
+          {
+            "node": "Prepare SMS Notifications",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare SMS Notifications": {
+      "main": [
+        [
+          {
+            "node": "SMS Recipient Available",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Reservation": {
+      "main": [
+        [
+          {
+            "node": "Prepare SMS Notifications",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Callback Request": {
+      "main": [
+        [
+          {
+            "node": "Prepare SMS Notifications",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SMS Recipient Available": {
+      "main": [
+        [
+          {
+            "node": "Send Telnyx SMS",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Finalize Tool Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Telnyx SMS": {
+      "main": [
+        [
+          {
+            "node": "Record SMS API Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Record SMS API Result": {
+      "main": [
+        [
+          {
+            "node": "Save Notification Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Notification Log": {
+      "main": [
+        [
+          {
+            "node": "Finalize Tool Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finalize Tool Result": {
+      "main": [
+        [
+          {
+            "node": "Return Dograh Tool Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-24T23:43:43.201Z",
+  "id": "HC2xxZJy7ATk7UYM",
+  "isArchived": false,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "name": "The Harbor Table — Cloud Reservation Tools",
+  "nodeGroups": [
+    {
+      "id": "5357406b-fb8b-4269-b29f-9bb3d138e5be",
+      "name": "Read restaurant data",
+      "nodeIds": [
+        "b78dac46-110c-43f6-8d79-f45ab5ee957a",
+        "50e9f183-7193-4717-8508-f8e0a7e7a0e1",
+        "bb620cc9-7551-49ce-80a8-7273ab2ab387",
+        "8b818f05-c549-4bc9-9306-97b098b9036f",
+        "aaba44a9-6a2d-475a-84b0-86706f6f51b1"
+      ],
+      "description": "Normalize Dograh inputs and check the demo policies against saved Harbor Table reservations."
+    },
+    {
+      "id": "4a883075-610d-4498-be5d-bf569c8fa167",
+      "name": "Save reservation or callback",
+      "nodeIds": [
+        "97bc5961-4ea7-4ac7-954e-3104e90cc24c",
+        "a40d9fb0-e56d-4004-9657-56c8e1a5b4cd",
+        "1760f5c3-8ca7-4d5c-bcf3-623608a03ee9",
+        "0d89d735-1fbc-4621-9619-e42760e83ba6",
+        "dcb88330-81ed-462c-ab89-339e81d17076"
+      ],
+      "description": "Persist the requested change before preparing guest confirmations and configurable staff alerts."
+    },
+    {
+      "id": "ebede427-e373-47f4-bf70-7c34a294e5fe",
+      "name": "Send and record SMS",
+      "nodeIds": [
+        "a9b3b4f0-f886-4bc6-90b0-96b78cd46632",
+        "aff1aba9-ada5-4c50-ab21-dc31163f4b6c",
+        "294b1070-6ede-42d1-b1cc-2a38ddd2c927",
+        "7458cecc-8618-4d26-923f-91921aad9eaa",
+        "318be694-4473-4327-be4b-48844919d7d8"
+      ],
+      "description": "Send through Telnyx, log acceptance or failure, and keep booking results independent of SMS delivery."
+    }
+  ],
+  "nodes": [
+    {
+      "id": "0666e5a4-0f5e-4008-b110-a794a9b530b9",
+      "name": "Restaurant Demo Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "restaurant-demo",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "2736b5e2-11ad-4d60-b27f-41943ddaa2dc"
+    },
+    {
+      "id": "b78dac46-110c-43f6-8d79-f45ab5ee957a",
+      "name": "Normalize Tool Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        272,
+        128
+      ],
+      "parameters": {
+        "jsCode": "const x=$input.first().json; const b=x.body&&typeof x.body==='object'?x.body:x; return [{json:{...b,action:String(x.query?.action||b.action||'').trim()}}];"
+      }
+    },
+    {
+      "id": "50e9f183-7193-4717-8508-f8e0a7e7a0e1",
+      "name": "Load Demo Settings",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        496,
+        128
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "pR4Sn4LjZItLVfXj",
+          "cachedResultName": "restaurant demo - settings"
+        },
+        "returnAll": true
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true
+    },
+    {
+      "id": "bb620cc9-7551-49ce-80a8-7273ab2ab387",
+      "name": "Load Harbor Slots",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        128
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "21QitrLiisOKBTlK",
+          "cachedResultName": "restaurant demo - reservation slots"
+        },
+        "returnAll": true
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true
+    },
+    {
+      "id": "8b818f05-c549-4bc9-9306-97b098b9036f",
+      "name": "Load Harbor Reservations",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        944,
+        128
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "istYWBne51rna8Q6",
+          "cachedResultName": "restaurant demo - reservations"
+        },
+        "returnAll": true
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true
+    },
+    {
+      "id": "aaba44a9-6a2d-475a-84b0-86706f6f51b1",
+      "name": "Decide Reservation Operation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1168,
+        128
+      ],
+      "parameters": {
+        "jsCode": "const req = $('Normalize Tool Request').first().json;\nconst settings = Object.fromEntries($('Load Demo Settings').all().filter(i=>i.json.key).map(i=>[i.json.key,i.json.value]));\nconst rows = $input.all().map(i=>i.json).filter(x=>x.reservation_id);\nconst slotRows = $('Load Harbor Slots').all().map(i=>i.json).filter(x=>x.slot_time);\nconst tz = settings.timezone || 'America/New_York';\nconst now = DateTime.now().setZone(tz);\nconst today = now.toISODate();\nconst str = v => String(v ?? '').trim();\nconst normCode = v => str(v).toUpperCase().replace(/[^A-Z0-9]/g,'');\nconst normName = v => str(v).toLowerCase().replace(/[^a-z0-9]/g,'');\nconst phone = v => { let s=str(v).replace(/\\D/g,''); return s.length===11&&s.startsWith('1')?s.slice(1):s; };\nconst minutes = t => Number(t.slice(0,2))*60+Number(t.slice(3));\nconst hm = m => String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');\nconst uid = prefix => prefix+Date.now().toString(36).toUpperCase()+Math.random().toString(36).slice(2,7).toUpperCase();\nconst action=req.action;\nconst name=str(req.guest_name||req.name||req.caller_name);\nconst tel=phone(req.phone||req.caller_phone||req.phone_number);\nconst code=normCode(req.confirmation_code||req.reservation_id);\nlet result={status:'success',data:{},message:''}, operation='none', row=null, row_id=null;\nconst done=(data,message,op='none',record=null,id=null)=>[{json:{result:{status:'success',data,message},operation:op,row:record,row_id:id,settings,request:req}}];\nconst fail=(reason,message,extra={})=>done({status:reason,...extra},message);\nconst publicRow=x=>({confirmation_code:x.reservation_id,reservation_id:x.reservation_id,guest_name:x.guest_name,phone:x.phone,date:x.res_date,time:x.res_time,party_size:Number(x.party_size),special_requests:x.special_requests||'',status:x.status});\nconst validDate=d=>/^\\d{4}-\\d{2}-\\d{2}$/.test(d)&&DateTime.fromISO(d,{zone:tz}).isValid;\nconst validTime=t=>/^([01]\\d|2[0-3]):[0-5]\\d$/.test(t);\nfunction availability(date,time,party,excludeId=null){\n if(!validDate(date)) return {available:false,status:'invalid_date',alternatives:[],message:'What date would you like, including the month and day?'};\n if(date<today||date>now.plus({days:Number(settings.booking_window_days||30)}).toISODate()) return {available:false,status:'invalid_date',alternatives:[],message:'Reservations must be from today through thirty days ahead.'};\n if(!Number.isInteger(party)||party<1||party>Number(settings.max_party_size||8)) return {available:false,status:party>8?'callback_required':'invalid_party_size',alternatives:[],message:party>8?'Our events team handles parties of nine or more. May we arrange a callback?':'How many guests will be joining you?'};\n if(!validTime(time)) return {available:false,status:'invalid_time',alternatives:[],message:'What time would you like?'};\n const day=DateTime.fromISO(date,{zone:tz}).weekday;\n const windows=JSON.parse(settings.hours_json)[day]||[];\n const slots=[];\n for(const window of windows) for(let m=minutes(window[0]);m<=minutes(window[1])-60;m+=30){\n  const t=hm(m); const config=slotRows.find(s=>Number(s.day_index)===day&&s.slot_time===t);\n  const capacity=config?Number(config.max_covers):(day===5||day===6?30:24);\n  const used=rows.filter(x=>x.status==='confirmed'&&x.res_date===date&&x.res_time===t&&x.id!==excludeId).reduce((s,x)=>s+Number(x.party_size),0);\n  const future=DateTime.fromISO(date+'T'+t,{zone:tz})>now;\n  if(future&&capacity-used>=party) slots.push({date,time:t,party_size:party});\n }\n const available=slots.some(s=>s.time===time);\n const alternatives=slots.filter(s=>s.time!==time).sort((a,b)=>Math.abs(minutes(a.time)-minutes(time))-Math.abs(minutes(b.time)-minutes(time))).slice(0,2);\n return {available,status:available?'available':'unavailable',date,time,party_size:party,alternatives,message:available?'That table is available.':windows.length?'That time is unavailable. Please offer one of the returned alternatives.':'We are closed on Mondays.'};\n}\nif(action==='check_availability') { const a=availability(str(req.date),str(req.time),Number(req.party_size)); return done(a,a.message); }\nif(action==='request_callback') {\n const request=str(req.request||req.reason||req.special_requests);\n if(!name||tel.length!==10||!request) return fail('missing_details','Please collect the guest name, ten digit phone number, and reason for the callback.');\n const callback={callback_id:uid('CB-'),guest_name:name,phone:tel,request,status:'pending'};\n return done({status:'recorded',callback_id:callback.callback_id},'Your callback request has been recorded.','callback',callback);\n}\nif(!['create_reservation','lookup_reservation','modify_reservation','cancel_reservation'].includes(action)) return fail('invalid_action','That tool action is not supported.');\nif(!name) return fail('missing_name','What name is the reservation under?');\nif(action==='create_reservation') {\n if(tel.length!==10) return fail('invalid_phone','What is the ten digit phone number for the reservation?');\n const date=str(req.date),time=str(req.time),party=Number(req.party_size);\n const same=rows.find(x=>x.status==='confirmed'&&x.phone===tel&&x.res_date===date&&x.res_time===time&&Number(x.party_size)===party&&normName(x.guest_name)===normName(name));\n if(same) return done({...publicRow(same),status:'confirmed',already_exists:true},'This reservation is already confirmed.');\n const a=availability(date,time,party); if(!a.available) return done(a,a.message);\n const record={reservation_id:uid('HT-'),guest_name:name,phone:tel,party_size:party,res_date:date,res_time:time,status:'confirmed',occasion:'',special_requests:str(req.special_requests),source:'Dograh cloud restaurant demo'};\n return done({...publicRow(record),status:'confirmed'},'Your reservation is confirmed. We hold tables for fifteen minutes.','insert',record);\n}\nif(!code&&tel.length!==10) return fail('missing_identifier','What is your confirmation code or the ten digit phone number used to book?');\nlet matches=rows.filter(x=>normName(x.guest_name)===normName(name)&&(code?normCode(x.reservation_id)===code:x.phone===tel));\nif(code&&tel.length===10) matches=matches.filter(x=>x.phone===tel);\nif(!code) matches=matches.filter(x=>x.status==='confirmed'&&x.res_date>=today);\nif(!matches.length) return done({found:false,status:'not_found'},'No matching reservation was found. Please check the name and confirmation code or phone number.');\nif(matches.length>1) return done({found:true,status:'multiple_matches',reservations:matches.map(publicRow)},'More than one reservation matches. Ask for the confirmation code.');\nconst target=matches[0];\nif(action==='lookup_reservation') return done({found:true,...publicRow(target)},'Reservation found.');\nif(action==='cancel_reservation'){\n if(target.status==='cancelled') return done({...publicRow(target),status:'cancelled',already_cancelled:true},'That reservation is already cancelled.');\n if(target.status!=='confirmed') return fail('not_confirmed','This reservation cannot be cancelled automatically. Please request a callback.');\n return done({...publicRow(target),status:'cancelled'},'Your reservation is cancelled. There is no cancellation fee.','update',{...target,status:'cancelled'},target.id);\n}\nif(target.status!=='confirmed') return fail('not_confirmed','This reservation is not active. Would you like a new reservation?');\nconst date=str(req.new_date||req.date||target.res_date),time=str(req.new_time||req.time||target.res_time);\nconst party=Number(req.new_party_size||req.party_size||target.party_size);\nconst a=availability(date,time,party,target.id); if(!a.available) return done(a,a.message);\nconst changed={...target,res_date:date,res_time:time,party_size:party,special_requests:req.special_requests===undefined?target.special_requests:str(req.special_requests)};\nconst same=changed.res_date===target.res_date&&changed.res_time===target.res_time&&changed.party_size===Number(target.party_size)&&changed.special_requests===target.special_requests;\nreturn done({...publicRow(changed),status:'modified',unchanged:same},'Your reservation has been updated.',same?'none':'update',changed,target.id);\n"
+      }
+    },
+    {
+      "id": "97bc5961-4ea7-4ac7-954e-3104e90cc24c",
+      "name": "Route Database Write",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        800,
+        384
+      ],
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.operation }}",
+                    "rightValue": "insert",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "insert"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.operation }}",
+                    "rightValue": "update",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "update"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.operation }}",
+                    "rightValue": "callback",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "callback"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "No write"
+        }
+      }
+    },
+    {
+      "id": "a40d9fb0-e56d-4004-9657-56c8e1a5b4cd",
+      "name": "Save Reservation",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1024,
+        128
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "istYWBne51rna8Q6",
+          "cachedResultName": "restaurant demo - reservations"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "reservation_id": "={{ $json.row.reservation_id }}",
+            "guest_name": "={{ $json.row.guest_name }}",
+            "phone": "={{ $json.row.phone }}",
+            "party_size": "={{ $json.row.party_size }}",
+            "res_date": "={{ $json.row.res_date }}",
+            "res_time": "={{ $json.row.res_time }}",
+            "status": "={{ $json.row.status }}",
+            "occasion": "={{ $json.row.occasion }}",
+            "special_requests": "={{ $json.row.special_requests }}",
+            "source": "={{ $json.row.source }}"
+          },
+          "schema": [
+            {
+              "id": "reservation_id",
+              "displayName": "reservation_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "guest_name",
+              "displayName": "guest_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "party_size",
+              "displayName": "party_size",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "res_date",
+              "displayName": "res_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "res_time",
+              "displayName": "res_time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "occasion",
+              "displayName": "occasion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "special_requests",
+              "displayName": "special_requests",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "dcb88330-81ed-462c-ab89-339e81d17076",
+      "name": "Prepare SMS Notifications",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        416
+      ],
+      "parameters": {
+        "jsCode": "const d=$('Decide Reservation Operation').first().json; const s=d.settings; const result=d.result; const jobs=[]; const row=d.row; const enabled=v=>String(v)==='true'; const e164=v=>{const x=String(v||'').replace(/\\D/g,'');return x.length===10?'+1'+x:(x.length===11&&x[0]==='1'?'+'+x:'');}; if(d.operation!=='none'&&row&&d.request.test_mode!==true){ const event=row.reservation_id||row.callback_id; if(d.operation!=='callback'&&enabled(s.guest_sms_enabled))jobs.push({event_id:event,kind:'guest_'+result.data.status,recipient:e164(row.phone),text:s.restaurant_name+': Reservation '+result.data.status+'. '+row.guest_name+', '+row.res_date+' at '+row.res_time+', '+row.party_size+' guests. Confirmation '+row.reservation_id+'.'+(result.data.status==='confirmed'?' Tables held for 15 minutes.':'')}); const staff=e164(s.staff_alert_phone); if(enabled(s.staff_alerts_enabled)&&staff)jobs.push({event_id:event,kind:'staff_'+result.data.status,recipient:staff,text:s.restaurant_name+' DEMO: '+(d.operation==='callback'?'Callback requested by '+row.guest_name+' ('+e164(row.phone)+'): '+row.request:result.data.status+' reservation '+event+' for '+row.guest_name+', '+row.res_date+' '+row.res_time+', '+row.party_size+' guests. Phone '+e164(row.phone))}); } return jobs.length?jobs.map(j=>({json:{...j,from:s.sms_from,skip:false}})):[{json:{skip:true,status:d.request.test_mode===true?'test_mode':!s.staff_alert_phone&&d.operation==='callback'?'staff_recipient_not_configured':'no_notification'}}];"
+      }
+    },
+    {
+      "id": "1760f5c3-8ca7-4d5c-bcf3-623608a03ee9",
+      "name": "Update Reservation",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1024,
+        320
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "istYWBne51rna8Q6",
+          "cachedResultName": "restaurant demo - reservations"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.row_id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "reservation_id": "={{ $json.row.reservation_id }}",
+            "guest_name": "={{ $json.row.guest_name }}",
+            "phone": "={{ $json.row.phone }}",
+            "party_size": "={{ $json.row.party_size }}",
+            "res_date": "={{ $json.row.res_date }}",
+            "res_time": "={{ $json.row.res_time }}",
+            "status": "={{ $json.row.status }}",
+            "occasion": "={{ $json.row.occasion }}",
+            "special_requests": "={{ $json.row.special_requests }}",
+            "source": "={{ $json.row.source }}"
+          },
+          "schema": [
+            {
+              "id": "reservation_id",
+              "displayName": "reservation_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "guest_name",
+              "displayName": "guest_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "party_size",
+              "displayName": "party_size",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "res_date",
+              "displayName": "res_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "res_time",
+              "displayName": "res_time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "occasion",
+              "displayName": "occasion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "special_requests",
+              "displayName": "special_requests",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "0d89d735-1fbc-4621-9619-e42760e83ba6",
+      "name": "Save Callback Request",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1024,
+        512
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "iCnTE7YIaic0EJa0",
+          "cachedResultName": "restaurant demo - callbacks"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "callback_id": "={{ $json.row.callback_id }}",
+            "guest_name": "={{ $json.row.guest_name }}",
+            "phone": "={{ $json.row.phone }}",
+            "request": "={{ $json.row.request }}",
+            "status": "={{ $json.row.status }}"
+          },
+          "schema": [
+            {
+              "id": "callback_id",
+              "displayName": "callback_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "guest_name",
+              "displayName": "guest_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "request",
+              "displayName": "request",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "a9b3b4f0-f886-4bc6-90b0-96b78cd46632",
+      "name": "SMS Recipient Available",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1328,
+        208
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.skip }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "false"
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "aff1aba9-ada5-4c50-ab21-dc31163f4b6c",
+      "name": "Send Telnyx SMS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1552,
+        128
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telnyx.com/v2/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpTemplatedCustomAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({from:$json.from,to:$json.recipient,text:$json.text}) }}",
+        "options": {
+          "timeout": 10000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "294b1070-6ede-42d1-b1cc-2a38ddd2c927",
+      "name": "Record SMS API Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1776,
+        128
+      ],
+      "parameters": {
+        "jsCode": "return $input.all().map((item,i)=>{const j=$('Prepare SMS Notifications').all()[i].json;const x=item.json;const b=x.body||x;const ok=x.statusCode>=200&&x.statusCode<300&&!!b.data?.id;return {json:{event_id:j.event_id,recipient:j.recipient,kind:j.kind,status:ok?'accepted':'failed',provider_id:b.data?.id||'',detail:JSON.stringify(ok?{provider_status:b.data?.to?.[0]?.status||'accepted'}:b.errors||x.error||b).slice(0,1500)}};});"
+      }
+    },
+    {
+      "id": "7458cecc-8618-4d26-923f-91921aad9eaa",
+      "name": "Save Notification Log",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2000,
+        128
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Dk6LwJdVhKJKxYsh",
+          "cachedResultName": "restaurant demo - notification log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "event_id": "={{ $json.event_id }}",
+            "recipient": "={{ $json.recipient }}",
+            "kind": "={{ $json.kind }}",
+            "status": "={{ $json.status }}",
+            "provider_id": "={{ $json.provider_id }}",
+            "detail": "={{ $json.detail }}"
+          },
+          "schema": [
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "recipient",
+              "displayName": "recipient",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "kind",
+              "displayName": "kind",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "provider_id",
+              "displayName": "provider_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "detail",
+              "displayName": "detail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "318be694-4473-4327-be4b-48844919d7d8",
+      "name": "Finalize Tool Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2224,
+        208
+      ],
+      "parameters": {
+        "jsCode": "const r=$('Decide Reservation Operation').first().json.result; const notifications=$input.all().map(i=>({status:i.json.status,recipient:i.json.recipient||'',kind:i.json.kind||''})); return [{json:{...r,data:{...r.data,notifications}}}];"
+      }
+    },
+    {
+      "id": "82e34800-356d-4132-9ee0-edd3ab95c56f",
+      "name": "Return Dograh Tool Result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1808,
+        0
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      }
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "HC2xxZJy7ATk7UYM",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-10-24T23:43:43.204Z",
+      "updatedAt": "2026-10-24T23:43:43.204Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-10-24T23:43:43.201Z",
+  "versionId": "19962ee2-ea00-44be-a3e7-a1e896305983"
+}
