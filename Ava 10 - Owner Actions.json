@@ -1,0 +1,2111 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "d10099dd-fde8-406c-8111-7b892c995b7d",
+    "workflowId": "BuG8FMtVBs56gLlY",
+    "nodes": [
+      {
+        "id": "46bb223c-b905-4a2d-a4a2-67e9ee36b991",
+        "name": "Owner Tap",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.3,
+        "position": [
+          0,
+          368
+        ],
+        "parameters": {
+          "inputSource": "workflowInputs",
+          "workflowInputs": {
+            "values": [
+              {
+                "name": "callback_data",
+                "type": "string"
+              },
+              {
+                "name": "callback_query_id",
+                "type": "string"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "66bec7cb-1493-4e99-b33d-99b5344c03d5",
+        "name": "Record Decision",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          224,
+          368
+        ],
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT ava.owner_decide(split_part($1, ':', 2)::bigint, split_part($1, ':', 3)) AS d",
+          "options": {
+            "queryReplacement": "={{ [ $json.callback_data ] }}"
+          }
+        },
+        "credentials": {
+          "postgres": {
+            "id": "1RCl2NMd9YUu88EJ",
+            "name": "Coolify Postgres"
+          }
+        }
+      },
+      {
+        "id": "3148ddd0-74c4-4b47-a687-bf10d986f946",
+        "name": "Route Outcome",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          448,
+          352
+        ],
+        "parameters": {
+          "mode": "rules",
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.d.outcome }}",
+                      "operator": {
+                        "operation": "equals",
+                        "type": "string"
+                      },
+                      "rightValue": "approve"
+                    }
+                  ],
+                  "options": {
+                    "caseSensitive": false,
+                    "leftValue": "",
+                    "typeValidation": "strict"
+                  }
+                },
+                "outputKey": "approve",
+                "renameOutput": true
+              },
+              {
+                "conditions": {
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.d.outcome }}",
+                      "operator": {
+                        "operation": "equals",
+                        "type": "string"
+                      },
+                      "rightValue": "decline"
+                    }
+                  ],
+                  "options": {
+                    "caseSensitive": false,
+                    "leftValue": "",
+                    "typeValidation": "strict"
+                  }
+                },
+                "outputKey": "decline",
+                "renameOutput": true
+              },
+              {
+                "conditions": {
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.d.outcome }}",
+                      "operator": {
+                        "operation": "equals",
+                        "type": "string"
+                      },
+                      "rightValue": "spam_brush_off"
+                    }
+                  ],
+                  "options": {
+                    "caseSensitive": false,
+                    "leftValue": "",
+                    "typeValidation": "strict"
+                  }
+                },
+                "outputKey": "spam brush off",
+                "renameOutput": true
+              },
+              {
+                "conditions": {
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.d.outcome }}",
+                      "operator": {
+                        "operation": "equals",
+                        "type": "string"
+                      },
+                      "rightValue": "spam_not_spam"
+                    }
+                  ],
+                  "options": {
+                    "caseSensitive": false,
+                    "leftValue": "",
+                    "typeValidation": "strict"
+                  }
+                },
+                "outputKey": "not spam",
+                "renameOutput": true
+              }
+            ]
+          },
+          "options": {
+            "fallbackOutput": "extra",
+            "renameFallbackOutput": "stale or handled"
+          }
+        }
+      },
+      {
+        "id": "e7acfe93-1851-433f-84b4-78b660af81b7",
+        "name": "Is Reschedule?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          672,
+          96
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose"
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ $json.d.original_event_id }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          }
+        }
+      },
+      {
+        "id": "da72022c-5766-4f1d-ad84-adcb9e80514f",
+        "name": "Move Calendar Event",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.4,
+        "position": [
+          896,
+          0
+        ],
+        "parameters": {
+          "mode": "once",
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "7lia7pC30AeON5CP",
+            "cachedResultName": "Ava 05 - Calendar Adapter"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "operation": "update_event",
+              "time_min": "",
+              "time_max": "",
+              "start": "={{ $json.d.start }}",
+              "end": "={{ $json.d.end }}",
+              "summary": "",
+              "description": "",
+              "attendee_email": "",
+              "call_format": "",
+              "event_id": "={{ $json.d.original_event_id }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "operation",
+                "displayName": "operation",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "time_min",
+                "displayName": "time_min",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "time_max",
+                "displayName": "time_max",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "start",
+                "displayName": "start",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "end",
+                "displayName": "end",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "summary",
+                "displayName": "summary",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "description",
+                "displayName": "description",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "attendee_email",
+                "displayName": "attendee_email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "call_format",
+                "displayName": "call_format",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "event_id",
+                "displayName": "event_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              }
+            ],
+            "attemptToConvertTypes": false
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        }
+      },
+      {
+        "id": "760a13b1-ec2e-4b96-8afb-6cff436b642f",
+        "name": "Mark Booked",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          1168,
+          224
+        ],
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT ava.finalize_approval($1::uuid, $2, $3) AS f",
+          "options": {
+            "queryReplacement": "={{ [ $('Record Decision').first().json.d.booking_id, $json.event_id ?? '', $json.meet_link ?? '' ] }}"
+          }
+        },
+        "credentials": {
+          "postgres": {
+            "id": "1RCl2NMd9YUu88EJ",
+            "name": "Coolify Postgres"
+          }
+        }
+      },
+      {
+        "id": "664cd913-ee07-456b-8899-5c275a52d2b2",
+        "name": "Create Calendar Event",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.4,
+        "position": [
+          896,
+          192
+        ],
+        "parameters": {
+          "mode": "once",
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "7lia7pC30AeON5CP",
+            "cachedResultName": "Ava 05 - Calendar Adapter"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "operation": "create_event",
+              "time_min": "",
+              "time_max": "",
+              "start": "={{ $json.d.start }}",
+              "end": "={{ $json.d.end }}",
+              "summary": "={{ $json.d.service + ' – ' + $json.d.client_name }}",
+              "description": "={{ ['Booked by Ava (' + $json.d.channel + ')', 'Need: ' + $json.d.topic, $json.d.call_format === 'phone' ? 'Phone call: ' + $json.d.owner_name + ' calls ' + $json.d.call_phone : 'Google Meet', $json.d.notes ? 'Notes: ' + $json.d.notes : ''].filter(Boolean).join('\\n') }}",
+              "attendee_email": "={{ $json.d.client_email }}",
+              "call_format": "={{ $json.d.call_format }}",
+              "event_id": ""
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "operation",
+                "displayName": "operation",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "time_min",
+                "displayName": "time_min",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "time_max",
+                "displayName": "time_max",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "start",
+                "displayName": "start",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "end",
+                "displayName": "end",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "summary",
+                "displayName": "summary",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "description",
+                "displayName": "description",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "attendee_email",
+                "displayName": "attendee_email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "call_format",
+                "displayName": "call_format",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "event_id",
+                "displayName": "event_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              }
+            ],
+            "attemptToConvertTypes": false
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        }
+      },
+      {
+        "id": "ffbc6a0c-cf6c-4f21-a667-40b6e88af3bf",
+        "name": "Write Decline",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1280,
+          368
+        ],
+        "parameters": {
+          "mode": "manual",
+          "includeOtherFields": false,
+          "assignments": {
+            "assignments": [
+              {
+                "id": "txt",
+                "name": "client_text",
+                "type": "string",
+                "value": "={{ (() => { const d = $json.d; return d.kind === 'reschedule' ? `Thanks for your patience, ${d.client_first_name}. ${d.owner_name} couldn't move your call to ${d.when_label} ET, so your original time (${d.original_when_label} ET) still stands. Want me to look for another option?` : `Thanks for your patience, ${d.client_first_name}. Unfortunately ${d.when_label} ET won't work for ${d.owner_name}. Would you like me to find another time?`; })() }}"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "462566c8-e22a-4659-9895-b1a9dd87fc95",
+        "name": "Tell Client",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.4,
+        "position": [
+          1648,
+          192
+        ],
+        "parameters": {
+          "mode": "once",
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "gSgaG1ldpxS6eyyp",
+            "cachedResultName": "Ava 06 - Reply Adapter"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "client_id": "={{ $('Record Decision').first().json.d.client_id }}",
+              "channel": "={{ $('Record Decision').first().json.d.channel }}",
+              "recipient": "={{ $('Record Decision').first().json.d.recipient }}",
+              "text": "={{ $json.client_text }}",
+              "reply_to": "={{ $('Record Decision').first().json.d.reply_to }}",
+              "thread_ref": "={{ $('Record Decision').first().json.d.thread_ref }}",
+              "author": "ava"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "client_id",
+                "displayName": "client_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "channel",
+                "displayName": "channel",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "recipient",
+                "displayName": "recipient",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "text",
+                "displayName": "text",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "reply_to",
+                "displayName": "reply_to",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "thread_ref",
+                "displayName": "thread_ref",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "author",
+                "displayName": "author",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              }
+            ],
+            "attemptToConvertTypes": false
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        }
+      },
+      {
+        "id": "38959ef1-641e-4e3f-b04b-a66375305e1b",
+        "name": "Update Owner Alert",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1920,
+          384
+        ],
+        "parameters": {
+          "resource": "message",
+          "operation": "editMessageText",
+          "messageType": "message",
+          "chatId": "={{ $('Record Decision').first().json.d.owner_chat_id }}",
+          "messageId": "={{ $('Record Decision').first().json.d.telegram_message_id }}",
+          "replyMarkup": "none",
+          "text": "={{ (() => { const d = $('Record Decision').first().json.d; const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); const status = { approve: '✅ <b>Approved</b>: calendar invite sent and client confirmed.', decline: '❌ <b>Declined</b>: client offered another time.', stale: '⌛ <b>No longer pending</b> (' + esc(d.booking_status) + '). Nothing was booked.', already_handled: 'ℹ️ Already handled (' + esc(d.previous_action) + ').', spam_brush_off: '👋 <b>Brushed off</b>: a polite reply was sent.', spam_ignore: '🔇 <b>Ignored</b>: no reply sent.', spam_not_spam: '✅ <b>Not spam</b>: Ava is handling it as a normal inquiry.' }[d.outcome] ?? 'Done.'; return esc(d.alert_text) + '\\n\\n' + status; })() }}",
+          "additionalFields": {
+            "parse_mode": "HTML",
+            "disable_web_page_preview": true
+          }
+        },
+        "credentials": {
+          "telegramApi": {
+            "id": "GrHxwuhk9SECQo8h",
+            "name": "NanoRob3"
+          }
+        },
+        "onError": "continueRegularOutput",
+        "webhookId": "2bee05c1-f07a-4a95-ae68-576ed1e15f96"
+      },
+      {
+        "id": "a5c7f732-6e0b-4f83-a824-7c306d1b9445",
+        "name": "Write Confirmation",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1392,
+          224
+        ],
+        "parameters": {
+          "mode": "manual",
+          "includeOtherFields": false,
+          "assignments": {
+            "assignments": [
+              {
+                "id": "txt",
+                "name": "client_text",
+                "type": "string",
+                "value": "={{ (() => { const d = $('Record Decision').first().json.d; const cal = $('Create Calendar Event').isExecuted ? $('Create Calendar Event').first().json : $('Move Calendar Event').first().json; const meet = cal.meet_link || ''; const moved = d.kind === 'reschedule'; const head = moved ? `Done, ${d.client_first_name}! Your ${d.service} with ${d.owner_name} has been moved to ${d.when_label} ET.` : `Great news, ${d.client_first_name}! Your ${d.service} with ${d.owner_name} is confirmed for ${d.when_label} ET (${d.duration_min} min).`; const how = d.call_format === 'phone' ? `${d.owner_name} will call you at ${d.call_phone}.` : (meet ? `Join on Google Meet: ${meet}` : 'The Google Meet link is in your calendar invite.'); const invite = d.client_email ? `${moved ? 'An updated' : 'A'} calendar invite is on its way to ${d.client_email}.` : ''; return [head, how, invite, 'Just reply here if anything changes.'].filter(Boolean).join('\\n\\n'); })() }}"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "633cf5cd-5a9e-42fa-adb7-7e96aa1d185d",
+        "name": "Answer Tap",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          2144,
+          384
+        ],
+        "parameters": {
+          "resource": "callback",
+          "operation": "answerQuery",
+          "queryId": "={{ $('Owner Tap').first().json.callback_query_id }}",
+          "additionalFields": {
+            "text": "={{ ({ approve: 'Booked ✅', decline: 'Declined', stale: 'This request is no longer pending', already_handled: 'Already handled', spam_brush_off: 'Polite reply sent', spam_ignore: 'Ignored', spam_not_spam: 'Handed to Ava' })[$('Record Decision').first().json.d.outcome] ?? 'Done' }}"
+          }
+        },
+        "credentials": {
+          "telegramApi": {
+            "id": "GrHxwuhk9SECQo8h",
+            "name": "NanoRob3"
+          }
+        },
+        "onError": "continueRegularOutput",
+        "webhookId": "063e8725-2a6e-44f3-89c5-b53d4b63335e"
+      },
+      {
+        "id": "30458d73-508d-4a06-a89d-fbe6172cbeb1",
+        "name": "Sticky Note 579367d5",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          192,
+          272
+        ],
+        "parameters": {
+          "content": "## Owner Actions\nHandles Approve / Decline taps. The database records the decision first, so a second tap or a tap on an expired request does nothing. Approve creates (or moves) the calendar event, marks the booking approved and confirms to the client. The owner alert is edited to show the outcome and its buttons are removed.",
+          "color": 5,
+          "width": 160,
+          "height": 224
+        }
+      },
+      {
+        "id": "9750ac2d-744a-4f65-bb7d-bc963b23ee8a",
+        "name": "Write Brush Off",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          700,
+          700
+        ],
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "txt",
+                "name": "client_text",
+                "type": "string",
+                "value": "Thanks for reaching out! This isn't something we need right now, but we appreciate you thinking of us. All the best."
+              }
+            ]
+          },
+          "includeOtherFields": false,
+          "mode": "manual"
+        }
+      },
+      {
+        "id": "138d7a19-6a86-4fe4-8fe7-ac9e64481d94",
+        "name": "Hand Back To Ava",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.4,
+        "position": [
+          700,
+          900
+        ],
+        "parameters": {
+          "mode": "once",
+          "options": {
+            "waitForSubWorkflow": false
+          },
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "cachedResultName": "Ava 02 - Core Router",
+            "mode": "id",
+            "value": "cVfGRyYqzfJWwFEt"
+          },
+          "workflowInputs": {
+            "attemptToConvertTypes": false,
+            "mappingMode": "defineBelow",
+            "matchingColumns": [],
+            "schema": [
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "channel",
+                "id": "channel",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "sender_ref",
+                "id": "sender_ref",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "sender_name",
+                "id": "sender_name",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "text",
+                "id": "text",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "external_id",
+                "id": "external_id",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "thread_ref",
+                "id": "thread_ref",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "force_category",
+                "id": "force_category",
+                "required": false,
+                "type": "string"
+              }
+            ],
+            "value": {
+              "channel": "={{ $json.d.channel }}",
+              "external_id": "={{ $json.d.reply_to }}",
+              "force_category": "booking",
+              "sender_name": "={{ $json.d.client_name }}",
+              "sender_ref": "={{ $json.d.recipient }}",
+              "text": "={{ $json.d.original_text }}",
+              "thread_ref": "={{ $json.d.thread_ref }}"
+            }
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Owner Tap": {
+        "main": [
+          [
+            {
+              "node": "Record Decision",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Record Decision": {
+        "main": [
+          [
+            {
+              "node": "Route Outcome",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Route Outcome": {
+        "main": [
+          [
+            {
+              "node": "Is Reschedule?",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Write Decline",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Write Brush Off",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Hand Back To Ava",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Update Owner Alert",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Is Reschedule?": {
+        "main": [
+          [
+            {
+              "node": "Move Calendar Event",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Create Calendar Event",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Move Calendar Event": {
+        "main": [
+          [
+            {
+              "node": "Mark Booked",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Mark Booked": {
+        "main": [
+          [
+            {
+              "node": "Write Confirmation",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create Calendar Event": {
+        "main": [
+          [
+            {
+              "node": "Mark Booked",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Write Decline": {
+        "main": [
+          [
+            {
+              "node": "Tell Client",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Tell Client": {
+        "main": [
+          [
+            {
+              "node": "Update Owner Alert",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Owner Alert": {
+        "main": [
+          [
+            {
+              "node": "Answer Tap",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Write Confirmation": {
+        "main": [
+          [
+            {
+              "node": "Tell Client",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Write Brush Off": {
+        "main": [
+          [
+            {
+              "node": "Tell Client",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Hand Back To Ava": {
+        "main": [
+          [
+            {
+              "node": "Update Owner Alert",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [
+      {
+        "id": "6a5a6367-ba22-4a97-8bf1-1153525aa6cf",
+        "name": "Book it",
+        "nodeIds": [
+          "760a13b1-ec2e-4b96-8afb-6cff436b642f",
+          "a5c7f732-6e0b-4f83-a824-7c306d1b9445"
+        ],
+        "description": "Marks the booking approved with its calendar event and writes the client confirmation."
+      },
+      {
+        "id": "0947f78b-a581-445a-8df9-1add5f4eb568",
+        "name": "Finish",
+        "nodeIds": [
+          "38959ef1-641e-4e3f-b04b-a66375305e1b",
+          "633cf5cd-5a9e-42fa-adb7-7e96aa1d185d"
+        ],
+        "description": "Edits the owner alert to show the outcome, removes its buttons and acknowledges the tap."
+      },
+      {
+        "id": "f6ef2171-8ce2-4340-b8fa-83c8d91e6f14",
+        "name": "Record and route",
+        "nodeIds": [
+          "66bec7cb-1493-4e99-b33d-99b5344c03d5",
+          "3148ddd0-74c4-4b47-a687-bf10d986f946"
+        ],
+        "description": "Records the tap atomically (blocks double or late taps) and routes approve, decline, or stale."
+      }
+    ],
+    "authors": "Robert Lord (via MCP)",
+    "name": "Handle spam brush off, ignore and not spam taps",
+    "description": "Added nodes: Write Brush Off, Hand Back To Ava\nUpdated nodes: Route Outcome, Update Owner Alert, Answer Tap\nConnections: 5 added, 1 removed",
+    "autosaved": false,
+    "createdAt": "2026-10-14T17:50:09.614Z",
+    "updatedAt": "2026-10-14T17:50:09.614Z"
+  },
+  "activeVersionId": "d10099dd-fde8-406c-8111-7b892c995b7d",
+  "connections": {
+    "Owner Tap": {
+      "main": [
+        [
+          {
+            "node": "Record Decision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Record Decision": {
+      "main": [
+        [
+          {
+            "node": "Route Outcome",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Outcome": {
+      "main": [
+        [
+          {
+            "node": "Is Reschedule?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Write Decline",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Write Brush Off",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Hand Back To Ava",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Owner Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Reschedule?": {
+      "main": [
+        [
+          {
+            "node": "Move Calendar Event",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Calendar Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Move Calendar Event": {
+      "main": [
+        [
+          {
+            "node": "Mark Booked",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Booked": {
+      "main": [
+        [
+          {
+            "node": "Write Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Calendar Event": {
+      "main": [
+        [
+          {
+            "node": "Mark Booked",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Decline": {
+      "main": [
+        [
+          {
+            "node": "Tell Client",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tell Client": {
+      "main": [
+        [
+          {
+            "node": "Update Owner Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Owner Alert": {
+      "main": [
+        [
+          {
+            "node": "Answer Tap",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Confirmation": {
+      "main": [
+        [
+          {
+            "node": "Tell Client",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Brush Off": {
+      "main": [
+        [
+          {
+            "node": "Tell Client",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hand Back To Ava": {
+      "main": [
+        [
+          {
+            "node": "Update Owner Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-14T16:38:54.869Z",
+  "id": "BuG8FMtVBs56gLlY",
+  "isArchived": false,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "name": "Ava 10 - Owner Actions",
+  "nodeGroups": [
+    {
+      "id": "6a5a6367-ba22-4a97-8bf1-1153525aa6cf",
+      "name": "Book it",
+      "nodeIds": [
+        "760a13b1-ec2e-4b96-8afb-6cff436b642f",
+        "a5c7f732-6e0b-4f83-a824-7c306d1b9445"
+      ],
+      "description": "Marks the booking approved with its calendar event and writes the client confirmation."
+    },
+    {
+      "id": "0947f78b-a581-445a-8df9-1add5f4eb568",
+      "name": "Finish",
+      "nodeIds": [
+        "38959ef1-641e-4e3f-b04b-a66375305e1b",
+        "633cf5cd-5a9e-42fa-adb7-7e96aa1d185d"
+      ],
+      "description": "Edits the owner alert to show the outcome, removes its buttons and acknowledges the tap."
+    },
+    {
+      "id": "f6ef2171-8ce2-4340-b8fa-83c8d91e6f14",
+      "name": "Record and route",
+      "nodeIds": [
+        "66bec7cb-1493-4e99-b33d-99b5344c03d5",
+        "3148ddd0-74c4-4b47-a687-bf10d986f946"
+      ],
+      "description": "Records the tap atomically (blocks double or late taps) and routes approve, decline, or stale."
+    }
+  ],
+  "nodes": [
+    {
+      "id": "46bb223c-b905-4a2d-a4a2-67e9ee36b991",
+      "name": "Owner Tap",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        368
+      ],
+      "parameters": {
+        "inputSource": "workflowInputs",
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "callback_data",
+              "type": "string"
+            },
+            {
+              "name": "callback_query_id",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "66bec7cb-1493-4e99-b33d-99b5344c03d5",
+      "name": "Record Decision",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        224,
+        368
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ava.owner_decide(split_part($1, ':', 2)::bigint, split_part($1, ':', 3)) AS d",
+        "options": {
+          "queryReplacement": "={{ [ $json.callback_data ] }}"
+        }
+      },
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      }
+    },
+    {
+      "id": "3148ddd0-74c4-4b47-a687-bf10d986f946",
+      "name": "Route Outcome",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        352
+      ],
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.d.outcome }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "approve"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                }
+              },
+              "outputKey": "approve",
+              "renameOutput": true
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.d.outcome }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "decline"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                }
+              },
+              "outputKey": "decline",
+              "renameOutput": true
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.d.outcome }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "spam_brush_off"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                }
+              },
+              "outputKey": "spam brush off",
+              "renameOutput": true
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.d.outcome }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "spam_not_spam"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                }
+              },
+              "outputKey": "not spam",
+              "renameOutput": true
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "stale or handled"
+        }
+      }
+    },
+    {
+      "id": "e7acfe93-1851-433f-84b4-78b660af81b7",
+      "name": "Is Reschedule?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        96
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.d.original_event_id }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "da72022c-5766-4f1d-ad84-adcb9e80514f",
+      "name": "Move Calendar Event",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        896,
+        0
+      ],
+      "parameters": {
+        "mode": "once",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "7lia7pC30AeON5CP",
+          "cachedResultName": "Ava 05 - Calendar Adapter"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "operation": "update_event",
+            "time_min": "",
+            "time_max": "",
+            "start": "={{ $json.d.start }}",
+            "end": "={{ $json.d.end }}",
+            "summary": "",
+            "description": "",
+            "attendee_email": "",
+            "call_format": "",
+            "event_id": "={{ $json.d.original_event_id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "operation",
+              "displayName": "operation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "time_min",
+              "displayName": "time_min",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "time_max",
+              "displayName": "time_max",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "start",
+              "displayName": "start",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "end",
+              "displayName": "end",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "attendee_email",
+              "displayName": "attendee_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "call_format",
+              "displayName": "call_format",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      }
+    },
+    {
+      "id": "760a13b1-ec2e-4b96-8afb-6cff436b642f",
+      "name": "Mark Booked",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1168,
+        224
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ava.finalize_approval($1::uuid, $2, $3) AS f",
+        "options": {
+          "queryReplacement": "={{ [ $('Record Decision').first().json.d.booking_id, $json.event_id ?? '', $json.meet_link ?? '' ] }}"
+        }
+      },
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      }
+    },
+    {
+      "id": "664cd913-ee07-456b-8899-5c275a52d2b2",
+      "name": "Create Calendar Event",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        896,
+        192
+      ],
+      "parameters": {
+        "mode": "once",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "7lia7pC30AeON5CP",
+          "cachedResultName": "Ava 05 - Calendar Adapter"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "operation": "create_event",
+            "time_min": "",
+            "time_max": "",
+            "start": "={{ $json.d.start }}",
+            "end": "={{ $json.d.end }}",
+            "summary": "={{ $json.d.service + ' – ' + $json.d.client_name }}",
+            "description": "={{ ['Booked by Ava (' + $json.d.channel + ')', 'Need: ' + $json.d.topic, $json.d.call_format === 'phone' ? 'Phone call: ' + $json.d.owner_name + ' calls ' + $json.d.call_phone : 'Google Meet', $json.d.notes ? 'Notes: ' + $json.d.notes : ''].filter(Boolean).join('\\n') }}",
+            "attendee_email": "={{ $json.d.client_email }}",
+            "call_format": "={{ $json.d.call_format }}",
+            "event_id": ""
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "operation",
+              "displayName": "operation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "time_min",
+              "displayName": "time_min",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "time_max",
+              "displayName": "time_max",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "start",
+              "displayName": "start",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "end",
+              "displayName": "end",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "attendee_email",
+              "displayName": "attendee_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "call_format",
+              "displayName": "call_format",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      }
+    },
+    {
+      "id": "ffbc6a0c-cf6c-4f21-a667-40b6e88af3bf",
+      "name": "Write Decline",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1280,
+        368
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "txt",
+              "name": "client_text",
+              "type": "string",
+              "value": "={{ (() => { const d = $json.d; return d.kind === 'reschedule' ? `Thanks for your patience, ${d.client_first_name}. ${d.owner_name} couldn't move your call to ${d.when_label} ET, so your original time (${d.original_when_label} ET) still stands. Want me to look for another option?` : `Thanks for your patience, ${d.client_first_name}. Unfortunately ${d.when_label} ET won't work for ${d.owner_name}. Would you like me to find another time?`; })() }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "462566c8-e22a-4659-9895-b1a9dd87fc95",
+      "name": "Tell Client",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        1648,
+        192
+      ],
+      "parameters": {
+        "mode": "once",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gSgaG1ldpxS6eyyp",
+          "cachedResultName": "Ava 06 - Reply Adapter"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "client_id": "={{ $('Record Decision').first().json.d.client_id }}",
+            "channel": "={{ $('Record Decision').first().json.d.channel }}",
+            "recipient": "={{ $('Record Decision').first().json.d.recipient }}",
+            "text": "={{ $json.client_text }}",
+            "reply_to": "={{ $('Record Decision').first().json.d.reply_to }}",
+            "thread_ref": "={{ $('Record Decision').first().json.d.thread_ref }}",
+            "author": "ava"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "client_id",
+              "displayName": "client_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "channel",
+              "displayName": "channel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "recipient",
+              "displayName": "recipient",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "reply_to",
+              "displayName": "reply_to",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "thread_ref",
+              "displayName": "thread_ref",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "author",
+              "displayName": "author",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      }
+    },
+    {
+      "id": "38959ef1-641e-4e3f-b04b-a66375305e1b",
+      "name": "Update Owner Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1920,
+        384
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "editMessageText",
+        "messageType": "message",
+        "chatId": "={{ $('Record Decision').first().json.d.owner_chat_id }}",
+        "messageId": "={{ $('Record Decision').first().json.d.telegram_message_id }}",
+        "replyMarkup": "none",
+        "text": "={{ (() => { const d = $('Record Decision').first().json.d; const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); const status = { approve: '✅ <b>Approved</b>: calendar invite sent and client confirmed.', decline: '❌ <b>Declined</b>: client offered another time.', stale: '⌛ <b>No longer pending</b> (' + esc(d.booking_status) + '). Nothing was booked.', already_handled: 'ℹ️ Already handled (' + esc(d.previous_action) + ').', spam_brush_off: '👋 <b>Brushed off</b>: a polite reply was sent.', spam_ignore: '🔇 <b>Ignored</b>: no reply sent.', spam_not_spam: '✅ <b>Not spam</b>: Ava is handling it as a normal inquiry.' }[d.outcome] ?? 'Done.'; return esc(d.alert_text) + '\\n\\n' + status; })() }}",
+        "additionalFields": {
+          "parse_mode": "HTML",
+          "disable_web_page_preview": true
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "GrHxwuhk9SECQo8h",
+          "name": "NanoRob3"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "webhookId": "2bee05c1-f07a-4a95-ae68-576ed1e15f96"
+    },
+    {
+      "id": "a5c7f732-6e0b-4f83-a824-7c306d1b9445",
+      "name": "Write Confirmation",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1392,
+        224
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "txt",
+              "name": "client_text",
+              "type": "string",
+              "value": "={{ (() => { const d = $('Record Decision').first().json.d; const cal = $('Create Calendar Event').isExecuted ? $('Create Calendar Event').first().json : $('Move Calendar Event').first().json; const meet = cal.meet_link || ''; const moved = d.kind === 'reschedule'; const head = moved ? `Done, ${d.client_first_name}! Your ${d.service} with ${d.owner_name} has been moved to ${d.when_label} ET.` : `Great news, ${d.client_first_name}! Your ${d.service} with ${d.owner_name} is confirmed for ${d.when_label} ET (${d.duration_min} min).`; const how = d.call_format === 'phone' ? `${d.owner_name} will call you at ${d.call_phone}.` : (meet ? `Join on Google Meet: ${meet}` : 'The Google Meet link is in your calendar invite.'); const invite = d.client_email ? `${moved ? 'An updated' : 'A'} calendar invite is on its way to ${d.client_email}.` : ''; return [head, how, invite, 'Just reply here if anything changes.'].filter(Boolean).join('\\n\\n'); })() }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "633cf5cd-5a9e-42fa-adb7-7e96aa1d185d",
+      "name": "Answer Tap",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2144,
+        384
+      ],
+      "parameters": {
+        "resource": "callback",
+        "operation": "answerQuery",
+        "queryId": "={{ $('Owner Tap').first().json.callback_query_id }}",
+        "additionalFields": {
+          "text": "={{ ({ approve: 'Booked ✅', decline: 'Declined', stale: 'This request is no longer pending', already_handled: 'Already handled', spam_brush_off: 'Polite reply sent', spam_ignore: 'Ignored', spam_not_spam: 'Handed to Ava' })[$('Record Decision').first().json.d.outcome] ?? 'Done' }}"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "GrHxwuhk9SECQo8h",
+          "name": "NanoRob3"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "webhookId": "063e8725-2a6e-44f3-89c5-b53d4b63335e"
+    },
+    {
+      "id": "30458d73-508d-4a06-a89d-fbe6172cbeb1",
+      "name": "Sticky Note 579367d5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        192,
+        272
+      ],
+      "parameters": {
+        "content": "## Owner Actions\nHandles Approve / Decline taps. The database records the decision first, so a second tap or a tap on an expired request does nothing. Approve creates (or moves) the calendar event, marks the booking approved and confirms to the client. The owner alert is edited to show the outcome and its buttons are removed.",
+        "color": 5,
+        "width": 160,
+        "height": 224
+      }
+    },
+    {
+      "id": "9750ac2d-744a-4f65-bb7d-bc963b23ee8a",
+      "name": "Write Brush Off",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        700,
+        700
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "txt",
+              "name": "client_text",
+              "type": "string",
+              "value": "Thanks for reaching out! This isn't something we need right now, but we appreciate you thinking of us. All the best."
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "mode": "manual"
+      }
+    },
+    {
+      "id": "138d7a19-6a86-4fe4-8fe7-ac9e64481d94",
+      "name": "Hand Back To Ava",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        700,
+        900
+      ],
+      "parameters": {
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": false
+        },
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "cachedResultName": "Ava 02 - Core Router",
+          "mode": "id",
+          "value": "cVfGRyYqzfJWwFEt"
+        },
+        "workflowInputs": {
+          "attemptToConvertTypes": false,
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "channel",
+              "id": "channel",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "sender_ref",
+              "id": "sender_ref",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "sender_name",
+              "id": "sender_name",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "text",
+              "id": "text",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "external_id",
+              "id": "external_id",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "thread_ref",
+              "id": "thread_ref",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "force_category",
+              "id": "force_category",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {
+            "channel": "={{ $json.d.channel }}",
+            "external_id": "={{ $json.d.reply_to }}",
+            "force_category": "booking",
+            "sender_name": "={{ $json.d.client_name }}",
+            "sender_ref": "={{ $json.d.recipient }}",
+            "text": "={{ $json.d.original_text }}",
+            "thread_ref": "={{ $json.d.thread_ref }}"
+          }
+        }
+      }
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "timezone": "America/New_York",
+    "errorWorkflow": "MgxgpZ3WBjOI2Lyl"
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "BuG8FMtVBs56gLlY",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-10-14T16:38:54.872Z",
+      "updatedAt": "2026-10-14T16:38:54.872Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-10-14T17:50:09.604Z",
+  "versionId": "d10099dd-fde8-406c-8111-7b892c995b7d"
+}
