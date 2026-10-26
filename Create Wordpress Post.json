@@ -1,5 +1,7 @@
 {
-  "active": true,
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
   "connections": {
     "When clicking ‘Test workflow’": {
       "main": [
@@ -264,6 +266,7 @@
     "templateCredsSetupCompleted": true
   },
   "name": "Create Wordpress Post",
+  "nodeGroups": [],
   "nodes": [
     {
       "parameters": {},
@@ -1023,16 +1026,21 @@
   },
   "shared": [
     {
-      "createdAt": "2024-11-22T15:44:21.907Z",
-      "updatedAt": "2024-11-22T15:44:21.907Z",
       "role": "workflow:owner",
       "workflowId": "7KGOJ6bvyYZ4ozlN",
-      "projectId": "WCIiaWERZpaZ5IaT"
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2024-11-22T15:44:21.907Z",
+      "updatedAt": "2024-11-22T15:44:21.907Z"
     }
   ],
   "staticData": {
     "node:Schedule Trigger": {
-      "recurrenceRules": []
+      "recurrenceRules": [
+        null
+      ],
+      "recurrenceRuleSignatures": [
+        null
+      ]
     }
   },
   "tags": [],
