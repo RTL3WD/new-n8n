@@ -1,0 +1,412 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Run Setup": {
+      "main": [
+        [
+          {
+            "node": "Apply Ava Schema",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply Ava Schema": {
+      "main": [
+        [
+          {
+            "node": "Apply v1.1 Booking Functions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply v1.1 Booking Functions": {
+      "main": [
+        [
+          {
+            "node": "Apply v1.2 Owner Decisions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply v1.2 Owner Decisions": {
+      "main": [
+        [
+          {
+            "node": "Apply v1.3 Message Intake",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply v1.3 Message Intake": {
+      "main": [
+        [
+          {
+            "node": "Apply v1.4 Owner Commands",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply v1.4 Owner Commands": {
+      "main": [
+        [
+          {
+            "node": "Apply v1.5 Conversations",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply v1.5 Conversations": {
+      "main": [
+        [
+          {
+            "node": "Apply v1.6 Scheduler Sweep",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply v1.6 Scheduler Sweep": {
+      "main": [
+        [
+          {
+            "node": "Apply v1.7 Spam And Changes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply v1.7 Spam And Changes": {
+      "main": [
+        [
+          {
+            "node": "Apply v1.8 Hold Approvals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply v1.8 Hold Approvals": {
+      "main": [
+        [
+          {
+            "node": "Verify Schema",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-14T16:10:49.049Z",
+  "id": "MOKhNUbFhg8tfaut",
+  "isArchived": false,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "name": "Ava 00 - DB Setup",
+  "nodeGroups": [
+    {
+      "id": "8e1e0795-b752-44ca-a05f-ee8d887ed611",
+      "name": "Migrations",
+      "nodeIds": [
+        "f86d8242-d895-4d3e-abb2-bc2331aa5a56",
+        "368e7055-c025-450f-aeff-360ebc1d97c6",
+        "975f6ea5-aa26-4495-9158-7d33910d6c98",
+        "13ef3af2-19d0-4812-a514-cbd9b938eddf",
+        "0365b190-6b07-4f4f-8e6b-ffeabd258e74",
+        "c92b52b1-f8b2-4467-87e9-d711e94a4650",
+        "1bf6ba12-0d3d-402e-8d06-fbcaa78548d0",
+        "18c7ac30-fd48-4d66-8af2-14e0841d2503",
+        "2b5fe314-1815-46a7-ba57-5013f4c71461",
+        "601771da-5e53-407a-851a-5126d12dd326"
+      ],
+      "description": "Applies every schema version in order, then verifies. Idempotent: safe to re-run on any deployment."
+    }
+  ],
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "31614efa-3a39-49d0-81c2-68c4471ebb8d",
+      "name": "Run Setup",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- =====================================================================\n-- Ava Booking Assistant - Postgres schema (v1)\n-- One schema per stack (\"ava\"). All times are timestamptz (stored UTC).\n-- Safe to re-run: everything uses IF NOT EXISTS / ON CONFLICT.\n-- =====================================================================\n\nCREATE SCHEMA IF NOT EXISTS ava;\nSET search_path TO ava, public;\n\n-- ---------------------------------------------------------------------\n-- 1. Settings: every preference lives here, never in workflow JSON\n-- ---------------------------------------------------------------------\nCREATE TABLE IF NOT EXISTS settings (\n  key         text PRIMARY KEY,\n  value       jsonb NOT NULL,\n  description text,\n  updated_at  timestamptz NOT NULL DEFAULT now()\n);\n\nINSERT INTO settings (key, value, description) VALUES\n  ('persona_name',            '\"Ava\"',                         'Assistant name shown to clients'),\n  ('owner_name',              '\"Rob\"',                         'Name Ava uses for the owner'),\n  ('timezone',                '\"America/New_York\"',            'IANA timezone for hours and display'),\n  ('work_days',               '[1,2,3,4,5]',                   'ISO weekdays bookable (1=Mon)'),\n  ('work_start',              '\"09:00\"',                       'Bookable window start (local)'),\n  ('work_end',                '\"17:00\"',                       'Bookable window end (local)'),\n  ('buffer_minutes',          '15',                            'Padding before and after each call'),\n  ('min_notice_hours',        '4',                             'Earliest bookable time from now'),\n  ('max_days_out',            '30',                            'Furthest bookable day'),\n  ('quiet_start',             '\"18:00\"',                       'Quiet hours start (local, weeknights)'),\n  ('quiet_end',               '\"08:00\"',                       'Quiet hours end (local)'),\n  ('quiet_weekends',          'true',                          'Fri quiet_start to Mon quiet_end is quiet'),\n  ('approval_timers',         '{\"standard\":{\"checkpoint\":120,\"expire\":240},\"urgent\":{\"checkpoint\":60,\"expire\":120}}',\n                                                               'Active minutes until checkpoint and expiry'),\n  ('urgent_days',             '7',                             'Calls within N days of request are urgent'),\n  ('urgent_keywords',         '[\"asap\",\"urgent\"]',             'Words that mark a request urgent'),\n  ('takeover_resume_hours',   '24',                            'Ava resumes after owner silence'),\n  ('change_cutoff_hours',     '24',                            'No AI reschedules/cancels inside this window'),\n  ('reminder_minutes',        '[1440,60]',                     'Client reminders before a call'),\n  ('spam_block',              '{\"count\":3,\"days\":30}',         'Block after N spam messages in D days'),\n  ('owner_chat_id',           '\"5076593768\"',                  'Owner Telegram chat for alerts'),\n  ('ops_chat_id',             '\"5076593768\"',                  'Managed-service ops alerts (errors)'),\n  ('calendar_id',             '\"automatestpete@gmail.com\"',    'Google Calendar to book into'),\n  ('model_tier',              '\"standard\"',                    'Client agent tier: economy|standard|premium'),\n  ('models',                  '{\"classifier\":\"openai/gpt-oss-120b\",\"economy\":\"openai/gpt-oss-120b\",\"standard\":\"openai/gpt-4.1-mini\",\"premium\":\"anthropic/claude-sonnet-4.5\"}',\n                                                               'OpenRouter model per tier (set at build)')\nON CONFLICT (key) DO NOTHING;\n\n-- ---------------------------------------------------------------------\n-- 2. Services\n-- ---------------------------------------------------------------------\nCREATE TABLE IF NOT EXISTS services (\n  id           serial PRIMARY KEY,\n  name         text NOT NULL UNIQUE,\n  duration_min int  NOT NULL CHECK (duration_min IN (30, 60)),\n  audience     text NOT NULL CHECK (audience IN ('new','existing','both')),\n  description  text,\n  active       boolean NOT NULL DEFAULT true,\n  sort_order   int NOT NULL DEFAULT 100\n);\n\nINSERT INTO services (name, duration_min, audience, description, sort_order) VALUES\n  ('Consultation',                        60, 'new',      'General consultation on a technical need', 10),\n  ('Project scoping',                     60, 'new',      'Define scope, deliverables and estimate for a project', 20),\n  ('Troubleshooting',                     60, 'both',     'Diagnose and fix a broken system or workflow', 30),\n  ('Automation opportunity assessment',   60, 'new',      'Map manual processes to automation wins', 40),\n  ('n8n health check or audit',           60, 'both',     'Errors, performance, credentials and scaling review', 50),\n  ('Self-hosting architecture review',    60, 'both',     'Docker, Coolify, Postgres, Caddy, Tailscale setups', 60),\n  ('AI agent and RAG design session',     60, 'both',     'Design AI agents and retrieval pipelines', 70),\n  ('n8n scaling setup',                   60, 'both',     'Queue mode, workers, environments', 80),\n  ('Training or handoff session',         60, 'existing', 'Teach the team to own what was built', 90),\n  ('Project update',                      30, 'existing', 'Status update on an active project', 100),\n  ('Alignment meeting',                   30, 'existing', 'Align on priorities and next steps', 110),\n  ('Quick question or office hours',      30, 'both',     'One focused problem', 120),\n  ('Single workflow review',              30, 'both',     'Review one workflow', 130),\n  ('Stack recommendation',                30, 'new',      'Which tool to use for a given job', 140)\nON CONFLICT (name) DO NOTHING;\n\n-- ---------------------------------------------------------------------\n-- 3. Clients and their channel identifiers\n-- ---------------------------------------------------------------------\nCREATE TABLE IF NOT EXISTS clients (\n  id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),\n  name            text,\n  email           text,\n  phone           text,\n  company         text,\n  is_existing     boolean NOT NULL DEFAULT false,   -- true = fast path\n  found_via       text,\n  notes           text,\n  takeover_until  timestamptz,                      -- Ava silent until this time\n  created_at      timestamptz NOT NULL DEFAULT now(),\n  updated_at      timestamptz NOT NULL DEFAULT now()\n);\n\nCREATE TABLE IF NOT EXISTS client_identifiers (\n  id          bigserial PRIMARY KEY,\n  client_id   uuid NOT NULL REFERENCES clients(id) ON DELETE CASCADE,\n  channel     text NOT NULL CHECK (channel IN ('telegram','email','phone','instagram','facebook','whatsapp','form')),\n  identifier  text NOT NULL,                        -- chat id, lowercased email, E.164 phone...\n  created_at  timestamptz NOT NULL DEFAULT now(),\n  UNIQUE (channel, identifier)\n);\nCREATE INDEX IF NOT EXISTS client_identifiers_client_idx ON client_identifiers(client_id);\n\n-- ---------------------------------------------------------------------\n-- 4. Bookings (requests, reschedules, cancellations) - the state machine\n--    pending -> approved | declined | expired ; approved -> cancelled | completed\n-- ---------------------------------------------------------------------\nCREATE TABLE IF NOT EXISTS bookings (\n  id                   uuid PRIMARY KEY DEFAULT gen_random_uuid(),\n  client_id            uuid NOT NULL REFERENCES clients(id),\n  service_id           int REFERENCES services(id),\n  kind                 text NOT NULL DEFAULT 'new' CHECK (kind IN ('new','reschedule')),\n  replaces_booking_id  uuid REFERENCES bookings(id),   -- reschedule: the original call\n  status               text NOT NULL DEFAULT 'pending'\n                         CHECK (status IN ('pending','approved','declined','expired','cancelled','completed')),\n  start_at             timestamptz NOT NULL,\n  end_at               timestamptz NOT NULL,\n  call_format          text NOT NULL CHECK (call_format IN ('meet','phone')),\n  call_phone           text,\n  topic                text,                          -- what they need help with\n  budget_text          text,\n  timeline_text        text,\n  notes                text,\n  channel              text NOT NULL,                 -- channel to reply on\n  urgent               boolean NOT NULL DEFAULT false,\n  urgent_reason        text,\n  requested_at         timestamptz NOT NULL DEFAULT now(),\n  checkpoint_due_at    timestamptz,                   -- computed in active (non-quiet) minutes\n  checkpoint_sent_at   timestamptz,\n  expires_at           timestamptz,\n  decided_at           timestamptz,\n  calendar_event_id    text,\n  meet_link            text,\n  approval_message_id  bigint,                        -- Telegram message holding the buttons\n  reminder_24h_sent_at timestamptz,\n  reminder_1h_sent_at  timestamptz,\n  created_at           timestamptz NOT NULL DEFAULT now(),\n  updated_at           timestamptz NOT NULL DEFAULT now(),\n  CHECK (end_at > start_at)\n);\nCREATE INDEX IF NOT EXISTS bookings_status_idx ON bookings(status);\nCREATE INDEX IF NOT EXISTS bookings_client_idx ON bookings(client_id);\nCREATE INDEX IF NOT EXISTS bookings_start_idx  ON bookings(start_at) WHERE status = 'approved';\n\n-- ---------------------------------------------------------------------\n-- 5. Message log (every inbound and outbound message, every channel)\n-- ---------------------------------------------------------------------\nCREATE TABLE IF NOT EXISTS messages (\n  id           bigserial PRIMARY KEY,\n  client_id    uuid REFERENCES clients(id),\n  channel      text NOT NULL,\n  direction    text NOT NULL CHECK (direction IN ('in','out')),\n  author       text NOT NULL CHECK (author IN ('client','ava','owner','system')),\n  sender_ref   text,                                 -- raw identifier (chat id / email)\n  external_id  text,                                 -- Telegram message id / Gmail id\n  thread_ref   text,                                 -- Gmail thread id\n  category     text,                                 -- inquiry, existing_client, spam, ...\n  body         text,\n  meta         jsonb NOT NULL DEFAULT '{}'::jsonb,\n  created_at   timestamptz NOT NULL DEFAULT now()\n);\nCREATE INDEX IF NOT EXISTS messages_client_idx ON messages(client_id, created_at DESC);\nCREATE INDEX IF NOT EXISTS messages_sender_idx ON messages(channel, sender_ref);\n\n-- ---------------------------------------------------------------------\n-- 6. Owner alerts (queue - held during quiet hours unless urgent)\n-- ---------------------------------------------------------------------\nCREATE TABLE IF NOT EXISTS owner_alerts (\n  id                   bigserial PRIMARY KEY,\n  kind                 text NOT NULL,                -- approval, reminder, expiry, client_msg, spam,\n                                                     -- email_notice, email_personal, cancel, error...\n  urgent               boolean NOT NULL DEFAULT false,\n  text                 text NOT NULL,\n  buttons              jsonb,                        -- Telegram inline keyboard\n  booking_id           uuid REFERENCES bookings(id),\n  ref                  jsonb NOT NULL DEFAULT '{}'::jsonb,  -- gmail id, spam event id, ...\n  status               text NOT NULL DEFAULT 'queued' CHECK (status IN ('queued','sent','failed','void')),\n  deliver_after        timestamptz NOT NULL DEFAULT now(),\n  sent_at              timestamptz,\n  telegram_message_id  bigint,\n  created_at           timestamptz NOT NULL DEFAULT now()\n);\nCREATE INDEX IF NOT EXISTS owner_alerts_due_idx ON owner_alerts(deliver_after) WHERE status = 'queued';\n\n-- ---------------------------------------------------------------------\n-- 7. Spam events and the derived blocklist\n-- ---------------------------------------------------------------------\nCREATE TABLE IF NOT EXISTS spam_events (\n  id          bigserial PRIMARY KEY,\n  channel     text NOT NULL,\n  identifier  text NOT NULL,\n  message_id  bigint REFERENCES messages(id),\n  action      text NOT NULL DEFAULT 'pending'\n                CHECK (action IN ('pending','brushed_off','ignored','not_spam')),\n  created_at  timestamptz NOT NULL DEFAULT now()\n);\nCREATE INDEX IF NOT EXISTS spam_events_sender_idx ON spam_events(channel, identifier, created_at);\n\n-- ---------------------------------------------------------------------\n-- 8. AI usage (for pass-through billing)\n-- ---------------------------------------------------------------------\nCREATE TABLE IF NOT EXISTS usage (\n  id                bigserial PRIMARY KEY,\n  workflow          text NOT NULL,\n  model             text NOT NULL,\n  tier              text,\n  prompt_tokens     int,\n  completion_tokens int,\n  cost_usd          numeric(12,6),\n  client_id         uuid REFERENCES clients(id),\n  created_at        timestamptz NOT NULL DEFAULT now()\n);\n\n-- =====================================================================\n-- Helper functions\n-- =====================================================================\n\n-- Setting accessor: ava.setting('timezone') ->> text\nCREATE OR REPLACE FUNCTION setting(k text) RETURNS jsonb\nLANGUAGE sql STABLE AS $$ SELECT value FROM ava.settings WHERE key = k $$;\n\n-- Is a moment inside quiet hours?\nCREATE OR REPLACE FUNCTION is_quiet(ts timestamptz DEFAULT now()) RETURNS boolean\nLANGUAGE plpgsql STABLE AS $$\nDECLARE\n  tz      text    := ava.setting('timezone') #>> '{}';\n  q_start time    := (ava.setting('quiet_start') #>> '{}')::time;\n  q_end   time    := (ava.setting('quiet_end')   #>> '{}')::time;\n  wkends  boolean := (ava.setting('quiet_weekends') #>> '{}')::boolean;\n  l       timestamp := ts AT TIME ZONE tz;\n  dow     int := extract(isodow FROM l);\nBEGIN\n  IF wkends AND (dow IN (6,7) OR (dow = 5 AND l::time >= q_start) OR (dow = 1 AND l::time < q_end)) THEN\n    RETURN true;\n  END IF;\n  RETURN l::time >= q_start OR l::time < q_end;\nEND $$;\n\n-- Next moment quiet hours end (now, if not quiet)\nCREATE OR REPLACE FUNCTION quiet_ends_at(ts timestamptz DEFAULT now()) RETURNS timestamptz\nLANGUAGE plpgsql STABLE AS $$\nDECLARE\n  t timestamptz := ts;\nBEGIN\n  -- step forward in 15-minute increments until active (max ~4 days)\n  FOR i IN 1..400 LOOP\n    EXIT WHEN NOT ava.is_quiet(t);\n    t := date_trunc('hour', t) + interval '15 min' * (floor(extract(minute FROM t) / 15) + 1);\n  END LOOP;\n  RETURN t;\nEND $$;\n\n-- Add N \"active\" minutes to a timestamp, skipping quiet hours (timers pause)\nCREATE OR REPLACE FUNCTION add_active_minutes(start_ts timestamptz, minutes int) RETURNS timestamptz\nLANGUAGE plpgsql STABLE AS $$\nDECLARE\n  tz        text := ava.setting('timezone') #>> '{}';\n  q_start   time := (ava.setting('quiet_start') #>> '{}')::time;\n  t         timestamptz := ava.quiet_ends_at(start_ts);\n  remaining interval := make_interval(mins => minutes);\n  win_end   timestamptz;\n  avail     interval;\nBEGIN\n  LOOP\n    -- active window closes at today's quiet_start (local)\n    win_end := ((t AT TIME ZONE tz)::date + q_start) AT TIME ZONE tz;\n    avail   := win_end - t;\n    IF remaining <= avail THEN\n      RETURN t + remaining;\n    END IF;\n    remaining := remaining - avail;\n    t := ava.quiet_ends_at(win_end);\n  END LOOP;\nEND $$;\n\n-- Senders currently blocked (N spam events in D days, rescued ones excluded)\nCREATE OR REPLACE VIEW blocked_senders AS\nSELECT channel, identifier, count(*) AS spam_count, max(created_at) AS last_spam_at\nFROM ava.spam_events\nWHERE action <> 'not_spam'\n  AND created_at > now() - make_interval(days => (ava.setting('spam_block')->>'days')::int)\nGROUP BY channel, identifier\nHAVING count(*) >= (ava.setting('spam_block')->>'count')::int;\n\n-- Keep updated_at fresh\nCREATE OR REPLACE FUNCTION touch_updated_at() RETURNS trigger\nLANGUAGE plpgsql AS $$ BEGIN NEW.updated_at := now(); RETURN NEW; END $$;\n\nDROP TRIGGER IF EXISTS clients_touch  ON clients;\nCREATE TRIGGER clients_touch  BEFORE UPDATE ON clients  FOR EACH ROW EXECUTE FUNCTION touch_updated_at();\nDROP TRIGGER IF EXISTS bookings_touch ON bookings;\nCREATE TRIGGER bookings_touch BEFORE UPDATE ON bookings FOR EACH ROW EXECUTE FUNCTION touch_updated_at();\nDROP TRIGGER IF EXISTS settings_touch ON settings;\nCREATE TRIGGER settings_touch BEFORE UPDATE ON settings FOR EACH ROW EXECUTE FUNCTION touch_updated_at();\n",
+        "options": {}
+      },
+      "id": "f86d8242-d895-4d3e-abb2-bc2331aa5a56",
+      "name": "Apply Ava Schema",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        224,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  (SELECT count(*) FROM information_schema.tables WHERE table_schema = 'ava' AND table_type = 'BASE TABLE') AS tables,\n  (SELECT count(*) FROM ava.settings) AS settings_rows,\n  (SELECT count(*) FROM ava.services) AS services_rows,\n  ava.is_quiet(now()) AS quiet_now,\n  (ava.add_active_minutes(now(), 120) AT TIME ZONE 'America/New_York')::text AS standard_checkpoint_if_requested_now",
+        "options": {}
+      },
+      "id": "601771da-5e53-407a-851a-5126d12dd326",
+      "name": "Verify Schema",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1344,
+        0
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Ava DB Setup\nRun manually to create or upgrade the `ava` schema. Safe to re-run: every statement is idempotent. Settings and services are only inserted if missing, so edits made in the database are kept.",
+        "height": 224,
+        "width": 384,
+        "color": 4
+      },
+      "id": "6af14138-23ab-4b3a-bade-2f75b73a48bf",
+      "name": "Sticky Note 46429371",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        144,
+        -272
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SET search_path TO ava, public;\n\nALTER TABLE owner_alerts ADD COLUMN IF NOT EXISTS action      text;\nALTER TABLE owner_alerts ADD COLUMN IF NOT EXISTS acted_at    timestamptz;\n\nCREATE OR REPLACE FUNCTION queue_owner_alert(\n  p_kind text, p_urgent boolean, p_text text,\n  p_buttons jsonb DEFAULT NULL, p_booking uuid DEFAULT NULL, p_ref jsonb DEFAULT '{}'::jsonb\n) RETURNS bigint\nLANGUAGE sql AS $$\n  INSERT INTO ava.owner_alerts (kind, urgent, text, buttons, booking_id, ref, deliver_after)\n  VALUES (p_kind, p_urgent, p_text, p_buttons, p_booking, COALESCE(p_ref, '{}'::jsonb),\n          CASE WHEN p_urgent THEN now() ELSE ava.quiet_ends_at(now()) END)\n  RETURNING id\n$$;\n\nCREATE OR REPLACE FUNCTION fmt_local(ts timestamptz) RETURNS text\nLANGUAGE sql STABLE AS $$\n  SELECT trim(to_char(ts AT TIME ZONE (ava.setting('timezone') #>> '{}'), 'Dy Mon FMDD, FMHH12:MI AM'))\n$$;\n\nCREATE OR REPLACE FUNCTION create_booking_request(\n  p_client uuid, p_service text, p_start timestamptz, p_end timestamptz,\n  p_format text, p_phone text, p_topic text, p_budget text, p_timeline text, p_notes text,\n  p_channel text, p_kind text DEFAULT 'new', p_replaces uuid DEFAULT NULL, p_urgent_words boolean DEFAULT false\n) RETURNS jsonb\nLANGUAGE plpgsql AS $$\nDECLARE\n  buf      interval := make_interval(mins => (ava.setting('buffer_minutes') #>> '{}')::int);\n  timers   jsonb    := ava.setting('approval_timers');\n  urg_days int      := (ava.setting('urgent_days') #>> '{}')::int;\n  v_urgent boolean;\n  v_reason text;\n  v_svc    ava.services;\n  v_client ava.clients;\n  v_id     uuid;\n  v_t      jsonb;\n  v_alert  bigint;\n  v_text   text;\n  v_orig   ava.bookings;\nBEGIN\n  IF EXISTS (\n    SELECT 1 FROM ava.bookings b\n    WHERE b.status IN ('pending','approved')\n      AND (p_replaces IS NULL OR b.id <> p_replaces)\n      AND tstzrange(b.start_at - buf, b.end_at + buf) && tstzrange(p_start, p_end)\n  ) THEN\n    RETURN jsonb_build_object('ok', false, 'error', 'slot_taken',\n      'message', 'That time was just requested by someone else. Check open slots again.');\n  END IF;\n\n  v_urgent := (p_start - now()) <= make_interval(days => urg_days) OR COALESCE(p_urgent_words, false);\n  v_reason := CASE\n    WHEN COALESCE(p_urgent_words, false) THEN 'client used urgency words'\n    WHEN (p_start - now()) <= make_interval(days => urg_days) THEN 'call within ' || urg_days || ' days'\n  END;\n  v_t := timers -> (CASE WHEN v_urgent THEN 'urgent' ELSE 'standard' END);\n\n  SELECT * INTO v_svc FROM ava.services WHERE lower(name) = lower(p_service) LIMIT 1;\n  SELECT * INTO v_client FROM ava.clients WHERE id = p_client;\n\n  INSERT INTO ava.bookings (client_id, service_id, kind, replaces_booking_id, start_at, end_at,\n    call_format, call_phone, topic, budget_text, timeline_text, notes, channel, urgent, urgent_reason,\n    checkpoint_due_at, expires_at)\n  VALUES (p_client, v_svc.id, COALESCE(p_kind, 'new'), p_replaces, p_start, p_end,\n    p_format, NULLIF(p_phone, ''), p_topic, NULLIF(p_budget, ''), NULLIF(p_timeline, ''), NULLIF(p_notes, ''),\n    p_channel, v_urgent, v_reason,\n    ava.add_active_minutes(now(), (v_t ->> 'checkpoint')::int),\n    ava.add_active_minutes(now(), (v_t ->> 'expire')::int))\n  RETURNING id INTO v_id;\n\n  IF p_replaces IS NOT NULL THEN\n    SELECT * INTO v_orig FROM ava.bookings WHERE id = p_replaces;\n  END IF;\n\n  v_text := CASE WHEN v_urgent THEN '🚨 URGENT ' ELSE '' END\n    || CASE WHEN p_kind = 'reschedule' THEN '🔁 Reschedule request' ELSE '📅 New booking request' END || E'\\n\\n'\n    || 'Client: ' || COALESCE(v_client.name, 'Unknown')\n      || CASE WHEN v_client.is_existing THEN ' (existing client)' ELSE '' END || E'\\n'\n    || COALESCE('Company: ' || v_client.company || E'\\n', '')\n    || 'Service: ' || COALESCE(v_svc.name, p_service, 'Not specified') || E'\\n'\n    || CASE WHEN v_orig.id IS NOT NULL THEN 'Moving from: ' || ava.fmt_local(v_orig.start_at) || E'\\n' ELSE '' END\n    || 'When: ' || ava.fmt_local(p_start) || ' (' || (extract(epoch FROM p_end - p_start) / 60)::int || ' min)' || E'\\n'\n    || 'Format: ' || CASE WHEN p_format = 'meet' THEN 'Google Meet' ELSE 'Phone call to ' || COALESCE(NULLIF(p_phone, ''), 'number not given') END || E'\\n'\n    || 'Email: ' || COALESCE(v_client.email, '-') || E'\\n'\n    || 'Need: ' || COALESCE(p_topic, '-') || E'\\n'\n    || COALESCE('Budget: ' || NULLIF(p_budget, '') || E'\\n', '')\n    || COALESCE('Timeline: ' || NULLIF(p_timeline, '') || E'\\n', '')\n    || COALESCE('Found you via: ' || v_client.found_via || E'\\n', '')\n    || COALESCE('Notes: ' || NULLIF(p_notes, '') || E'\\n', '')\n    || COALESCE(E'\\nUrgent because: ' || v_reason, '');\n\n  v_alert := ava.queue_owner_alert('approval', v_urgent, v_text,\n    '[{\"text\":\"✅ Approve\",\"action\":\"approve\"},{\"text\":\"❌ Decline\",\"action\":\"decline\"}]'::jsonb,\n    v_id, jsonb_build_object('kind', p_kind));\n\n  RETURN jsonb_build_object(\n    'ok', true,\n    'booking_id', v_id,\n    'status', 'pending_owner_approval',\n    'urgent', v_urgent,\n    'owner_offline', ava.is_quiet(now()) AND NOT v_urgent,\n    'alert_id', v_alert,\n    'message', CASE WHEN ava.is_quiet(now())\n      THEN 'Request sent. The owner is offline right now and will review it when back (next business morning).'\n      ELSE 'Request sent to the owner for approval. The client will be told automatically once it is approved.' END\n  );\nEND $$;\n\nCREATE OR REPLACE FUNCTION claim_due_alerts(p_limit int DEFAULT 20) RETURNS SETOF ava.owner_alerts\nLANGUAGE sql AS $$\n  UPDATE ava.owner_alerts a SET status = 'sent', sent_at = now()\n  WHERE a.id IN (\n    SELECT id FROM ava.owner_alerts\n    WHERE status = 'queued' AND deliver_after <= now()\n    ORDER BY urgent DESC, created_at\n    LIMIT p_limit\n    FOR UPDATE SKIP LOCKED\n  )\n  RETURNING a.*\n$$;\n",
+        "options": {}
+      },
+      "id": "368e7055-c025-450f-aeff-360ebc1d97c6",
+      "name": "Apply v1.1 Booking Functions",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        448,
+        0
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- =====================================================================\n-- v1.2 - Owner decisions on approval alerts\n-- =====================================================================\nSET search_path TO ava, public;\n\nINSERT INTO settings (key, value, description) VALUES\n  ('owner_test_mode', 'false', 'When true, the owner chat is treated as a client (/testclient)')\nON CONFLICT (key) DO NOTHING;\n\n-- Record the owner's tap and return everything needed to act on it.\n-- outcome: approve | decline | stale (request no longer pending) | already_handled | not_found\nCREATE OR REPLACE FUNCTION owner_decide(p_alert bigint, p_action text) RETURNS jsonb\nLANGUAGE plpgsql AS $$\nDECLARE\n  a  ava.owner_alerts;\n  b  ava.bookings;\n  c  ava.clients;\n  sv ava.services;\n  o  ava.bookings;\n  v_recipient text;\n  v_reply_to  text;\n  v_thread    text;\nBEGIN\n  SELECT * INTO a FROM ava.owner_alerts WHERE id = p_alert FOR UPDATE;\n  IF NOT FOUND THEN\n    RETURN jsonb_build_object('outcome', 'not_found');\n  END IF;\n\n  IF a.acted_at IS NOT NULL THEN\n    RETURN jsonb_build_object('outcome', 'already_handled', 'previous_action', a.action,\n      'alert_text', a.text, 'telegram_message_id', a.telegram_message_id,\n      'owner_chat_id', ava.setting('owner_chat_id') #>> '{}');\n  END IF;\n\n  IF a.booking_id IS NOT NULL THEN\n    SELECT * INTO b FROM ava.bookings WHERE id = a.booking_id FOR UPDATE;\n  END IF;\n\n  -- Late tap on an expired / already-decided request\n  IF a.kind = 'approval' AND (b.id IS NULL OR b.status <> 'pending') THEN\n    UPDATE ava.owner_alerts SET action = 'stale', acted_at = now() WHERE id = a.id;\n    RETURN jsonb_build_object('outcome', 'stale', 'booking_status', b.status,\n      'alert_text', a.text, 'telegram_message_id', a.telegram_message_id,\n      'owner_chat_id', ava.setting('owner_chat_id') #>> '{}');\n  END IF;\n\n  UPDATE ava.owner_alerts SET action = p_action, acted_at = now() WHERE id = a.id;\n\n  SELECT * INTO c  FROM ava.clients  WHERE id = b.client_id;\n  SELECT * INTO sv FROM ava.services WHERE id = b.service_id;\n  IF b.replaces_booking_id IS NOT NULL THEN\n    SELECT * INTO o FROM ava.bookings WHERE id = b.replaces_booking_id;\n  END IF;\n\n  -- Where to reply: the client's identifier on the booking channel; for email, the latest inbound message\n  SELECT identifier INTO v_recipient FROM ava.client_identifiers\n   WHERE client_id = b.client_id AND channel = b.channel ORDER BY created_at DESC LIMIT 1;\n  IF b.channel = 'email' THEN\n    SELECT external_id, thread_ref INTO v_reply_to, v_thread FROM ava.messages\n     WHERE client_id = b.client_id AND channel = 'email' AND direction = 'in'\n     ORDER BY created_at DESC LIMIT 1;\n  END IF;\n\n  IF p_action = 'decline' THEN\n    UPDATE ava.bookings SET status = 'declined', decided_at = now() WHERE id = b.id;\n  END IF;\n\n  RETURN jsonb_build_object(\n    'outcome', CASE WHEN p_action = 'approve' THEN 'approve' ELSE 'decline' END,\n    'alert_text', a.text,\n    'telegram_message_id', a.telegram_message_id,\n    'owner_chat_id', ava.setting('owner_chat_id') #>> '{}',\n    'owner_name', ava.setting('owner_name') #>> '{}',\n    'booking_id', b.id,\n    'kind', b.kind,\n    'client_id', c.id,\n    'client_name', COALESCE(c.name, 'there'),\n    'client_first_name', COALESCE(split_part(c.name, ' ', 1), 'there'),\n    'client_email', COALESCE(c.email, ''),\n    'service', COALESCE(sv.name, 'call'),\n    'start', b.start_at,\n    'end', b.end_at,\n    'when_label', ava.fmt_local(b.start_at),\n    'duration_min', (extract(epoch FROM b.end_at - b.start_at) / 60)::int,\n    'call_format', b.call_format,\n    'call_phone', COALESCE(b.call_phone, ''),\n    'topic', COALESCE(b.topic, ''),\n    'notes', COALESCE(b.notes, ''),\n    'channel', b.channel,\n    'recipient', COALESCE(v_recipient, ''),\n    'reply_to', COALESCE(v_reply_to, ''),\n    'thread_ref', COALESCE(v_thread, ''),\n    'original_event_id', COALESCE(o.calendar_event_id, ''),\n    'original_when_label', CASE WHEN o.id IS NOT NULL THEN ava.fmt_local(o.start_at) ELSE '' END\n  );\nEND $$;\n\n-- Mark an approved booking as booked; a reschedule retires the original booking.\nCREATE OR REPLACE FUNCTION finalize_approval(p_booking uuid, p_event text, p_meet text) RETURNS jsonb\nLANGUAGE plpgsql AS $$\nDECLARE b ava.bookings;\nBEGIN\n  UPDATE ava.bookings\n     SET status = 'approved', decided_at = now(),\n         calendar_event_id = NULLIF(p_event, ''), meet_link = NULLIF(p_meet, '')\n   WHERE id = p_booking\n  RETURNING * INTO b;\n  IF b.replaces_booking_id IS NOT NULL THEN\n    UPDATE ava.bookings SET status = 'cancelled', updated_at = now()\n     WHERE id = b.replaces_booking_id AND status = 'approved';\n  END IF;\n  RETURN jsonb_build_object('ok', true, 'booking_id', b.id, 'status', b.status);\nEND $$;\n\n-- Owner commands helper: toggle test mode\nCREATE OR REPLACE FUNCTION set_owner_test_mode(p_on boolean) RETURNS boolean\nLANGUAGE sql AS $$\n  UPDATE ava.settings SET value = to_jsonb(p_on) WHERE key = 'owner_test_mode' RETURNING p_on\n$$;\n",
+        "options": {}
+      },
+      "id": "975f6ea5-aa26-4495-9158-7d33910d6c98",
+      "name": "Apply v1.2 Owner Decisions",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        672,
+        0
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- =====================================================================\n-- v1.3 - Inbound message intake and client profile helpers\n-- =====================================================================\nSET search_path TO ava, public;\n\n-- Resolve (or create) the client behind an inbound message, log it, and return\n-- everything the router and Ava need: block/takeover state, profile, bookings, catalog.\nCREATE OR REPLACE FUNCTION ingest_message(\n  p_channel text, p_sender text, p_name text, p_text text,\n  p_external text DEFAULT NULL, p_thread text DEFAULT NULL\n) RETURNS jsonb\nLANGUAGE plpgsql AS $$\nDECLARE\n  v_sender  text := CASE WHEN p_channel = 'email' THEN lower(trim(p_sender)) ELSE trim(p_sender) END;\n  v_client  ava.clients;\n  v_new     boolean := false;\n  v_msg     bigint;\n  v_kw      text;\n  v_urgent  boolean := false;\n  v_blocked boolean;\nBEGIN\n  SELECT EXISTS (SELECT 1 FROM ava.blocked_senders WHERE channel = p_channel AND identifier = v_sender)\n    INTO v_blocked;\n\n  SELECT c.* INTO v_client FROM ava.clients c\n    JOIN ava.client_identifiers i ON i.client_id = c.id\n   WHERE i.channel = p_channel AND i.identifier = v_sender LIMIT 1;\n\n  IF v_client.id IS NULL AND NOT v_blocked THEN\n    INSERT INTO ava.clients (name, email)\n    VALUES (NULLIF(trim(p_name), ''), CASE WHEN p_channel = 'email' THEN v_sender END)\n    RETURNING * INTO v_client;\n    INSERT INTO ava.client_identifiers (client_id, channel, identifier) VALUES (v_client.id, p_channel, v_sender);\n    v_new := true;\n  END IF;\n\n  INSERT INTO ava.messages (client_id, channel, direction, author, sender_ref, external_id, thread_ref, body, category)\n  VALUES (v_client.id, p_channel, 'in', 'client', v_sender, NULLIF(p_external, ''), NULLIF(p_thread, ''), p_text,\n          CASE WHEN v_blocked THEN 'blocked' END)\n  RETURNING id INTO v_msg;\n\n  IF v_blocked THEN\n    RETURN jsonb_build_object('blocked', true, 'message_id', v_msg);\n  END IF;\n\n  SELECT string_agg(regexp_replace(k, '([.*+?^${}()|\\[\\]\\\\])', '\\\\\\1', 'g'), '|')\n    INTO v_kw FROM jsonb_array_elements_text(ava.setting('urgent_keywords')) k;\n  IF v_kw IS NOT NULL AND p_text ~* ('\\m(' || v_kw || ')\\M') THEN\n    v_urgent := true;\n  END IF;\n\n  RETURN jsonb_build_object(\n    'blocked', false,\n    'message_id', v_msg,\n    'client_id', v_client.id,\n    'is_new_client', v_new,\n    'is_existing_client', v_client.is_existing,\n    'takeover_active', COALESCE(v_client.takeover_until > now(), false),\n    'quiet_now', ava.is_quiet(now()),\n    'urgent_words', v_urgent,\n    'persona_name', ava.setting('persona_name') #>> '{}',\n    'owner_name', ava.setting('owner_name') #>> '{}',\n    'timezone', ava.setting('timezone') #>> '{}',\n    'now_label', trim(to_char(now() AT TIME ZONE (ava.setting('timezone') #>> '{}'), 'FMDay, FMMonth FMDD, YYYY FMHH12:MI AM')),\n    'today', (now() AT TIME ZONE (ava.setting('timezone') #>> '{}'))::date,\n    'profile', jsonb_build_object(\n      'name', v_client.name, 'email', v_client.email, 'phone', v_client.phone,\n      'company', v_client.company, 'found_via', v_client.found_via, 'notes', v_client.notes),\n    'bookings', COALESCE((\n      SELECT jsonb_agg(jsonb_build_object(\n        'booking_id', b.id, 'status', b.status, 'service', s.name,\n        'when', ava.fmt_local(b.start_at) || ' ET', 'start', b.start_at, 'end', b.end_at,\n        'call_format', b.call_format,\n        'hours_until', round(extract(epoch FROM b.start_at - now()) / 3600)) ORDER BY b.start_at)\n      FROM ava.bookings b LEFT JOIN ava.services s ON s.id = b.service_id\n      WHERE b.client_id = v_client.id AND b.status IN ('pending', 'approved') AND b.end_at > now()), '[]'::jsonb),\n    'services', (\n      SELECT string_agg('- ' || name || ' (' || duration_min || ' min' ||\n               CASE audience WHEN 'existing' THEN ', existing clients only' WHEN 'new' THEN ', new clients' ELSE '' END ||\n               '): ' || COALESCE(description, ''), E'\\n' ORDER BY sort_order)\n      FROM ava.services WHERE active)\n  );\nEND $$;\n\n-- Fill in profile fields Ava learned; never overwrite a known value with a blank.\nCREATE OR REPLACE FUNCTION update_client_profile(\n  p_client uuid, p_name text, p_email text, p_phone text, p_company text, p_found_via text\n) RETURNS void\nLANGUAGE plpgsql AS $$\nBEGIN\n  UPDATE ava.clients SET\n    name      = COALESCE(NULLIF(trim(p_name), ''), name),\n    email     = COALESCE(NULLIF(lower(trim(p_email)), ''), email),\n    phone     = COALESCE(NULLIF(trim(p_phone), ''), phone),\n    company   = COALESCE(NULLIF(trim(p_company), ''), company),\n    found_via = COALESCE(NULLIF(trim(p_found_via), ''), found_via)\n  WHERE id = p_client;\n  -- A newly learned email becomes another way to recognise this client\n  IF NULLIF(trim(p_email), '') IS NOT NULL THEN\n    INSERT INTO ava.client_identifiers (client_id, channel, identifier)\n    VALUES (p_client, 'email', lower(trim(p_email)))\n    ON CONFLICT (channel, identifier) DO NOTHING;\n  END IF;\nEND $$;\n\nCREATE OR REPLACE FUNCTION set_message_category(p_message bigint, p_category text) RETURNS void\nLANGUAGE sql AS $$ UPDATE ava.messages SET category = p_category WHERE id = p_message $$;\n",
+        "options": {}
+      },
+      "id": "13ef3af2-19d0-4812-a514-cbd9b938eddf",
+      "name": "Apply v1.3 Message Intake",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        896,
+        0
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- =====================================================================\n-- v1.4 - Owner commands (/testclient, /takeover, /say, /resume, /help)\n-- =====================================================================\nSET search_path TO ava, public;\n\nCREATE OR REPLACE FUNCTION owner_command(p_cmd text, p_args text) RETURNS jsonb\nLANGUAGE plpgsql AS $$\nDECLARE\n  v_cmd   text := lower(split_part(trim(p_cmd), '@', 1));   -- \"/say@MyBot\" -> \"/say\"\n  v_hours int  := (ava.setting('takeover_resume_hours') #>> '{}')::int;\n  v_on    boolean;\n  c       ava.clients;\n  m       ava.messages;\n  v_names text;\n  v_help  text := E'Owner commands:\\n'\n    || E'/testclient - switch between owner mode and chatting with Ava as a client\\n'\n    || E'/takeover - take over the most recent client conversation (Ava goes quiet)\\n'\n    || E'/say <message> - send a message to the client you took over\\n'\n    || E'/resume - hand all taken-over conversations back to Ava\\n'\n    || E'/help - show this list';\nBEGIN\n  IF v_cmd = '/testclient' THEN\n    v_on := NOT COALESCE((ava.setting('owner_test_mode') #>> '{}')::boolean, false);\n    PERFORM ava.set_owner_test_mode(v_on);\n    RETURN jsonb_build_object('reply', CASE WHEN v_on\n      THEN E'🧪 Test client mode ON. Your messages now go to Ava as a client.\\nSend /testclient again to switch back to owner mode.'\n      ELSE '👤 Owner mode ON. Your messages are no longer sent to Ava.' END);\n\n  ELSIF v_cmd = '/takeover' THEN\n    SELECT * INTO m FROM ava.messages\n     WHERE direction = 'in' AND author = 'client' AND client_id IS NOT NULL\n       AND created_at > now() - interval '7 days' AND COALESCE(category, '') NOT IN ('spam', 'blocked')\n     ORDER BY created_at DESC LIMIT 1;\n    IF m.id IS NULL THEN\n      RETURN jsonb_build_object('reply', 'No client has messaged in the last 7 days, so there is nothing to take over.');\n    END IF;\n    UPDATE ava.clients SET takeover_until = now() + make_interval(hours => v_hours)\n     WHERE id = m.client_id RETURNING * INTO c;\n    RETURN jsonb_build_object('reply',\n      '🙋 You have taken over the conversation with ' || COALESCE(c.name, 'the client') || ' (' || m.channel || E').\\n'\n      || 'Ava stays quiet and their messages come straight to you for ' || v_hours || E' hours.\\n'\n      || E'Reply with /say <message> to answer them, or /resume to hand back to Ava.');\n\n  ELSIF v_cmd = '/say' THEN\n    IF COALESCE(trim(p_args), '') = '' THEN\n      RETURN jsonb_build_object('reply', 'Add your message after the command, for example: /say Thanks, I will call you at 2pm.');\n    END IF;\n    SELECT * INTO c FROM ava.clients WHERE takeover_until > now() ORDER BY updated_at DESC LIMIT 1;\n    IF c.id IS NULL THEN\n      RETURN jsonb_build_object('reply', 'No active takeover. Send /takeover first.');\n    END IF;\n    SELECT * INTO m FROM ava.messages\n     WHERE client_id = c.id AND direction = 'in' ORDER BY created_at DESC LIMIT 1;\n    UPDATE ava.clients SET takeover_until = now() + make_interval(hours => v_hours) WHERE id = c.id;\n    RETURN jsonb_build_object(\n      'reply', '✓ Sent to ' || COALESCE(c.name, 'the client') || '.',\n      'send', jsonb_build_object(\n        'client_id', c.id,\n        'channel', m.channel,\n        'recipient', COALESCE((SELECT identifier FROM ava.client_identifiers\n                                WHERE client_id = c.id AND channel = m.channel\n                                ORDER BY created_at DESC LIMIT 1), m.sender_ref),\n        'text', trim(p_args),\n        'reply_to', COALESCE(m.external_id, ''),\n        'thread_ref', COALESCE(m.thread_ref, '')));\n\n  ELSIF v_cmd = '/resume' THEN\n    WITH r AS (\n      UPDATE ava.clients SET takeover_until = NULL WHERE takeover_until > now() RETURNING COALESCE(name, 'unnamed client') AS n\n    ) SELECT string_agg(n, ', ') INTO v_names FROM r;\n    RETURN jsonb_build_object('reply', CASE WHEN v_names IS NULL\n      THEN 'Ava was not paused for anyone.'\n      ELSE '🤖 Ava is back on for: ' || v_names || '.' END);\n\n  ELSE\n    RETURN jsonb_build_object('reply', v_help);\n  END IF;\nEND $$;\n",
+        "options": {}
+      },
+      "id": "0365b190-6b07-4f4f-8e6b-ffeabd258e74",
+      "name": "Apply v1.4 Owner Commands",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1120,
+        0
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      }
+    },
+    {
+      "id": "c92b52b1-f8b2-4467-87e9-d711e94a4650",
+      "name": "Apply v1.5 Conversations",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1440,
+        0
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "options": {},
+        "query": "-- =====================================================================\n-- v1.5 - Separate conversations per client, with summaries of past ones\n-- A conversation closes after N hours of silence, or when its booking\n-- request is approved, declined or expires. Ava's working memory is keyed\n-- on the conversation; older conversations reach her only as summaries.\n-- =====================================================================\nSET search_path TO ava, public;\n\nINSERT INTO settings (key, value, description) VALUES\n  ('conversation_gap_hours', '12', 'Silence after which the next message starts a new conversation')\nON CONFLICT (key) DO NOTHING;\n\nCREATE TABLE IF NOT EXISTS conversations (\n  id               uuid PRIMARY KEY DEFAULT gen_random_uuid(),\n  client_id        uuid NOT NULL REFERENCES clients(id) ON DELETE CASCADE,\n  channel          text NOT NULL,\n  status           text NOT NULL DEFAULT 'open' CHECK (status IN ('open', 'closed')),\n  started_at       timestamptz NOT NULL DEFAULT now(),\n  last_message_at  timestamptz NOT NULL DEFAULT now(),\n  closed_at        timestamptz,\n  close_reason     text,              -- inactive | booking_approved | booking_declined | booking_expired\n  summary          text,              -- written when closed\n  summarized_at    timestamptz\n);\nCREATE INDEX IF NOT EXISTS conversations_client_idx ON conversations(client_id, started_at DESC);\nCREATE INDEX IF NOT EXISTS conversations_open_idx   ON conversations(client_id) WHERE status = 'open';\n\nALTER TABLE messages ADD COLUMN IF NOT EXISTS conversation_id uuid REFERENCES conversations(id);\nALTER TABLE bookings ADD COLUMN IF NOT EXISTS conversation_id uuid REFERENCES conversations(id);\nCREATE INDEX IF NOT EXISTS messages_conversation_idx ON messages(conversation_id, created_at);\n\n-- Close a client's open conversations that have gone quiet; return the open (or a new) one.\nCREATE OR REPLACE FUNCTION current_conversation(p_client uuid, p_channel text) RETURNS uuid\nLANGUAGE plpgsql AS $$\nDECLARE\n  gap  interval := make_interval(hours => COALESCE((ava.setting('conversation_gap_hours') #>> '{}')::int, 12));\n  v_id uuid;\nBEGIN\n  UPDATE ava.conversations\n     SET status = 'closed', closed_at = last_message_at + gap, close_reason = 'inactive'\n   WHERE client_id = p_client AND status = 'open' AND last_message_at < now() - gap;\n\n  SELECT id INTO v_id FROM ava.conversations\n   WHERE client_id = p_client AND status = 'open'\n   ORDER BY last_message_at DESC LIMIT 1;\n\n  IF v_id IS NULL THEN\n    INSERT INTO ava.conversations (client_id, channel) VALUES (p_client, p_channel) RETURNING id INTO v_id;\n  END IF;\n  RETURN v_id;\nEND $$;\n\n-- Every message is filed under the client's open conversation (inbound opens one if needed).\nCREATE OR REPLACE FUNCTION tag_message_conversation() RETURNS trigger\nLANGUAGE plpgsql AS $$\nBEGIN\n  IF NEW.conversation_id IS NULL AND NEW.client_id IS NOT NULL THEN\n    IF NEW.direction = 'in' THEN\n      NEW.conversation_id := ava.current_conversation(NEW.client_id, NEW.channel);\n    ELSE\n      SELECT id INTO NEW.conversation_id FROM ava.conversations\n       WHERE client_id = NEW.client_id AND status = 'open'\n       ORDER BY last_message_at DESC LIMIT 1;\n    END IF;\n  END IF;\n  IF NEW.conversation_id IS NOT NULL THEN\n    UPDATE ava.conversations SET last_message_at = NEW.created_at WHERE id = NEW.conversation_id;\n  END IF;\n  RETURN NEW;\nEND $$;\n\nDROP TRIGGER IF EXISTS messages_conversation ON messages;\nCREATE TRIGGER messages_conversation BEFORE INSERT ON messages\n  FOR EACH ROW EXECUTE FUNCTION tag_message_conversation();\n\n-- A booking request belongs to the conversation that produced it.\nCREATE OR REPLACE FUNCTION tag_booking_conversation() RETURNS trigger\nLANGUAGE plpgsql AS $$\nBEGIN\n  IF NEW.conversation_id IS NULL THEN\n    SELECT id INTO NEW.conversation_id FROM ava.conversations\n     WHERE client_id = NEW.client_id AND status = 'open'\n     ORDER BY last_message_at DESC LIMIT 1;\n  END IF;\n  RETURN NEW;\nEND $$;\n\nDROP TRIGGER IF EXISTS bookings_conversation ON bookings;\nCREATE TRIGGER bookings_conversation BEFORE INSERT ON bookings\n  FOR EACH ROW EXECUTE FUNCTION tag_booking_conversation();\n\n-- When a request is decided or expires, its conversation is finished.\nCREATE OR REPLACE FUNCTION close_conversation_on_decision() RETURNS trigger\nLANGUAGE plpgsql AS $$\nBEGIN\n  IF OLD.status = 'pending' AND NEW.status IN ('approved', 'declined', 'expired') AND NEW.conversation_id IS NOT NULL THEN\n    UPDATE ava.conversations\n       SET status = 'closed', closed_at = now(), close_reason = 'booking_' || NEW.status\n     WHERE id = NEW.conversation_id AND status = 'open';\n  END IF;\n  RETURN NEW;\nEND $$;\n\nDROP TRIGGER IF EXISTS bookings_close_conversation ON bookings;\nCREATE TRIGGER bookings_close_conversation AFTER UPDATE OF status ON bookings\n  FOR EACH ROW EXECUTE FUNCTION close_conversation_on_decision();\n\n-- Closed conversations that still need a summary (oldest first)\nCREATE OR REPLACE FUNCTION conversations_needing_summary(p_client uuid DEFAULT NULL, p_limit int DEFAULT 5)\nRETURNS TABLE (conversation_id uuid)\nLANGUAGE sql STABLE AS $$\n  SELECT c.id FROM ava.conversations c\n   WHERE c.status = 'closed' AND c.summary IS NULL\n     AND (p_client IS NULL OR c.client_id = p_client)\n     AND EXISTS (SELECT 1 FROM ava.messages m WHERE m.conversation_id = c.id)\n   ORDER BY c.closed_at\n   LIMIT p_limit\n$$;\n\n-- Transcript for the summarizer\nCREATE OR REPLACE FUNCTION conversation_transcript(p_conversation uuid) RETURNS jsonb\nLANGUAGE sql STABLE AS $$\n  SELECT jsonb_build_object(\n    'conversation_id', c.id,\n    'client_name', cl.name,\n    'started', ava.fmt_local(c.started_at),\n    'close_reason', c.close_reason,\n    'bookings', COALESCE((SELECT jsonb_agg(jsonb_build_object(\n        'service', s.name, 'when', ava.fmt_local(b.start_at) || ' ET', 'status', b.status))\n      FROM ava.bookings b LEFT JOIN ava.services s ON s.id = b.service_id\n      WHERE b.conversation_id = c.id), '[]'::jsonb),\n    'transcript', COALESCE((SELECT string_agg(\n        CASE m.author WHEN 'client' THEN 'Client' WHEN 'owner' THEN 'Owner' ELSE 'Assistant' END\n        || ': ' || left(regexp_replace(m.body, '\\s+', ' ', 'g'), 600), E'\\n' ORDER BY m.created_at)\n      FROM ava.messages m WHERE m.conversation_id = c.id AND m.body IS NOT NULL), '')\n  )\n  FROM ava.conversations c JOIN ava.clients cl ON cl.id = c.client_id\n  WHERE c.id = p_conversation\n$$;\n\nCREATE OR REPLACE FUNCTION save_conversation_summary(p_conversation uuid, p_summary text) RETURNS void\nLANGUAGE sql AS $$\n  UPDATE ava.conversations SET summary = left(trim(p_summary), 600), summarized_at = now() WHERE id = p_conversation\n$$;\n\n-- What Ava sees about earlier conversations (newest first)\nCREATE OR REPLACE FUNCTION conversation_history(p_client uuid, p_current uuid, p_limit int DEFAULT 5) RETURNS jsonb\nLANGUAGE sql STABLE AS $$\n  SELECT COALESCE(jsonb_agg(h ORDER BY h->>'started_at' DESC), '[]'::jsonb) FROM (\n    SELECT jsonb_build_object(\n      'started_at', c.started_at,\n      'date', trim(to_char(c.started_at AT TIME ZONE (ava.setting('timezone') #>> '{}'), 'Mon FMDD, YYYY')),\n      'channel', c.channel,\n      'summary', COALESCE(c.summary, '(no summary yet)')) AS h\n    FROM ava.conversations c\n    WHERE c.client_id = p_client AND c.id <> p_current AND c.status = 'closed'\n      AND EXISTS (SELECT 1 FROM ava.messages m WHERE m.conversation_id = c.id)\n    ORDER BY c.started_at DESC LIMIT p_limit\n  ) x\n$$;\n\n-- Backfill: give existing messages a conversation per client so history starts clean\nDO $$\nDECLARE r record; v_conv uuid;\nBEGIN\n  FOR r IN SELECT DISTINCT client_id, min(channel) AS channel, min(created_at) AS first_at, max(created_at) AS last_at\n             FROM ava.messages WHERE conversation_id IS NULL AND client_id IS NOT NULL GROUP BY client_id LOOP\n    INSERT INTO ava.conversations (client_id, channel, status, started_at, last_message_at, closed_at, close_reason)\n    VALUES (r.client_id, r.channel, 'closed', r.first_at, r.last_at, now(), 'inactive')\n    RETURNING id INTO v_conv;\n    UPDATE ava.messages SET conversation_id = v_conv WHERE client_id = r.client_id AND conversation_id IS NULL;\n  END LOOP;\nEND $$;\n\n-- ingest_message now reports the conversation and any summaries still owed\nCREATE OR REPLACE FUNCTION ingest_message(\n  p_channel text, p_sender text, p_name text, p_text text,\n  p_external text DEFAULT NULL, p_thread text DEFAULT NULL\n) RETURNS jsonb\nLANGUAGE plpgsql AS $$\nDECLARE\n  v_sender  text := CASE WHEN p_channel = 'email' THEN lower(trim(p_sender)) ELSE trim(p_sender) END;\n  v_client  ava.clients;\n  v_new     boolean := false;\n  v_msg     bigint;\n  v_conv    uuid;\n  v_kw      text;\n  v_urgent  boolean := false;\n  v_blocked boolean;\nBEGIN\n  SELECT EXISTS (SELECT 1 FROM ava.blocked_senders WHERE channel = p_channel AND identifier = v_sender)\n    INTO v_blocked;\n\n  SELECT c.* INTO v_client FROM ava.clients c\n    JOIN ava.client_identifiers i ON i.client_id = c.id\n   WHERE i.channel = p_channel AND i.identifier = v_sender LIMIT 1;\n\n  IF v_client.id IS NULL AND NOT v_blocked THEN\n    INSERT INTO ava.clients (name, email)\n    VALUES (NULLIF(trim(p_name), ''), CASE WHEN p_channel = 'email' THEN v_sender END)\n    RETURNING * INTO v_client;\n    INSERT INTO ava.client_identifiers (client_id, channel, identifier) VALUES (v_client.id, p_channel, v_sender);\n    v_new := true;\n  END IF;\n\n  INSERT INTO ava.messages (client_id, channel, direction, author, sender_ref, external_id, thread_ref, body, category)\n  VALUES (v_client.id, p_channel, 'in', 'client', v_sender, NULLIF(p_external, ''), NULLIF(p_thread, ''), p_text,\n          CASE WHEN v_blocked THEN 'blocked' END)\n  RETURNING id, conversation_id INTO v_msg, v_conv;\n\n  IF v_blocked THEN\n    RETURN jsonb_build_object('blocked', true, 'message_id', v_msg);\n  END IF;\n\n  SELECT string_agg(regexp_replace(k, '([.*+?^${}()|\\[\\]\\\\])', '\\\\\\1', 'g'), '|')\n    INTO v_kw FROM jsonb_array_elements_text(ava.setting('urgent_keywords')) k;\n  IF v_kw IS NOT NULL AND p_text ~* ('\\m(' || v_kw || ')\\M') THEN\n    v_urgent := true;\n  END IF;\n\n  RETURN jsonb_build_object(\n    'blocked', false,\n    'message_id', v_msg,\n    'client_id', v_client.id,\n    'conversation_id', v_conv,\n    'is_new_conversation', (SELECT count(*) = 1 FROM ava.messages WHERE conversation_id = v_conv),\n    'needs_summary', COALESCE((SELECT jsonb_agg(n.conversation_id) FROM ava.conversations_needing_summary(v_client.id) n), '[]'::jsonb),\n    'is_new_client', v_new,\n    'is_existing_client', v_client.is_existing,\n    'takeover_active', COALESCE(v_client.takeover_until > now(), false),\n    'quiet_now', ava.is_quiet(now()),\n    'urgent_words', v_urgent,\n    'persona_name', ava.setting('persona_name') #>> '{}',\n    'owner_name', ava.setting('owner_name') #>> '{}',\n    'timezone', ava.setting('timezone') #>> '{}',\n    'now_label', trim(to_char(now() AT TIME ZONE (ava.setting('timezone') #>> '{}'), 'FMDay, FMMonth FMDD, YYYY FMHH12:MI AM')),\n    'today', (now() AT TIME ZONE (ava.setting('timezone') #>> '{}'))::date,\n    'profile', jsonb_build_object(\n      'name', v_client.name, 'email', v_client.email, 'phone', v_client.phone,\n      'company', v_client.company, 'found_via', v_client.found_via, 'notes', v_client.notes),\n    'bookings', COALESCE((\n      SELECT jsonb_agg(jsonb_build_object(\n        'booking_id', b.id, 'status', b.status, 'service', s.name,\n        'when', ava.fmt_local(b.start_at) || ' ET', 'start', b.start_at, 'end', b.end_at,\n        'call_format', b.call_format,\n        'hours_until', round(extract(epoch FROM b.start_at - now()) / 3600)) ORDER BY b.start_at)\n      FROM ava.bookings b LEFT JOIN ava.services s ON s.id = b.service_id\n      WHERE b.client_id = v_client.id AND b.status IN ('pending', 'approved') AND b.end_at > now()), '[]'::jsonb),\n    'services', (\n      SELECT string_agg('- ' || name || ' (' || duration_min || ' min' ||\n               CASE audience WHEN 'existing' THEN ', existing clients only' WHEN 'new' THEN ', new clients' ELSE '' END ||\n               '): ' || COALESCE(description, ''), E'\\n' ORDER BY sort_order)\n      FROM ava.services WHERE active)\n  );\nEND $$;\n\n"
+      },
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      },
+      "executeOnce": true
+    },
+    {
+      "id": "1bf6ba12-0d3d-402e-8d06-fbcaa78548d0",
+      "name": "Apply v1.6 Scheduler Sweep",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1660,
+        0
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "options": {},
+        "query": "-- =====================================================================\n-- v1.6 - Scheduler sweep: approval timers, expiry, reminders, cleanup\n-- Every step claims its rows with an UPDATE ... RETURNING, so two sweeps\n-- running at once can never send the same message twice.\n-- =====================================================================\nSET search_path TO ava, public;\n\n-- Where to reach a client on a channel (email replies need the latest inbound message id)\nCREATE OR REPLACE FUNCTION client_reply_target(p_client uuid, p_channel text) RETURNS jsonb\nLANGUAGE sql STABLE AS $$\n  SELECT jsonb_build_object(\n    'recipient', COALESCE(\n      (SELECT identifier FROM ava.client_identifiers WHERE client_id = p_client AND channel = p_channel\n        ORDER BY created_at DESC LIMIT 1), ''),\n    'reply_to', COALESCE(\n      (SELECT external_id FROM ava.messages WHERE client_id = p_client AND channel = p_channel AND direction = 'in'\n        ORDER BY created_at DESC LIMIT 1), ''),\n    'thread_ref', COALESCE(\n      (SELECT thread_ref FROM ava.messages WHERE client_id = p_client AND channel = p_channel AND direction = 'in'\n        ORDER BY created_at DESC LIMIT 1), ''))\n$$;\n\nCREATE OR REPLACE FUNCTION client_message(p_client uuid, p_channel text, p_text text) RETURNS jsonb\nLANGUAGE sql STABLE AS $$\n  SELECT jsonb_build_object('client_id', p_client, 'channel', p_channel, 'text', p_text, 'author', 'ava')\n         || ava.client_reply_target(p_client, p_channel)\n$$;\n\nCREATE OR REPLACE FUNCTION sweep() RETURNS jsonb\nLANGUAGE plpgsql AS $$\nDECLARE\n  v_owner   text := ava.setting('owner_name') #>> '{}';\n  v_gap     interval := make_interval(hours => COALESCE((ava.setting('conversation_gap_hours') #>> '{}')::int, 12));\n  v_msgs    jsonb := '[]'::jsonb;\n  v_ids     uuid[];\n  v_count   jsonb := '{}'::jsonb;\n  b         record;\n  v_first   text;\n  v_how     text;\nBEGIN\n  -- 1. Approval checkpoint: nudge the owner (with buttons) and tell the client we are still waiting\n  WITH u AS (\n    UPDATE ava.bookings SET checkpoint_sent_at = now()\n     WHERE status = 'pending' AND checkpoint_sent_at IS NULL AND checkpoint_due_at <= now() AND expires_at > now()\n    RETURNING id)\n  SELECT array_agg(id) INTO v_ids FROM u;\n  v_count := v_count || jsonb_build_object('checkpoints', COALESCE(array_length(v_ids, 1), 0));\n\n  FOR b IN SELECT bk.*, c.name AS client_name, s.name AS service FROM ava.bookings bk\n             JOIN ava.clients c ON c.id = bk.client_id LEFT JOIN ava.services s ON s.id = bk.service_id\n            WHERE bk.id = ANY(COALESCE(v_ids, '{}')) LOOP\n    v_first := COALESCE(NULLIF(split_part(b.client_name, ' ', 1), ''), 'there');\n    PERFORM ava.queue_owner_alert('reminder', b.urgent,\n      '⏰ Still waiting on your approval' || CASE WHEN b.urgent THEN ' (urgent)' ELSE '' END || E'\\n\\n'\n      || COALESCE(b.client_name, 'Client') || ': ' || COALESCE(b.service, 'call') || ', ' || ava.fmt_local(b.start_at) || E' ET\\n'\n      || 'Expires ' || ava.fmt_local(b.expires_at) || ' ET if not answered.',\n      '[{\"text\":\"✅ Approve\",\"action\":\"approve\"},{\"text\":\"❌ Decline\",\"action\":\"decline\"}]'::jsonb, b.id);\n    v_msgs := v_msgs || ava.client_message(b.client_id, b.channel,\n      'Quick update, ' || v_first || ': ' || v_owner || ' hasn''t confirmed your ' || COALESCE(b.service, 'call')\n      || ' request for ' || ava.fmt_local(b.start_at) || ' ET yet. You''ll hear back soon.');\n  END LOOP;\n\n  -- 2. Expiry: the request lapses, the client is offered other times, the owner is told\n  WITH u AS (\n    UPDATE ava.bookings SET status = 'expired', decided_at = now()\n     WHERE status = 'pending' AND expires_at <= now()\n    RETURNING id)\n  SELECT array_agg(id) INTO v_ids FROM u;\n  v_count := v_count || jsonb_build_object('expired', COALESCE(array_length(v_ids, 1), 0));\n\n  FOR b IN SELECT bk.*, c.name AS client_name, s.name AS service, o.start_at AS original_start\n             FROM ava.bookings bk\n             JOIN ava.clients c ON c.id = bk.client_id LEFT JOIN ava.services s ON s.id = bk.service_id\n             LEFT JOIN ava.bookings o ON o.id = bk.replaces_booking_id\n            WHERE bk.id = ANY(COALESCE(v_ids, '{}')) LOOP\n    v_first := COALESCE(NULLIF(split_part(b.client_name, ' ', 1), ''), 'there');\n    PERFORM ava.queue_owner_alert('expiry', b.urgent,\n      '⌛ Request expired with no answer' || E'\\n\\n' || COALESCE(b.client_name, 'Client') || ': '\n      || COALESCE(b.service, 'call') || ', ' || ava.fmt_local(b.start_at) || E' ET\\n'\n      || 'The client was offered other times.', NULL, b.id);\n    v_msgs := v_msgs || ava.client_message(b.client_id, b.channel,\n      CASE WHEN b.kind = 'reschedule' AND b.original_start IS NOT NULL\n        THEN 'Sorry, ' || v_first || ': ' || v_owner || ' wasn''t able to confirm the move to ' || ava.fmt_local(b.start_at)\n             || ' ET in time, so your original time (' || ava.fmt_local(b.original_start) || ' ET) still stands. Want me to look for another option?'\n        ELSE 'Sorry, ' || v_first || ': ' || v_owner || ' wasn''t able to confirm ' || ava.fmt_local(b.start_at)\n             || ' ET in time, so that request has lapsed. Would you like me to find another time?' END);\n  END LOOP;\n\n  -- 3. Reminders before confirmed calls (skipped silently if the call was booked inside the window)\n  WITH u AS (\n    UPDATE ava.bookings SET reminder_24h_sent_at = now()\n     WHERE status = 'approved' AND reminder_24h_sent_at IS NULL\n       AND start_at > now() AND start_at - now() <= interval '24 hours'\n    RETURNING id, ((decided_at IS NOT NULL AND decided_at > start_at - interval '24 hours')\n                   OR start_at - now() < interval '2 hours') AS skip)\n  SELECT array_agg(id) FILTER (WHERE NOT skip) INTO v_ids FROM u;\n  v_count := v_count || jsonb_build_object('reminders_24h', COALESCE(array_length(v_ids, 1), 0));\n\n  FOR b IN SELECT bk.*, c.name AS client_name, s.name AS service FROM ava.bookings bk\n             JOIN ava.clients c ON c.id = bk.client_id LEFT JOIN ava.services s ON s.id = bk.service_id\n            WHERE bk.id = ANY(COALESCE(v_ids, '{}')) LOOP\n    v_first := COALESCE(NULLIF(split_part(b.client_name, ' ', 1), ''), 'there');\n    v_how := CASE WHEN b.call_format = 'phone'\n      THEN v_owner || ' will call you at ' || COALESCE(b.call_phone, 'the number you gave') || '. If that number has changed, just reply with the new one.'\n      ELSE COALESCE('Join on Google Meet: ' || b.meet_link, 'The Google Meet link is in your calendar invite.') END;\n    v_msgs := v_msgs || ava.client_message(b.client_id, b.channel,\n      'Hi ' || v_first || ', a reminder that your ' || COALESCE(b.service, 'call') || ' with ' || v_owner\n      || CASE WHEN (b.start_at AT TIME ZONE (ava.setting('timezone') #>> '{}'))::date\n                   = (now() AT TIME ZONE (ava.setting('timezone') #>> '{}'))::date\n              THEN ' is today, ' ELSE ' is tomorrow, ' END\n      || ava.fmt_local(b.start_at) || E' ET.\\n\\n' || v_how\n      || E'\\n\\nReply here if you can''t make it.');\n  END LOOP;\n\n  WITH u AS (\n    UPDATE ava.bookings SET reminder_1h_sent_at = now()\n     WHERE status = 'approved' AND reminder_1h_sent_at IS NULL\n       AND start_at > now() AND start_at - now() <= interval '60 minutes'\n    RETURNING id, (decided_at IS NOT NULL AND decided_at > start_at - interval '60 minutes') AS skip)\n  SELECT array_agg(id) FILTER (WHERE NOT skip) INTO v_ids FROM u;\n  v_count := v_count || jsonb_build_object('reminders_1h', COALESCE(array_length(v_ids, 1), 0));\n\n  FOR b IN SELECT bk.*, c.name AS client_name, s.name AS service FROM ava.bookings bk\n             JOIN ava.clients c ON c.id = bk.client_id LEFT JOIN ava.services s ON s.id = bk.service_id\n            WHERE bk.id = ANY(COALESCE(v_ids, '{}')) LOOP\n    v_first := COALESCE(NULLIF(split_part(b.client_name, ' ', 1), ''), 'there');\n    v_how := CASE WHEN b.call_format = 'phone'\n      THEN v_owner || ' will call you at ' || COALESCE(b.call_phone, 'the number you gave') || '.'\n      ELSE COALESCE('Join here: ' || b.meet_link, 'The Google Meet link is in your calendar invite.') END;\n    v_msgs := v_msgs || ava.client_message(b.client_id, b.channel,\n      'Hi ' || v_first || ', your ' || COALESCE(b.service, 'call') || ' with ' || v_owner || ' starts in about an hour ('\n      || trim(to_char(b.start_at AT TIME ZONE (ava.setting('timezone') #>> '{}'), 'FMHH12:MI AM')) || E' ET).\\n\\n' || v_how);\n  END LOOP;\n\n  -- 4. Calls that have ended\n  WITH u AS (UPDATE ava.bookings SET status = 'completed' WHERE status = 'approved' AND end_at < now() RETURNING id)\n  SELECT array_agg(id) INTO v_ids FROM u;\n  v_count := v_count || jsonb_build_object('completed', COALESCE(array_length(v_ids, 1), 0));\n\n  -- 5. Close conversations that have gone quiet (summaries are written by the workflow)\n  UPDATE ava.conversations\n     SET status = 'closed', closed_at = last_message_at + v_gap, close_reason = 'inactive'\n   WHERE status = 'open' AND last_message_at < now() - v_gap;\n\n  RETURN jsonb_build_object(\n    'counts', v_count,\n    'client_messages', v_msgs,\n    'summarize', COALESCE((SELECT jsonb_agg(conversation_id) FROM ava.conversations_needing_summary(NULL, 10)), '[]'::jsonb),\n    'alerts_due', (SELECT count(*) FROM ava.owner_alerts WHERE status = 'queued' AND deliver_after <= now())\n  );\nEND $$;\n"
+      },
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      },
+      "executeOnce": true
+    },
+    {
+      "id": "18c7ac30-fd48-4d66-8af2-14e0841d2503",
+      "name": "Apply v1.7 Spam And Changes",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1880,
+        0
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "options": {},
+        "query": "-- =====================================================================\n-- v1.7 - Spam actions and Ava-handled reschedule / cancel\n-- =====================================================================\nSET search_path TO ava, public;\n\nCREATE OR REPLACE FUNCTION owner_decide(p_alert bigint, p_action text) RETURNS jsonb\nLANGUAGE plpgsql AS $$\nDECLARE\n  a  ava.owner_alerts;\n  b  ava.bookings;\n  c  ava.clients;\n  sv ava.services;\n  o  ava.bookings;\n  v_recipient text;\n  v_reply_to  text;\n  v_thread    text;\n  se ava.spam_events;\n  sm ava.messages;\n  sc ava.clients;\nBEGIN\n  SELECT * INTO a FROM ava.owner_alerts WHERE id = p_alert FOR UPDATE;\n  IF NOT FOUND THEN\n    RETURN jsonb_build_object('outcome', 'not_found');\n  END IF;\n\n  IF a.acted_at IS NOT NULL THEN\n    RETURN jsonb_build_object('outcome', 'already_handled', 'previous_action', a.action,\n      'alert_text', a.text, 'telegram_message_id', a.telegram_message_id,\n      'owner_chat_id', ava.setting('owner_chat_id') #>> '{}');\n  END IF;\n\n  -- Spam alerts: brush_off | ignore | not_spam\n  IF a.kind = 'spam' THEN\n    UPDATE ava.owner_alerts SET action = p_action, acted_at = now() WHERE id = a.id;\n    UPDATE ava.spam_events\n       SET action = CASE p_action WHEN 'brush_off' THEN 'brushed_off' WHEN 'not_spam' THEN 'not_spam' ELSE 'ignored' END\n     WHERE id = (a.ref ->> 'spam_event_id')::bigint\n    RETURNING * INTO se;\n    SELECT * INTO sm FROM ava.messages WHERE id = se.message_id;\n    SELECT * INTO sc FROM ava.clients WHERE id = sm.client_id;\n    IF p_action = 'not_spam' THEN\n      UPDATE ava.messages SET category = 'not_spam' WHERE id = sm.id;\n    END IF;\n    RETURN jsonb_build_object(\n      'outcome', 'spam_' || p_action,\n      'alert_text', a.text,\n      'telegram_message_id', a.telegram_message_id,\n      'owner_chat_id', ava.setting('owner_chat_id') #>> '{}',\n      'client_id', sm.client_id,\n      'client_name', COALESCE(sc.name, ''),\n      'channel', sm.channel,\n      'recipient', COALESCE(sm.sender_ref, ''),\n      'reply_to', COALESCE(sm.external_id, ''),\n      'thread_ref', COALESCE(sm.thread_ref, ''),\n      'original_text', COALESCE(sm.body, ''));\n  END IF;\n\n  IF a.booking_id IS NOT NULL THEN\n    SELECT * INTO b FROM ava.bookings WHERE id = a.booking_id FOR UPDATE;\n  END IF;\n\n  -- Late tap on an expired / already-decided request\n  IF a.kind IN ('approval', 'reminder') AND (b.id IS NULL OR b.status <> 'pending') THEN\n    UPDATE ava.owner_alerts SET action = 'stale', acted_at = now() WHERE id = a.id;\n    RETURN jsonb_build_object('outcome', 'stale', 'booking_status', b.status,\n      'alert_text', a.text, 'telegram_message_id', a.telegram_message_id,\n      'owner_chat_id', ava.setting('owner_chat_id') #>> '{}');\n  END IF;\n\n  UPDATE ava.owner_alerts SET action = p_action, acted_at = now() WHERE id = a.id;\n\n  SELECT * INTO c  FROM ava.clients  WHERE id = b.client_id;\n  SELECT * INTO sv FROM ava.services WHERE id = b.service_id;\n  IF b.replaces_booking_id IS NOT NULL THEN\n    SELECT * INTO o FROM ava.bookings WHERE id = b.replaces_booking_id;\n  END IF;\n\n  -- Where to reply: the client's identifier on the booking channel; for email, the latest inbound message\n  SELECT identifier INTO v_recipient FROM ava.client_identifiers\n   WHERE client_id = b.client_id AND channel = b.channel ORDER BY created_at DESC LIMIT 1;\n  IF b.channel = 'email' THEN\n    SELECT external_id, thread_ref INTO v_reply_to, v_thread FROM ava.messages\n     WHERE client_id = b.client_id AND channel = 'email' AND direction = 'in'\n     ORDER BY created_at DESC LIMIT 1;\n  END IF;\n\n  IF p_action = 'decline' THEN\n    UPDATE ava.bookings SET status = 'declined', decided_at = now() WHERE id = b.id;\n  END IF;\n\n  RETURN jsonb_build_object(\n    'outcome', CASE WHEN p_action = 'approve' THEN 'approve' ELSE 'decline' END,\n    'alert_text', a.text,\n    'telegram_message_id', a.telegram_message_id,\n    'owner_chat_id', ava.setting('owner_chat_id') #>> '{}',\n    'owner_name', ava.setting('owner_name') #>> '{}',\n    'booking_id', b.id,\n    'kind', b.kind,\n    'client_id', c.id,\n    'client_name', COALESCE(c.name, 'there'),\n    'client_first_name', COALESCE(split_part(c.name, ' ', 1), 'there'),\n    'client_email', COALESCE(c.email, ''),\n    'service', COALESCE(sv.name, 'call'),\n    'start', b.start_at,\n    'end', b.end_at,\n    'when_label', ava.fmt_local(b.start_at),\n    'duration_min', (extract(epoch FROM b.end_at - b.start_at) / 60)::int,\n    'call_format', b.call_format,\n    'call_phone', COALESCE(b.call_phone, ''),\n    'topic', COALESCE(b.topic, ''),\n    'notes', COALESCE(b.notes, ''),\n    'channel', b.channel,\n    'recipient', COALESCE(v_recipient, ''),\n    'reply_to', COALESCE(v_reply_to, ''),\n    'thread_ref', COALESCE(v_thread, ''),\n    'original_event_id', COALESCE(o.calendar_event_id, ''),\n    'original_when_label', CASE WHEN o.id IS NOT NULL THEN ava.fmt_local(o.start_at) ELSE '' END\n  );\nEND $$;\n\n\n-- =====================================================================\n-- Booking changes requested through Ava (reschedule / cancel)\n-- outcome: not_found | not_changeable | within_cutoff | cancelled | reschedule_ok\n-- =====================================================================\nCREATE OR REPLACE FUNCTION request_booking_change(p_action text, p_booking uuid, p_client uuid) RETURNS jsonb\nLANGUAGE plpgsql AS $$\nDECLARE\n  b       ava.bookings;\n  c       ava.clients;\n  sv      ava.services;\n  cutoff  interval := make_interval(hours => COALESCE((ava.setting('change_cutoff_hours') #>> '{}')::int, 24));\n  v_owner text := ava.setting('owner_name') #>> '{}';\n  v_what  text := CASE WHEN p_action = 'cancel' THEN 'cancel' ELSE 'move' END;\nBEGIN\n  SELECT * INTO b FROM ava.bookings WHERE id = p_booking AND client_id = p_client FOR UPDATE;\n  IF b.id IS NULL THEN\n    RETURN jsonb_build_object('outcome', 'not_found',\n      'message', 'No booking with that id belongs to this client. Use a booking_id from the upcoming calls list.');\n  END IF;\n  SELECT * INTO c  FROM ava.clients  WHERE id = b.client_id;\n  SELECT * INTO sv FROM ava.services WHERE id = b.service_id;\n\n  IF b.status NOT IN ('approved', 'pending') OR b.start_at <= now() THEN\n    RETURN jsonb_build_object('outcome', 'not_changeable',\n      'message', 'That call is ' || b.status || ' and cannot be changed.');\n  END IF;\n\n  -- Inside the cutoff the owner decides: alert him (urgent) and change nothing\n  IF b.start_at - now() < cutoff THEN\n    PERFORM ava.queue_owner_alert('client_msg', true,\n      '🔁 ' || COALESCE(c.name, 'A client') || ' wants to ' || v_what || ' a call within ' || extract(epoch FROM cutoff)::int / 3600 || E'h\\n\\n'\n      || COALESCE(sv.name, 'Call') || ', ' || ava.fmt_local(b.start_at) || E' ET\\n'\n      || 'Nothing was changed. Please handle it directly (/takeover then /say).', NULL, b.id);\n    RETURN jsonb_build_object('outcome', 'within_cutoff',\n      'message', 'The call is less than ' || extract(epoch FROM cutoff)::int / 3600 || ' hours away, so changes go to ' || v_owner\n        || ' personally. ' || v_owner || ' has been alerted and will get back to the client directly. Nothing was changed yet.');\n  END IF;\n\n  IF p_action = 'cancel' THEN\n    UPDATE ava.bookings SET status = CASE WHEN status = 'pending' THEN 'declined' ELSE 'cancelled' END,\n                            decided_at = now()\n     WHERE id = b.id;\n    PERFORM ava.queue_owner_alert('cancel', false,\n      '❎ ' || COALESCE(c.name, 'A client') || E' cancelled\\n\\n' || COALESCE(sv.name, 'Call') || ', ' || ava.fmt_local(b.start_at)\n      || E' ET\\nThe calendar event was removed.', NULL, b.id);\n    RETURN jsonb_build_object('outcome', 'cancelled', 'event_id', COALESCE(b.calendar_event_id, ''),\n      'message', 'Cancelled. The calendar invite has been withdrawn and ' || v_owner || ' has been notified.');\n  END IF;\n\n  -- Reschedule: hand back what the booking request needs\n  IF b.status <> 'approved' THEN\n    RETURN jsonb_build_object('outcome', 'not_changeable',\n      'message', 'That request is still waiting for ' || v_owner || '''s approval. Offer to cancel it and request the new time instead.');\n  END IF;\n  RETURN jsonb_build_object('outcome', 'reschedule_ok',\n    'booking_id', b.id, 'service', COALESCE(sv.name, ''), 'call_format', b.call_format,\n    'call_phone', COALESCE(b.call_phone, ''), 'topic', COALESCE(b.topic, ''), 'notes', COALESCE(b.notes, ''),\n    'channel', b.channel, 'duration_min', (extract(epoch FROM b.end_at - b.start_at) / 60)::int);\nEND $$;\n"
+      },
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      },
+      "executeOnce": true
+    },
+    {
+      "id": "2b5fe314-1815-46a7-ba57-5013f4c71461",
+      "name": "Apply v1.8 Hold Approvals",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        2100,
+        0
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "options": {},
+        "query": "-- =====================================================================\n-- v1.8 - Approval alerts wait until the client has been told\n-- Approval alerts are created 'held'. The Core Router releases them only\n-- after Ava's reply to the client is delivered. A safety net in the sweep\n-- releases any hold older than 2 minutes so an approval is never lost.\n-- =====================================================================\nSET search_path TO ava, public;\n\nALTER TABLE owner_alerts DROP CONSTRAINT IF EXISTS owner_alerts_status_check;\nALTER TABLE owner_alerts ADD CONSTRAINT owner_alerts_status_check\n  CHECK (status IN ('held', 'queued', 'sent', 'failed', 'void'));\n\nCREATE OR REPLACE FUNCTION hold_approval_alerts() RETURNS trigger\nLANGUAGE plpgsql AS $$\nBEGIN\n  IF NEW.kind = 'approval' THEN\n    NEW.status := 'held';\n  END IF;\n  RETURN NEW;\nEND $$;\n\nDROP TRIGGER IF EXISTS owner_alerts_hold_approvals ON owner_alerts;\nCREATE TRIGGER owner_alerts_hold_approvals BEFORE INSERT ON owner_alerts\n  FOR EACH ROW EXECUTE FUNCTION hold_approval_alerts();\n\n-- Called by the Core Router after the client reply is delivered\nCREATE OR REPLACE FUNCTION release_held_alerts(p_client uuid) RETURNS int\nLANGUAGE sql AS $$\n  WITH u AS (\n    UPDATE ava.owner_alerts a SET status = 'queued'\n      FROM ava.bookings b\n     WHERE a.booking_id = b.id AND b.client_id = p_client AND a.status = 'held'\n    RETURNING a.id)\n  SELECT count(*)::int FROM u\n$$;\n\n-- Safety net used by the scheduler sweep\nCREATE OR REPLACE FUNCTION release_stale_holds() RETURNS int\nLANGUAGE sql AS $$\n  WITH u AS (\n    UPDATE ava.owner_alerts SET status = 'queued'\n     WHERE status = 'held' AND created_at < now() - interval '2 minutes'\n    RETURNING id)\n  SELECT count(*)::int FROM u\n$$;\n"
+      },
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      },
+      "executeOnce": true
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "binaryMode": "separate"
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "MOKhNUbFhg8tfaut",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-10-14T16:10:49.051Z",
+      "updatedAt": "2026-10-14T16:10:49.051Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-10-14T17:56:38.664Z",
+  "versionId": "3cc74361-35da-4b50-bf7e-466494e53f46"
+}
