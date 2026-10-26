@@ -1,0 +1,189 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "e786483d-fc95-43ed-b756-b7208275d830",
+    "workflowId": "MgxgpZ3WBjOI2Lyl",
+    "nodes": [
+      {
+        "id": "8f62fbda-bafb-4af0-855b-588e23622b91",
+        "name": "Ava Workflow Failed",
+        "type": "n8n-nodes-base.errorTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "parameters": {}
+      },
+      {
+        "id": "30ddfdee-17c8-4c0d-a2b0-19ef8cabc32a",
+        "name": "Alert Ops Chat",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          224,
+          0
+        ],
+        "parameters": {
+          "resource": "message",
+          "operation": "sendMessage",
+          "chatId": "5076593768",
+          "text": "={{ (() => { const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); const e = $json.execution ?? {}; const w = $json.workflow ?? {}; return '⚠️ <b>Ava workflow failed</b>\\n\\nWorkflow: ' + esc(w.name) + '\\nNode: ' + esc(e.lastNodeExecuted ?? e.error?.node?.name) + '\\nError: ' + esc(String(e.error?.message ?? 'unknown').slice(0, 500)) + (e.url ? '\\n\\n<a href=\"' + e.url + '\">Open execution</a>' : ''); })() }}",
+          "additionalFields": {
+            "appendAttribution": false,
+            "parse_mode": "HTML",
+            "disable_web_page_preview": true
+          }
+        },
+        "credentials": {
+          "telegramApi": {
+            "id": "GrHxwuhk9SECQo8h",
+            "name": "NanoRob3"
+          }
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 3000,
+        "webhookId": "5447e649-f640-49f5-a414-d0166b7962df"
+      },
+      {
+        "id": "287f57fa-8ab0-49d3-9594-eee0483e8ffe",
+        "name": "Sticky Note 44ebdff2",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          192,
+          -96
+        ],
+        "parameters": {
+          "content": "## Error Handler\nSet as the error workflow on every Ava workflow. Runs only for production (live) executions, not manual tests, and posts the failing workflow, node and error to the ops Telegram chat. In the managed-service version this points at your own ops bot, not the client's bot.",
+          "color": 3,
+          "width": 160,
+          "height": 224
+        }
+      }
+    ],
+    "connections": {
+      "Ava Workflow Failed": {
+        "main": [
+          [
+            {
+              "node": "Alert Ops Chat",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Robert Lord (via MCP)",
+    "name": "Initial error handler",
+    "description": "Created with 3 nodes: Ava Workflow Failed, Alert Ops Chat, Sticky Note 44ebdff2",
+    "autosaved": false,
+    "createdAt": "2026-10-14T17:45:39.305Z",
+    "updatedAt": "2026-10-14T17:45:39.305Z"
+  },
+  "activeVersionId": "e786483d-fc95-43ed-b756-b7208275d830",
+  "connections": {
+    "Ava Workflow Failed": {
+      "main": [
+        [
+          {
+            "node": "Alert Ops Chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-14T17:45:39.302Z",
+  "id": "MgxgpZ3WBjOI2Lyl",
+  "isArchived": false,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "name": "Ava 13 - Error Handler",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "8f62fbda-bafb-4af0-855b-588e23622b91",
+      "name": "Ava Workflow Failed",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "30ddfdee-17c8-4c0d-a2b0-19ef8cabc32a",
+      "name": "Alert Ops Chat",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        224,
+        0
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "sendMessage",
+        "chatId": "5076593768",
+        "text": "={{ (() => { const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); const e = $json.execution ?? {}; const w = $json.workflow ?? {}; return '⚠️ <b>Ava workflow failed</b>\\n\\nWorkflow: ' + esc(w.name) + '\\nNode: ' + esc(e.lastNodeExecuted ?? e.error?.node?.name) + '\\nError: ' + esc(String(e.error?.message ?? 'unknown').slice(0, 500)) + (e.url ? '\\n\\n<a href=\"' + e.url + '\">Open execution</a>' : ''); })() }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML",
+          "disable_web_page_preview": true
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "GrHxwuhk9SECQo8h",
+          "name": "NanoRob3"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 3000,
+      "webhookId": "5447e649-f640-49f5-a414-d0166b7962df"
+    },
+    {
+      "id": "287f57fa-8ab0-49d3-9594-eee0483e8ffe",
+      "name": "Sticky Note 44ebdff2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        192,
+        -96
+      ],
+      "parameters": {
+        "content": "## Error Handler\nSet as the error workflow on every Ava workflow. Runs only for production (live) executions, not manual tests, and posts the failing workflow, node and error to the ops Telegram chat. In the managed-service version this points at your own ops bot, not the client's bot.",
+        "color": 3,
+        "width": 160,
+        "height": 224
+      }
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "MgxgpZ3WBjOI2Lyl",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-10-14T17:45:39.304Z",
+      "updatedAt": "2026-10-14T17:45:39.304Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-10-14T17:45:39.302Z",
+  "versionId": "e786483d-fc95-43ed-b756-b7208275d830"
+}
