@@ -1,0 +1,384 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Make Phone Call": {
+      "main": [
+        [
+          {
+            "node": "Wait for Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Call Results": {
+      "main": [
+        [
+          {
+            "node": "NocoDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NocoDB": {
+      "main": [
+        [
+          {
+            "node": "Send NTFY Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send NTFY Notification": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Wait Until Scheduled Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean Phone Number": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait Until Scheduled Time": {
+      "main": [
+        [
+          {
+            "node": "Make Phone Call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Results": {
+      "main": [
+        [
+          {
+            "node": "Get Call Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Clean Phone Number",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-11-26T12:42:08.034Z",
+  "id": "G1I3Hgm3TVNqmHFE",
+  "isArchived": false,
+  "meta": null,
+  "name": "Outbound Dialer",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.vapi.ai/call/phone",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 3097c5d8-ad92-4f60-904a-b641d0fb0323"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"assistant\": {\n    \"model\": {\n      \"messages\": [\n        {\n          \"content\": \"You are Clara, an AI Voice Assistant for Automate St Pete, conducting initial consultations with businesses interested in AI and automation solutions. Your role is to facilitate a structured yet conversational discovery session to understand their business needs and opportunities for AI implementation. Consultation Structure: 1. Introduction and Context Setting: - Introduce yourself clearly - Explain the consultation structure - Set expectations for the conversation 2. Information Gathering Categories: Business Overview: - Nature of business and target audience - Current business model - Core services/products offered - Key challenges and opportunities Workflows and Processes: - Time-consuming tasks and workflows - Inefficient processes needing streamlining - Manual operations that could be automated - Current operational bottlenecks Technology Infrastructure: - Current technology stack - Critical business tools and systems - Desired integrations - Existing automation attempts Goals and Outcomes: - Short-term objectives - Long-term vision - Definition of success - Desired measurable outcomes Pain Points: - Specific problems needing solutions - Areas of inefficiency - Current business impact of these issues Interaction Guidelines: - Maintain a professional, conversational tone - Provide real-time feedback and clarification - Confirm understanding regularly - Ask follow-up questions when needed - Keep the conversation focused but natural At the end of each section: - Summarize key points gathered - Confirm accuracy of understanding - Bridge naturally to next topic Closing the Consultation: - Summarize all key information gathered - Explain next steps in the process - Thank them for their time Key Principles: - Listen actively and show understanding - Dive deeper when valuable information is shared - Keep the conversation focused on their business needs - Demonstrate value through efficient information gathering - Be conversational while maintaining structure Your role is to make this consultation efficient and valuable while giving them a practical demonstration of AI capabilities through your own performance.\",\n          \"role\": \"system\"\n        }\n      ],\n      \"provider\": \"openai\",\n      \"model\": \"gpt-4o-mini\",\n      \"temperature\": 2,\n      \"maxTokens\": 10000,\n      \"emotionRecognitionEnabled\": true,\n      \"numFastTurns\": 0\n    },\n    \"firstMessage\": \"Hello this is Clara, the AI assistant from Automate St Pete. May I speak with {{ $json.Name }} ?\",\n    \"firstMessageMode\": \"assistant-speaks-first\"\n  },\n  \"phoneNumberId\": \"c385d18a-3eb8-477b-bfa5-5c3a6e7c3f31\",\n  \"customer\": {\n    \"number\": \"+1{{ $json.Phone }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "90b966f4-6226-4908-97a5-b37339bb4b20",
+      "name": "Make Phone Call",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        928,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.vapi.ai/call/{{ $json.id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 3097c5d8-ad92-4f60-904a-b641d0fb0323"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "80e45461-b8c5-46b1-aea3-f85dac661baf",
+      "name": "Get Call Results",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1392,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "p396c1l7rjkrr41",
+        "table": "mwsufn0rwpc5q6e",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "=Id",
+              "fieldValue": "={{ $('Loop Over Items').all()[0].json.Id }}"
+            },
+            {
+              "fieldName": "Call Success Evaluation",
+              "fieldValue": "={{ $json.analysis.successEvaluation }}"
+            },
+            {
+              "fieldName": "Call Summary",
+              "fieldValue": "={{ $json.summary }}"
+            },
+            {
+              "fieldName": "Transcript",
+              "fieldValue": "={{ $json.transcript }}"
+            },
+            {
+              "fieldName": "Recording",
+              "fieldValue": "={{ $json.recordingUrl }}"
+            },
+            {
+              "fieldName": "Call Cost",
+              "fieldValue": "={{ $json.cost }}"
+            },
+            {
+              "fieldName": "Messages JSON",
+              "fieldValue": "={{ $json.messages }}"
+            },
+            {
+              "fieldName": "Vapi Call ID",
+              "fieldValue": "={{ $json.id }}"
+            },
+            {
+              "fieldName": "Phone",
+              "fieldValue": "={{ $('Clean Phone Number').all()[0].json['Cleaned Number'] }}"
+            },
+            {
+              "fieldName": "Outbound Call",
+              "fieldValue": "1"
+            }
+          ]
+        }
+      },
+      "id": "e6839810-9ac1-4c6a-abd6-1df4267ebfd9",
+      "name": "NocoDB",
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1584,
+        0
+      ],
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "mZ1bN8fBGJ1SO75T",
+          "name": "NoCoDB Internal"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://ntfy.aspworkplace.com/n8nAutodialerResults",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "text/plain",
+        "body": "=Business: {{ $('Loop Over Items').all()[0].json.Business }}\n\nPhone: {{ $('Loop Over Items').all()[0].json.Phone }}\nSuccess Eval: {{ $json['Call Success Evaluation'] }}\n\nCall Summary: {{ $json['Call Summary'] }}\n",
+        "options": {}
+      },
+      "id": "1e8a51e7-4afc-4b13-9153-ee26ac4fdc10",
+      "name": "Send NTFY Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1808,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d48f073f-f416-49a3-b3a5-f109611ab118",
+              "name": "Name",
+              "value": "={{ $('Webhook').item.json.body.booking.first_name }} {{ $('Webhook').item.json.body.booking.last_name }}",
+              "type": "string"
+            },
+            {
+              "id": "c39a8b7a-1c52-47f9-b364-018803d031ee",
+              "name": "Phone",
+              "value": "={{ $json[\"Cleaned Number\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "70acfd50-36d1-4b19-86e2-ad607e42d91d",
+              "name": "Time",
+              "value": "={{ $('Webhook').item.json.body.booking.start_time.replace(\" \",\"T\") }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        0
+      ],
+      "id": "b08d9aa9-26aa-4a68-950c-7816c5b7a9c7",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "function formatPhoneNumber(phoneNumber) {\n    // Remove all non-digit characters\n    let cleaned = phoneNumber.replace(/\\D/g, '');\n\n    // Ensure the number has 11 digits (including the country code)\n    if (cleaned.length === 11 && cleaned.startsWith('1')) {\n        // Remove the leading country code\n        cleaned = cleaned.slice(1);\n    }\n\n    // Return empty array if not exactly 10 digits after processing\n    if (cleaned.length !== 10) {\n        return [];\n    }\n\n    // Return array with object containing the cleaned phone number\n    return [{\n        \"Cleaned Phone\": cleaned\n    }];\n}\n\n// Get just the formatted number from the result:\nconst result = formatPhoneNumber($('Webhook').all()[0].json.body.booking.custom_fields.custom_phone);\nif (result.length > 0) {\n    return [{\"Cleaned Number\": result[0][\"Cleaned Phone\"]}];\n}"
+      },
+      "id": "66e20ae9-b7dd-4d4d-b114-a8145593baaa",
+      "name": "Clean Phone Number",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        688,
+        0
+      ],
+      "id": "f8d2ecbd-fdb5-4ba8-bcd3-b92094057ca2",
+      "name": "Wait Until Scheduled Time",
+      "webhookId": "38465b7a-a3cc-4277-81a2-c2e6c1fb0339"
+    },
+    {
+      "parameters": {
+        "amount": 6,
+        "unit": "minutes"
+      },
+      "id": "5cbe41ac-d784-4609-9411-ed11ef882208",
+      "name": "Wait for Results",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1168,
+        0
+      ],
+      "webhookId": "25d1898b-65e7-4e96-ae48-6916b3e9c01b"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.vapi.ai/call/phone",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 3097c5d8-ad92-4f60-904a-b641d0fb0323"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"assistant\": {\n    \"model\": {\n      \"messages\": [\n        {\n          \"content\": \"You are Clara, an AI Voice Assistant for Automate St Pete, conducting initial consultations with businesses interested in AI and automation solutions. Your role is to facilitate a structured yet conversational discovery session to understand their business needs and opportunities for AI implementation. Consultation Structure: 1. Introduction and Context Setting: - Introduce yourself clearly - Explain the consultation structure - Set expectations for the conversation 2. Information Gathering Categories: Business Overview: - Nature of business and target audience - Current business model - Core services/products offered - Key challenges and opportunities Workflows and Processes: - Time-consuming tasks and workflows - Inefficient processes needing streamlining - Manual operations that could be automated - Current operational bottlenecks Technology Infrastructure: - Current technology stack - Critical business tools and systems - Desired integrations - Existing automation attempts Goals and Outcomes: - Short-term objectives - Long-term vision - Definition of success - Desired measurable outcomes Pain Points: - Specific problems needing solutions - Areas of inefficiency - Current business impact of these issues Interaction Guidelines: - Maintain a professional, conversational tone - Provide real-time feedback and clarification - Confirm understanding regularly - Ask follow-up questions when needed - Keep the conversation focused but natural At the end of each section: - Summarize key points gathered - Confirm accuracy of understanding - Bridge naturally to next topic Closing the Consultation: - Summarize all key information gathered - Explain next steps in the process - Thank them for their time Key Principles: - Listen actively and show understanding - Dive deeper when valuable information is shared - Keep the conversation focused on their business needs - Demonstrate value through efficient information gathering - Be conversational while maintaining structure Your role is to make this consultation efficient and valuable while giving them a practical demonstration of AI capabilities through your own performance.\",\n          \"role\": \"system\"\n        }\n      ],\n      \"provider\": \"openai\",\n      \"model\": \"gpt-4o-mini\",\n      \"temperature\": 2,\n      \"maxTokens\": 10000,\n      \"emotionRecognitionEnabled\": true,\n      \"numFastTurns\": 0\n    },\n    \"firstMessage\": \"Hello this is Clara, the AI assistant from Automate St Pete. May I speak with  ?\",\n    \"firstMessageMode\": \"assistant-speaks-first\"\n  },\n  \"phoneNumberId\": \"c385d18a-3eb8-477b-bfa5-5c3a6e7c3f31\",\n  \"customer\": {\n    \"number\": \"+17272918100\"\n  }\n}",
+        "options": {}
+      },
+      "id": "6d881bb9-e10e-4bb3-be8a-3618346b6ab3",
+      "name": "Make Phone Call1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        560,
+        288
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "4a5c549c-e94a-438b-bf68-c8c625c01c95",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "G1I3Hgm3TVNqmHFE",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2025-11-26T12:42:08.040Z",
+      "updatedAt": "2025-11-26T12:42:08.040Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-11-26T13:00:12.000Z",
+  "versionId": "7910ea7d-cabf-4c00-9705-44889da8878b"
+}
