@@ -1,0 +1,95 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-11-09T02:59:41.797Z",
+  "id": "vrd7pYXAz0her5ZE",
+  "isArchived": false,
+  "meta": null,
+  "name": "My workflow 32",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0196c1a1-96c5-4c2c-85bb-974925926ac7",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://data.tmsapi.com/v1.1/lineups",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "postalCode",
+              "value": "89109"
+            },
+            {
+              "name": "country",
+              "value": "USA"
+            },
+            {
+              "name": "api_key",
+              "value": "qeyatapj9d5svqkznc4nck38"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "acfff60b-ab0f-45a6-a203-3ab437685c8c",
+      "name": "HTTP Request"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "vrd7pYXAz0her5ZE",
+      "projectId": "fUja7PZjiQMQFmQp",
+      "createdAt": "2025-11-09T02:59:41.804Z",
+      "updatedAt": "2025-11-09T02:59:41.804Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-11-09T02:59:41.797Z",
+  "versionId": "428cba73-d93e-4a5b-b8be-373ef56ec4c2"
+}
