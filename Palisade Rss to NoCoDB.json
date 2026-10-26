@@ -1,5 +1,7 @@
 {
-  "active": true,
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
   "connections": {
     "Edit Fields": {
       "main": [
@@ -78,9 +80,10 @@
   },
   "createdAt": "2025-01-03T15:47:14.592Z",
   "id": "CQ8Abu2nXlQpOGX8",
-  "isArchived": false,
+  "isArchived": true,
   "meta": null,
   "name": "Palisade Rss to NoCoDB",
+  "nodeGroups": [],
   "nodes": [
     {
       "parameters": {
@@ -266,16 +269,16 @@
   },
   "shared": [
     {
-      "createdAt": "2025-01-03T15:47:14.597Z",
-      "updatedAt": "2025-01-03T15:47:14.597Z",
       "role": "workflow:owner",
       "workflowId": "CQ8Abu2nXlQpOGX8",
-      "projectId": "WCIiaWERZpaZ5IaT"
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2025-01-03T15:47:14.597Z",
+      "updatedAt": "2025-01-03T15:47:14.597Z"
     }
   ],
   "staticData": {
     "node:RSS Feed Trigger": {
-      "lastItemDate": "2025-10-22T00:00:00.000Z"
+      "lastItemDate": "2026-10-20T00:00:00.000Z"
     },
     "node:Research Feed Trigger": {
       "lastItemDate": "2024-12-24T05:00:00.000Z"
@@ -283,6 +286,6 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2025-01-03T15:48:09.000Z",
-  "versionId": "0c170dc4-2b69-4356-8835-f9c30e28a13e"
+  "updatedAt": "2026-10-22T02:17:56.000Z",
+  "versionId": "b3b96a6c-fc25-44fc-8bc4-20043cf5d08e"
 }
