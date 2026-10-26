@@ -1,0 +1,144 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-01-22T02:51:54.182Z",
+  "id": "sMDOg3v9M0DubuuFNHxqF",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Text Rob",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Text me",
+        "formFields": {
+          "values": [
+            {
+              "fieldName": "Message",
+              "fieldLabel": "Message",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.4,
+      "position": [
+        224,
+        -16
+      ],
+      "id": "0cc1106a-4faf-4211-94e1-3187d5a00652",
+      "name": "On form submission",
+      "webhookId": "a6bd2a83-d694-4320-a9e3-3952974fd32d"
+    },
+    {
+      "parameters": {
+        "sendTo": "7029084316@vtext.com",
+        "subject": "=You received a message from yourself!",
+        "message": "=\n\n{{ $json.Message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        -112
+      ],
+      "id": "c90001fc-d2d0-45e1-995d-bb2a64dab76a",
+      "name": "Send a message",
+      "webhookId": "f8d465f4-871d-4cdc-8237-c81202791eab",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Rob Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "8f2930a6-4be2-4565-8adb-8cd19b51d5fd",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        -208
+      ],
+      "id": "08fbb0c5-ae5f-4c30-9275-eef5300fb00b",
+      "name": "Webhook",
+      "webhookId": "8f2930a6-4be2-4565-8adb-8cd19b51d5fd"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        -208
+      ],
+      "id": "c5dc4d57-cf16-4413-a6a4-6e067c764844",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "sMDOg3v9M0DubuuFNHxqF",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-01-22T02:51:54.187Z",
+      "updatedAt": "2026-01-22T02:51:54.187Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-02-21T00:42:07.639Z",
+  "versionId": "87e3e6ef-c497-4684-8668-f4e755b648ea"
+}
