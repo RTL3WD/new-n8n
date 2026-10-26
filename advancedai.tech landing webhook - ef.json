@@ -1,0 +1,139 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "404f3dfc-e974-42ca-8391-f13cebc9b9fc",
+    "workflowId": "cUIVuYoDkCv6nCUY",
+    "nodes": [
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.errorTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "a84a719a-28b4-45f8-8b0a-5eeac048d4e1",
+        "name": "Error Trigger"
+      },
+      {
+        "parameters": {
+          "chatId": "5076593768",
+          "text": "={{ $('Error Trigger').item }}",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          224,
+          0
+        ],
+        "id": "b47dfb5a-2303-48cf-934c-57312818d6b8",
+        "name": "Send a text message",
+        "webhookId": "b0cde31e-b9e0-4f43-8fd0-ab11fee1f981",
+        "credentials": {
+          "telegramApi": {
+            "id": "GrHxwuhk9SECQo8h",
+            "name": "NanoRob3"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Error Trigger": {
+        "main": [
+          [
+            {
+              "node": "Send a text message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Robert Lord",
+    "name": "Version 1",
+    "description": "advancedai.tech landing webhook error workflow telegram notification.",
+    "autosaved": true,
+    "createdAt": "2026-10-21T17:00:22.341Z",
+    "updatedAt": "2026-10-21T17:00:49.000Z"
+  },
+  "activeVersionId": "404f3dfc-e974-42ca-8391-f13cebc9b9fc",
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-21T16:59:16.259Z",
+  "id": "cUIVuYoDkCv6nCUY",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "advancedai.tech landing webhook - ef",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a84a719a-28b4-45f8-8b0a-5eeac048d4e1",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "chatId": "5076593768",
+        "text": "={{ $('Error Trigger').item }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "b47dfb5a-2303-48cf-934c-57312818d6b8",
+      "name": "Send a text message",
+      "webhookId": "b0cde31e-b9e0-4f43-8fd0-ab11fee1f981",
+      "credentials": {
+        "telegramApi": {
+          "id": "GrHxwuhk9SECQo8h",
+          "name": "NanoRob3"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "cUIVuYoDkCv6nCUY",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-10-21T16:59:16.262Z",
+      "updatedAt": "2026-10-21T16:59:16.262Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-10-21T17:00:30.914Z",
+  "versionId": "404f3dfc-e974-42ca-8391-f13cebc9b9fc"
+}
