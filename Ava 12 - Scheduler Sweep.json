@@ -1,0 +1,651 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "9f512f37-fd6d-4fc9-91be-e973964aac54",
+    "workflowId": "W8AWn1lR5kiSIinJ",
+    "nodes": [
+      {
+        "id": "031b9fdf-fe83-4aac-a0aa-98eb08e208b2",
+        "name": "Every 5 Minutes",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.4,
+        "position": [
+          0,
+          192
+        ],
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "minutes",
+                "minutesInterval": 5
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "a9b3593f-3e41-4e9b-b7bf-85f8b22c3bd9",
+        "name": "Run Sweep",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          224,
+          192
+        ],
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT ava.sweep() AS sweep, ava.release_stale_holds() AS stale_holds_released",
+          "options": {}
+        },
+        "credentials": {
+          "postgres": {
+            "id": "1RCl2NMd9YUu88EJ",
+            "name": "Coolify Postgres"
+          }
+        }
+      },
+      {
+        "id": "f638403a-e57a-4c43-838f-10115fbb1dde",
+        "name": "One Item Per Client Message",
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1.1,
+        "position": [
+          496,
+          512
+        ],
+        "parameters": {
+          "fieldToSplitOut": "sweep.client_messages",
+          "include": "noOtherFields",
+          "options": {}
+        }
+      },
+      {
+        "id": "2b9aad95-8cd1-40d4-aa4c-97409da8380c",
+        "name": "Send Client Message",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.4,
+        "position": [
+          720,
+          512
+        ],
+        "parameters": {
+          "mode": "each",
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "gSgaG1ldpxS6eyyp",
+            "cachedResultName": "Ava 06 - Reply Adapter"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "client_id": "={{ $json.client_id }}",
+              "channel": "={{ $json.channel }}",
+              "recipient": "={{ $json.recipient }}",
+              "text": "={{ $json.text }}",
+              "reply_to": "={{ $json.reply_to }}",
+              "thread_ref": "={{ $json.thread_ref }}",
+              "author": "ava"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "client_id",
+                "displayName": "client_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "channel",
+                "displayName": "channel",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "recipient",
+                "displayName": "recipient",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "text",
+                "displayName": "text",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "reply_to",
+                "displayName": "reply_to",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "thread_ref",
+                "displayName": "thread_ref",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "author",
+                "displayName": "author",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              }
+            ],
+            "attemptToConvertTypes": false
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "id": "a85d3816-f7d6-4342-9b75-5918f740dcf8",
+        "name": "Summarize Idle Conversations",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.4,
+        "position": [
+          608,
+          0
+        ],
+        "parameters": {
+          "mode": "once",
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "vRnC9HsTnGZKm7nd",
+            "cachedResultName": "Ava 11 - Summarize Conversation"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "conversation_ids": "={{ $json.sweep.summarize }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "conversation_ids",
+                "displayName": "conversation_ids",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "array"
+              }
+            ],
+            "attemptToConvertTypes": false
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "id": "0b358ae7-be77-457e-b9cb-adc83b3869e7",
+        "name": "Send Due Owner Alerts",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.4,
+        "position": [
+          608,
+          192
+        ],
+        "parameters": {
+          "mode": "once",
+          "source": "database",
+          "workflowId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "OMglHORb5zLpGPGx",
+            "cachedResultName": "Ava 09 - Alert Dispatcher"
+          },
+          "options": {
+            "waitForSubWorkflow": false
+          }
+        }
+      },
+      {
+        "id": "8c7f6521-bc68-4f08-b274-ea6ed4f4cafa",
+        "name": "Sticky Note 38049dbb",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          192,
+          96
+        ],
+        "parameters": {
+          "content": "## Scheduler Sweep\nEvery 5 minutes the database decides what is due (ava.sweep): approval checkpoints and expiries (timers pause in quiet hours), 24h and 1h call reminders, finished calls, idle conversations. This workflow only carries it out: client messages, conversation summaries, and owner alerts that are now due, including the ones held overnight.",
+          "color": 4,
+          "width": 160,
+          "height": 224
+        }
+      }
+    ],
+    "connections": {
+      "Every 5 Minutes": {
+        "main": [
+          [
+            {
+              "node": "Run Sweep",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Run Sweep": {
+        "main": [
+          [
+            {
+              "node": "One Item Per Client Message",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Summarize Idle Conversations",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Send Due Owner Alerts",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "One Item Per Client Message": {
+        "main": [
+          [
+            {
+              "node": "Send Client Message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [
+      {
+        "id": "9809086c-7f74-4db9-9a63-be3e9f5b12aa",
+        "name": "Client messages",
+        "nodeIds": [
+          "f638403a-e57a-4c43-838f-10115fbb1dde",
+          "2b9aad95-8cd1-40d4-aa4c-97409da8380c"
+        ],
+        "description": "Sends still-waiting, expiry and reminder messages through the reply adapter, one per client."
+      }
+    ],
+    "authors": "Robert Lord (via MCP)",
+    "name": "Release stale approval holds",
+    "description": "Updated nodes: Run Sweep",
+    "autosaved": false,
+    "createdAt": "2026-10-14T17:56:53.175Z",
+    "updatedAt": "2026-10-14T17:56:53.175Z"
+  },
+  "activeVersionId": "9f512f37-fd6d-4fc9-91be-e973964aac54",
+  "connections": {
+    "Every 5 Minutes": {
+      "main": [
+        [
+          {
+            "node": "Run Sweep",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Sweep": {
+      "main": [
+        [
+          {
+            "node": "One Item Per Client Message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Summarize Idle Conversations",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send Due Owner Alerts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "One Item Per Client Message": {
+      "main": [
+        [
+          {
+            "node": "Send Client Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-14T17:45:05.819Z",
+  "id": "W8AWn1lR5kiSIinJ",
+  "isArchived": false,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "name": "Ava 12 - Scheduler Sweep",
+  "nodeGroups": [
+    {
+      "id": "9809086c-7f74-4db9-9a63-be3e9f5b12aa",
+      "name": "Client messages",
+      "nodeIds": [
+        "f638403a-e57a-4c43-838f-10115fbb1dde",
+        "2b9aad95-8cd1-40d4-aa4c-97409da8380c"
+      ],
+      "description": "Sends still-waiting, expiry and reminder messages through the reply adapter, one per client."
+    }
+  ],
+  "nodes": [
+    {
+      "id": "031b9fdf-fe83-4aac-a0aa-98eb08e208b2",
+      "name": "Every 5 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        192
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "a9b3593f-3e41-4e9b-b7bf-85f8b22c3bd9",
+      "name": "Run Sweep",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        224,
+        192
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ava.sweep() AS sweep, ava.release_stale_holds() AS stale_holds_released",
+        "options": {}
+      },
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      }
+    },
+    {
+      "id": "f638403a-e57a-4c43-838f-10115fbb1dde",
+      "name": "One Item Per Client Message",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1.1,
+      "position": [
+        496,
+        512
+      ],
+      "parameters": {
+        "fieldToSplitOut": "sweep.client_messages",
+        "include": "noOtherFields",
+        "options": {}
+      }
+    },
+    {
+      "id": "2b9aad95-8cd1-40d4-aa4c-97409da8380c",
+      "name": "Send Client Message",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        720,
+        512
+      ],
+      "parameters": {
+        "mode": "each",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gSgaG1ldpxS6eyyp",
+          "cachedResultName": "Ava 06 - Reply Adapter"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "client_id": "={{ $json.client_id }}",
+            "channel": "={{ $json.channel }}",
+            "recipient": "={{ $json.recipient }}",
+            "text": "={{ $json.text }}",
+            "reply_to": "={{ $json.reply_to }}",
+            "thread_ref": "={{ $json.thread_ref }}",
+            "author": "ava"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "client_id",
+              "displayName": "client_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "channel",
+              "displayName": "channel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "recipient",
+              "displayName": "recipient",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "reply_to",
+              "displayName": "reply_to",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "thread_ref",
+              "displayName": "thread_ref",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "author",
+              "displayName": "author",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "a85d3816-f7d6-4342-9b75-5918f740dcf8",
+      "name": "Summarize Idle Conversations",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        608,
+        0
+      ],
+      "parameters": {
+        "mode": "once",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "vRnC9HsTnGZKm7nd",
+          "cachedResultName": "Ava 11 - Summarize Conversation"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "conversation_ids": "={{ $json.sweep.summarize }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "conversation_ids",
+              "displayName": "conversation_ids",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array"
+            }
+          ],
+          "attemptToConvertTypes": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "0b358ae7-be77-457e-b9cb-adc83b3869e7",
+      "name": "Send Due Owner Alerts",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        608,
+        192
+      ],
+      "parameters": {
+        "mode": "once",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "OMglHORb5zLpGPGx",
+          "cachedResultName": "Ava 09 - Alert Dispatcher"
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      }
+    },
+    {
+      "id": "8c7f6521-bc68-4f08-b274-ea6ed4f4cafa",
+      "name": "Sticky Note 38049dbb",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        192,
+        96
+      ],
+      "parameters": {
+        "content": "## Scheduler Sweep\nEvery 5 minutes the database decides what is due (ava.sweep): approval checkpoints and expiries (timers pause in quiet hours), 24h and 1h call reminders, finished calls, idle conversations. This workflow only carries it out: client messages, conversation summaries, and owner alerts that are now due, including the ones held overnight.",
+        "color": 4,
+        "width": 160,
+        "height": 224
+      }
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "timezone": "America/New_York",
+    "saveDataSuccessExecution": "none",
+    "errorWorkflow": "MgxgpZ3WBjOI2Lyl"
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "W8AWn1lR5kiSIinJ",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-10-14T17:45:05.822Z",
+      "updatedAt": "2026-10-14T17:45:05.822Z"
+    }
+  ],
+  "staticData": {
+    "node:Every 5 Minutes": {
+      "recurrenceRules": [
+        null
+      ],
+      "recurrenceRuleSignatures": [
+        null
+      ]
+    }
+  },
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2026-10-14T17:56:53.174Z",
+  "versionId": "9f512f37-fd6d-4fc9-91be-e973964aac54"
+}
