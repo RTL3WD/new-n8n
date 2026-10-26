@@ -1,0 +1,79 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-14T15:55:31.501Z",
+  "id": "GF2D79u3My8kuBBc",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "AI Assistant Workflow Failure",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c6866bbb-bb42-4ccd-b5a3-3d30d352ca66",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "4904fb1a-c3b0-408c-90e4-603429b06d4f",
+      "name": "Send a text message",
+      "webhookId": "00e6b5c1-5022-4d9d-a0fc-84e482e3f53b",
+      "credentials": {
+        "telegramApi": {
+          "id": "GrHxwuhk9SECQo8h",
+          "name": "NanoRob3"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "GF2D79u3My8kuBBc",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-10-14T15:55:31.503Z",
+      "updatedAt": "2026-10-14T15:55:31.503Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-10-14T15:55:54.423Z",
+  "versionId": "5a8be881-65e2-49d3-813c-7338f155a727"
+}
