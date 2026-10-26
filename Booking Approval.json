@@ -1,0 +1,560 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "f8745519-75be-4bf4-9496-d02245d9bc84",
+    "workflowId": "iVg8dk3vcYQfbZ8y",
+    "nodes": [
+      {
+        "parameters": {
+          "workflowInputs": {
+            "values": [
+              {
+                "name": "mode"
+              },
+              {
+                "name": "client_chat_id"
+              },
+              {
+                "name": "client_name"
+              },
+              {
+                "name": "event_type"
+              },
+              {
+                "name": "start_iso"
+              },
+              {
+                "name": "end_iso"
+              },
+              {
+                "name": "location"
+              },
+              {
+                "name": "notes"
+              },
+              {
+                "name": "calendar_id"
+              },
+              {
+                "name": "photographer_chat_id"
+              },
+              {
+                "name": "timezone"
+              },
+              {
+                "name": "chat_id"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          -128,
+          384
+        ],
+        "id": "8e1d81de-4117-4162-8b88-f2f8f9bbc69d",
+        "name": "When Executed by Another Workflow"
+      },
+      {
+        "parameters": {
+          "operation": "sendAndWait",
+          "chatId": "={{ $json.chat_id }}",
+          "message": "=📸 New booking request\n\nClient: {{ $json.client_name }}\nShoot: {{ $json.event_type }}\nWhen: {{ DateTime.fromISO($json.start_iso).setZone($json.timezone).toFormat(\"cccc, LLL d 'at' h:mm a\") }}\nUntil: {{ DateTime.fromISO($json.end_iso).setZone($json.timezone).toFormat('h:mm a') }}\nWhere: {{ $json.location }}\nNotes: {{ $json.notes || '—' }}\n\nApprove to add it to the calendar and confirm with the client.",
+          "approvalOptions": {
+            "values": {
+              "approvalType": "double"
+            }
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          96,
+          384
+        ],
+        "id": "6f2913bd-1b67-4b37-a277-5648a10c908b",
+        "name": "Ask Photographer",
+        "webhookId": "eecef830-b3dc-4fec-8a86-760e3252631f",
+        "credentials": {
+          "telegramApi": {
+            "id": "GrHxwuhk9SECQo8h",
+            "name": "NanoRob3"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "a992bd30-18f3-4f08-9b57-95b40da5515a",
+                "leftValue": "={{ $json.data.approved }}",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          320,
+          384
+        ],
+        "id": "b539c6ec-860e-4cb4-9d01-d750caf9da9f",
+        "name": "Approved?"
+      },
+      {
+        "parameters": {
+          "chatId": "={{ $('When Executed by Another Workflow').item.json.chat_id }}",
+          "text": "=Great news, {{ $('When Executed by Another Workflow').item.json.client_name }}! 🎉 Your {{ $('When Executed by Another Workflow').item.json.event_type }} session is confirmed for {{ DateTime.fromISO($('When Executed by Another Workflow').item.json.start_iso).setZone($('When Executed by Another Workflow').item.json.timezone).toFormat(\"cccc, LLL d 'at' h:mm a\") }} at {{ $('When Executed by Another Workflow').item.json.location }}. The photographer will follow up with details.",
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          768,
+          288
+        ],
+        "id": "f5a99646-5f1f-409f-88a0-bd3e5c8888fa",
+        "name": "Confirm to Client",
+        "webhookId": "f9234bef-c79c-48cd-baec-52e42e15569c",
+        "credentials": {
+          "telegramApi": {
+            "id": "GrHxwuhk9SECQo8h",
+            "name": "NanoRob3"
+          }
+        },
+        "disabled": true
+      },
+      {
+        "parameters": {
+          "chatId": "={{ $('When Executed by Another Workflow').item.json.client_chat_id }}",
+          "text": "=Thanks for your patience, {{ $('When Executed by Another Workflow').item.json.client_name }}. That time won't work on our end, but the photographer will reach out shortly with some alternatives.",
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          544,
+          480
+        ],
+        "id": "69bebe54-7f68-4a54-986c-49a63698e6d6",
+        "name": "Tell Client Declined",
+        "webhookId": "eaa27d2a-ff46-484e-9c56-4c22621c1dbf",
+        "credentials": {
+          "telegramApi": {
+            "id": "GrHxwuhk9SECQo8h",
+            "name": "NanoRob3"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "calendar": {
+            "__rl": true,
+            "value": "automatestpete@gmail.com",
+            "mode": "id"
+          },
+          "start": "={{ $('When Executed by Another Workflow').item.json.start_iso }}",
+          "end": "={{ $('When Executed by Another Workflow').item.json.end_iso }}",
+          "additionalFields": {
+            "description": "=Booked via Telegram assistant. Notes: {{ $('When Executed by Another Workflow').item.json.notes }}",
+            "location": "={{ $('When Executed by Another Workflow').item.json.location }}",
+            "summary": "={{ $('When Executed by Another Workflow').item.json.event_type }} – {{ $('When Executed by Another Workflow').item.json.client_name }}"
+          }
+        },
+        "type": "n8n-nodes-base.googleCalendar",
+        "typeVersion": 1.3,
+        "position": [
+          544,
+          288
+        ],
+        "id": "0408a5c1-f20d-44d9-9969-4df4a0f24a2e",
+        "name": "Create an event",
+        "credentials": {
+          "googleCalendarOAuth2Api": {
+            "id": "uN5dopaOLSVA2U6J",
+            "name": "Google Calendar account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "Ask Photographer",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Ask Photographer": {
+        "main": [
+          [
+            {
+              "node": "Approved?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Approved?": {
+        "main": [
+          [
+            {
+              "node": "Create an event",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Tell Client Declined",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create an event": {
+        "main": [
+          [
+            {
+              "node": "Confirm to Client",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Robert Lord",
+    "name": "Version f8745519",
+    "description": "",
+    "autosaved": true,
+    "createdAt": "2026-10-13T20:48:18.138Z",
+    "updatedAt": "2026-10-13T20:48:21.000Z"
+  },
+  "activeVersionId": "f8745519-75be-4bf4-9496-d02245d9bc84",
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Ask Photographer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ask Photographer": {
+      "main": [
+        [
+          {
+            "node": "Approved?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Approved?": {
+      "main": [
+        [
+          {
+            "node": "Create an event",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Tell Client Declined",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an event": {
+      "main": [
+        [
+          {
+            "node": "Confirm to Client",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-13T19:33:22.620Z",
+  "id": "iVg8dk3vcYQfbZ8y",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Booking Approval",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "mode"
+            },
+            {
+              "name": "client_chat_id"
+            },
+            {
+              "name": "client_name"
+            },
+            {
+              "name": "event_type"
+            },
+            {
+              "name": "start_iso"
+            },
+            {
+              "name": "end_iso"
+            },
+            {
+              "name": "location"
+            },
+            {
+              "name": "notes"
+            },
+            {
+              "name": "calendar_id"
+            },
+            {
+              "name": "photographer_chat_id"
+            },
+            {
+              "name": "timezone"
+            },
+            {
+              "name": "chat_id"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -128,
+        384
+      ],
+      "id": "8e1d81de-4117-4162-8b88-f2f8f9bbc69d",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "={{ $json.chat_id }}",
+        "message": "=📸 New booking request\n\nClient: {{ $json.client_name }}\nShoot: {{ $json.event_type }}\nWhen: {{ DateTime.fromISO($json.start_iso).setZone($json.timezone).toFormat(\"cccc, LLL d 'at' h:mm a\") }}\nUntil: {{ DateTime.fromISO($json.end_iso).setZone($json.timezone).toFormat('h:mm a') }}\nWhere: {{ $json.location }}\nNotes: {{ $json.notes || '—' }}\n\nApprove to add it to the calendar and confirm with the client.",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        96,
+        384
+      ],
+      "id": "6f2913bd-1b67-4b37-a277-5648a10c908b",
+      "name": "Ask Photographer",
+      "webhookId": "eecef830-b3dc-4fec-8a86-760e3252631f",
+      "credentials": {
+        "telegramApi": {
+          "id": "GrHxwuhk9SECQo8h",
+          "name": "NanoRob3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a992bd30-18f3-4f08-9b57-95b40da5515a",
+              "leftValue": "={{ $json.data.approved }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        320,
+        384
+      ],
+      "id": "b539c6ec-860e-4cb4-9d01-d750caf9da9f",
+      "name": "Approved?"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('When Executed by Another Workflow').item.json.chat_id }}",
+        "text": "=Great news, {{ $('When Executed by Another Workflow').item.json.client_name }}! 🎉 Your {{ $('When Executed by Another Workflow').item.json.event_type }} session is confirmed for {{ DateTime.fromISO($('When Executed by Another Workflow').item.json.start_iso).setZone($('When Executed by Another Workflow').item.json.timezone).toFormat(\"cccc, LLL d 'at' h:mm a\") }} at {{ $('When Executed by Another Workflow').item.json.location }}. The photographer will follow up with details.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        768,
+        288
+      ],
+      "id": "f5a99646-5f1f-409f-88a0-bd3e5c8888fa",
+      "name": "Confirm to Client",
+      "webhookId": "f9234bef-c79c-48cd-baec-52e42e15569c",
+      "credentials": {
+        "telegramApi": {
+          "id": "GrHxwuhk9SECQo8h",
+          "name": "NanoRob3"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('When Executed by Another Workflow').item.json.client_chat_id }}",
+        "text": "=Thanks for your patience, {{ $('When Executed by Another Workflow').item.json.client_name }}. That time won't work on our end, but the photographer will reach out shortly with some alternatives.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        544,
+        480
+      ],
+      "id": "69bebe54-7f68-4a54-986c-49a63698e6d6",
+      "name": "Tell Client Declined",
+      "webhookId": "eaa27d2a-ff46-484e-9c56-4c22621c1dbf",
+      "credentials": {
+        "telegramApi": {
+          "id": "GrHxwuhk9SECQo8h",
+          "name": "NanoRob3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "automatestpete@gmail.com",
+          "mode": "id"
+        },
+        "start": "={{ $('When Executed by Another Workflow').item.json.start_iso }}",
+        "end": "={{ $('When Executed by Another Workflow').item.json.end_iso }}",
+        "additionalFields": {
+          "description": "=Booked via Telegram assistant. Notes: {{ $('When Executed by Another Workflow').item.json.notes }}",
+          "location": "={{ $('When Executed by Another Workflow').item.json.location }}",
+          "summary": "={{ $('When Executed by Another Workflow').item.json.event_type }} – {{ $('When Executed by Another Workflow').item.json.client_name }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        544,
+        288
+      ],
+      "id": "0408a5c1-f20d-44d9-9969-4df4a0f24a2e",
+      "name": "Create an event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "client_name": "Rob",
+          "end_iso": "2026-10-16T22:00:00-04:00",
+          "event_type": "anniversary",
+          "location": "St Pete Beach",
+          "notes": "",
+          "start_iso": "2026-10-16T20:00:00-04:00",
+          "chat_id": 5076593768
+        }
+      }
+    ],
+    "Ask Photographer": [
+      {
+        "json": {
+          "data": {
+            "approved": true
+          }
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "iVg8dk3vcYQfbZ8y",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-10-13T19:33:22.622Z",
+      "updatedAt": "2026-10-13T19:33:22.622Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-10-14T14:25:21.710Z",
+  "versionId": "f8745519-75be-4bf4-9496-d02245d9bc84"
+}
