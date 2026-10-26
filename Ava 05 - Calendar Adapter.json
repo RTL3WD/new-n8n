@@ -1,0 +1,1558 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "ea531d3c-0a03-488e-a9cc-24043cfeed2f",
+    "workflowId": "7lia7pC30AeON5CP",
+    "nodes": [
+      {
+        "id": "16465397-3906-41f7-a22d-ccd4258fdd7a",
+        "name": "Calendar Request",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.3,
+        "position": [
+          0,
+          480
+        ],
+        "parameters": {
+          "inputSource": "workflowInputs",
+          "workflowInputs": {
+            "values": [
+              {
+                "name": "operation",
+                "type": "string"
+              },
+              {
+                "name": "time_min",
+                "type": "string"
+              },
+              {
+                "name": "time_max",
+                "type": "string"
+              },
+              {
+                "name": "start",
+                "type": "string"
+              },
+              {
+                "name": "end",
+                "type": "string"
+              },
+              {
+                "name": "summary",
+                "type": "string"
+              },
+              {
+                "name": "description",
+                "type": "string"
+              },
+              {
+                "name": "attendee_email",
+                "type": "string"
+              },
+              {
+                "name": "call_format",
+                "type": "string"
+              },
+              {
+                "name": "event_id",
+                "type": "string"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "5e77cda9-a5ac-4cd6-8a3f-cc3136b96285",
+        "name": "Load Calendar Settings",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          224,
+          480
+        ],
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT ava.setting('calendar_id') #>> '{}' AS calendar_id, ava.setting('timezone') #>> '{}' AS timezone",
+          "options": {}
+        },
+        "credentials": {
+          "postgres": {
+            "id": "1RCl2NMd9YUu88EJ",
+            "name": "Coolify Postgres"
+          }
+        },
+        "executeOnce": true
+      },
+      {
+        "id": "81c1c283-c526-49f3-a7e2-b1d8fc73243d",
+        "name": "Route Operation",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          448,
+          416
+        ],
+        "parameters": {
+          "mode": "rules",
+          "rules": {
+            "values": [
+              {
+                "renameOutput": true,
+                "outputKey": "get_busy",
+                "conditions": {
+                  "options": {
+                    "caseSensitive": false,
+                    "leftValue": "",
+                    "typeValidation": "strict"
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('Calendar Request').first().json.operation }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "get_busy"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "renameOutput": true,
+                "outputKey": "create_meet",
+                "conditions": {
+                  "options": {
+                    "caseSensitive": false,
+                    "leftValue": "",
+                    "typeValidation": "strict"
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('Calendar Request').first().json.operation }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "create_event"
+                    },
+                    {
+                      "leftValue": "={{ $('Calendar Request').first().json.call_format }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "meet"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "renameOutput": true,
+                "outputKey": "create_phone",
+                "conditions": {
+                  "options": {
+                    "caseSensitive": false,
+                    "leftValue": "",
+                    "typeValidation": "strict"
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('Calendar Request').first().json.operation }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "create_event"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "renameOutput": true,
+                "outputKey": "update_event",
+                "conditions": {
+                  "options": {
+                    "caseSensitive": false,
+                    "leftValue": "",
+                    "typeValidation": "strict"
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('Calendar Request').first().json.operation }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "update_event"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "renameOutput": true,
+                "outputKey": "delete_event",
+                "conditions": {
+                  "options": {
+                    "caseSensitive": false,
+                    "leftValue": "",
+                    "typeValidation": "strict"
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('Calendar Request').first().json.operation }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "delete_event"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              }
+            ]
+          },
+          "options": {
+            "fallbackOutput": "extra",
+            "renameFallbackOutput": "unknown"
+          }
+        }
+      },
+      {
+        "id": "7dbe5910-a04f-40e3-b852-048da2854100",
+        "name": "Get Busy Slots",
+        "type": "n8n-nodes-base.googleCalendar",
+        "typeVersion": 1.3,
+        "position": [
+          672,
+          0
+        ],
+        "parameters": {
+          "resource": "calendar",
+          "operation": "availability",
+          "calendar": {
+            "__rl": true,
+            "mode": "id",
+            "value": "={{ $('Load Calendar Settings').first().json.calendar_id }}"
+          },
+          "timeMin": "={{ $('Calendar Request').first().json.time_min }}",
+          "timeMax": "={{ $('Calendar Request').first().json.time_max }}",
+          "options": {
+            "outputFormat": "raw",
+            "timezone": {
+              "__rl": true,
+              "mode": "id",
+              "value": "={{ $('Load Calendar Settings').first().json.timezone }}"
+            }
+          }
+        },
+        "credentials": {
+          "googleCalendarOAuth2Api": {
+            "id": "uN5dopaOLSVA2U6J",
+            "name": "Google Calendar account"
+          }
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000,
+        "alwaysOutputData": true
+      },
+      {
+        "id": "01bfc4df-e6f0-406a-ab2e-a09fb7167168",
+        "name": "Format Busy",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          896,
+          0
+        ],
+        "parameters": {
+          "jsCode": "// Google free/busy raw response: { calendars: { <id>: { busy: [{start,end}], errors? } } }\nconst raw = $input.first()?.json ?? {};\nconst cals = raw.calendars ?? {};\nconst busy = [];\nconst errors = [];\nfor (const [id, cal] of Object.entries(cals)) {\n  for (const b of cal.busy ?? []) busy.push({ start: b.start, end: b.end });\n  if (cal.errors?.length) errors.push({ id, errors: cal.errors });\n}\nreturn [{ json: { ok: errors.length === 0, operation: 'get_busy', busy, errors, raw_keys: Object.keys(raw) } }];"
+        }
+      },
+      {
+        "id": "4ce36e83-e003-4eb1-9566-83c892a030a4",
+        "name": "Create Meet Event",
+        "type": "n8n-nodes-base.googleCalendar",
+        "typeVersion": 1.3,
+        "position": [
+          672,
+          192
+        ],
+        "parameters": {
+          "resource": "event",
+          "operation": "create",
+          "calendar": {
+            "__rl": true,
+            "mode": "id",
+            "value": "={{ $('Load Calendar Settings').first().json.calendar_id }}"
+          },
+          "start": "={{ $('Calendar Request').first().json.start }}",
+          "end": "={{ $('Calendar Request').first().json.end }}",
+          "useDefaultReminders": true,
+          "additionalFields": {
+            "summary": "={{ $('Calendar Request').first().json.summary }}",
+            "description": "={{ $('Calendar Request').first().json.description }}",
+            "attendees": [
+              "={{ $('Calendar Request').first().json.attendee_email }}"
+            ],
+            "conferenceDataUi": {
+              "conferenceDataValues": {
+                "conferenceSolution": "hangoutsMeet"
+              }
+            },
+            "sendUpdates": "all"
+          }
+        },
+        "credentials": {
+          "googleCalendarOAuth2Api": {
+            "id": "uN5dopaOLSVA2U6J",
+            "name": "Google Calendar account"
+          }
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000
+      },
+      {
+        "id": "983762e2-a514-4f77-a470-d501a223bdd0",
+        "name": "Format Created",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          896,
+          288
+        ],
+        "parameters": {
+          "mode": "manual",
+          "includeOtherFields": false,
+          "assignments": {
+            "assignments": [
+              {
+                "id": "ok",
+                "name": "ok",
+                "value": true,
+                "type": "boolean"
+              },
+              {
+                "id": "op",
+                "name": "operation",
+                "value": "create_event",
+                "type": "string"
+              },
+              {
+                "id": "eid",
+                "name": "event_id",
+                "value": "={{ $json.id }}",
+                "type": "string"
+              },
+              {
+                "id": "meet",
+                "name": "meet_link",
+                "value": "={{ $json.hangoutLink ?? '' }}",
+                "type": "string"
+              },
+              {
+                "id": "link",
+                "name": "html_link",
+                "value": "={{ $json.htmlLink ?? '' }}",
+                "type": "string"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "dc56f60f-d93e-45ef-82f0-9b133a132102",
+        "name": "Create Phone Event",
+        "type": "n8n-nodes-base.googleCalendar",
+        "typeVersion": 1.3,
+        "position": [
+          672,
+          384
+        ],
+        "parameters": {
+          "resource": "event",
+          "operation": "create",
+          "calendar": {
+            "__rl": true,
+            "mode": "id",
+            "value": "={{ $('Load Calendar Settings').first().json.calendar_id }}"
+          },
+          "start": "={{ $('Calendar Request').first().json.start }}",
+          "end": "={{ $('Calendar Request').first().json.end }}",
+          "useDefaultReminders": true,
+          "additionalFields": {
+            "summary": "={{ $('Calendar Request').first().json.summary }}",
+            "description": "={{ $('Calendar Request').first().json.description }}",
+            "attendees": [
+              "={{ $('Calendar Request').first().json.attendee_email }}"
+            ],
+            "sendUpdates": "all"
+          }
+        },
+        "credentials": {
+          "googleCalendarOAuth2Api": {
+            "id": "uN5dopaOLSVA2U6J",
+            "name": "Google Calendar account"
+          }
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000
+      },
+      {
+        "id": "4625dcbd-bef8-4fb6-859a-107e1d247a93",
+        "name": "Move Event",
+        "type": "n8n-nodes-base.googleCalendar",
+        "typeVersion": 1.3,
+        "position": [
+          672,
+          576
+        ],
+        "parameters": {
+          "resource": "event",
+          "operation": "update",
+          "calendar": {
+            "__rl": true,
+            "mode": "id",
+            "value": "={{ $('Load Calendar Settings').first().json.calendar_id }}"
+          },
+          "eventId": "={{ $('Calendar Request').first().json.event_id }}",
+          "useDefaultReminders": true,
+          "updateFields": {
+            "start": "={{ $('Calendar Request').first().json.start }}",
+            "end": "={{ $('Calendar Request').first().json.end }}",
+            "sendUpdates": "all"
+          }
+        },
+        "credentials": {
+          "googleCalendarOAuth2Api": {
+            "id": "uN5dopaOLSVA2U6J",
+            "name": "Google Calendar account"
+          }
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000
+      },
+      {
+        "id": "8e3ac2a8-d877-4e24-8759-bc9ebf6fbaeb",
+        "name": "Format Moved",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          896,
+          576
+        ],
+        "parameters": {
+          "mode": "manual",
+          "includeOtherFields": false,
+          "assignments": {
+            "assignments": [
+              {
+                "id": "ok",
+                "name": "ok",
+                "value": true,
+                "type": "boolean"
+              },
+              {
+                "id": "op",
+                "name": "operation",
+                "value": "update_event",
+                "type": "string"
+              },
+              {
+                "id": "eid",
+                "name": "event_id",
+                "value": "={{ $json.id }}",
+                "type": "string"
+              },
+              {
+                "id": "meet",
+                "name": "meet_link",
+                "value": "={{ $json.hangoutLink ?? '' }}",
+                "type": "string"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "89620b42-e802-4556-a095-84a34462e938",
+        "name": "Cancel Event",
+        "type": "n8n-nodes-base.googleCalendar",
+        "typeVersion": 1.3,
+        "position": [
+          672,
+          768
+        ],
+        "parameters": {
+          "resource": "event",
+          "operation": "delete",
+          "calendar": {
+            "__rl": true,
+            "mode": "id",
+            "value": "={{ $('Load Calendar Settings').first().json.calendar_id }}"
+          },
+          "eventId": "={{ $('Calendar Request').first().json.event_id }}",
+          "options": {
+            "sendUpdates": "all"
+          }
+        },
+        "credentials": {
+          "googleCalendarOAuth2Api": {
+            "id": "uN5dopaOLSVA2U6J",
+            "name": "Google Calendar account"
+          }
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000
+      },
+      {
+        "id": "c4b28272-f11a-4af2-b919-4200390bddfb",
+        "name": "Format Cancelled",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          896,
+          768
+        ],
+        "parameters": {
+          "mode": "manual",
+          "includeOtherFields": false,
+          "assignments": {
+            "assignments": [
+              {
+                "id": "ok",
+                "name": "ok",
+                "value": true,
+                "type": "boolean"
+              },
+              {
+                "id": "op",
+                "name": "operation",
+                "value": "delete_event",
+                "type": "string"
+              },
+              {
+                "id": "eid",
+                "name": "event_id",
+                "value": "={{ $('Calendar Request').first().json.event_id }}",
+                "type": "string"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "297d460c-f27d-4a07-ada9-a72f62b175cc",
+        "name": "Unknown Operation",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          672,
+          960
+        ],
+        "parameters": {
+          "mode": "manual",
+          "includeOtherFields": false,
+          "assignments": {
+            "assignments": [
+              {
+                "id": "ok",
+                "name": "ok",
+                "value": false,
+                "type": "boolean"
+              },
+              {
+                "id": "err",
+                "name": "error",
+                "value": "={{ 'Unknown calendar operation: ' + $('Calendar Request').first().json.operation }}",
+                "type": "string"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "99b0edcb-625e-4a07-a3d7-d1969b686098",
+        "name": "Sticky Note bf45a67e",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          416,
+          320
+        ],
+        "parameters": {
+          "content": "## Calendar Adapter (Google)\nThe only place that talks to the calendar provider. Operations: `get_busy` (free/busy only, no event details), `create_event` (Meet link when call_format = meet), `update_event` (move times), `delete_event`. Every output has `ok`. A future Outlook adapter must keep the same inputs and outputs.",
+          "color": 5,
+          "width": 160,
+          "height": 352
+        }
+      }
+    ],
+    "connections": {
+      "Calendar Request": {
+        "main": [
+          [
+            {
+              "node": "Load Calendar Settings",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Load Calendar Settings": {
+        "main": [
+          [
+            {
+              "node": "Route Operation",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Route Operation": {
+        "main": [
+          [
+            {
+              "node": "Get Busy Slots",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Create Meet Event",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Create Phone Event",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Move Event",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Cancel Event",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Unknown Operation",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Busy Slots": {
+        "main": [
+          [
+            {
+              "node": "Format Busy",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create Meet Event": {
+        "main": [
+          [
+            {
+              "node": "Format Created",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create Phone Event": {
+        "main": [
+          [
+            {
+              "node": "Format Created",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Move Event": {
+        "main": [
+          [
+            {
+              "node": "Format Moved",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Cancel Event": {
+        "main": [
+          [
+            {
+              "node": "Format Cancelled",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [
+      {
+        "id": "99702bcd-7b65-4b77-8df9-47d7343ac84b",
+        "name": "Free/busy lookup",
+        "nodeIds": [
+          "7dbe5910-a04f-40e3-b852-048da2854100",
+          "01bfc4df-e6f0-406a-ab2e-a09fb7167168"
+        ],
+        "description": "Returns busy blocks only (start/end), never event titles or attendees."
+      },
+      {
+        "id": "43692cb9-6809-416b-9625-b7f183c6b4c1",
+        "name": "Move event",
+        "nodeIds": [
+          "4625dcbd-bef8-4fb6-859a-107e1d247a93",
+          "8e3ac2a8-d877-4e24-8759-bc9ebf6fbaeb"
+        ],
+        "description": "Reschedule: moves an existing event to new times and notifies attendees."
+      },
+      {
+        "id": "1614fa6e-756c-40d9-b975-a5fc5694f02b",
+        "name": "Cancel event",
+        "nodeIds": [
+          "89620b42-e802-4556-a095-84a34462e938",
+          "c4b28272-f11a-4af2-b919-4200390bddfb"
+        ],
+        "description": "Deletes the event and sends cancellation notices to attendees."
+      },
+      {
+        "id": "46d19ff6-0b00-415e-ae25-c2ad423cf02a",
+        "name": "Settings and routing",
+        "nodeIds": [
+          "5e77cda9-a5ac-4cd6-8a3f-cc3136b96285",
+          "81c1c283-c526-49f3-a7e2-b1d8fc73243d"
+        ],
+        "description": "Reads calendar ID and timezone from ava.settings, then routes to the requested operation."
+      }
+    ],
+    "authors": "Robert Lord (via MCP)",
+    "name": "Parse raw free/busy response",
+    "description": "Updated nodes: Get Busy Slots, Format Busy",
+    "autosaved": false,
+    "createdAt": "2026-10-14T16:21:59.887Z",
+    "updatedAt": "2026-10-14T16:21:59.887Z"
+  },
+  "activeVersionId": "ea531d3c-0a03-488e-a9cc-24043cfeed2f",
+  "connections": {
+    "Calendar Request": {
+      "main": [
+        [
+          {
+            "node": "Load Calendar Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Calendar Settings": {
+      "main": [
+        [
+          {
+            "node": "Route Operation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Operation": {
+      "main": [
+        [
+          {
+            "node": "Get Busy Slots",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Meet Event",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Phone Event",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Move Event",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Cancel Event",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Unknown Operation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Busy Slots": {
+      "main": [
+        [
+          {
+            "node": "Format Busy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Meet Event": {
+      "main": [
+        [
+          {
+            "node": "Format Created",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Phone Event": {
+      "main": [
+        [
+          {
+            "node": "Format Created",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Move Event": {
+      "main": [
+        [
+          {
+            "node": "Format Moved",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cancel Event": {
+      "main": [
+        [
+          {
+            "node": "Format Cancelled",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-14T16:18:29.689Z",
+  "id": "7lia7pC30AeON5CP",
+  "isArchived": false,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "name": "Ava 05 - Calendar Adapter",
+  "nodeGroups": [
+    {
+      "id": "99702bcd-7b65-4b77-8df9-47d7343ac84b",
+      "name": "Free/busy lookup",
+      "nodeIds": [
+        "7dbe5910-a04f-40e3-b852-048da2854100",
+        "01bfc4df-e6f0-406a-ab2e-a09fb7167168"
+      ],
+      "description": "Returns busy blocks only (start/end), never event titles or attendees."
+    },
+    {
+      "id": "43692cb9-6809-416b-9625-b7f183c6b4c1",
+      "name": "Move event",
+      "nodeIds": [
+        "4625dcbd-bef8-4fb6-859a-107e1d247a93",
+        "8e3ac2a8-d877-4e24-8759-bc9ebf6fbaeb"
+      ],
+      "description": "Reschedule: moves an existing event to new times and notifies attendees."
+    },
+    {
+      "id": "1614fa6e-756c-40d9-b975-a5fc5694f02b",
+      "name": "Cancel event",
+      "nodeIds": [
+        "89620b42-e802-4556-a095-84a34462e938",
+        "c4b28272-f11a-4af2-b919-4200390bddfb"
+      ],
+      "description": "Deletes the event and sends cancellation notices to attendees."
+    },
+    {
+      "id": "46d19ff6-0b00-415e-ae25-c2ad423cf02a",
+      "name": "Settings and routing",
+      "nodeIds": [
+        "5e77cda9-a5ac-4cd6-8a3f-cc3136b96285",
+        "81c1c283-c526-49f3-a7e2-b1d8fc73243d"
+      ],
+      "description": "Reads calendar ID and timezone from ava.settings, then routes to the requested operation."
+    }
+  ],
+  "nodes": [
+    {
+      "id": "16465397-3906-41f7-a22d-ccd4258fdd7a",
+      "name": "Calendar Request",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        480
+      ],
+      "parameters": {
+        "inputSource": "workflowInputs",
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "operation",
+              "type": "string"
+            },
+            {
+              "name": "time_min",
+              "type": "string"
+            },
+            {
+              "name": "time_max",
+              "type": "string"
+            },
+            {
+              "name": "start",
+              "type": "string"
+            },
+            {
+              "name": "end",
+              "type": "string"
+            },
+            {
+              "name": "summary",
+              "type": "string"
+            },
+            {
+              "name": "description",
+              "type": "string"
+            },
+            {
+              "name": "attendee_email",
+              "type": "string"
+            },
+            {
+              "name": "call_format",
+              "type": "string"
+            },
+            {
+              "name": "event_id",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "5e77cda9-a5ac-4cd6-8a3f-cc3136b96285",
+      "name": "Load Calendar Settings",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        224,
+        480
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ava.setting('calendar_id') #>> '{}' AS calendar_id, ava.setting('timezone') #>> '{}' AS timezone",
+        "options": {}
+      },
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      },
+      "executeOnce": true
+    },
+    {
+      "id": "81c1c283-c526-49f3-a7e2-b1d8fc73243d",
+      "name": "Route Operation",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        416
+      ],
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "values": [
+            {
+              "renameOutput": true,
+              "outputKey": "get_busy",
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Calendar Request').first().json.operation }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "get_busy"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "renameOutput": true,
+              "outputKey": "create_meet",
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Calendar Request').first().json.operation }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "create_event"
+                  },
+                  {
+                    "leftValue": "={{ $('Calendar Request').first().json.call_format }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "meet"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "renameOutput": true,
+              "outputKey": "create_phone",
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Calendar Request').first().json.operation }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "create_event"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "renameOutput": true,
+              "outputKey": "update_event",
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Calendar Request').first().json.operation }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "update_event"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "renameOutput": true,
+              "outputKey": "delete_event",
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Calendar Request').first().json.operation }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "delete_event"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "unknown"
+        }
+      }
+    },
+    {
+      "id": "7dbe5910-a04f-40e3-b852-048da2854100",
+      "name": "Get Busy Slots",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        672,
+        0
+      ],
+      "parameters": {
+        "resource": "calendar",
+        "operation": "availability",
+        "calendar": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Load Calendar Settings').first().json.calendar_id }}"
+        },
+        "timeMin": "={{ $('Calendar Request').first().json.time_min }}",
+        "timeMax": "={{ $('Calendar Request').first().json.time_max }}",
+        "options": {
+          "outputFormat": "raw",
+          "timezone": {
+            "__rl": true,
+            "mode": "id",
+            "value": "={{ $('Load Calendar Settings').first().json.timezone }}"
+          }
+        }
+      },
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "alwaysOutputData": true
+    },
+    {
+      "id": "01bfc4df-e6f0-406a-ab2e-a09fb7167168",
+      "name": "Format Busy",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Google free/busy raw response: { calendars: { <id>: { busy: [{start,end}], errors? } } }\nconst raw = $input.first()?.json ?? {};\nconst cals = raw.calendars ?? {};\nconst busy = [];\nconst errors = [];\nfor (const [id, cal] of Object.entries(cals)) {\n  for (const b of cal.busy ?? []) busy.push({ start: b.start, end: b.end });\n  if (cal.errors?.length) errors.push({ id, errors: cal.errors });\n}\nreturn [{ json: { ok: errors.length === 0, operation: 'get_busy', busy, errors, raw_keys: Object.keys(raw) } }];"
+      }
+    },
+    {
+      "id": "4ce36e83-e003-4eb1-9566-83c892a030a4",
+      "name": "Create Meet Event",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        672,
+        192
+      ],
+      "parameters": {
+        "resource": "event",
+        "operation": "create",
+        "calendar": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Load Calendar Settings').first().json.calendar_id }}"
+        },
+        "start": "={{ $('Calendar Request').first().json.start }}",
+        "end": "={{ $('Calendar Request').first().json.end }}",
+        "useDefaultReminders": true,
+        "additionalFields": {
+          "summary": "={{ $('Calendar Request').first().json.summary }}",
+          "description": "={{ $('Calendar Request').first().json.description }}",
+          "attendees": [
+            "={{ $('Calendar Request').first().json.attendee_email }}"
+          ],
+          "conferenceDataUi": {
+            "conferenceDataValues": {
+              "conferenceSolution": "hangoutsMeet"
+            }
+          },
+          "sendUpdates": "all"
+        }
+      },
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "id": "983762e2-a514-4f77-a470-d501a223bdd0",
+      "name": "Format Created",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        288
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ok",
+              "name": "ok",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "op",
+              "name": "operation",
+              "value": "create_event",
+              "type": "string"
+            },
+            {
+              "id": "eid",
+              "name": "event_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "meet",
+              "name": "meet_link",
+              "value": "={{ $json.hangoutLink ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "link",
+              "name": "html_link",
+              "value": "={{ $json.htmlLink ?? '' }}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "dc56f60f-d93e-45ef-82f0-9b133a132102",
+      "name": "Create Phone Event",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        672,
+        384
+      ],
+      "parameters": {
+        "resource": "event",
+        "operation": "create",
+        "calendar": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Load Calendar Settings').first().json.calendar_id }}"
+        },
+        "start": "={{ $('Calendar Request').first().json.start }}",
+        "end": "={{ $('Calendar Request').first().json.end }}",
+        "useDefaultReminders": true,
+        "additionalFields": {
+          "summary": "={{ $('Calendar Request').first().json.summary }}",
+          "description": "={{ $('Calendar Request').first().json.description }}",
+          "attendees": [
+            "={{ $('Calendar Request').first().json.attendee_email }}"
+          ],
+          "sendUpdates": "all"
+        }
+      },
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "id": "4625dcbd-bef8-4fb6-859a-107e1d247a93",
+      "name": "Move Event",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        672,
+        576
+      ],
+      "parameters": {
+        "resource": "event",
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Load Calendar Settings').first().json.calendar_id }}"
+        },
+        "eventId": "={{ $('Calendar Request').first().json.event_id }}",
+        "useDefaultReminders": true,
+        "updateFields": {
+          "start": "={{ $('Calendar Request').first().json.start }}",
+          "end": "={{ $('Calendar Request').first().json.end }}",
+          "sendUpdates": "all"
+        }
+      },
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "id": "8e3ac2a8-d877-4e24-8759-bc9ebf6fbaeb",
+      "name": "Format Moved",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        576
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ok",
+              "name": "ok",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "op",
+              "name": "operation",
+              "value": "update_event",
+              "type": "string"
+            },
+            {
+              "id": "eid",
+              "name": "event_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "meet",
+              "name": "meet_link",
+              "value": "={{ $json.hangoutLink ?? '' }}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "89620b42-e802-4556-a095-84a34462e938",
+      "name": "Cancel Event",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        672,
+        768
+      ],
+      "parameters": {
+        "resource": "event",
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Load Calendar Settings').first().json.calendar_id }}"
+        },
+        "eventId": "={{ $('Calendar Request').first().json.event_id }}",
+        "options": {
+          "sendUpdates": "all"
+        }
+      },
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uN5dopaOLSVA2U6J",
+          "name": "Google Calendar account"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "id": "c4b28272-f11a-4af2-b919-4200390bddfb",
+      "name": "Format Cancelled",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        768
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ok",
+              "name": "ok",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "op",
+              "name": "operation",
+              "value": "delete_event",
+              "type": "string"
+            },
+            {
+              "id": "eid",
+              "name": "event_id",
+              "value": "={{ $('Calendar Request').first().json.event_id }}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "297d460c-f27d-4a07-ada9-a72f62b175cc",
+      "name": "Unknown Operation",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        960
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ok",
+              "name": "ok",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "err",
+              "name": "error",
+              "value": "={{ 'Unknown calendar operation: ' + $('Calendar Request').first().json.operation }}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "99b0edcb-625e-4a07-a3d7-d1969b686098",
+      "name": "Sticky Note bf45a67e",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        416,
+        320
+      ],
+      "parameters": {
+        "content": "## Calendar Adapter (Google)\nThe only place that talks to the calendar provider. Operations: `get_busy` (free/busy only, no event details), `create_event` (Meet link when call_format = meet), `update_event` (move times), `delete_event`. Every output has `ok`. A future Outlook adapter must keep the same inputs and outputs.",
+        "color": 5,
+        "width": 160,
+        "height": 352
+      }
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "timezone": "America/New_York",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "MgxgpZ3WBjOI2Lyl"
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "7lia7pC30AeON5CP",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-10-14T16:18:29.691Z",
+      "updatedAt": "2026-10-14T16:18:29.691Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-10-14T17:46:03.809Z",
+  "versionId": "ea531d3c-0a03-488e-a9cc-24043cfeed2f"
+}
