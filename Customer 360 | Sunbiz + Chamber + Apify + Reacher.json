@@ -1,0 +1,1579 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Daily 8am": {
+      "main": [
+        [
+          {
+            "node": "Daily Mode",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily Mode": {
+      "main": [
+        [
+          {
+            "node": "Read Source",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Source": {
+      "main": [
+        [
+          {
+            "node": "Read Published",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Manual Mode",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Mode": {
+      "main": [
+        [
+          {
+            "node": "Read Source",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Published": {
+      "main": [
+        [
+          {
+            "node": "Read Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Review": {
+      "main": [
+        [
+          {
+            "node": "Select Records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Chamber": {
+      "main": [
+        [
+          {
+            "node": "Fetch Website",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Website": {
+      "main": [
+        [
+          {
+            "node": "Search Public Web",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Public Web": {
+      "main": [
+        [
+          {
+            "node": "Apify Contact Scraper",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Research Context": {
+      "main": [
+        [
+          {
+            "node": "Research Profile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research Profile": {
+      "main": [
+        [
+          {
+            "node": "Generate Candidates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Research Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Research Profile",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Candidates": {
+      "main": [
+        [
+          {
+            "node": "Has Candidates?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Candidates?": {
+      "main": [
+        [
+          {
+            "node": "Check Email Reacher",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Candidates Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Email Reacher": {
+      "main": [
+        [
+          {
+            "node": "Attach Reacher Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Attach Reacher Result": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Checks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Checks": {
+      "main": [
+        [
+          {
+            "node": "Publish?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publish?": {
+      "main": [
+        [
+          {
+            "node": "Save Results",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Save Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Results": {
+      "main": [
+        [
+          {
+            "node": "Clear Refresh Flag",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Review": {
+      "main": [
+        [
+          {
+            "node": "Clear Refresh Flag",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Candidates Review": {
+      "main": [
+        [
+          {
+            "node": "Save Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apify Contact Scraper": {
+      "main": [
+        [
+          {
+            "node": "Apify LinkedIn Employees",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apify LinkedIn Employees": {
+      "main": [
+        [
+          {
+            "node": "Build Research Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select Records": {
+      "main": [
+        [
+          {
+            "node": "One Business at a Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "One Business at a Time": {
+      "main": [
+        null,
+        [
+          {
+            "node": "Fetch Chamber",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clear Refresh Flag": {
+      "main": [
+        [
+          {
+            "node": "One Business at a Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-15T15:32:49.581Z",
+  "id": "KIIhC4N0ia1t5KWS",
+  "isArchived": false,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Customer 360 | Sunbiz + Chamber + Apify + Reacher",
+  "nodeGroups": [
+    {
+      "id": "ac7efffd-c46a-4b75-9030-f721047e9180",
+      "name": "Research sources",
+      "nodeIds": [
+        "a8de5147-b195-485e-9162-56dc77c44068",
+        "62fa5ae9-52b4-462e-991f-dfb5cc9bb2f4",
+        "bb23eccd-d7ff-49bc-adfb-5b1116a3978e",
+        "b67790b9-bc70-4430-b539-11fab500962c",
+        "cfad69ce-b44a-48cc-8332-c6523adc0ca0",
+        "ffeaf9de-2887-4fd2-aebf-1c5686ac7ae8"
+      ],
+      "description": "Collect chamber, business site, public search, website contacts, and LinkedIn employee evidence."
+    },
+    {
+      "id": "326cd543-1139-4bdf-87ba-95a27d397dd2",
+      "name": "Extract profiles",
+      "nodeIds": [
+        "46515e6c-657c-4740-9372-2712c1830bfe",
+        "248299db-21a1-47d9-9893-20435d3f1702",
+        "15da1c6b-7014-45be-9aa9-c5356dedb6d0"
+      ],
+      "description": "Extract attributed people and generate four email candidates per person."
+    },
+    {
+      "id": "580e8cad-0c91-4916-b9ca-5fa1dbeed817",
+      "name": "Select business rows",
+      "nodeIds": [
+        "10b6dd39-bc31-49af-9038-a35b2586b7ed",
+        "919a14db-209e-4491-9a4a-e34a2136c6ef",
+        "1137e398-c61a-43d3-a668-d8bf00bb38a1",
+        "7df6bf67-7e51-4a45-89db-eb2b05d31495"
+      ],
+      "description": "Read source and prior results, then choose 100 new rows or marked refresh requests."
+    },
+    {
+      "id": "b22f9ea6-7bfe-463b-91bf-0a97efe9453a",
+      "name": "Verify and route profiles",
+      "nodeIds": [
+        "26507b4d-01d7-4ab1-85fc-c9ffa56e70ec",
+        "551e20a9-11d1-438b-bfb5-9387c93c58fd",
+        "f4e671d0-ffaf-44eb-b567-3de5c5f0f751",
+        "7132dce9-8f46-4b65-b26d-7ca80d419df2",
+        "8cc0adf1-3f9a-4e11-abd5-f98b5d49fc2c",
+        "58e72291-6092-48a3-9763-6e51240be109",
+        "05d2fdd9-e3f3-44bc-aa2e-1286eada701a",
+        "00a77de7-855f-4a39-81d8-66ffbc40b0dc",
+        "eec8b009-ac1a-4e95-8f34-b4709d4727d6"
+      ],
+      "description": "Check four emails per person, hold uncertain profiles for review, and save the result."
+    }
+  ],
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "id": "22b6074a-b2d8-4c99-a73c-86324cefe239",
+      "name": "Daily 8am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -96,
+        -208
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "return {json:{mode:'daily'}};"
+      },
+      "id": "13eddfa1-5acc-4c70-8106-a322603a4afa",
+      "name": "Daily Mode",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        128,
+        -208
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1lrJ_Fk63Gp_Q2ZVICO_MPsuJAB7vFMsykxJar95l36k"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "771439209",
+          "cachedResultName": "unified_list_sunbiz_enriched"
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "specifyRangeA1",
+              "range": "A1:X10170"
+            }
+          }
+        }
+      },
+      "id": "10b6dd39-bc31-49af-9038-a35b2586b7ed",
+      "name": "Read Source",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        416,
+        16
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sKITsW661Itsg15I",
+          "name": "Google Sheets account - ASP"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "4b57ccbf-b631-40c3-94ab-2068bbaabdc3",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        -16
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "return {json:{mode:'manual'}};"
+      },
+      "id": "4298c0be-768e-40fb-bae9-2c0a89e48ccb",
+      "name": "Manual Mode",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        128,
+        -16
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1lrJ_Fk63Gp_Q2ZVICO_MPsuJAB7vFMsykxJar95l36k"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1364757157",
+          "cachedResultName": "Customer360_Results"
+        },
+        "options": {}
+      },
+      "id": "919a14db-209e-4491-9a4a-e34a2136c6ef",
+      "name": "Read Published",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        640,
+        16
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sKITsW661Itsg15I",
+          "name": "Google Sheets account - ASP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1lrJ_Fk63Gp_Q2ZVICO_MPsuJAB7vFMsykxJar95l36k"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1006872204",
+          "cachedResultName": "Customer360_Review"
+        },
+        "options": {}
+      },
+      "id": "1137e398-c61a-43d3-a668-d8bf00bb38a1",
+      "name": "Read Review",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        864,
+        16
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sKITsW661Itsg15I",
+          "name": "Google Sheets account - ASP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const source = $('Read Source').all().map(x => x.json).filter(x => x.name);\nconst done = new Set([...$('Read Published').all(), ...$('Read Review').all()].map(x => x.json.record_key).filter(Boolean));\nlet mode = 'daily';\ntry { const manual=$('Manual Mode').all(); if(manual.length) mode='manual'; } catch (e) {}\nconst rows = source.map((s, i) => {\n  const key = String(s.profile_url || s.sunbiz_document_number || [s.name,s.street,s.city_state_zip].join('|')).trim();\n  return { ...s, record_key:key, source_row:Number(s.row_number || i+2) };\n}).filter(s => s.record_key && (mode === 'manual' ? String(s.c360_refresh_request || '').trim().toUpperCase() === 'REFRESH' : !done.has(s.record_key)));\nreturn rows.slice(0, 100).map(json => ({json}));"
+      },
+      "id": "7df6bf67-7e51-4a45-89db-eb2b05d31495",
+      "name": "Select Records",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1088,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.profile_url || 'https://www.uschamber.com/co/chambers' }}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 2
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "text"
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "a8de5147-b195-485e-9162-56dc77c44068",
+      "name": "Fetch Chamber",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1168,
+        -48
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Select Records').item.json.website || $('Select Records').item.json.profile_url || 'https://www.uschamber.com/co/chambers' }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "text"
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "62fa5ae9-52b4-462e-991f-dfb5cc9bb2f4",
+      "name": "Fetch Website",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1392,
+        -48
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://serpapi.com/search.json",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "serpApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "engine",
+              "value": "google"
+            },
+            {
+              "name": "q",
+              "value": "={{ $('Select Records').item.json.name + ' ' + $('Select Records').item.json.city_state_zip + ' owner contact LinkedIn automation' }}"
+            },
+            {
+              "name": "num",
+              "value": "10"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 2
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "bb23eccd-d7ff-49bc-adfb-5b1116a3978e",
+      "name": "Search Public Web",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1616,
+        -48
+      ],
+      "credentials": {
+        "serpApi": {
+          "id": "TrHqZUgKGIHkC3cl",
+          "name": "SerpAPI account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input=$input.all();\nconst groups=new Map();\nconst clean=(v)=>String(v?.html??v?.body??v?.data??(typeof v==='string'?v:'')).replace(/<script[\\s\\S]*?<\\/script>/gi,' ').replace(/<style[\\s\\S]*?<\\/style>/gi,' ').replace(/<[^>]+>/g,' ').replace(/&nbsp;|&#160;/gi,' ').replace(/&amp;/gi,'&').replace(/\\s+/g,' ').trim().slice(0,9000);\nfor(let i=0;i<input.length;i++){\n let source={},chamber={},website={},search={},contact={};\n try {source=$('Select Records').itemMatching(i).json;} catch(e) {source=$('Select Records').all()[i]?.json||{};}\n try {chamber=$('Fetch Chamber').itemMatching(i).json;} catch(e) {}\n try {website=$('Fetch Website').itemMatching(i).json;} catch(e) {}\n try {search=$('Search Public Web').itemMatching(i).json.body??$('Search Public Web').itemMatching(i).json;} catch(e) {}\n try {contact=$('Apify Contact Scraper').itemMatching(i).json;} catch(e) {}\n const key=source.record_key||String(i);\n if(!groups.has(key)) groups.set(key,{source,chamber_text:clean(chamber),website_text:clean(website),search_results:(search.organic_results||[]).slice(0,10).map(r=>({title:r.title,snippet:r.snippet,link:r.link})),contact_details:contact,linkedin_people:[],source_anomalies:[]});\n const raw=input[i].json; const people=Array.isArray(raw)?raw:Array.isArray(raw.body)?raw.body:Array.isArray(raw.items)?raw.items:[raw];\n for(const person of people) if(person && typeof person==='object' && (person.fullName||person.name||person.profileUrl||person.linkedinUrl)) groups.get(key).linkedin_people.push(person);\n}\nreturn [...groups.values()].map(v=>{v.linkedin_people=v.linkedin_people.slice(0,3);const filed=String(v.source.sunbiz_date_filed||'');if(/20[2-9][0-9]/.test(filed)&&new Date(filed).getTime()>Date.now())v.source_anomalies.push('Sunbiz filing date appears in the future; do not infer age from it');return {json:v};});"
+      },
+      "id": "ffeaf9de-2887-4fd2-aebf-1c5686ac7ae8",
+      "name": "Build Research Context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2288,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ 'Research this business. Return ONLY valid JSON with keys confirmed_match (boolean), company_match_confidence (high/medium/low), website, business_phone, business_email, people (up to 3 objects with name, role, public_email, public_phone, linkedin_url, evidence_url, confidence), evidence (objects {claim,url}), observed_needs (facts with evidence URL), hypothesized_needs (labeled hypotheses), automation_fit (yes/no/unknown), fit_reason, source_anomalies. Use only supplied evidence; verify company/person identity by location, domain, names and roles. Apify results are leads, not confirmation. Include actual source URLs; never invent facts, URLs, email addresses, or interest in AI. Hypotheses may infer likely needs from business operations. Assess fit for automated solutions, including an Ava-like booking assistant when relevant. Keep absence empty, distinguish observed facts from hypotheses. Source context: '+JSON.stringify($json).slice(0,45000) }}",
+        "batching": {
+          "batchSize": 1,
+          "delayBetweenBatches": 500
+        }
+      },
+      "id": "46515e6c-657c-4740-9372-2712c1830bfe",
+      "name": "Research Profile",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1696,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {
+          "maxTokensToSample": 2500,
+          "temperature": 0.1
+        }
+      },
+      "id": "248299db-21a1-47d9-9893-20435d3f1702",
+      "name": "Groq Research Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        1768,
+        168
+      ],
+      "credentials": {
+        "groqApi": {
+          "id": "Sky8svfm6OEcYSKn",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const contexts = $('Build Research Context').all().map(x => x.json);\nconst outputs = $input.all();\nconst out = [];\nfor (let i=0;i<outputs.length;i++) {\n  const src = contexts[i]?.source || {};\n  let p = outputs[i].json.output ?? outputs[i].json.text ?? outputs[i].json;\n  if (typeof p === 'string') { try { p=JSON.parse(p.replace(/^\\s*```(?:json)?/i,'').replace(/```\\s*$/,'').trim()); } catch(e) { p={parse_error:String(e),people:[],evidence:[]}; } }\n  if (!p || typeof p !== 'object') p={parse_error:'No structured output',people:[],evidence:[]};\n  const people = (Array.isArray(p.people)?p.people:[]).filter(x=>x&&String(x.name||'').trim().split(/\\s+/).length>=2).slice(0,3);\n  p.people=people;\n  const rawSite=String(p.website||src.website||'');\n  let domain='';\n  domain=rawSite.toLowerCase().replace(/^https?:\\/\\//,'').split('/')[0].split(':')[0].replace(/^www\\./,'');\n  if (!domain || !domain.includes('.') || domain.includes('linkedin.com') || domain.includes('facebook.com')) domain='';\n  const known=people.map(x=>String(x.public_email||'').toLowerCase()).find(x=>x.endsWith('@'+domain));\n  let pattern='';\n  if (known) {\n    const owner=people.find(x=>String(x.public_email||'').toLowerCase()===known);\n    const parts=String(owner?.name||'').toLowerCase().replace(/[^a-z\\s-]/g,'').split(/\\s+/).filter(Boolean);\n    const first=parts[0]||'', last=parts.at(-1)||'', local=known.split('@')[0];\n    if(local===first+'.'+last) pattern='first.last'; else if(local===first[0]+last) pattern='flast'; else if(local===first) pattern='first'; else if(local===first+last) pattern='firstlast';\n  }\n  for (let j=0;j<people.length;j++) {\n    const person=people[j];\n    const parts=String(person.name).toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z\\s-]/g,'').split(/\\s+/).filter(Boolean);\n    const first=parts[0]||'', last=parts.at(-1)||'';\n    if(!domain || !first || !last) continue;\n    const local={ 'first.last':first+'.'+last, flast:first[0]+last, first:first, firstlast:first+last };\n    const variants=[String(person.public_email||'').toLowerCase(),pattern?local[pattern]+'@'+domain:'',first+'.'+last+'@'+domain,first[0]+last+'@'+domain,first+'@'+domain,first+last+'@'+domain,first+'_'+last+'@'+domain,last+'@'+domain];\n    const emails=[...new Set(variants.filter(x=>/^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$/.test(x)&&x.endsWith('@'+domain)))].slice(0,4);\n    if(emails.length<4) continue;\n    emails.forEach((email,k)=>out.push({json:{record_key:src.record_key,source:src,profile:p,person_index:j,candidate_email:email,candidate_rank:k+1,known_pattern:pattern,skip_check:false}}));\n  }\n  if(!out.some(x=>x.json.record_key===src.record_key)) out.push({json:{record_key:src.record_key,source:src,profile:p,candidate_email:'',skip_check:true}});\n}\nreturn out;"
+      },
+      "id": "15da1c6b-7014-45be-9aa9-c5356dedb6d0",
+      "name": "Generate Candidates",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2048,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.skip_check }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "false"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "26507b4d-01d7-4ab1-85fc-c9ffa56e70ec",
+      "name": "Has Candidates?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2224,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://u2wfervxqiwcouzajnmnqqxo.aspworkplace.com/v0/check_email",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({to_email:$json.candidate_email}) }}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 4
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "551e20a9-11d1-438b-bfb5-9387c93c58fd",
+      "name": "Check Email Reacher",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        2448,
+        64
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const candidate = $('Generate Candidates').item.json;\nconst result = $json.body ?? $json;\nreturn {json:{...candidate,reacher:result}};"
+      },
+      "id": "f4e671d0-ffaf-44eb-b567-3de5c5f0f751",
+      "name": "Attach Reacher Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2672,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const groups=new Map();\nfor(const x of $input.all()) { const v=x.json; const key=v.record_key; if(!groups.has(key))groups.set(key,{source:v.source,profile:v.profile,checks:[]}); const g=groups.get(key); g.checks.push({person_index:v.person_index,person:g.profile.people?.[v.person_index]?.name||'',email:v.candidate_email,rank:v.candidate_rank,status:String(v.reacher?.is_reachable||'unknown').toLowerCase(),result:v.reacher}); }\nconst rows=[];\nfor(const item of groups.values()) { const src = item.source || {}; const p = item.profile || {};\nconst people=Array.isArray(p.people)?p.people:[];\nconst checks=item.checks||[];\nconst safe=checks.filter(c=>c.status==='safe').map(c=>c.email);\nconst confirmed=p.confirmed_match===true && String(p.company_match_confidence||'').toLowerCase()==='high';\nconst evidence=(Array.isArray(p.evidence)?p.evidence:[]).filter(e=>e&&/^https?:\\/\\//.test(e.url||''));\nconst complete=people.length>0 && people.every((person,i)=>new Set(checks.filter(c=>c.person_index===i).map(c=>c.email)).size>=4);\nconst high=confirmed && complete && safe.length>0 && evidence.length>0 && !p.parse_error;\nconst reasons=[];\nif(!confirmed) reasons.push('Business identity not confirmed at high confidence');\nif(!people.length) reasons.push('No attributable person found');\nif(!complete) reasons.push('Fewer than four Reacher checks for at least one person');\nif(!safe.length) reasons.push('No safe Reacher email');\nif(!evidence.length) reasons.push('No cited source evidence');\nif(p.parse_error) reasons.push('Research output could not be parsed');\nconst row={record_key:src.record_key,source_row:src.source_row,business_name:src.name||'',legal_name:src.sunbiz_legal_name||'',entity_status:src.sunbiz_status||'',category:src.category||'',street:src.street||'',city_state_zip:src.city_state_zip||'',website:p.website||src.website||'',chamber_profile:src.profile_url||'',business_phone:p.business_phone||src.phone||'',business_email:p.business_email||'',people_json:JSON.stringify(people),decision_makers:people.filter(x=>/owner|founder|president|ceo|manager|director|principal/i.test(x.role||'')).map(x=>x.name+' ('+x.role+')').join('; '),safe_email_addresses:safe.join('; '),email_checks_json:JSON.stringify(checks),observed_needs:JSON.stringify(p.observed_needs||[]),hypothesized_needs:JSON.stringify(p.hypothesized_needs||[]),automation_fit:p.automation_fit||'unknown',fit_reason:p.fit_reason||'',company_match_confidence:p.company_match_confidence||'low',profile_confidence:high?'high':'low',evidence_json:JSON.stringify({sources:[src.profile_url,src.website,src.sunbiz_source].filter(Boolean),claims:evidence,source_anomalies:p.source_anomalies||[]}),review_reason:reasons.join('; '),researched_at:new Date().toISOString(),review_status:high?'AUTO_PUBLISHED':'PENDING'};\nrows.push({json:row}); }\nreturn rows;"
+      },
+      "id": "7132dce9-8f46-4b65-b26d-7ca80d419df2",
+      "name": "Aggregate Checks",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2896,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.review_status }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "rightValue": "AUTO_PUBLISHED"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "8cc0adf1-3f9a-4e11-abd5-f98b5d49fc2c",
+      "name": "Publish?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3120,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1lrJ_Fk63Gp_Q2ZVICO_MPsuJAB7vFMsykxJar95l36k"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1364757157",
+          "cachedResultName": "Customer360_Results"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "schema": [
+            {
+              "id": "record_key",
+              "displayName": "record_key",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source_row",
+              "displayName": "source_row",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "business_name",
+              "displayName": "business_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "legal_name",
+              "displayName": "legal_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "entity_status",
+              "displayName": "entity_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "street",
+              "displayName": "street",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "city_state_zip",
+              "displayName": "city_state_zip",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "website",
+              "displayName": "website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "chamber_profile",
+              "displayName": "chamber_profile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "business_phone",
+              "displayName": "business_phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "business_email",
+              "displayName": "business_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "people_json",
+              "displayName": "people_json",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "decision_makers",
+              "displayName": "decision_makers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "safe_email_addresses",
+              "displayName": "safe_email_addresses",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "email_checks_json",
+              "displayName": "email_checks_json",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "observed_needs",
+              "displayName": "observed_needs",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "hypothesized_needs",
+              "displayName": "hypothesized_needs",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "automation_fit",
+              "displayName": "automation_fit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "fit_reason",
+              "displayName": "fit_reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "company_match_confidence",
+              "displayName": "company_match_confidence",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "profile_confidence",
+              "displayName": "profile_confidence",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "evidence_json",
+              "displayName": "evidence_json",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "review_reason",
+              "displayName": "review_reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "researched_at",
+              "displayName": "researched_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "review_status",
+              "displayName": "review_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ],
+          "matchingColumns": [
+            "record_key"
+          ]
+        },
+        "options": {
+          "handlingExtraData": "ignoreIt"
+        }
+      },
+      "id": "58e72291-6092-48a3-9763-6e51240be109",
+      "name": "Save Results",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3344,
+        16
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sKITsW661Itsg15I",
+          "name": "Google Sheets account - ASP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1lrJ_Fk63Gp_Q2ZVICO_MPsuJAB7vFMsykxJar95l36k"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "771439209",
+          "cachedResultName": "unified_list_sunbiz_enriched"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "profile_url": "={{ $json.chamber_profile }}",
+            "c360_refresh_request": ""
+          },
+          "schema": [
+            {
+              "id": "profile_url",
+              "displayName": "profile_url",
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "c360_refresh_request",
+              "displayName": "c360_refresh_request",
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ],
+          "matchingColumns": [
+            "profile_url"
+          ]
+        },
+        "options": {}
+      },
+      "id": "eec8b009-ac1a-4e95-8f34-b4709d4727d6",
+      "name": "Clear Refresh Flag",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3568,
+        160
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sKITsW661Itsg15I",
+          "name": "Google Sheets account - ASP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1lrJ_Fk63Gp_Q2ZVICO_MPsuJAB7vFMsykxJar95l36k"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1006872204",
+          "cachedResultName": "Customer360_Review"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "schema": [
+            {
+              "id": "record_key",
+              "displayName": "record_key",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source_row",
+              "displayName": "source_row",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "business_name",
+              "displayName": "business_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "legal_name",
+              "displayName": "legal_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "entity_status",
+              "displayName": "entity_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "street",
+              "displayName": "street",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "city_state_zip",
+              "displayName": "city_state_zip",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "website",
+              "displayName": "website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "chamber_profile",
+              "displayName": "chamber_profile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "business_phone",
+              "displayName": "business_phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "business_email",
+              "displayName": "business_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "people_json",
+              "displayName": "people_json",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "decision_makers",
+              "displayName": "decision_makers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "safe_email_addresses",
+              "displayName": "safe_email_addresses",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "email_checks_json",
+              "displayName": "email_checks_json",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "observed_needs",
+              "displayName": "observed_needs",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "hypothesized_needs",
+              "displayName": "hypothesized_needs",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "automation_fit",
+              "displayName": "automation_fit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "fit_reason",
+              "displayName": "fit_reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "company_match_confidence",
+              "displayName": "company_match_confidence",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "profile_confidence",
+              "displayName": "profile_confidence",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "evidence_json",
+              "displayName": "evidence_json",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "review_reason",
+              "displayName": "review_reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "researched_at",
+              "displayName": "researched_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "review_status",
+              "displayName": "review_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ],
+          "matchingColumns": [
+            "record_key"
+          ]
+        },
+        "options": {
+          "handlingExtraData": "ignoreIt"
+        }
+      },
+      "id": "05d2fdd9-e3f3-44bc-aa2e-1286eada701a",
+      "name": "Save Review",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3344,
+        256
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sKITsW661Itsg15I",
+          "name": "Google Sheets account - ASP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const item=$json; item.checks=[]; const src = item.source || {}; const p = item.profile || {};\nconst people=Array.isArray(p.people)?p.people:[];\nconst checks=item.checks||[];\nconst safe=checks.filter(c=>c.status==='safe').map(c=>c.email);\nconst confirmed=p.confirmed_match===true && String(p.company_match_confidence||'').toLowerCase()==='high';\nconst evidence=(Array.isArray(p.evidence)?p.evidence:[]).filter(e=>e&&/^https?:\\/\\//.test(e.url||''));\nconst high=confirmed && safe.length>0 && evidence.length>0 && !p.parse_error;\nconst reasons=[];\nif(!confirmed) reasons.push('Business identity not confirmed at high confidence');\nif(!people.length) reasons.push('No attributable person found');\nif(!safe.length) reasons.push('No safe Reacher email');\nif(!evidence.length) reasons.push('No cited source evidence');\nif(p.parse_error) reasons.push('Research output could not be parsed');\nconst row={record_key:src.record_key,source_row:src.source_row,business_name:src.name||'',legal_name:src.sunbiz_legal_name||'',entity_status:src.sunbiz_status||'',category:src.category||'',street:src.street||'',city_state_zip:src.city_state_zip||'',website:p.website||src.website||'',chamber_profile:src.profile_url||'',business_phone:p.business_phone||src.phone||'',business_email:p.business_email||'',people_json:JSON.stringify(people),decision_makers:people.filter(x=>/owner|founder|president|ceo|manager|director|principal/i.test(x.role||'')).map(x=>x.name+' ('+x.role+')').join('; '),safe_email_addresses:safe.join('; '),email_checks_json:JSON.stringify(checks),observed_needs:JSON.stringify(p.observed_needs||[]),hypothesized_needs:JSON.stringify(p.hypothesized_needs||[]),automation_fit:p.automation_fit||'unknown',fit_reason:p.fit_reason||'',company_match_confidence:p.company_match_confidence||'low',profile_confidence:high?'high':'low',evidence_json:JSON.stringify({sources:[src.profile_url,src.website,src.sunbiz_source].filter(Boolean),claims:evidence,source_anomalies:p.source_anomalies||[]}),review_reason:reasons.join('; '),researched_at:new Date().toISOString(),review_status:high?'AUTO_PUBLISHED':'PENDING'};\nrow.review_reason=[row.review_reason,'Fewer than four candidates for a researched person or no attributable person/domain'].filter(Boolean).join('; '); row.profile_confidence='low'; row.review_status='PENDING'; return {json:row};"
+      },
+      "id": "00a77de7-855f-4a39-81d8-66ffbc40b0dc",
+      "name": "No Candidates Review",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3120,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "Run actor and get dataset",
+        "actorId": {
+          "__rl": true,
+          "value": "9Sk4JJhEma9vBKqrg",
+          "mode": "list",
+          "cachedResultName": "Contact Details Scraper (vdrmota/contact-info-scraper)",
+          "cachedResultUrl": "https://console.apify.com/actors/9Sk4JJhEma9vBKqrg/input"
+        },
+        "customBody": "{{ JSON.stringify({startUrls:[{url:$('Select Records').item.json.website || $('Select Records').item.json.profile_url}],maxRequestsPerStartUrl:4,maxRequests:4,maxDepth:1,mergeContacts:true,sameDomain:true,maximumLeadsEnrichmentRecords:0,verifyLeadsEnrichmentEmails:false}) }}",
+        "maxTotalChargeUsd": 0.05
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 2,
+      "position": [
+        1840,
+        -48
+      ],
+      "id": "b67790b9-bc70-4430-b539-11fab500962c",
+      "name": "Apify Contact Scraper",
+      "alwaysOutputData": true,
+      "credentials": {
+        "apifyApi": {
+          "id": "fuM1jAgRqeFNhCrG",
+          "name": "ASP Apify Account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "Run actor and get dataset",
+        "actorSource": "store",
+        "actorId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Vb6LZkh4EqRlR0Ka9",
+          "cachedResultName": "LinkedIn Company Employees Scraper (No Cookies) (harvestapi/linkedin-company-employees)"
+        },
+        "customBody": "{{ JSON.stringify({companies:[$('Select Records').item.json.name],profileScraperMode:'Short ($4 per 1k)',maxItems:3}) }}",
+        "maxTotalChargeUsd": 0.05
+      },
+      "id": "cfad69ce-b44a-48cc-8332-c6523adc0ca0",
+      "name": "Apify LinkedIn Employees",
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 2,
+      "position": [
+        2064,
+        -48
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "apifyApi": {
+          "id": "fuM1jAgRqeFNhCrG",
+          "name": "ASP Apify Account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "id": "8f9e0d08-afdc-49ef-8da2-6fd0718d1d59",
+      "name": "One Business at a Time",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        880,
+        -112
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "timezone": "America/New_York",
+    "binaryMode": "separate"
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "KIIhC4N0ia1t5KWS",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-10-15T15:32:49.589Z",
+      "updatedAt": "2026-10-15T15:32:49.589Z"
+    }
+  ],
+  "staticData": {
+    "node:Daily 8am": {
+      "recurrenceRules": [
+        null
+      ],
+      "recurrenceRuleSignatures": [
+        null
+      ]
+    }
+  },
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2026-10-15T16:30:18.610Z",
+  "versionId": "fd31834d-4b45-4f3e-921f-1e3eb29b084a"
+}
