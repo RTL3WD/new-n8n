@@ -1,0 +1,544 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "8e11c1c5-3c28-44e4-8cf2-6805fcc80670",
+    "workflowId": "X6f87zkwg1NauDVW",
+    "nodes": [
+      {
+        "id": "990d033a-c785-40cd-9220-999ad3e9ac4c",
+        "name": "Booking Request",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.3,
+        "position": [
+          0,
+          80
+        ],
+        "parameters": {
+          "inputSource": "workflowInputs",
+          "workflowInputs": {
+            "values": [
+              {
+                "name": "client_id",
+                "type": "string"
+              },
+              {
+                "name": "service",
+                "type": "string"
+              },
+              {
+                "name": "start",
+                "type": "string"
+              },
+              {
+                "name": "end",
+                "type": "string"
+              },
+              {
+                "name": "call_format",
+                "type": "string"
+              },
+              {
+                "name": "call_phone",
+                "type": "string"
+              },
+              {
+                "name": "topic",
+                "type": "string"
+              },
+              {
+                "name": "budget_text",
+                "type": "string"
+              },
+              {
+                "name": "timeline_text",
+                "type": "string"
+              },
+              {
+                "name": "notes",
+                "type": "string"
+              },
+              {
+                "name": "channel",
+                "type": "string"
+              },
+              {
+                "name": "kind",
+                "type": "string"
+              },
+              {
+                "name": "replaces_booking_id",
+                "type": "string"
+              },
+              {
+                "name": "urgent_words",
+                "type": "boolean"
+              },
+              {
+                "name": "client_name",
+                "type": "string"
+              },
+              {
+                "name": "client_email",
+                "type": "string"
+              },
+              {
+                "name": "company",
+                "type": "string"
+              },
+              {
+                "name": "found_via",
+                "type": "string"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "212c0c11-6358-407e-9ac9-afd7288fc48a",
+        "name": "Create Pending Booking",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          224,
+          80
+        ],
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT ava.create_booking_request(\n  $1::uuid, $2, $3::timestamptz, $4::timestamptz, $5, $6, $7, $8, $9, $10, $11,\n  COALESCE(NULLIF($12, ''), 'new'), NULLIF($13, '')::uuid, COALESCE(NULLIF($14, '')::boolean, false)\n) AS result",
+          "options": {
+            "queryReplacement": "={{ (() => { const r = $('Booking Request').first().json; return [ r.client_id, r.service ?? '', r.start, r.end, (r.call_format || 'meet').toLowerCase(), r.call_phone ?? '', r.topic ?? '', r.budget_text ?? '', r.timeline_text ?? '', r.notes ?? '', r.channel ?? 'telegram', r.kind ?? '', r.replaces_booking_id ?? '', String(r.urgent_words ?? false) ]; })() }}"
+          }
+        },
+        "credentials": {
+          "postgres": {
+            "id": "1RCl2NMd9YUu88EJ",
+            "name": "Coolify Postgres"
+          }
+        }
+      },
+      {
+        "id": "ca1bce15-9978-4e34-8df5-22a1a11c4609",
+        "name": "Request Created?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          448,
+          80
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose"
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ $json.result.ok }}",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          }
+        }
+      },
+      {
+        "id": "1701c9c7-1cd9-4a4e-824a-0a24e9d5cee2",
+        "name": "Return Result",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          896,
+          80
+        ],
+        "parameters": {
+          "mode": "raw",
+          "jsonOutput": "={{ JSON.stringify($('Create Pending Booking').first().json.result) }}"
+        }
+      },
+      {
+        "id": "0f84a70f-ff09-4b8e-bf89-88c1c9135606",
+        "name": "Sticky Note e7862069",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          192,
+          -16
+        ],
+        "parameters": {
+          "content": "## Booking Request\nCalled by Ava's request_booking tool. The database re-checks the slot, decides urgency, sets the paused approval timers and queues the owner alert, all in one transaction. The alert is dispatched without waiting, so the client gets an answer immediately.",
+          "color": 5,
+          "width": 160,
+          "height": 224
+        }
+      },
+      {
+        "id": "5706c86b-4cf3-453c-a0e4-655bc25370ab",
+        "name": "Save Client Profile",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          -80,
+          0
+        ],
+        "parameters": {
+          "operation": "executeQuery",
+          "options": {
+            "queryReplacement": "={{ [ $json.client_id, $json.client_name ?? '', $json.client_email ?? '', $json.call_phone ?? '', $json.company ?? '', $json.found_via ?? '' ] }}"
+          },
+          "query": "SELECT ava.update_client_profile($1::uuid, $2, $3, $4, $5, $6) AS saved"
+        },
+        "credentials": {
+          "postgres": {
+            "id": "1RCl2NMd9YUu88EJ",
+            "name": "Coolify Postgres"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Create Pending Booking": {
+        "main": [
+          [
+            {
+              "node": "Request Created?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Request Created?": {
+        "main": [
+          [
+            {
+              "node": "Return Result",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Return Result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Booking Request": {
+        "main": [
+          [
+            {
+              "node": "Save Client Profile",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Save Client Profile": {
+        "main": [
+          [
+            {
+              "node": "Create Pending Booking",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Robert Lord (via MCP)",
+    "name": "Stop dispatching approvals before the client is told",
+    "description": "Removed nodes: Send Due Alerts Now\nConnections: 1 added, 2 removed",
+    "autosaved": false,
+    "createdAt": "2026-10-14T17:56:51.466Z",
+    "updatedAt": "2026-10-14T17:56:51.466Z"
+  },
+  "activeVersionId": "8e11c1c5-3c28-44e4-8cf2-6805fcc80670",
+  "connections": {
+    "Create Pending Booking": {
+      "main": [
+        [
+          {
+            "node": "Request Created?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Request Created?": {
+      "main": [
+        [
+          {
+            "node": "Return Result",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Return Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Booking Request": {
+      "main": [
+        [
+          {
+            "node": "Save Client Profile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Client Profile": {
+      "main": [
+        [
+          {
+            "node": "Create Pending Booking",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-14T16:27:57.748Z",
+  "id": "X6f87zkwg1NauDVW",
+  "isArchived": false,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "name": "Ava 08 - Booking Request",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "990d033a-c785-40cd-9220-999ad3e9ac4c",
+      "name": "Booking Request",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        80
+      ],
+      "parameters": {
+        "inputSource": "workflowInputs",
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "client_id",
+              "type": "string"
+            },
+            {
+              "name": "service",
+              "type": "string"
+            },
+            {
+              "name": "start",
+              "type": "string"
+            },
+            {
+              "name": "end",
+              "type": "string"
+            },
+            {
+              "name": "call_format",
+              "type": "string"
+            },
+            {
+              "name": "call_phone",
+              "type": "string"
+            },
+            {
+              "name": "topic",
+              "type": "string"
+            },
+            {
+              "name": "budget_text",
+              "type": "string"
+            },
+            {
+              "name": "timeline_text",
+              "type": "string"
+            },
+            {
+              "name": "notes",
+              "type": "string"
+            },
+            {
+              "name": "channel",
+              "type": "string"
+            },
+            {
+              "name": "kind",
+              "type": "string"
+            },
+            {
+              "name": "replaces_booking_id",
+              "type": "string"
+            },
+            {
+              "name": "urgent_words",
+              "type": "boolean"
+            },
+            {
+              "name": "client_name",
+              "type": "string"
+            },
+            {
+              "name": "client_email",
+              "type": "string"
+            },
+            {
+              "name": "company",
+              "type": "string"
+            },
+            {
+              "name": "found_via",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "212c0c11-6358-407e-9ac9-afd7288fc48a",
+      "name": "Create Pending Booking",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        224,
+        80
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ava.create_booking_request(\n  $1::uuid, $2, $3::timestamptz, $4::timestamptz, $5, $6, $7, $8, $9, $10, $11,\n  COALESCE(NULLIF($12, ''), 'new'), NULLIF($13, '')::uuid, COALESCE(NULLIF($14, '')::boolean, false)\n) AS result",
+        "options": {
+          "queryReplacement": "={{ (() => { const r = $('Booking Request').first().json; return [ r.client_id, r.service ?? '', r.start, r.end, (r.call_format || 'meet').toLowerCase(), r.call_phone ?? '', r.topic ?? '', r.budget_text ?? '', r.timeline_text ?? '', r.notes ?? '', r.channel ?? 'telegram', r.kind ?? '', r.replaces_booking_id ?? '', String(r.urgent_words ?? false) ]; })() }}"
+        }
+      },
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      }
+    },
+    {
+      "id": "ca1bce15-9978-4e34-8df5-22a1a11c4609",
+      "name": "Request Created?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        80
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.result.ok }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "1701c9c7-1cd9-4a4e-824a-0a24e9d5cee2",
+      "name": "Return Result",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        80
+      ],
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ JSON.stringify($('Create Pending Booking').first().json.result) }}"
+      }
+    },
+    {
+      "id": "0f84a70f-ff09-4b8e-bf89-88c1c9135606",
+      "name": "Sticky Note e7862069",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        192,
+        -16
+      ],
+      "parameters": {
+        "content": "## Booking Request\nCalled by Ava's request_booking tool. The database re-checks the slot, decides urgency, sets the paused approval timers and queues the owner alert, all in one transaction. The alert is dispatched without waiting, so the client gets an answer immediately.",
+        "color": 5,
+        "width": 160,
+        "height": 224
+      }
+    },
+    {
+      "id": "5706c86b-4cf3-453c-a0e4-655bc25370ab",
+      "name": "Save Client Profile",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        -80,
+        0
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "options": {
+          "queryReplacement": "={{ [ $json.client_id, $json.client_name ?? '', $json.client_email ?? '', $json.call_phone ?? '', $json.company ?? '', $json.found_via ?? '' ] }}"
+        },
+        "query": "SELECT ava.update_client_profile($1::uuid, $2, $3, $4, $5, $6) AS saved"
+      },
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      }
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "errorWorkflow": "MgxgpZ3WBjOI2Lyl"
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "X6f87zkwg1NauDVW",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-10-14T16:27:57.750Z",
+      "updatedAt": "2026-10-14T16:27:57.750Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-10-14T17:56:51.465Z",
+  "versionId": "8e11c1c5-3c28-44e4-8cf2-6805fcc80670"
+}
