@@ -1,0 +1,1470 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "ff2532d6-e1d1-4dbf-825c-67f11372dde8",
+    "workflowId": "48I4ya8nEVnfUOPV",
+    "nodes": [
+      {
+        "parameters": {
+          "updates": [
+            "message",
+            "callback_query"
+          ],
+          "additionalFields": {}
+        },
+        "id": "85451683-21c1-4565-aea8-af913dc04d86",
+        "name": "Telegram Update",
+        "type": "n8n-nodes-base.telegramTrigger",
+        "typeVersion": 1.5,
+        "position": [
+          0,
+          400
+        ],
+        "webhookId": "fb48f1c7-8ea8-4613-9d83-f958e5314dee",
+        "credentials": {
+          "telegramApi": {
+            "id": "GrHxwuhk9SECQo8h",
+            "name": "NanoRob3"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT ava.setting('owner_chat_id') #>> '{}' AS owner_chat_id,\n       COALESCE((ava.setting('owner_test_mode') #>> '{}')::boolean, false) AS test_mode",
+          "options": {}
+        },
+        "id": "29033ec3-b201-4760-8bfe-1e0529a655c2",
+        "name": "Load Owner Settings",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          288,
+          576
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "1RCl2NMd9YUu88EJ",
+            "name": "Coolify Postgres"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Decide what this Telegram update is: an owner button tap, an owner command, owner chatter,\n// a client message (including the owner in /testclient mode), or something to ignore.\nconst u = $('Telegram Update').first().json;\nconst s = $input.first().json;\nconst owner = String(s.owner_chat_id);\n\nif (u.callback_query) {\n  const cq = u.callback_query;\n  const fromOwner = String(cq.from?.id) === owner || String(cq.message?.chat?.id) === owner;\n  return [{ json: fromOwner\n    ? { kind: 'owner_tap', callback_data: cq.data ?? '', callback_query_id: cq.id }\n    : { kind: 'ignore', reason: 'callback from non-owner' } }];\n}\n\nconst msg = u.message;\nif (!msg || msg.chat?.type !== 'private') {\n  return [{ json: { kind: 'ignore', reason: 'not a private message' } }];\n}\n\nconst chat = String(msg.chat.id);\nconst text = (msg.text ?? msg.caption ?? '').trim();\nconst isOwner = chat === owner;\n\nif (isOwner && text.startsWith('/')) {\n  const [command, ...rest] = text.split(/\\s+/);\n  return [{ json: { kind: 'owner_command', chat, command, args: rest.join(' ') } }];\n}\nif (isOwner && !s.test_mode) {\n  return [{ json: { kind: 'owner_chat', chat } }];\n}\nif (!text) {\n  return [{ json: { kind: 'unsupported', chat } }];\n}\nif (!isOwner && text === '/start') {\n  // Telegram sends /start when someone opens the bot: treat it as a hello\n  return [{ json: { kind: 'client', chat, channel: 'telegram', sender_ref: chat,\n    sender_name: [msg.from?.first_name, msg.from?.last_name].filter(Boolean).join(' '),\n    text: 'Hi', external_id: String(msg.message_id) } }];\n}\nreturn [{ json: { kind: 'client', chat, channel: 'telegram', sender_ref: chat,\n  sender_name: [msg.from?.first_name, msg.from?.last_name].filter(Boolean).join(' '),\n  text, external_id: String(msg.message_id) } }];"
+        },
+        "id": "1d4c70ec-4903-44ca-a0a3-ee98648e9b17",
+        "name": "Sort Update",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          512,
+          576
+        ]
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": false,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.kind }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "client"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "client"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": false,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.kind }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "owner_tap"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "owner tap"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": false,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.kind }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "owner_command"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "owner command"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": false,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.kind }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "owner_chat"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "owner chat"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": false,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.kind }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "unsupported"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "unsupported"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "d2a97694-e3b1-4f53-97a3-64b53e6f44d8",
+        "name": "Route Update",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          736,
+          528
+        ]
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "cVfGRyYqzfJWwFEt",
+            "cachedResultName": "Ava 02 - Core Router"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "channel": "telegram",
+              "sender_ref": "={{ $json.sender_ref }}",
+              "sender_name": "={{ $json.sender_name }}",
+              "text": "={{ $json.text }}",
+              "external_id": "={{ $json.external_id }}",
+              "thread_ref": ""
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "channel",
+                "displayName": "channel",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "sender_ref",
+                "displayName": "sender_ref",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "sender_name",
+                "displayName": "sender_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "text",
+                "displayName": "text",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "external_id",
+                "displayName": "external_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "thread_ref",
+                "displayName": "thread_ref",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              }
+            ],
+            "attemptToConvertTypes": false
+          },
+          "options": {
+            "waitForSubWorkflow": false
+          }
+        },
+        "id": "054ae155-8414-4ecb-ab04-5645b563753f",
+        "name": "Hand To Core Router",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.4,
+        "position": [
+          912,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "BuG8FMtVBs56gLlY",
+            "cachedResultName": "Ava 10 - Owner Actions"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "callback_data": "={{ $json.callback_data }}",
+              "callback_query_id": "={{ $json.callback_query_id }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "callback_data",
+                "displayName": "callback_data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "callback_query_id",
+                "displayName": "callback_query_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              }
+            ],
+            "attemptToConvertTypes": false
+          },
+          "options": {
+            "waitForSubWorkflow": false
+          }
+        },
+        "id": "1adda1d0-64e0-43e0-a03c-6225407e06ab",
+        "name": "Hand To Owner Actions",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.4,
+        "position": [
+          912,
+          384
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT ava.owner_command($1, $2) AS r",
+          "options": {
+            "queryReplacement": "={{ [ $json.command, $json.args ] }}"
+          }
+        },
+        "id": "d0b1539a-82c4-4d44-803a-090d69dff934",
+        "name": "Run Owner Command",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          944,
+          400
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "1RCl2NMd9YUu88EJ",
+            "name": "Coolify Postgres"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ $json.r.send }}",
+                "operator": {
+                  "type": "object",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "8b028277-0b2a-41c8-82ac-152371babe8e",
+        "name": "Message For Client?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1168,
+          400
+        ]
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "gSgaG1ldpxS6eyyp",
+            "cachedResultName": "Ava 06 - Reply Adapter"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "client_id": "={{ $json.r.send.client_id }}",
+              "channel": "={{ $json.r.send.channel }}",
+              "recipient": "={{ $json.r.send.recipient }}",
+              "text": "={{ $json.r.send.text }}",
+              "reply_to": "={{ $json.r.send.reply_to }}",
+              "thread_ref": "={{ $json.r.send.thread_ref }}",
+              "author": "owner"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "client_id",
+                "displayName": "client_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "channel",
+                "displayName": "channel",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "recipient",
+                "displayName": "recipient",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "text",
+                "displayName": "text",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "reply_to",
+                "displayName": "reply_to",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "thread_ref",
+                "displayName": "thread_ref",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "author",
+                "displayName": "author",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              }
+            ],
+            "attemptToConvertTypes": false
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "id": "9302d343-9a93-4d08-b022-cc1abb18e726",
+        "name": "Send Owner Message To Client",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.4,
+        "position": [
+          1392,
+          336
+        ]
+      },
+      {
+        "parameters": {
+          "chatId": "={{ $('Sort Update').first().json.chat }}",
+          "text": "={{ String($('Run Owner Command').first().json.r.reply).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}",
+          "additionalFields": {
+            "appendAttribution": false,
+            "parse_mode": "HTML"
+          }
+        },
+        "id": "645ff68b-b07e-416d-9853-106bda5dab15",
+        "name": "Reply To Owner",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1616,
+          400
+        ],
+        "webhookId": "71983140-e8cd-403b-9186-25ecd2724bd0",
+        "credentials": {
+          "telegramApi": {
+            "id": "GrHxwuhk9SECQo8h",
+            "name": "NanoRob3"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "={{ $json.chat }}",
+          "text": "You are in owner mode, so Ava does not answer you. Send /help for commands, or /testclient to chat with Ava as a client.",
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "id": "4bd6a589-8abd-4c02-8179-3767c751f0c1",
+        "name": "Owner Mode Hint",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          912,
+          576
+        ],
+        "webhookId": "66b940d7-7f28-4da1-abd8-3ded6d2f0de8",
+        "credentials": {
+          "telegramApi": {
+            "id": "GrHxwuhk9SECQo8h",
+            "name": "NanoRob3"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "={{ $json.chat }}",
+          "text": "Thanks! I can only read text messages for now. Could you type out what you need?",
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "id": "f3825174-7a46-4d44-a9f1-0a867ca1ab3b",
+        "name": "Text Only Reply",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          912,
+          768
+        ],
+        "webhookId": "55fde054-d151-4575-b4c6-a24b58e1d627",
+        "credentials": {
+          "telegramApi": {
+            "id": "GrHxwuhk9SECQo8h",
+            "name": "NanoRob3"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## Telegram Ingest\nThe only workflow listening to the bot (Telegram allows one webhook per bot). Sorts each update: owner button taps go to Owner Actions, owner commands run here, client messages (and the owner in /testclient mode) go to the Core Router. Hands off without waiting so Telegram gets a fast response.",
+          "height": 240,
+          "width": 400,
+          "color": 4
+        },
+        "id": "17e8b23f-0770-41f0-a372-080fce66ec78",
+        "name": "Sticky Note 90d5eb0c",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          240,
+          144
+        ]
+      }
+    ],
+    "connections": {
+      "Telegram Update": {
+        "main": [
+          [
+            {
+              "node": "Load Owner Settings",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Load Owner Settings": {
+        "main": [
+          [
+            {
+              "node": "Sort Update",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Sort Update": {
+        "main": [
+          [
+            {
+              "node": "Route Update",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Route Update": {
+        "main": [
+          [
+            {
+              "node": "Hand To Core Router",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Hand To Owner Actions",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Run Owner Command",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Owner Mode Hint",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Text Only Reply",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Run Owner Command": {
+        "main": [
+          [
+            {
+              "node": "Message For Client?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Message For Client?": {
+        "main": [
+          [
+            {
+              "node": "Send Owner Message To Client",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Reply To Owner",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send Owner Message To Client": {
+        "main": [
+          [
+            {
+              "node": "Reply To Owner",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [
+      {
+        "id": "879cd161-48b1-4094-a708-128d3462085f",
+        "name": "Sort",
+        "nodeIds": [
+          "29033ec3-b201-4760-8bfe-1e0529a655c2",
+          "1d4c70ec-4903-44ca-a0a3-ee98648e9b17",
+          "d2a97694-e3b1-4f53-97a3-64b53e6f44d8"
+        ],
+        "description": "Loads the owner chat and test mode, then labels the update: client, owner tap, owner command, owner chat or unsupported."
+      },
+      {
+        "id": "21b29eaf-5632-4383-a43d-8888f537ce8a",
+        "name": "Owner commands",
+        "nodeIds": [
+          "d0b1539a-82c4-4d44-803a-090d69dff934",
+          "8b028277-0b2a-41c8-82ac-152371babe8e",
+          "9302d343-9a93-4d08-b022-cc1abb18e726",
+          "645ff68b-b07e-416d-9853-106bda5dab15"
+        ],
+        "description": "Runs /testclient, /takeover, /say, /resume or /help in the database, relays /say text to the client, and confirms to the owner."
+      }
+    ],
+    "authors": "Robert Lord",
+    "name": "Version ff2532d6",
+    "description": "",
+    "autosaved": true,
+    "createdAt": "2026-10-15T15:29:37.938Z",
+    "updatedAt": "2026-10-15T15:29:53.000Z"
+  },
+  "activeVersionId": "ff2532d6-e1d1-4dbf-825c-67f11372dde8",
+  "connections": {
+    "Telegram Update": {
+      "main": [
+        [
+          {
+            "node": "Load Owner Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Owner Settings": {
+      "main": [
+        [
+          {
+            "node": "Sort Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort Update": {
+      "main": [
+        [
+          {
+            "node": "Route Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Update": {
+      "main": [
+        [
+          {
+            "node": "Hand To Core Router",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Hand To Owner Actions",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Run Owner Command",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Owner Mode Hint",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Text Only Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Owner Command": {
+      "main": [
+        [
+          {
+            "node": "Message For Client?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message For Client?": {
+      "main": [
+        [
+          {
+            "node": "Send Owner Message To Client",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply To Owner",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Owner Message To Client": {
+      "main": [
+        [
+          {
+            "node": "Reply To Owner",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-14T17:14:16.708Z",
+  "id": "48I4ya8nEVnfUOPV",
+  "isArchived": false,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "name": "Ava 01 - Telegram Ingest",
+  "nodeGroups": [
+    {
+      "id": "879cd161-48b1-4094-a708-128d3462085f",
+      "name": "Sort",
+      "nodeIds": [
+        "29033ec3-b201-4760-8bfe-1e0529a655c2",
+        "1d4c70ec-4903-44ca-a0a3-ee98648e9b17",
+        "d2a97694-e3b1-4f53-97a3-64b53e6f44d8"
+      ],
+      "description": "Loads the owner chat and test mode, then labels the update: client, owner tap, owner command, owner chat or unsupported."
+    },
+    {
+      "id": "21b29eaf-5632-4383-a43d-8888f537ce8a",
+      "name": "Owner commands",
+      "nodeIds": [
+        "d0b1539a-82c4-4d44-803a-090d69dff934",
+        "8b028277-0b2a-41c8-82ac-152371babe8e",
+        "9302d343-9a93-4d08-b022-cc1abb18e726",
+        "645ff68b-b07e-416d-9853-106bda5dab15"
+      ],
+      "description": "Runs /testclient, /takeover, /say, /resume or /help in the database, relays /say text to the client, and confirms to the owner."
+    }
+  ],
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message",
+          "callback_query"
+        ],
+        "additionalFields": {}
+      },
+      "id": "85451683-21c1-4565-aea8-af913dc04d86",
+      "name": "Telegram Update",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        400
+      ],
+      "webhookId": "fb48f1c7-8ea8-4613-9d83-f958e5314dee",
+      "credentials": {
+        "telegramApi": {
+          "id": "GrHxwuhk9SECQo8h",
+          "name": "NanoRob3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ava.setting('owner_chat_id') #>> '{}' AS owner_chat_id,\n       COALESCE((ava.setting('owner_test_mode') #>> '{}')::boolean, false) AS test_mode",
+        "options": {}
+      },
+      "id": "29033ec3-b201-4760-8bfe-1e0529a655c2",
+      "name": "Load Owner Settings",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        288,
+        576
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Decide what this Telegram update is: an owner button tap, an owner command, owner chatter,\n// a client message (including the owner in /testclient mode), or something to ignore.\nconst u = $('Telegram Update').first().json;\nconst s = $input.first().json;\nconst owner = String(s.owner_chat_id);\n\nif (u.callback_query) {\n  const cq = u.callback_query;\n  const fromOwner = String(cq.from?.id) === owner || String(cq.message?.chat?.id) === owner;\n  return [{ json: fromOwner\n    ? { kind: 'owner_tap', callback_data: cq.data ?? '', callback_query_id: cq.id }\n    : { kind: 'ignore', reason: 'callback from non-owner' } }];\n}\n\nconst msg = u.message;\nif (!msg || msg.chat?.type !== 'private') {\n  return [{ json: { kind: 'ignore', reason: 'not a private message' } }];\n}\n\nconst chat = String(msg.chat.id);\nconst text = (msg.text ?? msg.caption ?? '').trim();\nconst isOwner = chat === owner;\n\nif (isOwner && text.startsWith('/')) {\n  const [command, ...rest] = text.split(/\\s+/);\n  return [{ json: { kind: 'owner_command', chat, command, args: rest.join(' ') } }];\n}\nif (isOwner && !s.test_mode) {\n  return [{ json: { kind: 'owner_chat', chat } }];\n}\nif (!text) {\n  return [{ json: { kind: 'unsupported', chat } }];\n}\nif (!isOwner && text === '/start') {\n  // Telegram sends /start when someone opens the bot: treat it as a hello\n  return [{ json: { kind: 'client', chat, channel: 'telegram', sender_ref: chat,\n    sender_name: [msg.from?.first_name, msg.from?.last_name].filter(Boolean).join(' '),\n    text: 'Hi', external_id: String(msg.message_id) } }];\n}\nreturn [{ json: { kind: 'client', chat, channel: 'telegram', sender_ref: chat,\n  sender_name: [msg.from?.first_name, msg.from?.last_name].filter(Boolean).join(' '),\n  text, external_id: String(msg.message_id) } }];"
+      },
+      "id": "1d4c70ec-4903-44ca-a0a3-ee98648e9b17",
+      "name": "Sort Update",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        512,
+        576
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.kind }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "client"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "client"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.kind }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "owner_tap"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "owner tap"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.kind }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "owner_command"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "owner command"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.kind }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "owner_chat"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "owner chat"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.kind }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "unsupported"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "unsupported"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d2a97694-e3b1-4f53-97a3-64b53e6f44d8",
+      "name": "Route Update",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        736,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "cVfGRyYqzfJWwFEt",
+          "cachedResultName": "Ava 02 - Core Router"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "channel": "telegram",
+            "sender_ref": "={{ $json.sender_ref }}",
+            "sender_name": "={{ $json.sender_name }}",
+            "text": "={{ $json.text }}",
+            "external_id": "={{ $json.external_id }}",
+            "thread_ref": ""
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "channel",
+              "displayName": "channel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "sender_ref",
+              "displayName": "sender_ref",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "sender_name",
+              "displayName": "sender_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "external_id",
+              "displayName": "external_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "thread_ref",
+              "displayName": "thread_ref",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "id": "054ae155-8414-4ecb-ab04-5645b563753f",
+      "name": "Hand To Core Router",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        912,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "BuG8FMtVBs56gLlY",
+          "cachedResultName": "Ava 10 - Owner Actions"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "callback_data": "={{ $json.callback_data }}",
+            "callback_query_id": "={{ $json.callback_query_id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "callback_data",
+              "displayName": "callback_data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "callback_query_id",
+              "displayName": "callback_query_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "id": "1adda1d0-64e0-43e0-a03c-6225407e06ab",
+      "name": "Hand To Owner Actions",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        912,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ava.owner_command($1, $2) AS r",
+        "options": {
+          "queryReplacement": "={{ [ $json.command, $json.args ] }}"
+        }
+      },
+      "id": "d0b1539a-82c4-4d44-803a-090d69dff934",
+      "name": "Run Owner Command",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        944,
+        400
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.r.send }}",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "8b028277-0b2a-41c8-82ac-152371babe8e",
+      "name": "Message For Client?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1168,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gSgaG1ldpxS6eyyp",
+          "cachedResultName": "Ava 06 - Reply Adapter"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "client_id": "={{ $json.r.send.client_id }}",
+            "channel": "={{ $json.r.send.channel }}",
+            "recipient": "={{ $json.r.send.recipient }}",
+            "text": "={{ $json.r.send.text }}",
+            "reply_to": "={{ $json.r.send.reply_to }}",
+            "thread_ref": "={{ $json.r.send.thread_ref }}",
+            "author": "owner"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "client_id",
+              "displayName": "client_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "channel",
+              "displayName": "channel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "recipient",
+              "displayName": "recipient",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "reply_to",
+              "displayName": "reply_to",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "thread_ref",
+              "displayName": "thread_ref",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "author",
+              "displayName": "author",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "9302d343-9a93-4d08-b022-cc1abb18e726",
+      "name": "Send Owner Message To Client",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        1392,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Sort Update').first().json.chat }}",
+        "text": "={{ String($('Run Owner Command').first().json.r.reply).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "645ff68b-b07e-416d-9853-106bda5dab15",
+      "name": "Reply To Owner",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1616,
+        400
+      ],
+      "webhookId": "71983140-e8cd-403b-9186-25ecd2724bd0",
+      "credentials": {
+        "telegramApi": {
+          "id": "GrHxwuhk9SECQo8h",
+          "name": "NanoRob3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat }}",
+        "text": "You are in owner mode, so Ava does not answer you. Send /help for commands, or /testclient to chat with Ava as a client.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "4bd6a589-8abd-4c02-8179-3767c751f0c1",
+      "name": "Owner Mode Hint",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        912,
+        576
+      ],
+      "webhookId": "66b940d7-7f28-4da1-abd8-3ded6d2f0de8",
+      "credentials": {
+        "telegramApi": {
+          "id": "GrHxwuhk9SECQo8h",
+          "name": "NanoRob3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat }}",
+        "text": "Thanks! I can only read text messages for now. Could you type out what you need?",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "f3825174-7a46-4d44-a9f1-0a867ca1ab3b",
+      "name": "Text Only Reply",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        912,
+        768
+      ],
+      "webhookId": "55fde054-d151-4575-b4c6-a24b58e1d627",
+      "credentials": {
+        "telegramApi": {
+          "id": "GrHxwuhk9SECQo8h",
+          "name": "NanoRob3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Telegram Ingest\nThe only workflow listening to the bot (Telegram allows one webhook per bot). Sorts each update: owner button taps go to Owner Actions, owner commands run here, client messages (and the owner in /testclient mode) go to the Core Router. Hands off without waiting so Telegram gets a fast response.",
+        "height": 240,
+        "width": 400,
+        "color": 4
+      },
+      "id": "17e8b23f-0770-41f0-a372-080fce66ec78",
+      "name": "Sticky Note 90d5eb0c",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        240,
+        144
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "timezone": "America/New_York",
+    "errorWorkflow": "MgxgpZ3WBjOI2Lyl",
+    "binaryMode": "separate"
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "48I4ya8nEVnfUOPV",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-10-14T17:14:16.710Z",
+      "updatedAt": "2026-10-14T17:14:16.710Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2026-10-15T15:29:37.936Z",
+  "versionId": "ff2532d6-e1d1-4dbf-825c-67f11372dde8"
+}
