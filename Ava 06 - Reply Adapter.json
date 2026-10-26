@@ -1,0 +1,940 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "d67e3bab-6b6f-40ec-b8c0-db101c3a1a50",
+    "workflowId": "gSgaG1ldpxS6eyyp",
+    "nodes": [
+      {
+        "id": "0b9a1995-9b35-4b7a-9de2-7627d7209159",
+        "name": "Reply Request",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.3,
+        "position": [
+          0,
+          192
+        ],
+        "parameters": {
+          "inputSource": "workflowInputs",
+          "workflowInputs": {
+            "values": [
+              {
+                "name": "client_id",
+                "type": "string"
+              },
+              {
+                "name": "channel",
+                "type": "string"
+              },
+              {
+                "name": "recipient",
+                "type": "string"
+              },
+              {
+                "name": "text",
+                "type": "string"
+              },
+              {
+                "name": "reply_to",
+                "type": "string"
+              },
+              {
+                "name": "thread_ref",
+                "type": "string"
+              },
+              {
+                "name": "author",
+                "type": "string"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "161741a9-2229-422d-a3ed-56bf4cf4e7c6",
+        "name": "Route by Channel",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          224,
+          176
+        ],
+        "parameters": {
+          "mode": "rules",
+          "rules": {
+            "values": [
+              {
+                "renameOutput": true,
+                "outputKey": "telegram",
+                "conditions": {
+                  "options": {
+                    "caseSensitive": false,
+                    "leftValue": "",
+                    "typeValidation": "strict"
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.channel }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "telegram"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "renameOutput": true,
+                "outputKey": "email",
+                "conditions": {
+                  "options": {
+                    "caseSensitive": false,
+                    "leftValue": "",
+                    "typeValidation": "strict"
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.channel }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "email"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              }
+            ]
+          },
+          "options": {
+            "fallbackOutput": "extra",
+            "renameFallbackOutput": "unsupported"
+          }
+        }
+      },
+      {
+        "id": "9e72b86c-3737-4ef4-a6c2-e3c700a38a5e",
+        "name": "Send Telegram",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          496,
+          320
+        ],
+        "parameters": {
+          "resource": "message",
+          "operation": "sendMessage",
+          "chatId": "={{ $json.recipient }}",
+          "text": "={{ String($json.text ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').slice(0, 4000) }}",
+          "additionalFields": {
+            "appendAttribution": false,
+            "parse_mode": "HTML",
+            "disable_web_page_preview": true
+          }
+        },
+        "credentials": {
+          "telegramApi": {
+            "id": "GrHxwuhk9SECQo8h",
+            "name": "NanoRob3"
+          }
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000,
+        "webhookId": "8f54c6d1-52b0-40fc-af26-91fcc7fdcdbd"
+      },
+      {
+        "id": "5425a34d-7474-4db6-af25-fe70cdaa6a6f",
+        "name": "Telegram Result",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          720,
+          320
+        ],
+        "parameters": {
+          "mode": "manual",
+          "includeOtherFields": false,
+          "assignments": {
+            "assignments": [
+              {
+                "id": "ext",
+                "name": "external_id",
+                "value": "={{ String($json.result?.message_id ?? '') }}",
+                "type": "string"
+              },
+              {
+                "id": "thr",
+                "name": "thread_ref",
+                "value": "",
+                "type": "string"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "349bacdc-e2cc-4db7-b62d-a8e4df3c949f",
+        "name": "Log Outbound Message",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          1024,
+          416
+        ],
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "INSERT INTO ava.messages (client_id, channel, direction, author, sender_ref, external_id, thread_ref, body)\nVALUES (NULLIF($1, '')::uuid, $2, 'out', COALESCE(NULLIF($3, ''), 'ava'), $4, NULLIF($5, ''), NULLIF($6, ''), $7)\nRETURNING id AS message_log_id, external_id, thread_ref",
+          "options": {
+            "queryReplacement": "={{ [ $('Reply Request').first().json.client_id ?? '', $('Reply Request').first().json.channel, $('Reply Request').first().json.author ?? '', $('Reply Request').first().json.recipient, $json.external_id ?? '', $json.thread_ref ?? '', $('Reply Request').first().json.text ] }}"
+          }
+        },
+        "credentials": {
+          "postgres": {
+            "id": "1RCl2NMd9YUu88EJ",
+            "name": "Coolify Postgres"
+          }
+        }
+      },
+      {
+        "id": "a6b498da-a063-4794-8afb-761ca4ebfcf5",
+        "name": "Reply by Email",
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.2,
+        "position": [
+          496,
+          512
+        ],
+        "parameters": {
+          "resource": "message",
+          "operation": "reply",
+          "messageId": "={{ $json.reply_to }}",
+          "emailType": "text",
+          "message": "={{ $json.text }}",
+          "options": {
+            "appendAttribution": false,
+            "replyToSenderOnly": true
+          }
+        },
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "E777VIw7zyxrVJ7s",
+            "name": "Rob Gmail account"
+          }
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000,
+        "webhookId": "77092317-e484-46e5-a145-e1bd28dc3c2c"
+      },
+      {
+        "id": "1ca7ec63-f367-4a0b-bbdb-aa044bd54324",
+        "name": "Email Result",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          720,
+          512
+        ],
+        "parameters": {
+          "mode": "manual",
+          "includeOtherFields": false,
+          "assignments": {
+            "assignments": [
+              {
+                "id": "ext",
+                "name": "external_id",
+                "value": "={{ $json.id ?? '' }}",
+                "type": "string"
+              },
+              {
+                "id": "thr",
+                "name": "thread_ref",
+                "value": "={{ $json.threadId ?? $('Reply Request').first().json.thread_ref ?? '' }}",
+                "type": "string"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "00e577e6-b256-4f77-a933-d3aab9ee0a9f",
+        "name": "Unsupported Channel",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          608,
+          0
+        ],
+        "parameters": {
+          "mode": "manual",
+          "includeOtherFields": false,
+          "assignments": {
+            "assignments": [
+              {
+                "id": "ok",
+                "name": "ok",
+                "value": false,
+                "type": "boolean"
+              },
+              {
+                "id": "err",
+                "name": "error",
+                "value": "={{ 'No reply adapter for channel: ' + $json.channel }}",
+                "type": "string"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "c9438211-cbb0-46c0-a47f-4e79ec75f53b",
+        "name": "Reply Sent",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1248,
+          416
+        ],
+        "parameters": {
+          "mode": "manual",
+          "includeOtherFields": true,
+          "assignments": {
+            "assignments": [
+              {
+                "id": "ok",
+                "name": "ok",
+                "value": true,
+                "type": "boolean"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "70413e64-b18f-4f94-a945-597215f7de26",
+        "name": "Sticky Note cb536f5f",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          192,
+          80
+        ],
+        "parameters": {
+          "content": "## Reply Adapter\nSends a message on the client's channel and logs it to `ava.messages`. Telegram text is HTML-escaped so client-supplied symbols never break formatting. Email replies stay in the original Gmail thread. New channels (SMS, WhatsApp) add one branch here.",
+          "color": 5,
+          "width": 160,
+          "height": 256
+        }
+      }
+    ],
+    "connections": {
+      "Reply Request": {
+        "main": [
+          [
+            {
+              "node": "Route by Channel",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Route by Channel": {
+        "main": [
+          [
+            {
+              "node": "Send Telegram",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Reply by Email",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Unsupported Channel",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send Telegram": {
+        "main": [
+          [
+            {
+              "node": "Telegram Result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Telegram Result": {
+        "main": [
+          [
+            {
+              "node": "Log Outbound Message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Log Outbound Message": {
+        "main": [
+          [
+            {
+              "node": "Reply Sent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Reply by Email": {
+        "main": [
+          [
+            {
+              "node": "Email Result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Email Result": {
+        "main": [
+          [
+            {
+              "node": "Log Outbound Message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [
+      {
+        "id": "8d9aa3e6-f115-46ae-994f-b61a8365b454",
+        "name": "Telegram",
+        "nodeIds": [
+          "9e72b86c-3737-4ef4-a6c2-e3c700a38a5e",
+          "5425a34d-7474-4db6-af25-fe70cdaa6a6f"
+        ],
+        "description": "Sends via the deployment bot, HTML-escaped, max 4000 characters."
+      },
+      {
+        "id": "81d31b7f-53e3-4bf1-9811-03e64af7f980",
+        "name": "Email",
+        "nodeIds": [
+          "a6b498da-a063-4794-8afb-761ca4ebfcf5",
+          "1ca7ec63-f367-4a0b-bbdb-aa044bd54324"
+        ],
+        "description": "Replies inside the original Gmail thread, sender only, no n8n attribution."
+      },
+      {
+        "id": "0bbbf480-3011-43bb-a894-7d9f5a5a2610",
+        "name": "Log",
+        "nodeIds": [
+          "349bacdc-e2cc-4db7-b62d-a8e4df3c949f",
+          "c9438211-cbb0-46c0-a47f-4e79ec75f53b"
+        ],
+        "description": "Writes the outbound message to ava.messages and returns ok."
+      }
+    ],
+    "authors": "Robert Lord (via MCP)",
+    "name": "Initial reply adapter",
+    "description": "Created with 10 nodes: Reply Request, Route by Channel, Send Telegram, Telegram Result, Log Outbound Message and 5 more",
+    "autosaved": false,
+    "createdAt": "2026-10-14T16:22:43.770Z",
+    "updatedAt": "2026-10-14T16:22:43.770Z"
+  },
+  "activeVersionId": "d67e3bab-6b6f-40ec-b8c0-db101c3a1a50",
+  "connections": {
+    "Reply Request": {
+      "main": [
+        [
+          {
+            "node": "Route by Channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Channel": {
+      "main": [
+        [
+          {
+            "node": "Send Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply by Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Unsupported Channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Telegram": {
+      "main": [
+        [
+          {
+            "node": "Telegram Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Result": {
+      "main": [
+        [
+          {
+            "node": "Log Outbound Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Outbound Message": {
+      "main": [
+        [
+          {
+            "node": "Reply Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply by Email": {
+      "main": [
+        [
+          {
+            "node": "Email Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Result": {
+      "main": [
+        [
+          {
+            "node": "Log Outbound Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-14T16:22:43.766Z",
+  "id": "gSgaG1ldpxS6eyyp",
+  "isArchived": false,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "name": "Ava 06 - Reply Adapter",
+  "nodeGroups": [
+    {
+      "id": "8d9aa3e6-f115-46ae-994f-b61a8365b454",
+      "name": "Telegram",
+      "nodeIds": [
+        "9e72b86c-3737-4ef4-a6c2-e3c700a38a5e",
+        "5425a34d-7474-4db6-af25-fe70cdaa6a6f"
+      ],
+      "description": "Sends via the deployment bot, HTML-escaped, max 4000 characters."
+    },
+    {
+      "id": "81d31b7f-53e3-4bf1-9811-03e64af7f980",
+      "name": "Email",
+      "nodeIds": [
+        "a6b498da-a063-4794-8afb-761ca4ebfcf5",
+        "1ca7ec63-f367-4a0b-bbdb-aa044bd54324"
+      ],
+      "description": "Replies inside the original Gmail thread, sender only, no n8n attribution."
+    },
+    {
+      "id": "0bbbf480-3011-43bb-a894-7d9f5a5a2610",
+      "name": "Log",
+      "nodeIds": [
+        "349bacdc-e2cc-4db7-b62d-a8e4df3c949f",
+        "c9438211-cbb0-46c0-a47f-4e79ec75f53b"
+      ],
+      "description": "Writes the outbound message to ava.messages and returns ok."
+    }
+  ],
+  "nodes": [
+    {
+      "id": "0b9a1995-9b35-4b7a-9de2-7627d7209159",
+      "name": "Reply Request",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        192
+      ],
+      "parameters": {
+        "inputSource": "workflowInputs",
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "client_id",
+              "type": "string"
+            },
+            {
+              "name": "channel",
+              "type": "string"
+            },
+            {
+              "name": "recipient",
+              "type": "string"
+            },
+            {
+              "name": "text",
+              "type": "string"
+            },
+            {
+              "name": "reply_to",
+              "type": "string"
+            },
+            {
+              "name": "thread_ref",
+              "type": "string"
+            },
+            {
+              "name": "author",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "161741a9-2229-422d-a3ed-56bf4cf4e7c6",
+      "name": "Route by Channel",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        176
+      ],
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "values": [
+            {
+              "renameOutput": true,
+              "outputKey": "telegram",
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.channel }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "telegram"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "renameOutput": true,
+              "outputKey": "email",
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.channel }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "email"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "unsupported"
+        }
+      }
+    },
+    {
+      "id": "9e72b86c-3737-4ef4-a6c2-e3c700a38a5e",
+      "name": "Send Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        496,
+        320
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "sendMessage",
+        "chatId": "={{ $json.recipient }}",
+        "text": "={{ String($json.text ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').slice(0, 4000) }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML",
+          "disable_web_page_preview": true
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "GrHxwuhk9SECQo8h",
+          "name": "NanoRob3"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "webhookId": "8f54c6d1-52b0-40fc-af26-91fcc7fdcdbd"
+    },
+    {
+      "id": "5425a34d-7474-4db6-af25-fe70cdaa6a6f",
+      "name": "Telegram Result",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        720,
+        320
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ext",
+              "name": "external_id",
+              "value": "={{ String($json.result?.message_id ?? '') }}",
+              "type": "string"
+            },
+            {
+              "id": "thr",
+              "name": "thread_ref",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "349bacdc-e2cc-4db7-b62d-a8e4df3c949f",
+      "name": "Log Outbound Message",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1024,
+        416
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO ava.messages (client_id, channel, direction, author, sender_ref, external_id, thread_ref, body)\nVALUES (NULLIF($1, '')::uuid, $2, 'out', COALESCE(NULLIF($3, ''), 'ava'), $4, NULLIF($5, ''), NULLIF($6, ''), $7)\nRETURNING id AS message_log_id, external_id, thread_ref",
+        "options": {
+          "queryReplacement": "={{ [ $('Reply Request').first().json.client_id ?? '', $('Reply Request').first().json.channel, $('Reply Request').first().json.author ?? '', $('Reply Request').first().json.recipient, $json.external_id ?? '', $json.thread_ref ?? '', $('Reply Request').first().json.text ] }}"
+        }
+      },
+      "credentials": {
+        "postgres": {
+          "id": "1RCl2NMd9YUu88EJ",
+          "name": "Coolify Postgres"
+        }
+      }
+    },
+    {
+      "id": "a6b498da-a063-4794-8afb-761ca4ebfcf5",
+      "name": "Reply by Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        496,
+        512
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "reply",
+        "messageId": "={{ $json.reply_to }}",
+        "emailType": "text",
+        "message": "={{ $json.text }}",
+        "options": {
+          "appendAttribution": false,
+          "replyToSenderOnly": true
+        }
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Rob Gmail account"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "webhookId": "77092317-e484-46e5-a145-e1bd28dc3c2c"
+    },
+    {
+      "id": "1ca7ec63-f367-4a0b-bbdb-aa044bd54324",
+      "name": "Email Result",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        720,
+        512
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ext",
+              "name": "external_id",
+              "value": "={{ $json.id ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "thr",
+              "name": "thread_ref",
+              "value": "={{ $json.threadId ?? $('Reply Request').first().json.thread_ref ?? '' }}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "00e577e6-b256-4f77-a933-d3aab9ee0a9f",
+      "name": "Unsupported Channel",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        608,
+        0
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ok",
+              "name": "ok",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "err",
+              "name": "error",
+              "value": "={{ 'No reply adapter for channel: ' + $json.channel }}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "c9438211-cbb0-46c0-a47f-4e79ec75f53b",
+      "name": "Reply Sent",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1248,
+        416
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": true,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ok",
+              "name": "ok",
+              "value": true,
+              "type": "boolean"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "70413e64-b18f-4f94-a945-597215f7de26",
+      "name": "Sticky Note cb536f5f",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        192,
+        80
+      ],
+      "parameters": {
+        "content": "## Reply Adapter\nSends a message on the client's channel and logs it to `ava.messages`. Telegram text is HTML-escaped so client-supplied symbols never break formatting. Email replies stay in the original Gmail thread. New channels (SMS, WhatsApp) add one branch here.",
+        "color": 5,
+        "width": 160,
+        "height": 256
+      }
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "errorWorkflow": "MgxgpZ3WBjOI2Lyl"
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "gSgaG1ldpxS6eyyp",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-10-14T16:22:43.769Z",
+      "updatedAt": "2026-10-14T16:22:43.769Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-10-14T17:46:04.972Z",
+  "versionId": "d67e3bab-6b6f-40ec-b8c0-db101c3a1a50"
+}
