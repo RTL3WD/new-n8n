@@ -1,5 +1,7 @@
 {
-  "active": true,
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
   "connections": {
     "Webhook": {
       "main": [
@@ -70,11 +72,12 @@
   },
   "createdAt": "2025-03-25T14:47:39.435Z",
   "id": "oyNa16e62jTvhzSt",
-  "isArchived": false,
+  "isArchived": true,
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "name": "NocoDB Confirmed Events Workflow",
+  "nodeGroups": [],
   "nodes": [
     {
       "parameters": {
@@ -366,16 +369,16 @@
   },
   "shared": [
     {
-      "createdAt": "2025-03-25T14:47:39.439Z",
-      "updatedAt": "2025-03-25T14:47:39.439Z",
       "role": "workflow:owner",
       "workflowId": "oyNa16e62jTvhzSt",
-      "projectId": "WCIiaWERZpaZ5IaT"
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2025-03-25T14:47:39.439Z",
+      "updatedAt": "2025-03-25T14:47:39.439Z"
     }
   ],
   "staticData": null,
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2025-03-25T19:08:58.000Z",
-  "versionId": "955061b7-926d-45c3-9f1f-bf0d0178c61f"
+  "updatedAt": "2026-10-22T02:18:04.000Z",
+  "versionId": "505aa230-9f22-45d3-906a-e4713e31fd55"
 }
