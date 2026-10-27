@@ -1,0 +1,85 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Clear O-R on 7 rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-27T19:34:48.162Z",
+  "id": "BZr3cmgtLwHHRlPt",
+  "isArchived": true,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "name": "TEMP | clear O-R on 7 rows (delete me)",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "e811b6a2-2a0f-46e1-8365-e5f884930325",
+      "name": "Start",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "4651a76b-da65-4ace-b4e8-493e6d9d748b",
+      "name": "Clear O-R on 7 rows",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        224,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://sheets.googleapis.com/v4/spreadsheets/1lrJ_Fk63Gp_Q2ZVICO_MPsuJAB7vFMsykxJar95l36k/values:batchClear",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"ranges\":[\"index!O2:R2\",\"index!O3:R3\",\"index!O6:R6\",\"index!O8:R8\",\"index!O11:R11\",\"index!O13:R13\",\"index!O14:R14\"]}",
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sKITsW661Itsg15I",
+          "name": "Google Sheets account - ASP"
+        }
+      }
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "BZr3cmgtLwHHRlPt",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-10-27T19:34:48.172Z",
+      "updatedAt": "2026-10-27T19:34:48.172Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-10-27T19:35:03.000Z",
+  "versionId": "595ef139-eb04-45b0-b08a-440e2b741087"
+}
