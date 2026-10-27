@@ -1,0 +1,85 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Read N-R Formulas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-27T19:28:30.194Z",
+  "id": "PSvryDYezQ28JMc7",
+  "isArchived": true,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "name": "TEMP read-only | index N-R formulas (delete me)",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "67c96d66-3534-4904-a48a-f37e7e7fa601",
+      "name": "Start",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "d7a8f75b-9140-4413-b001-08ce33eb9331",
+      "name": "Read N-R Formulas",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        224,
+        0
+      ],
+      "parameters": {
+        "authentication": "predefinedCredentialType",
+        "jsonBody": "={{ JSON.stringify({ valueInputOption: 'USER_ENTERED', data: [2,3,6,8,11,13,14].map(r => ({ range: 'index!N' + r, values: [['=REGEXEXTRACT(G' + r + ', \"@.*\")']] })) }) }}",
+        "method": "POST",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "https://sheets.googleapis.com/v4/spreadsheets/1lrJ_Fk63Gp_Q2ZVICO_MPsuJAB7vFMsykxJar95l36k/values:batchUpdate"
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sKITsW661Itsg15I",
+          "name": "Google Sheets account - ASP"
+        }
+      }
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "PSvryDYezQ28JMc7",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-10-27T19:28:30.198Z",
+      "updatedAt": "2026-10-27T19:28:30.198Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-10-27T19:32:23.000Z",
+  "versionId": "745f06a0-076b-4080-a145-96007deff479"
+}
