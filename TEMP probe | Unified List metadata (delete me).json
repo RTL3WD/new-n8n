@@ -1,0 +1,181 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Search Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Drive": {
+      "main": [
+        [
+          {
+            "node": "List Ids",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Ids": {
+      "main": [
+        [
+          {
+            "node": "Sheet Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheet Metadata": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-27T18:27:52.976Z",
+  "id": "nzVYlLbnhLADySyQ",
+  "isArchived": true,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "name": "TEMP probe | Unified List metadata (delete me)",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "c6a63915-61d2-4500-a9ed-35a31fac8fc4",
+      "name": "Start",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "c1f36221-2310-43e8-a9f0-69c9526616f9",
+      "name": "Search Drive",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        224,
+        0
+      ],
+      "parameters": {
+        "url": "https://www.googleapis.com/drive/v3/files",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDriveOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "name contains 'Unified' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false"
+            },
+            {
+              "name": "fields",
+              "value": "files(id,name,modifiedTime)"
+            },
+            {
+              "name": "pageSize",
+              "value": "20"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Zw8jmPeh7kB7F9lh",
+          "name": "Google Drive account - ASP"
+        }
+      }
+    },
+    {
+      "id": "5f279d4b-4fb6-4117-8505-c67999ed7faf",
+      "name": "List Ids",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ],
+      "parameters": {
+        "jsCode": "return [{json:{id:'1lrJ_Fk63Gp_Q2ZVICO_MPsuJAB7vFMsykxJar95l36k'}}];",
+        "mode": "runOnceForAllItems"
+      }
+    },
+    {
+      "id": "14add51c-77a0-4c90-8846-09b48f5ff6a0",
+      "name": "Sheet Metadata",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        672,
+        0
+      ],
+      "parameters": {
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/1lrJ_Fk63Gp_Q2ZVICO_MPsuJAB7vFMsykxJar95l36k/values:batchGet?ranges=index!A1:R1000&ranges=unified_list_sunbiz_enriched!A1:Y10170&ranges=Customer360_Results!A1:Z1013&ranges=Customer360_Review!A1:Z1057&ranges=unified_list!A1:I10170",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sKITsW661Itsg15I",
+          "name": "Google Sheets account - ASP"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "f991c060-f518-448c-bcab-2c95f80ca31c",
+      "name": "Summarize",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const vr=$json.valueRanges||[];const out={};const dom=u=>String(u||'').toLowerCase().replace(/^https?:\\/\\//,'').split('/')[0].replace(/^www\\./,'');const idx=vr[0].values;const idxDomains=new Set(idx.slice(1).map(r=>dom(r[4])).filter(Boolean));const idxNames=new Set(idx.slice(1).map(r=>String(r[2]||'').toLowerCase().trim()));for(const r of vr.slice(1)){const v=r.values||[];const h=v[0]||[];const wi=h.findIndex(x=>/^website$/i.test(x));const ni=h.findIndex(x=>/^(name|business_name|business)$/i.test(x));const hits=v.filter(row=>row.join(' ').toLowerCase().match(/1000north|elshimy/));const domMatch=wi>=0?v.slice(1).filter(row=>idxDomains.has(dom(row[wi]))).length:null;const nameMatch=ni>=0?v.slice(1).filter(row=>idxNames.has(String(row[ni]||'').toLowerCase().trim())).length:null;out[r.range]={rows:v.length,headers:h,row2:(v[1]||[]).map(c=>String(c).slice(0,150)),hits:hits.map(x=>x.map(c=>String(c).slice(0,600))),domMatch,nameMatch};}\nconst sheetRowCheck=idx.slice(1,8).map(r=>({b:r[1],biz:r[2]}));out.sheetRowCheck=sheetRowCheck;out.idxBlankB=idx.slice(1).filter(r=>!r[1]).length;out.idxWithEmail=idx.slice(1).filter(r=>r[6]).length;out.idxStatus=[...new Set(idx.slice(1).map(r=>String(r[12]).split(':')[0]))];out.idxHasWebsite=idx.slice(1).filter(r=>r[4]).length;out.idxReady=idx.slice(1).filter(r=>/^ready/.test(r[12]||'')).length;return [{json:out}];"
+      }
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "nzVYlLbnhLADySyQ",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-10-27T18:27:52.980Z",
+      "updatedAt": "2026-10-27T18:27:52.980Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-10-27T18:35:59.000Z",
+  "versionId": "a44934f7-f67b-4b4c-b34b-d72ee183c4a4"
+}
