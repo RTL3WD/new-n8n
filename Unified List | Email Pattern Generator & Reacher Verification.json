@@ -1,0 +1,1902 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "9a04abcd-6efd-45b2-a6b1-343bfa2ca307",
+    "workflowId": "YgWJ8rJLCivu00FV",
+    "nodes": [
+      {
+        "parameters": {
+          "content": "## Unified List email verifier\n**Manual only. Keep inactive.**\n\n1. **Domain = column N** (your REGEXEXTRACT formula). Rows with `#N/A`, a free-mail domain (gmail etc.) or filled P-R are skipped. **N is never written.**\n2. **Generate:** representatives from Sunbiz + Customer 360. Patterns in order: first.last, first, flast, firstlast, firstl, first.l. A pattern seen in an existing email (or learned earlier for the domain) is used directly.\n3. **Location guess:** from the business name (\"of Boca Raton\", \"(DeFuniak Springs)\") or a city slug in the website path, e.g. `bocaraton@`.\n4. **Test:** one at a time, stop at the first safe hit, reuse the pattern for other reps. If Reacher says catch-all / unknown / no MX, stop testing that domain and put best guesses in Q.\n5. Max **10 checks per run**, 5 s apart. Writes O-R only.",
+          "height": 352,
+          "width": 688
+        },
+        "id": "dc640f0d-bc3c-4b47-bcd2-e520a338acca",
+        "name": "Sticky Note f3dffcec",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          0,
+          -464
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "68e33531-6aef-4c4d-9692-65ab8b46dc3f",
+        "name": "Run Manually",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          -48
+        ],
+        "disabled": true
+      },
+      {
+        "parameters": {
+          "url": "https://sheets.googleapis.com/v4/spreadsheets/1lrJ_Fk63Gp_Q2ZVICO_MPsuJAB7vFMsykxJar95l36k/values:batchGet?ranges=index!A:R&ranges=unified_list_sunbiz_enriched!A:X&ranges=Customer360_Results!A:Z&ranges=Customer360_Review!A:Z&valueRenderOption=FORMATTED_VALUE",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "googleSheetsOAuth2Api",
+          "options": {
+            "timeout": 60000
+          }
+        },
+        "id": "facd06b1-eaf5-4136-8602-ed0931050225",
+        "name": "Read Unified List",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          288,
+          48
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "sKITsW661Itsg15I",
+            "name": "Google Sheets account - ASP"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "dataTableId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "ulAtKXG2sMn0evss",
+            "cachedResultName": "Unified List - email verification cache"
+          },
+          "returnAll": true
+        },
+        "id": "6cc649e6-5e67-41a3-90d6-d4f1e5e4110a",
+        "name": "Read Email Cache",
+        "type": "n8n-nodes-base.dataTable",
+        "typeVersion": 1.1,
+        "position": [
+          512,
+          48
+        ],
+        "executeOnce": true,
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "jsCode": "const MAX_JOBS = 15, MAX_EXISTING = 2;\nconst vr = $('Read Unified List').first().json.valueRanges || [];\nconst tab = (name) => { const r = vr.find(x => String(x.range || '').replace(/'/g, '').startsWith(name + '!')); return (r && r.values) || []; };\nconst toObjs = (v) => { const h = v[0] || []; return v.slice(1).map((r, i) => { const o = { _row: i + 2 }; h.forEach((k, j) => { o[k] = r[j] == null ? '' : r[j]; }); return o; }); };\nconst FREE = new Set(['gmail.com','yahoo.com','hotmail.com','outlook.com','aol.com','icloud.com','me.com','msn.com','live.com','comcast.net','att.net','bellsouth.net','verizon.net','protonmail.com','ymail.com']);\nconst GENERIC = /^(info|sales|office|admin|contact|support|service|services|hello|team|help|mail|marketing|billing|accounts|customerservice|reception|frontdesk|opportunities)$/;\nconst norm = (e) => String(e || '').trim().toLowerCase().replace(/^mailto:/, '');\nconst isEmail = (e) => /^[a-z0-9._%+-]+@[a-z0-9.-]+[.][a-z]{2,}$/.test(e);\nconst domOf = (u) => String(u || '').trim().toLowerCase().replace(/^https?:[/][/]/, '').split(/[/?#]/)[0].split(':')[0].replace(/^www[.]/, '');\nconst tok = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/['’-]/g, '').replace(/[^a-z ]/g, ' ').split(' ').filter(Boolean);\nconst ORG = /(^|[^a-z])(llc|inc|corp|corporation|company|trust|lp|llp|pa|pllc|services|agents?|registered|holdings|ltd|bank|association|incorporated|partnership)([^a-z]|$)/i;\nconst KEY_ROLE = /owner|founder|pres|ceo|coo|cfo|manag|mgr|ambr|member|principal|partner|director|^p$|^d$|^vp$/i;\nconst bucketOf = (s) => { s = String(s || '').toLowerCase(); return s === 'safe' ? 'safe' : s === 'invalid' ? 'invalid' : (s === 'risky' || s === 'unknown') ? 'risky_unknown' : 'error'; };\nconst PAT = { 'first.last': (f, l) => f + '.' + l, 'first': (f, l) => f, 'flast': (f, l) => f[0] + l, 'firstlast': (f, l) => f + l, 'firstl': (f, l) => f + l[0], 'first.l': (f, l) => f + '.' + l[0], 'f.last': (f, l) => f[0] + '.' + l, 'first_last': (f, l) => f + '_' + l, 'last': (f, l) => l, 'last.first': (f, l) => l + '.' + f, 'lastf': (f, l) => l + f[0] };\nconst isProbe = (e, x) => (x && x.purpose === 'probe') || /^nx[a-z0-9]+q7@/.test(e);\nconst slugPlace = (s) => { if (/[0-9]/.test(String(s || '').replace(/ [0-9]{5}$/, ''))) return ''; const v = tok(s).filter(w => !/^(fl|florida|usa|the)$/.test(w)).join(''); return v.length >= 4 && v.length <= 18 ? v : ''; };\nconst locationOf = (biz, website, city) => {\n  const n = String(biz || '');\n  const m = n.match(/ of ([A-Za-z .'-]+)$/i) || n.match(/[(]([A-Za-z .'-]+)[)]/) || n.match(/ - ([A-Za-z .'-]+)$/);\n  if (m) { const s = slugPlace(m[1]); if (s) return s; }\n  const c = slugPlace(String(city || '').replace(/[0-9]+/g, '').trim());\n  if (c) { const path = String(website || '').toLowerCase().replace(/^https?:[/][/][^/]+/, '').replace(/[^a-z0-9]/g, ''); if (path.includes(c)) return c; }\n  return '';\n};\n\nconst idx = tab('index');\nconst sunObjs = toObjs(tab('unified_list_sunbiz_enriched'));\nconst sunByRow = new Map(sunObjs.map(o => [o._row, o]));\nconst sunByDom = new Map(), sunByName = new Map();\nfor (const o of sunObjs) { const d = domOf(o.website); if (d && !sunByDom.has(d)) sunByDom.set(d, o); const n = String(o.name || '').trim().toLowerCase(); if (n && !sunByName.has(n)) sunByName.set(n, o); }\nconst c360 = [...toObjs(tab('Customer360_Results')), ...toObjs(tab('Customer360_Review'))];\nconst c360BySrc = new Map(), c360ByDom = new Map();\nfor (const o of c360) { const s = Number(o.source_row); if (s && !c360BySrc.has(s)) c360BySrc.set(s, o); const d = domOf(o.website); if (d && !c360ByDom.has(d)) c360ByDom.set(d, o); }\n\nconst domCache = new Map();\nfor (const it of $('Read Domain Cache').all()) { const x = it.json || {}; const d = String(x.domain || '').toLowerCase(); if (!d || !x.status || String(x.probe_status || '')) continue; domCache.set(d, { status: String(x.status), pattern: String(x.pattern || '') }); }\nconst known = {};\nfor (const it of $('Read Email Cache').all()) { const x = it.json || {}; const e = norm(x.email); if (!e || !x.status || x.status === 'error' || isProbe(e, x)) continue; known[e] = { status: String(x.status), bucket: x.bucket || bucketOf(x.status), is_catch_all: x.is_catch_all === true, mx_accepts_mail: typeof x.mx_accepts_mail === 'boolean' ? x.mx_accepts_mail : null, source: x.source || 'cache' }; }\nfor (const o of c360) {\n  let checks = []; try { checks = JSON.parse(o.email_checks_json || '[]'); } catch (e) { checks = []; }\n  for (const c of (Array.isArray(checks) ? checks : [])) {\n    const e = norm(c && c.email); const st = String((c && c.status) || (c && c.result && c.result.is_reachable) || '').toLowerCase(); const b = bucketOf(st);\n    if (!isEmail(e) || b === 'error' || known[e]) continue;\n    const mx = c.result && c.result.mx && typeof c.result.mx.accepts_mail === 'boolean' ? c.result.mx.accepts_mail : null;\n    known[e] = { status: st, bucket: b, is_catch_all: !!(c.result && c.result.smtp && c.result.smtp.is_catch_all), mx_accepts_mail: mx, source: 'customer360' };\n  }\n}\nconst knownKeys = Object.keys(known);\n\nconst people = (srow, c) => {\n  const out = [];\n  let pj = []; try { pj = JSON.parse((c && c.people_json) || '[]'); } catch (e) { pj = []; }\n  for (const p of (Array.isArray(pj) ? pj : [])) { const t = tok(p && p.name); if (t.length < 2) continue; out.push({ first: t[0], last: t[t.length - 1], role: String((p && p.role) || ''), source: 'customer360', prio: KEY_ROLE.test(String((p && p.role) || '')) ? 1 : 2.5 }); }\n  if (srow) {\n    for (const part of String(srow.sunbiz_officers || '').split(';')) {\n      let role = '', nm = part.trim(); const m = nm.match(/^([^:]+):[ ]*(.*)$/); if (m) { role = m[1].trim(); nm = m[2]; }\n      nm = nm.split(',')[0]; if (!nm || ORG.test(nm)) continue;\n      const t = tok(nm); if (t.length < 2) continue;\n      out.push({ first: t[1], last: t[0], role, source: 'sunbiz_officer', prio: KEY_ROLE.test(role) ? 2 : 3 });\n    }\n    const ra = String(srow.sunbiz_registered_agent || '').split(',')[0];\n    if (ra && !ORG.test(ra)) { const t = tok(ra); if (t.length >= 2) out.push({ first: t[1], last: t[0], role: 'Registered Agent', source: 'sunbiz_agent', prio: 5 }); }\n  }\n  const seen = new Set(), res = [];\n  for (const p of out.sort((a, b) => a.prio - b.prio)) { if (p.first.length < 2 || p.last.length < 2) continue; const k = [p.first, p.last].sort().join('|'); if (seen.has(k)) continue; seen.add(k); res.push(p); }\n  return res.slice(0, 3);\n};\n\nconst jobs = []; let eligible = 0, noDomainYet = 0, freeMail = 0, skippedNoMx = 0, skippedNoData = 0;\nfor (let i = 1; i < idx.length && jobs.length < MAX_JOBS; i++) {\n  const r = idx[i] || []; const rowNum = i + 1;\n  const g = (k) => String(r[k] == null ? '' : r[k]).trim();\n  if (/^skipped/i.test(g(12))) continue;\n  if (g(15) || g(16) || g(17)) continue;\n  const nval = g(13).toLowerCase();\n  if (!/^@[a-z0-9.-]+[.][a-z]{2,}$/.test(nval)) { noDomainYet++; continue; }\n  const domain = nval.slice(1);\n  if (FREE.has(domain)) { freeMail++; continue; }\n  eligible++;\n  const biz = g(2), wd = domOf(g(4)), sr = Number(g(1));\n  const srow = (sr && sunByRow.get(sr)) || (wd && sunByDom.get(wd)) || sunByName.get(biz.toLowerCase()) || null;\n  const c = (srow && c360BySrc.get(srow._row)) || (wd && c360ByDom.get(wd)) || null;\n  const existing = [...new Set([g(6), c ? c.business_email : '', c ? c.safe_email_addresses : ''].join(',').replace(/[^a-zA-Z0-9._%+@-]+/g, ',').split(',').map(norm).filter(e => isEmail(e) && e.endsWith('@' + domain)))].slice(0, MAX_EXISTING);\n  const dc = domCache.get(domain) || null;\n  if (dc && dc.status === 'no_mx') { skippedNoMx++; continue; }\n  const reps = people(srow, c);\n  const location = locationOf(biz, g(4), g(9));\n  if (!reps.length && !existing.length && !location) { skippedNoData++; continue; }\n  let pattern = '', hint = '';\n  for (const e of existing) {\n    const loc = e.split('@')[0];\n    if (GENERIC.test(loc)) continue;\n    for (const p of reps) for (const k of Object.keys(PAT)) if (!pattern && PAT[k](p.first, p.last) === loc) pattern = k;\n    if (!pattern && !hint && /^[a-z]{2,}[.][a-z]{2,}$/.test(loc)) hint = 'first.last';\n  }\n  if (!pattern && dc && dc.pattern) pattern = dc.pattern;\n  const sub = {}; let domainStatus = dc ? dc.status : '';\n  for (const e of knownKeys) if (e.endsWith('@' + domain)) { sub[e] = known[e]; if (known[e].mx_accepts_mail === false) domainStatus = 'no_mx'; else if (known[e].is_catch_all && domainStatus !== 'no_mx') domainStatus = 'catch_all'; }\n  jobs.push({ json: { job: { row: rowNum, business: biz, domain, existing, reps: reps.map(p => ({ first: p.first, last: p.last, role: p.role || p.source })), pattern, hint, location, domainStatus, known: sub } } });\n}\nif (!jobs.length) return [];\njobs[0].json.planStats = { eligibleRows: eligible, jobs: jobs.length, rowsWaitingOnDomainInN: noDomainYet, freeMailDomainsSkipped: freeMail, skippedNoMx, skippedNoPeopleOrEmail: skippedNoData, emailCacheEntries: knownKeys.length, domainCacheEntries: domCache.size };\nreturn jobs;"
+        },
+        "id": "57244bc2-f4de-430e-b2c4-2824b49b41b3",
+        "name": "Plan Domain Jobs",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          960,
+          48
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://u2wfervxqiwcouzajnmnqqxo.aspworkplace.com/v0/check_email",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({ to_email: $json.email }) }}",
+          "options": {
+            "response": {
+              "response": {
+                "fullResponse": true,
+                "neverError": true,
+                "responseFormat": "json"
+              }
+            },
+            "timeout": 90000
+          }
+        },
+        "id": "820d2e77-34c9-44fa-891b-3fcc92f59675",
+        "name": "Reacher Check",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2208,
+          -192
+        ],
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "const prev = $('Next Step').item.json;\nconst res = ($json && $json.body) || $json || {};\nconst ok = !$json.error && Number($json.statusCode || 200) < 300 && typeof res.is_reachable === 'string';\nconst status = ok ? res.is_reachable.toLowerCase() : 'error';\nconst bucket = status === 'safe' ? 'safe' : status === 'invalid' ? 'invalid' : (status === 'risky' || status === 'unknown') ? 'risky_unknown' : 'error';\nconst smtp = (ok && res.smtp) || {};\nconst mx = ok && res.mx && typeof res.mx.accepts_mail === 'boolean' ? res.mx.accepts_mail : null;\nconst detail = ok ? { mx_accepts_mail: mx, smtp: smtp, role_account: res.misc ? res.misc.is_role_account : null, disposable: res.misc ? res.misc.is_disposable : null } : { error: $json.error || res };\nreturn { json: { email: String(prev.email).toLowerCase(), domain: prev.domain, status, bucket, is_catch_all: smtp.is_catch_all === true, is_deliverable: smtp.is_deliverable === true, mx_accepts_mail: mx, purpose: prev.purpose, source: 'reacher', index_row: Number(prev.index_row) || 0, business: String(prev.business || '').slice(0, 200), checked_at: new Date().toISOString(), detail: JSON.stringify(detail).slice(0, 2000), job: prev.job } };"
+        },
+        "id": "c16a8242-554a-46e7-aa56-a03119d97506",
+        "name": "Normalize Result",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2432,
+          -192
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "upsert",
+          "dataTableId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "ulAtKXG2sMn0evss",
+            "cachedResultName": "Unified List - email verification cache"
+          },
+          "matchType": "allConditions",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "email",
+                "keyValue": "={{ $json.email }}"
+              }
+            ]
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "matchingColumns": [],
+            "schema": [
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "email",
+                "id": "email",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "domain",
+                "id": "domain",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "status",
+                "id": "status",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "bucket",
+                "id": "bucket",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "is_catch_all",
+                "id": "is_catch_all",
+                "required": false,
+                "type": "boolean"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "is_deliverable",
+                "id": "is_deliverable",
+                "required": false,
+                "type": "boolean"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "mx_accepts_mail",
+                "id": "mx_accepts_mail",
+                "required": false,
+                "type": "boolean"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "purpose",
+                "id": "purpose",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "source",
+                "id": "source",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "index_row",
+                "id": "index_row",
+                "required": false,
+                "type": "number"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "business",
+                "id": "business",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "checked_at",
+                "id": "checked_at",
+                "required": false,
+                "type": "dateTime"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "detail",
+                "id": "detail",
+                "required": false,
+                "type": "string"
+              }
+            ],
+            "value": {
+              "bucket": "={{ $json.bucket }}",
+              "business": "={{ $json.business }}",
+              "checked_at": "={{ $json.checked_at }}",
+              "detail": "={{ $json.detail }}",
+              "domain": "={{ $json.domain }}",
+              "email": "={{ $json.email }}",
+              "index_row": "={{ $json.index_row }}",
+              "is_catch_all": "={{ $json.is_catch_all }}",
+              "is_deliverable": "={{ $json.is_deliverable }}",
+              "mx_accepts_mail": "={{ $json.mx_accepts_mail }}",
+              "purpose": "={{ $json.purpose }}",
+              "source": "={{ $json.source }}",
+              "status": "={{ $json.status }}"
+            }
+          },
+          "options": {}
+        },
+        "id": "64e2c16f-dcb1-44b6-b5a4-73c2f3029f33",
+        "name": "Save Email Result",
+        "type": "n8n-nodes-base.dataTable",
+        "typeVersion": 1.1,
+        "position": [
+          2656,
+          -240
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "ec086961-57f8-4267-be8c-6b19755ba837",
+        "name": "Wait 5 Seconds",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          2656,
+          96
+        ],
+        "webhookId": "a49b7767-1d25-4041-8cf8-2c855ce01347"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "574dd6b5-9749-4e82-897c-10cd4d34da32",
+        "name": "Loop Domains",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          1232,
+          48
+        ]
+      },
+      {
+        "parameters": {
+          "url": "https://sheets.googleapis.com/v4/spreadsheets/1lrJ_Fk63Gp_Q2ZVICO_MPsuJAB7vFMsykxJar95l36k/values/index!A:R?valueRenderOption=FORMATTED_VALUE",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "googleSheetsOAuth2Api",
+          "options": {
+            "timeout": 60000
+          }
+        },
+        "id": "6485b86c-32dd-4063-890c-4b4a7afb4dca",
+        "name": "Re-read Index N-R",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1520,
+          -80
+        ],
+        "executeOnce": true,
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "sKITsW661Itsg15I",
+            "name": "Google Sheets account - ASP"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const outcomes = new Map();\nfor (let r = 0; r < 1000; r++) { let items; try { items = $('Next Step').all(0, r); } catch (e) { break; } if (!items || !items.length) break; for (const it of items) { const x = it.json || {}; if (x.action === 'finish' && x.outcome) outcomes.set(x.outcome.row, x.outcome); } }\nlet checks = 0, errors = 0; const byPurpose = {};\nfor (let r = 0; r < 500; r++) { let items; try { items = $('Normalize Result').all(0, r); } catch (e) { break; } if (!items || !items.length) break; for (const it of items) { checks++; const x = it.json || {}; if (x.status === 'error') errors++; byPurpose[x.purpose] = (byPurpose[x.purpose] || 0) + 1; } }\nlet planStats = {}; try { planStats = $('Plan Domain Jobs').first().json.planStats || {}; } catch (e) {}\nconst fresh = $('Re-read Index N-R').first().json.values || [];\nconst split = (s) => String(s || '').split(',').map(x => x.trim().toLowerCase()).filter(Boolean);\nconst data = [], written = [], skipped = [];\nfor (const o of outcomes.values()) {\n  if (!o.complete) { skipped.push({ row: o.row, business: o.business, domain: o.domain, domainStatus: o.domainStatus, reason: o.reason === 'deferred_budget' ? 'check budget used up; continues next run' : 'Reacher error; retries next run' }); continue; }\n  if (!o.candidates.length) { skipped.push({ row: o.row, business: o.business, domain: o.domain, domainStatus: o.domainStatus, reason: 'nothing to write (domain has no mail server)' }); continue; }\n  const r = fresh[o.row - 1] || [];\n  if (String(r[2] || '').trim() !== String(o.business || '').trim()) { skipped.push({ row: o.row, business: o.business, reason: 'row moved or changed since planning' }); continue; }\n  const cur = [14, 15, 16, 17].map(k => String(r[k] == null ? '' : r[k]).trim());\n  if (cur[1] || cur[2] || cur[3]) { skipped.push({ row: o.row, business: o.business, reason: 'P-R filled since planning; left untouched' }); continue; }\n  const by = (b) => o.candidates.filter(e => o.results[e] === b).join(', ');\n  const values = [[...new Set([...split(cur[0]), ...o.candidates])].join(', '), by('safe'), by('risky_unknown'), by('invalid')];\n  data.push({ range: 'index!O' + o.row + ':R' + o.row, values: [values] });\n  written.push({ row: o.row, business: o.business, domainStatus: o.domainStatus, pattern: o.pattern, safe: values[1], risky_unknown: values[2], invalid: values[3] });\n}\nreturn [{ json: { hasUpdates: data.length > 0, body: { valueInputOption: 'RAW', data }, summary: { rowsWritten: written.length, rowsDeferred: skipped.length, reacherChecks: checks, checksByPurpose: byPurpose, reacherErrors: errors, plan: planStats }, written, skipped } }];"
+        },
+        "id": "86e5cc4d-ffb6-4b6b-ac46-9c7ea91b1f63",
+        "name": "Build N-R Merge",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1744,
+          -80
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ $json.hasUpdates }}",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "36627d2b-936b-4b7b-ba2b-9b67f2fb07bf",
+        "name": "Any Rows to Write?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1968,
+          -80
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://sheets.googleapis.com/v4/spreadsheets/1lrJ_Fk63Gp_Q2ZVICO_MPsuJAB7vFMsykxJar95l36k/values:batchUpdate",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "googleSheetsOAuth2Api",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify($json.body) }}",
+          "options": {
+            "timeout": 60000
+          }
+        },
+        "id": "a34032af-919d-4868-b5f4-93493eff3374",
+        "name": "Write N-R to Index",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2192,
+          -80
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "sKITsW661Itsg15I",
+            "name": "Google Sheets account - ASP"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "dataTableId": {
+            "__rl": true,
+            "cachedResultName": "Unified List - domain cache",
+            "mode": "id",
+            "value": "f2bOfRvyG4cHz0A3"
+          },
+          "returnAll": true
+        },
+        "id": "0efd3e45-f84f-4b9f-959c-70fa72a815db",
+        "name": "Read Domain Cache",
+        "type": "n8n-nodes-base.dataTable",
+        "typeVersion": 1.1,
+        "position": [
+          736,
+          48
+        ],
+        "alwaysOutputData": true,
+        "executeOnce": true
+      },
+      {
+        "parameters": {
+          "jsCode": "const MAX_CHECKS = 10;\nconst ORDER_BASE = ['first.last', 'first', 'flast', 'firstlast', 'firstl', 'first.l'];\nconst TRIES_PER_REP = [6, 3, 0];\nconst PAT = { 'first.last': (f, l) => f + '.' + l, 'first': (f, l) => f, 'flast': (f, l) => f[0] + l, 'firstlast': (f, l) => f + l, 'firstl': (f, l) => f + l[0], 'first.l': (f, l) => f + '.' + l[0], 'f.last': (f, l) => f[0] + '.' + l, 'first_last': (f, l) => f + '_' + l, 'last': (f, l) => l, 'last.first': (f, l) => l + '.' + f, 'lastf': (f, l) => l + f[0] };\nconst job = $input.first().json.job;\nconst runRes = {}; let used = 0;\nfor (let r = 0; r < 500; r++) { let items; try { items = $('Normalize Result').all(0, r); } catch (e) { break; } if (!items || !items.length) break; for (const it of items) { used++; const x = it.json || {}; if (x.email) runRes[x.email] = x; } }\nconst known = job.known || {};\nconst res = (e) => (runRes[e] && runRes[e].status !== 'error') ? runRes[e] : (known[e] || null);\nconst failedNow = (e) => !!(runRes[e] && runRes[e].status === 'error');\nlet domainStatus = job.domainStatus || '', pattern = job.pattern || '';\nconst considered = [], results = {};\nconst note = (e, b) => { if (!considered.includes(e)) considered.push(e); results[e] = b; };\nconst learn = (r) => { if (r.mx_accepts_mail === false) domainStatus = 'no_mx'; else if (r.is_catch_all === true) domainStatus = 'catch_all'; else if (r.status === 'safe' || r.status === 'invalid') domainStatus = 'confirmed'; else if (r.status === 'unknown' && domainStatus !== 'confirmed') domainStatus = 'unverifiable'; };\nconst stopped = () => domainStatus === 'catch_all' || domainStatus === 'no_mx' || domainStatus === 'unverifiable';\nconst out = (reason) => [{ json: { action: 'finish', outcome: { row: job.row, business: job.business, domain: job.domain, reason, complete: reason === 'complete', domainStatus, pattern, probeStatus: '', candidates: considered, results, saveDomain: !!domainStatus && (domainStatus !== (job.domainStatus || '') || pattern !== (job.pattern || '')), checksUsedSoFar: used } } }];\nconst check = (email, purpose) => used >= MAX_CHECKS ? out('deferred_budget') : [{ json: { action: 'check', email, domain: email.split('@')[1], purpose, index_row: job.row, business: job.business, job } }];\nconst reps = job.reps || [];\nconst D = '@' + job.domain;\nif (!pattern && !stopped()) {\n  const order = [...new Set([job.hint, ...ORDER_BASE].filter(k => k && PAT[k]))];\n  let found = '';\n  for (let i = 0; i < reps.length && !found && !stopped(); i++) {\n    const p = reps[i];\n    for (const k of order.slice(0, TRIES_PER_REP[i] || 0)) {\n      const e = PAT[k](p.first, p.last) + D;\n      if (considered.includes(e)) continue;\n      const r = res(e);\n      if (!r) { if (failedNow(e)) return out('error'); return check(e, 'pattern_search'); }\n      note(e, r.bucket); learn(r);\n      if (r.bucket === 'safe' && !r.is_catch_all) { found = k; break; }\n      if (stopped()) break;\n    }\n  }\n  pattern = found;\n}\nif (pattern && PAT[pattern] && !stopped()) {\n  for (const p of reps) { const e = PAT[pattern](p.first, p.last) + D; if (considered.includes(e)) continue; const r = res(e); if (!r) { if (failedNow(e)) return out('error'); return check(e, 'apply_pattern'); } note(e, r.bucket); learn(r); if (stopped()) break; }\n}\nif (job.location) { const e = job.location + D; if (!considered.includes(e)) { const r = res(e); if (r) { note(e, r.bucket); learn(r); } else if (stopped()) { note(e, 'risky_unknown'); } else { if (failedNow(e)) return out('error'); return check(e, 'location'); } } }\nfor (const e of (job.existing || [])) { if (considered.includes(e)) continue; const r = res(e); if (r) { note(e, r.bucket); continue; } if (stopped()) { note(e, 'risky_unknown'); continue; } if (failedNow(e)) return out('error'); return check(e, 'existing'); }\nif (stopped() && domainStatus !== 'no_mx') { const pt = PAT[pattern] ? pattern : (PAT[job.hint] ? job.hint : 'first.last'); for (const p of reps) { const e = PAT[pt](p.first, p.last) + D; if (!considered.includes(e)) note(e, 'risky_unknown'); } }\nreturn out('complete');"
+        },
+        "id": "e293f636-43ea-4950-a379-fae9b08b0e80",
+        "name": "Next Step",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1616,
+          -16
+        ]
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.action }}",
+                      "operator": {
+                        "operation": "equals",
+                        "type": "string"
+                      },
+                      "rightValue": "check"
+                    }
+                  ],
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  }
+                },
+                "renameOutput": true,
+                "outputKey": "check"
+              },
+              {
+                "conditions": {
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.action }}",
+                      "operator": {
+                        "operation": "equals",
+                        "type": "string"
+                      },
+                      "rightValue": "finish"
+                    }
+                  ],
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  }
+                },
+                "renameOutput": true,
+                "outputKey": "finish"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "e1fbb9ee-d3d8-4782-887b-f23c36e04f15",
+        "name": "Route Step",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          1984,
+          -96
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "combinator": "and",
+            "conditions": [
+              {
+                "leftValue": "={{ $json.outcome.saveDomain }}",
+                "operator": {
+                  "operation": "true",
+                  "singleValue": true,
+                  "type": "boolean"
+                },
+                "rightValue": ""
+              }
+            ],
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            }
+          },
+          "options": {}
+        },
+        "id": "b8eccca6-59b5-4058-b9bb-3f4bf0479e4f",
+        "name": "Save Domain?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2208,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "upsert",
+          "dataTableId": {
+            "__rl": true,
+            "cachedResultName": "Unified List - domain cache",
+            "mode": "id",
+            "value": "f2bOfRvyG4cHz0A3"
+          },
+          "matchType": "allConditions",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "domain",
+                "keyValue": "={{ $json.outcome.domain }}"
+              }
+            ]
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "matchingColumns": [],
+            "schema": [
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "domain",
+                "id": "domain",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "status",
+                "id": "status",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "pattern",
+                "id": "pattern",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "probe_status",
+                "id": "probe_status",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "business",
+                "id": "business",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "checked_at",
+                "id": "checked_at",
+                "required": false,
+                "type": "dateTime"
+              }
+            ],
+            "value": {
+              "business": "={{ $json.outcome.business }}",
+              "checked_at": "={{ $now.toISO() }}",
+              "domain": "={{ $json.outcome.domain }}",
+              "pattern": "={{ $json.outcome.pattern }}",
+              "probe_status": "={{ $json.outcome.probeStatus }}",
+              "status": "={{ $json.outcome.domainStatus }}"
+            }
+          },
+          "options": {}
+        },
+        "id": "97691309-3799-4051-9db5-6d733cd72834",
+        "name": "Save Domain Cache",
+        "type": "n8n-nodes-base.dataTable",
+        "typeVersion": 1.1,
+        "position": [
+          2432,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "minutes"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.4,
+        "position": [
+          0,
+          128
+        ],
+        "id": "ba78efd5-ba1b-4ace-b9d9-5135e3fe99fc",
+        "name": "Schedule Trigger"
+      }
+    ],
+    "connections": {
+      "Read Unified List": {
+        "main": [
+          [
+            {
+              "node": "Read Email Cache",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Reacher Check": {
+        "main": [
+          [
+            {
+              "node": "Normalize Result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Normalize Result": {
+        "main": [
+          [
+            {
+              "node": "Save Email Result",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Wait 5 Seconds",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Re-read Index N-R": {
+        "main": [
+          [
+            {
+              "node": "Build N-R Merge",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Build N-R Merge": {
+        "main": [
+          [
+            {
+              "node": "Any Rows to Write?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Any Rows to Write?": {
+        "main": [
+          [
+            {
+              "node": "Write N-R to Index",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Run Manually": {
+        "main": [
+          [
+            {
+              "node": "Read Unified List",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Read Email Cache": {
+        "main": [
+          [
+            {
+              "node": "Read Domain Cache",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Read Domain Cache": {
+        "main": [
+          [
+            {
+              "node": "Plan Domain Jobs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Plan Domain Jobs": {
+        "main": [
+          [
+            {
+              "node": "Loop Domains",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Domains": {
+        "main": [
+          [
+            {
+              "node": "Re-read Index N-R",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Next Step",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Next Step": {
+        "main": [
+          [
+            {
+              "node": "Route Step",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Route Step": {
+        "main": [
+          [
+            {
+              "node": "Reacher Check",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Save Domain?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait 5 Seconds": {
+        "main": [
+          [
+            {
+              "node": "Next Step",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Save Domain?": {
+        "main": [
+          [
+            {
+              "node": "Save Domain Cache",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Loop Domains",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Save Domain Cache": {
+        "main": [
+          [
+            {
+              "node": "Loop Domains",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "Read Unified List",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [
+      {
+        "id": "27eb96b9-d50b-4e81-a159-af472d5186c6",
+        "name": "Read & plan",
+        "nodeIds": [
+          "facd06b1-eaf5-4136-8602-ed0931050225",
+          "6cc649e6-5e67-41a3-90d6-d4f1e5e4110a",
+          "0efd3e45-f84f-4b9f-959c-70fa72a815db",
+          "57244bc2-f4de-430e-b2c4-2824b49b41b3"
+        ],
+        "description": "Reads index, Sunbiz, Customer 360 and both caches, then builds one job per eligible row."
+      },
+      {
+        "id": "23ece121-d0a5-4e50-8a93-a2f93b832fad",
+        "name": "Merge into N-R",
+        "nodeIds": [
+          "6485b86c-32dd-4063-890c-4b4a7afb4dca",
+          "86e5cc4d-ffb6-4b6b-ac46-9c7ea91b1f63",
+          "36627d2b-936b-4b7b-ba2b-9b67f2fb07bf",
+          "a34032af-919d-4868-b5f4-93493eff3374"
+        ],
+        "description": "Re-reads the sheet and fills N-R only on rows whose P-R are still blank."
+      }
+    ],
+    "authors": "Robert Lord",
+    "name": "Version 9a04abcd",
+    "description": "",
+    "autosaved": true,
+    "createdAt": "2026-10-27T19:48:47.698Z",
+    "updatedAt": "2026-10-27T19:48:49.000Z"
+  },
+  "activeVersionId": "9a04abcd-6efd-45b2-a6b1-343bfa2ca307",
+  "connections": {
+    "Read Unified List": {
+      "main": [
+        [
+          {
+            "node": "Read Email Cache",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reacher Check": {
+      "main": [
+        [
+          {
+            "node": "Normalize Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Result": {
+      "main": [
+        [
+          {
+            "node": "Save Email Result",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Wait 5 Seconds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Re-read Index N-R": {
+      "main": [
+        [
+          {
+            "node": "Build N-R Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build N-R Merge": {
+      "main": [
+        [
+          {
+            "node": "Any Rows to Write?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Any Rows to Write?": {
+      "main": [
+        [
+          {
+            "node": "Write N-R to Index",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Manually": {
+      "main": [
+        [
+          {
+            "node": "Read Unified List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Email Cache": {
+      "main": [
+        [
+          {
+            "node": "Read Domain Cache",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Domain Cache": {
+      "main": [
+        [
+          {
+            "node": "Plan Domain Jobs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Plan Domain Jobs": {
+      "main": [
+        [
+          {
+            "node": "Loop Domains",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Domains": {
+      "main": [
+        [
+          {
+            "node": "Re-read Index N-R",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Next Step",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Next Step": {
+      "main": [
+        [
+          {
+            "node": "Route Step",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Step": {
+      "main": [
+        [
+          {
+            "node": "Reacher Check",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Save Domain?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 5 Seconds": {
+      "main": [
+        [
+          {
+            "node": "Next Step",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Domain?": {
+      "main": [
+        [
+          {
+            "node": "Save Domain Cache",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Domains",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Domain Cache": {
+      "main": [
+        [
+          {
+            "node": "Loop Domains",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read Unified List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-27T18:34:37.950Z",
+  "id": "YgWJ8rJLCivu00FV",
+  "isArchived": false,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Unified List | Email Pattern Generator & Reacher Verification",
+  "nodeGroups": [
+    {
+      "id": "27eb96b9-d50b-4e81-a159-af472d5186c6",
+      "name": "Read & plan",
+      "nodeIds": [
+        "facd06b1-eaf5-4136-8602-ed0931050225",
+        "6cc649e6-5e67-41a3-90d6-d4f1e5e4110a",
+        "0efd3e45-f84f-4b9f-959c-70fa72a815db",
+        "57244bc2-f4de-430e-b2c4-2824b49b41b3"
+      ],
+      "description": "Reads index, Sunbiz, Customer 360 and both caches, then builds one job per eligible row."
+    },
+    {
+      "id": "23ece121-d0a5-4e50-8a93-a2f93b832fad",
+      "name": "Merge into N-R",
+      "nodeIds": [
+        "6485b86c-32dd-4063-890c-4b4a7afb4dca",
+        "86e5cc4d-ffb6-4b6b-ac46-9c7ea91b1f63",
+        "36627d2b-936b-4b7b-ba2b-9b67f2fb07bf",
+        "a34032af-919d-4868-b5f4-93493eff3374"
+      ],
+      "description": "Re-reads the sheet and fills N-R only on rows whose P-R are still blank."
+    }
+  ],
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Unified List email verifier\n**Manual only. Keep inactive.**\n\n1. **Domain = column N** (your REGEXEXTRACT formula). Rows with `#N/A`, a free-mail domain (gmail etc.) or filled P-R are skipped. **N is never written.**\n2. **Generate:** representatives from Sunbiz + Customer 360. Patterns in order: first.last, first, flast, firstlast, firstl, first.l. A pattern seen in an existing email (or learned earlier for the domain) is used directly.\n3. **Location guess:** from the business name (\"of Boca Raton\", \"(DeFuniak Springs)\") or a city slug in the website path, e.g. `bocaraton@`.\n4. **Test:** one at a time, stop at the first safe hit, reuse the pattern for other reps. If Reacher says catch-all / unknown / no MX, stop testing that domain and put best guesses in Q.\n5. Max **10 checks per run**, 5 s apart. Writes O-R only.",
+        "height": 352,
+        "width": 688
+      },
+      "id": "dc640f0d-bc3c-4b47-bcd2-e520a338acca",
+      "name": "Sticky Note f3dffcec",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -464
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "68e33531-6aef-4c4d-9692-65ab8b46dc3f",
+      "name": "Run Manually",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -48
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "https://sheets.googleapis.com/v4/spreadsheets/1lrJ_Fk63Gp_Q2ZVICO_MPsuJAB7vFMsykxJar95l36k/values:batchGet?ranges=index!A:R&ranges=unified_list_sunbiz_enriched!A:X&ranges=Customer360_Results!A:Z&ranges=Customer360_Review!A:Z&valueRenderOption=FORMATTED_VALUE",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "facd06b1-eaf5-4136-8602-ed0931050225",
+      "name": "Read Unified List",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        288,
+        48
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sKITsW661Itsg15I",
+          "name": "Google Sheets account - ASP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "ulAtKXG2sMn0evss",
+          "cachedResultName": "Unified List - email verification cache"
+        },
+        "returnAll": true
+      },
+      "id": "6cc649e6-5e67-41a3-90d6-d4f1e5e4110a",
+      "name": "Read Email Cache",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        512,
+        48
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const MAX_JOBS = 15, MAX_EXISTING = 2;\nconst vr = $('Read Unified List').first().json.valueRanges || [];\nconst tab = (name) => { const r = vr.find(x => String(x.range || '').replace(/'/g, '').startsWith(name + '!')); return (r && r.values) || []; };\nconst toObjs = (v) => { const h = v[0] || []; return v.slice(1).map((r, i) => { const o = { _row: i + 2 }; h.forEach((k, j) => { o[k] = r[j] == null ? '' : r[j]; }); return o; }); };\nconst FREE = new Set(['gmail.com','yahoo.com','hotmail.com','outlook.com','aol.com','icloud.com','me.com','msn.com','live.com','comcast.net','att.net','bellsouth.net','verizon.net','protonmail.com','ymail.com']);\nconst GENERIC = /^(info|sales|office|admin|contact|support|service|services|hello|team|help|mail|marketing|billing|accounts|customerservice|reception|frontdesk|opportunities)$/;\nconst norm = (e) => String(e || '').trim().toLowerCase().replace(/^mailto:/, '');\nconst isEmail = (e) => /^[a-z0-9._%+-]+@[a-z0-9.-]+[.][a-z]{2,}$/.test(e);\nconst domOf = (u) => String(u || '').trim().toLowerCase().replace(/^https?:[/][/]/, '').split(/[/?#]/)[0].split(':')[0].replace(/^www[.]/, '');\nconst tok = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/['’-]/g, '').replace(/[^a-z ]/g, ' ').split(' ').filter(Boolean);\nconst ORG = /(^|[^a-z])(llc|inc|corp|corporation|company|trust|lp|llp|pa|pllc|services|agents?|registered|holdings|ltd|bank|association|incorporated|partnership)([^a-z]|$)/i;\nconst KEY_ROLE = /owner|founder|pres|ceo|coo|cfo|manag|mgr|ambr|member|principal|partner|director|^p$|^d$|^vp$/i;\nconst bucketOf = (s) => { s = String(s || '').toLowerCase(); return s === 'safe' ? 'safe' : s === 'invalid' ? 'invalid' : (s === 'risky' || s === 'unknown') ? 'risky_unknown' : 'error'; };\nconst PAT = { 'first.last': (f, l) => f + '.' + l, 'first': (f, l) => f, 'flast': (f, l) => f[0] + l, 'firstlast': (f, l) => f + l, 'firstl': (f, l) => f + l[0], 'first.l': (f, l) => f + '.' + l[0], 'f.last': (f, l) => f[0] + '.' + l, 'first_last': (f, l) => f + '_' + l, 'last': (f, l) => l, 'last.first': (f, l) => l + '.' + f, 'lastf': (f, l) => l + f[0] };\nconst isProbe = (e, x) => (x && x.purpose === 'probe') || /^nx[a-z0-9]+q7@/.test(e);\nconst slugPlace = (s) => { if (/[0-9]/.test(String(s || '').replace(/ [0-9]{5}$/, ''))) return ''; const v = tok(s).filter(w => !/^(fl|florida|usa|the)$/.test(w)).join(''); return v.length >= 4 && v.length <= 18 ? v : ''; };\nconst locationOf = (biz, website, city) => {\n  const n = String(biz || '');\n  const m = n.match(/ of ([A-Za-z .'-]+)$/i) || n.match(/[(]([A-Za-z .'-]+)[)]/) || n.match(/ - ([A-Za-z .'-]+)$/);\n  if (m) { const s = slugPlace(m[1]); if (s) return s; }\n  const c = slugPlace(String(city || '').replace(/[0-9]+/g, '').trim());\n  if (c) { const path = String(website || '').toLowerCase().replace(/^https?:[/][/][^/]+/, '').replace(/[^a-z0-9]/g, ''); if (path.includes(c)) return c; }\n  return '';\n};\n\nconst idx = tab('index');\nconst sunObjs = toObjs(tab('unified_list_sunbiz_enriched'));\nconst sunByRow = new Map(sunObjs.map(o => [o._row, o]));\nconst sunByDom = new Map(), sunByName = new Map();\nfor (const o of sunObjs) { const d = domOf(o.website); if (d && !sunByDom.has(d)) sunByDom.set(d, o); const n = String(o.name || '').trim().toLowerCase(); if (n && !sunByName.has(n)) sunByName.set(n, o); }\nconst c360 = [...toObjs(tab('Customer360_Results')), ...toObjs(tab('Customer360_Review'))];\nconst c360BySrc = new Map(), c360ByDom = new Map();\nfor (const o of c360) { const s = Number(o.source_row); if (s && !c360BySrc.has(s)) c360BySrc.set(s, o); const d = domOf(o.website); if (d && !c360ByDom.has(d)) c360ByDom.set(d, o); }\n\nconst domCache = new Map();\nfor (const it of $('Read Domain Cache').all()) { const x = it.json || {}; const d = String(x.domain || '').toLowerCase(); if (!d || !x.status || String(x.probe_status || '')) continue; domCache.set(d, { status: String(x.status), pattern: String(x.pattern || '') }); }\nconst known = {};\nfor (const it of $('Read Email Cache').all()) { const x = it.json || {}; const e = norm(x.email); if (!e || !x.status || x.status === 'error' || isProbe(e, x)) continue; known[e] = { status: String(x.status), bucket: x.bucket || bucketOf(x.status), is_catch_all: x.is_catch_all === true, mx_accepts_mail: typeof x.mx_accepts_mail === 'boolean' ? x.mx_accepts_mail : null, source: x.source || 'cache' }; }\nfor (const o of c360) {\n  let checks = []; try { checks = JSON.parse(o.email_checks_json || '[]'); } catch (e) { checks = []; }\n  for (const c of (Array.isArray(checks) ? checks : [])) {\n    const e = norm(c && c.email); const st = String((c && c.status) || (c && c.result && c.result.is_reachable) || '').toLowerCase(); const b = bucketOf(st);\n    if (!isEmail(e) || b === 'error' || known[e]) continue;\n    const mx = c.result && c.result.mx && typeof c.result.mx.accepts_mail === 'boolean' ? c.result.mx.accepts_mail : null;\n    known[e] = { status: st, bucket: b, is_catch_all: !!(c.result && c.result.smtp && c.result.smtp.is_catch_all), mx_accepts_mail: mx, source: 'customer360' };\n  }\n}\nconst knownKeys = Object.keys(known);\n\nconst people = (srow, c) => {\n  const out = [];\n  let pj = []; try { pj = JSON.parse((c && c.people_json) || '[]'); } catch (e) { pj = []; }\n  for (const p of (Array.isArray(pj) ? pj : [])) { const t = tok(p && p.name); if (t.length < 2) continue; out.push({ first: t[0], last: t[t.length - 1], role: String((p && p.role) || ''), source: 'customer360', prio: KEY_ROLE.test(String((p && p.role) || '')) ? 1 : 2.5 }); }\n  if (srow) {\n    for (const part of String(srow.sunbiz_officers || '').split(';')) {\n      let role = '', nm = part.trim(); const m = nm.match(/^([^:]+):[ ]*(.*)$/); if (m) { role = m[1].trim(); nm = m[2]; }\n      nm = nm.split(',')[0]; if (!nm || ORG.test(nm)) continue;\n      const t = tok(nm); if (t.length < 2) continue;\n      out.push({ first: t[1], last: t[0], role, source: 'sunbiz_officer', prio: KEY_ROLE.test(role) ? 2 : 3 });\n    }\n    const ra = String(srow.sunbiz_registered_agent || '').split(',')[0];\n    if (ra && !ORG.test(ra)) { const t = tok(ra); if (t.length >= 2) out.push({ first: t[1], last: t[0], role: 'Registered Agent', source: 'sunbiz_agent', prio: 5 }); }\n  }\n  const seen = new Set(), res = [];\n  for (const p of out.sort((a, b) => a.prio - b.prio)) { if (p.first.length < 2 || p.last.length < 2) continue; const k = [p.first, p.last].sort().join('|'); if (seen.has(k)) continue; seen.add(k); res.push(p); }\n  return res.slice(0, 3);\n};\n\nconst jobs = []; let eligible = 0, noDomainYet = 0, freeMail = 0, skippedNoMx = 0, skippedNoData = 0;\nfor (let i = 1; i < idx.length && jobs.length < MAX_JOBS; i++) {\n  const r = idx[i] || []; const rowNum = i + 1;\n  const g = (k) => String(r[k] == null ? '' : r[k]).trim();\n  if (/^skipped/i.test(g(12))) continue;\n  if (g(15) || g(16) || g(17)) continue;\n  const nval = g(13).toLowerCase();\n  if (!/^@[a-z0-9.-]+[.][a-z]{2,}$/.test(nval)) { noDomainYet++; continue; }\n  const domain = nval.slice(1);\n  if (FREE.has(domain)) { freeMail++; continue; }\n  eligible++;\n  const biz = g(2), wd = domOf(g(4)), sr = Number(g(1));\n  const srow = (sr && sunByRow.get(sr)) || (wd && sunByDom.get(wd)) || sunByName.get(biz.toLowerCase()) || null;\n  const c = (srow && c360BySrc.get(srow._row)) || (wd && c360ByDom.get(wd)) || null;\n  const existing = [...new Set([g(6), c ? c.business_email : '', c ? c.safe_email_addresses : ''].join(',').replace(/[^a-zA-Z0-9._%+@-]+/g, ',').split(',').map(norm).filter(e => isEmail(e) && e.endsWith('@' + domain)))].slice(0, MAX_EXISTING);\n  const dc = domCache.get(domain) || null;\n  if (dc && dc.status === 'no_mx') { skippedNoMx++; continue; }\n  const reps = people(srow, c);\n  const location = locationOf(biz, g(4), g(9));\n  if (!reps.length && !existing.length && !location) { skippedNoData++; continue; }\n  let pattern = '', hint = '';\n  for (const e of existing) {\n    const loc = e.split('@')[0];\n    if (GENERIC.test(loc)) continue;\n    for (const p of reps) for (const k of Object.keys(PAT)) if (!pattern && PAT[k](p.first, p.last) === loc) pattern = k;\n    if (!pattern && !hint && /^[a-z]{2,}[.][a-z]{2,}$/.test(loc)) hint = 'first.last';\n  }\n  if (!pattern && dc && dc.pattern) pattern = dc.pattern;\n  const sub = {}; let domainStatus = dc ? dc.status : '';\n  for (const e of knownKeys) if (e.endsWith('@' + domain)) { sub[e] = known[e]; if (known[e].mx_accepts_mail === false) domainStatus = 'no_mx'; else if (known[e].is_catch_all && domainStatus !== 'no_mx') domainStatus = 'catch_all'; }\n  jobs.push({ json: { job: { row: rowNum, business: biz, domain, existing, reps: reps.map(p => ({ first: p.first, last: p.last, role: p.role || p.source })), pattern, hint, location, domainStatus, known: sub } } });\n}\nif (!jobs.length) return [];\njobs[0].json.planStats = { eligibleRows: eligible, jobs: jobs.length, rowsWaitingOnDomainInN: noDomainYet, freeMailDomainsSkipped: freeMail, skippedNoMx, skippedNoPeopleOrEmail: skippedNoData, emailCacheEntries: knownKeys.length, domainCacheEntries: domCache.size };\nreturn jobs;"
+      },
+      "id": "57244bc2-f4de-430e-b2c4-2824b49b41b3",
+      "name": "Plan Domain Jobs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://u2wfervxqiwcouzajnmnqqxo.aspworkplace.com/v0/check_email",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ to_email: $json.email }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 90000
+        }
+      },
+      "id": "820d2e77-34c9-44fa-891b-3fcc92f59675",
+      "name": "Reacher Check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2208,
+        -192
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const prev = $('Next Step').item.json;\nconst res = ($json && $json.body) || $json || {};\nconst ok = !$json.error && Number($json.statusCode || 200) < 300 && typeof res.is_reachable === 'string';\nconst status = ok ? res.is_reachable.toLowerCase() : 'error';\nconst bucket = status === 'safe' ? 'safe' : status === 'invalid' ? 'invalid' : (status === 'risky' || status === 'unknown') ? 'risky_unknown' : 'error';\nconst smtp = (ok && res.smtp) || {};\nconst mx = ok && res.mx && typeof res.mx.accepts_mail === 'boolean' ? res.mx.accepts_mail : null;\nconst detail = ok ? { mx_accepts_mail: mx, smtp: smtp, role_account: res.misc ? res.misc.is_role_account : null, disposable: res.misc ? res.misc.is_disposable : null } : { error: $json.error || res };\nreturn { json: { email: String(prev.email).toLowerCase(), domain: prev.domain, status, bucket, is_catch_all: smtp.is_catch_all === true, is_deliverable: smtp.is_deliverable === true, mx_accepts_mail: mx, purpose: prev.purpose, source: 'reacher', index_row: Number(prev.index_row) || 0, business: String(prev.business || '').slice(0, 200), checked_at: new Date().toISOString(), detail: JSON.stringify(detail).slice(0, 2000), job: prev.job } };"
+      },
+      "id": "c16a8242-554a-46e7-aa56-a03119d97506",
+      "name": "Normalize Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2432,
+        -192
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "ulAtKXG2sMn0evss",
+          "cachedResultName": "Unified List - email verification cache"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "email",
+              "keyValue": "={{ $json.email }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "bucket": "={{ $json.bucket }}",
+            "business": "={{ $json.business }}",
+            "checked_at": "={{ $json.checked_at }}",
+            "detail": "={{ $json.detail }}",
+            "domain": "={{ $json.domain }}",
+            "email": "={{ $json.email }}",
+            "index_row": "={{ $json.index_row }}",
+            "is_catch_all": "={{ $json.is_catch_all }}",
+            "is_deliverable": "={{ $json.is_deliverable }}",
+            "mx_accepts_mail": "={{ $json.mx_accepts_mail }}",
+            "purpose": "={{ $json.purpose }}",
+            "source": "={{ $json.source }}",
+            "status": "={{ $json.status }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "domain",
+              "displayName": "domain",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "bucket",
+              "displayName": "bucket",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "is_catch_all",
+              "displayName": "is_catch_all",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "is_deliverable",
+              "displayName": "is_deliverable",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "index_row",
+              "displayName": "index_row",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "business",
+              "displayName": "business",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "checked_at",
+              "displayName": "checked_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "detail",
+              "displayName": "detail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "mx_accepts_mail",
+              "displayName": "mx_accepts_mail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "purpose",
+              "displayName": "purpose",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "64e2c16f-dcb1-44b6-b5a4-73c2f3029f33",
+      "name": "Save Email Result",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2656,
+        -240
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "ec086961-57f8-4267-be8c-6b19755ba837",
+      "name": "Wait 5 Seconds",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2656,
+        96
+      ],
+      "webhookId": "a49b7767-1d25-4041-8cf8-2c855ce01347"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "574dd6b5-9749-4e82-897c-10cd4d34da32",
+      "name": "Loop Domains",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1232,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://sheets.googleapis.com/v4/spreadsheets/1lrJ_Fk63Gp_Q2ZVICO_MPsuJAB7vFMsykxJar95l36k/values/index!A:R?valueRenderOption=FORMATTED_VALUE",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "6485b86c-32dd-4063-890c-4b4a7afb4dca",
+      "name": "Re-read Index N-R",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1520,
+        -80
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sKITsW661Itsg15I",
+          "name": "Google Sheets account - ASP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const outcomes = new Map();\nfor (let r = 0; r < 1000; r++) { let items; try { items = $('Next Step').all(0, r); } catch (e) { break; } if (!items || !items.length) break; for (const it of items) { const x = it.json || {}; if (x.action === 'finish' && x.outcome) outcomes.set(x.outcome.row, x.outcome); } }\nlet checks = 0, errors = 0; const byPurpose = {};\nfor (let r = 0; r < 500; r++) { let items; try { items = $('Normalize Result').all(0, r); } catch (e) { break; } if (!items || !items.length) break; for (const it of items) { checks++; const x = it.json || {}; if (x.status === 'error') errors++; byPurpose[x.purpose] = (byPurpose[x.purpose] || 0) + 1; } }\nlet planStats = {}; try { planStats = $('Plan Domain Jobs').first().json.planStats || {}; } catch (e) {}\nconst fresh = $('Re-read Index N-R').first().json.values || [];\nconst split = (s) => String(s || '').split(',').map(x => x.trim().toLowerCase()).filter(Boolean);\nconst data = [], written = [], skipped = [];\nfor (const o of outcomes.values()) {\n  if (!o.complete) { skipped.push({ row: o.row, business: o.business, domain: o.domain, domainStatus: o.domainStatus, reason: o.reason === 'deferred_budget' ? 'check budget used up; continues next run' : 'Reacher error; retries next run' }); continue; }\n  if (!o.candidates.length) { skipped.push({ row: o.row, business: o.business, domain: o.domain, domainStatus: o.domainStatus, reason: 'nothing to write (domain has no mail server)' }); continue; }\n  const r = fresh[o.row - 1] || [];\n  if (String(r[2] || '').trim() !== String(o.business || '').trim()) { skipped.push({ row: o.row, business: o.business, reason: 'row moved or changed since planning' }); continue; }\n  const cur = [14, 15, 16, 17].map(k => String(r[k] == null ? '' : r[k]).trim());\n  if (cur[1] || cur[2] || cur[3]) { skipped.push({ row: o.row, business: o.business, reason: 'P-R filled since planning; left untouched' }); continue; }\n  const by = (b) => o.candidates.filter(e => o.results[e] === b).join(', ');\n  const values = [[...new Set([...split(cur[0]), ...o.candidates])].join(', '), by('safe'), by('risky_unknown'), by('invalid')];\n  data.push({ range: 'index!O' + o.row + ':R' + o.row, values: [values] });\n  written.push({ row: o.row, business: o.business, domainStatus: o.domainStatus, pattern: o.pattern, safe: values[1], risky_unknown: values[2], invalid: values[3] });\n}\nreturn [{ json: { hasUpdates: data.length > 0, body: { valueInputOption: 'RAW', data }, summary: { rowsWritten: written.length, rowsDeferred: skipped.length, reacherChecks: checks, checksByPurpose: byPurpose, reacherErrors: errors, plan: planStats }, written, skipped } }];"
+      },
+      "id": "86e5cc4d-ffb6-4b6b-ac46-9c7ea91b1f63",
+      "name": "Build N-R Merge",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1744,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.hasUpdates }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "36627d2b-936b-4b7b-ba2b-9b67f2fb07bf",
+      "name": "Any Rows to Write?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1968,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sheets.googleapis.com/v4/spreadsheets/1lrJ_Fk63Gp_Q2ZVICO_MPsuJAB7vFMsykxJar95l36k/values:batchUpdate",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.body) }}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "a34032af-919d-4868-b5f4-93493eff3374",
+      "name": "Write N-R to Index",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2192,
+        -80
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sKITsW661Itsg15I",
+          "name": "Google Sheets account - ASP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "cachedResultName": "Unified List - domain cache",
+          "mode": "id",
+          "value": "f2bOfRvyG4cHz0A3"
+        },
+        "returnAll": true
+      },
+      "id": "0efd3e45-f84f-4b9f-959c-70fa72a815db",
+      "name": "Read Domain Cache",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        736,
+        48
+      ],
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const MAX_CHECKS = 10;\nconst ORDER_BASE = ['first.last', 'first', 'flast', 'firstlast', 'firstl', 'first.l'];\nconst TRIES_PER_REP = [6, 3, 0];\nconst PAT = { 'first.last': (f, l) => f + '.' + l, 'first': (f, l) => f, 'flast': (f, l) => f[0] + l, 'firstlast': (f, l) => f + l, 'firstl': (f, l) => f + l[0], 'first.l': (f, l) => f + '.' + l[0], 'f.last': (f, l) => f[0] + '.' + l, 'first_last': (f, l) => f + '_' + l, 'last': (f, l) => l, 'last.first': (f, l) => l + '.' + f, 'lastf': (f, l) => l + f[0] };\nconst job = $input.first().json.job;\nconst runRes = {}; let used = 0;\nfor (let r = 0; r < 500; r++) { let items; try { items = $('Normalize Result').all(0, r); } catch (e) { break; } if (!items || !items.length) break; for (const it of items) { used++; const x = it.json || {}; if (x.email) runRes[x.email] = x; } }\nconst known = job.known || {};\nconst res = (e) => (runRes[e] && runRes[e].status !== 'error') ? runRes[e] : (known[e] || null);\nconst failedNow = (e) => !!(runRes[e] && runRes[e].status === 'error');\nlet domainStatus = job.domainStatus || '', pattern = job.pattern || '';\nconst considered = [], results = {};\nconst note = (e, b) => { if (!considered.includes(e)) considered.push(e); results[e] = b; };\nconst learn = (r) => { if (r.mx_accepts_mail === false) domainStatus = 'no_mx'; else if (r.is_catch_all === true) domainStatus = 'catch_all'; else if (r.status === 'safe' || r.status === 'invalid') domainStatus = 'confirmed'; else if (r.status === 'unknown' && domainStatus !== 'confirmed') domainStatus = 'unverifiable'; };\nconst stopped = () => domainStatus === 'catch_all' || domainStatus === 'no_mx' || domainStatus === 'unverifiable';\nconst out = (reason) => [{ json: { action: 'finish', outcome: { row: job.row, business: job.business, domain: job.domain, reason, complete: reason === 'complete', domainStatus, pattern, probeStatus: '', candidates: considered, results, saveDomain: !!domainStatus && (domainStatus !== (job.domainStatus || '') || pattern !== (job.pattern || '')), checksUsedSoFar: used } } }];\nconst check = (email, purpose) => used >= MAX_CHECKS ? out('deferred_budget') : [{ json: { action: 'check', email, domain: email.split('@')[1], purpose, index_row: job.row, business: job.business, job } }];\nconst reps = job.reps || [];\nconst D = '@' + job.domain;\nif (!pattern && !stopped()) {\n  const order = [...new Set([job.hint, ...ORDER_BASE].filter(k => k && PAT[k]))];\n  let found = '';\n  for (let i = 0; i < reps.length && !found && !stopped(); i++) {\n    const p = reps[i];\n    for (const k of order.slice(0, TRIES_PER_REP[i] || 0)) {\n      const e = PAT[k](p.first, p.last) + D;\n      if (considered.includes(e)) continue;\n      const r = res(e);\n      if (!r) { if (failedNow(e)) return out('error'); return check(e, 'pattern_search'); }\n      note(e, r.bucket); learn(r);\n      if (r.bucket === 'safe' && !r.is_catch_all) { found = k; break; }\n      if (stopped()) break;\n    }\n  }\n  pattern = found;\n}\nif (pattern && PAT[pattern] && !stopped()) {\n  for (const p of reps) { const e = PAT[pattern](p.first, p.last) + D; if (considered.includes(e)) continue; const r = res(e); if (!r) { if (failedNow(e)) return out('error'); return check(e, 'apply_pattern'); } note(e, r.bucket); learn(r); if (stopped()) break; }\n}\nif (job.location) { const e = job.location + D; if (!considered.includes(e)) { const r = res(e); if (r) { note(e, r.bucket); learn(r); } else if (stopped()) { note(e, 'risky_unknown'); } else { if (failedNow(e)) return out('error'); return check(e, 'location'); } } }\nfor (const e of (job.existing || [])) { if (considered.includes(e)) continue; const r = res(e); if (r) { note(e, r.bucket); continue; } if (stopped()) { note(e, 'risky_unknown'); continue; } if (failedNow(e)) return out('error'); return check(e, 'existing'); }\nif (stopped() && domainStatus !== 'no_mx') { const pt = PAT[pattern] ? pattern : (PAT[job.hint] ? job.hint : 'first.last'); for (const p of reps) { const e = PAT[pt](p.first, p.last) + D; if (!considered.includes(e)) note(e, 'risky_unknown'); } }\nreturn out('complete');"
+      },
+      "id": "e293f636-43ea-4950-a379-fae9b08b0e80",
+      "name": "Next Step",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1616,
+        -16
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "check"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                }
+              },
+              "renameOutput": true,
+              "outputKey": "check"
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "finish"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                }
+              },
+              "renameOutput": true,
+              "outputKey": "finish"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e1fbb9ee-d3d8-4782-887b-f23c36e04f15",
+      "name": "Route Step",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1984,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.outcome.saveDomain }}",
+              "operator": {
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          }
+        },
+        "options": {}
+      },
+      "id": "b8eccca6-59b5-4058-b9bb-3f4bf0479e4f",
+      "name": "Save Domain?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2208,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "cachedResultName": "Unified List - domain cache",
+          "mode": "id",
+          "value": "f2bOfRvyG4cHz0A3"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "domain",
+              "keyValue": "={{ $json.outcome.domain }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "domain",
+              "id": "domain",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "status",
+              "id": "status",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "pattern",
+              "id": "pattern",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "probe_status",
+              "id": "probe_status",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "business",
+              "id": "business",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "checked_at",
+              "id": "checked_at",
+              "required": false,
+              "type": "dateTime"
+            }
+          ],
+          "value": {
+            "business": "={{ $json.outcome.business }}",
+            "checked_at": "={{ $now.toISO() }}",
+            "domain": "={{ $json.outcome.domain }}",
+            "pattern": "={{ $json.outcome.pattern }}",
+            "probe_status": "={{ $json.outcome.probeStatus }}",
+            "status": "={{ $json.outcome.domainStatus }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "97691309-3799-4051-9db5-6d733cd72834",
+      "name": "Save Domain Cache",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2432,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        128
+      ],
+      "id": "ba78efd5-ba1b-4ace-b9d9-5135e3fe99fc",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "pinData": {
+    "Schedule Trigger": [
+      {
+        "json": {
+          "timestamp": "2026-10-27T15:50:56.004-04:00",
+          "Readable date": "October 27th 2026, 3:50:56 pm",
+          "Readable time": "3:50:56 pm",
+          "Day of week": "Tuesday",
+          "Year": "2026",
+          "Month": "October",
+          "Day of month": "27",
+          "Hour": "15",
+          "Minute": "50",
+          "Second": "56",
+          "Timezone": "America/New_York (UTC-04:00)"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "timezone": "America/New_York",
+    "saveManualExecutions": true,
+    "binaryMode": "separate"
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "YgWJ8rJLCivu00FV",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-10-27T18:34:37.953Z",
+      "updatedAt": "2026-10-27T18:34:37.953Z"
+    }
+  ],
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": [
+        null
+      ],
+      "recurrenceRuleSignatures": [
+        null
+      ]
+    }
+  },
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2026-10-27T19:53:41.414Z",
+  "versionId": "dc86244e-1e10-47b7-a473-94b2022c91c2"
+}
