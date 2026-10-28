@@ -1,0 +1,675 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "39ddb48f-917d-4ce3-96c3-554a80d2bc1f",
+    "workflowId": "72QOLoACenTUW1YW",
+    "nodes": [
+      {
+        "id": "d719ddc8-517c-4480-965a-5dea55e75786",
+        "name": "Sticky Note efea9248",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          576,
+          -32
+        ],
+        "parameters": {
+          "content": "## Email cache → Unified List sheet\nDaily at 6:41 AM ET.\n\n1. Creates the `email_verification_cache` tab if it's missing.\n2. Reads the **Unified List - email verification cache** data table.\n3. Clears the tab and writes a full snapshot (newest checks first).\n\nThe tab is a mirror — edits made there get overwritten on the next run.",
+          "width": 520,
+          "height": 260
+        }
+      },
+      {
+        "id": "4aa13244-c80f-4d9d-b575-57b040b24d56",
+        "name": "Daily 6:41 AM",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          0
+        ],
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "cronExpression",
+                "expression": "41 6 * * *"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "d26f97a2-14da-463d-bb95-79f7de3b125d",
+        "name": "Get Workbook Tabs",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          224,
+          0
+        ],
+        "parameters": {
+          "url": "https://sheets.googleapis.com/v4/spreadsheets/1lrJ_Fk63Gp_Q2ZVICO_MPsuJAB7vFMsykxJar95l36k?fields=sheets.properties(title,sheetId)",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "googleSheetsOAuth2Api",
+          "options": {
+            "timeout": 60000
+          }
+        },
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "sKITsW661Itsg15I",
+            "name": "Google Sheets account - ASP"
+          }
+        }
+      },
+      {
+        "id": "e1026dcf-dca7-4057-b996-af338fc379e0",
+        "name": "Tab Exists?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          448,
+          0
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose"
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ ($json.sheets || []).some(s => s.properties.title === 'email_verification_cache') }}",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          }
+        }
+      },
+      {
+        "id": "70608208-e682-4b80-9ed5-723aed9546ec",
+        "name": "Read Email Cache",
+        "type": "n8n-nodes-base.dataTable",
+        "typeVersion": 1.1,
+        "position": [
+          896,
+          0
+        ],
+        "parameters": {
+          "operation": "get",
+          "dataTableId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "ulAtKXG2sMn0evss",
+            "cachedResultName": "Unified List - email verification cache"
+          },
+          "returnAll": true
+        },
+        "executeOnce": true
+      },
+      {
+        "id": "367f7141-ac29-46ef-89b8-08db1d601ffa",
+        "name": "Build Sheet Rows",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1120,
+          0
+        ],
+        "parameters": {
+          "jsCode": "const COLS = ['email','domain','status','bucket','is_catch_all','is_deliverable','mx_accepts_mail','purpose','source','index_row','business','checked_at','detail'];\n// Prefix values Sheets would treat as formulas\nconst safe = (v) => {\n  if (v === null || v === undefined) return '';\n  if (typeof v === 'boolean' || typeof v === 'number') return v;\n  const s = typeof v === 'object' ? JSON.stringify(v) : String(v);\n  return /^[=+@-]/.test(s) ? \"'\" + s : s;\n};\nconst fmt = (d) => {\n  if (!d) return '';\n  const js = new Date(d);\n  if (isNaN(js)) return String(d);\n  return DateTime.fromJSDate(js).setZone('America/New_York').toFormat('yyyy-MM-dd HH:mm:ss');\n};\nconst rows = $input.all().map(i => i.json).filter(x => x && x.email);\nrows.sort((a, b) => new Date(b.checked_at || 0) - new Date(a.checked_at || 0));\nconst values = [COLS, ...rows.map(r => COLS.map(c => c === 'checked_at' ? fmt(r[c]) : safe(r[c])))];\nreturn [{ json: { values, rowCount: rows.length } }];"
+        }
+      },
+      {
+        "id": "67e3e2b3-65e6-4a15-9b1d-f6a1de3122ab",
+        "name": "Clear Tab",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1344,
+          0
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "https://sheets.googleapis.com/v4/spreadsheets/1lrJ_Fk63Gp_Q2ZVICO_MPsuJAB7vFMsykxJar95l36k/values/email_verification_cache!A:Z:clear",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "googleSheetsOAuth2Api",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "{}",
+          "options": {
+            "timeout": 60000
+          }
+        },
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "sKITsW661Itsg15I",
+            "name": "Google Sheets account - ASP"
+          }
+        },
+        "executeOnce": true
+      },
+      {
+        "id": "5a12c7cd-4976-46e0-989a-c6123ca0ed29",
+        "name": "Write Rows",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1568,
+          0
+        ],
+        "parameters": {
+          "method": "PUT",
+          "url": "https://sheets.googleapis.com/v4/spreadsheets/1lrJ_Fk63Gp_Q2ZVICO_MPsuJAB7vFMsykxJar95l36k/values/email_verification_cache!A1?valueInputOption=USER_ENTERED",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "googleSheetsOAuth2Api",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({ majorDimension: 'ROWS', values: $('Build Sheet Rows').first().json.values }) }}",
+          "options": {
+            "timeout": 120000
+          }
+        },
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "sKITsW661Itsg15I",
+            "name": "Google Sheets account - ASP"
+          }
+        },
+        "executeOnce": true
+      },
+      {
+        "id": "2c6cf246-95e0-4793-b1a7-5898e670f095",
+        "name": "Create Tab",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          672,
+          80
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "https://sheets.googleapis.com/v4/spreadsheets/1lrJ_Fk63Gp_Q2ZVICO_MPsuJAB7vFMsykxJar95l36k:batchUpdate",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "googleSheetsOAuth2Api",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "{\"requests\":[{\"addSheet\":{\"properties\":{\"title\":\"email_verification_cache\",\"gridProperties\":{\"frozenRowCount\":1}}}}]}",
+          "options": {
+            "timeout": 60000
+          }
+        },
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "sKITsW661Itsg15I",
+            "name": "Google Sheets account - ASP"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Daily 6:41 AM": {
+        "main": [
+          [
+            {
+              "node": "Get Workbook Tabs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Workbook Tabs": {
+        "main": [
+          [
+            {
+              "node": "Tab Exists?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Tab Exists?": {
+        "main": [
+          [
+            {
+              "node": "Read Email Cache",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Create Tab",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Read Email Cache": {
+        "main": [
+          [
+            {
+              "node": "Build Sheet Rows",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Build Sheet Rows": {
+        "main": [
+          [
+            {
+              "node": "Clear Tab",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Clear Tab": {
+        "main": [
+          [
+            {
+              "node": "Write Rows",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create Tab": {
+        "main": [
+          [
+            {
+              "node": "Read Email Cache",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [
+      {
+        "id": "63334ba0-a74a-4e78-a167-0d2d8a6e746e",
+        "name": "Mirror cache to sheet",
+        "nodeIds": [
+          "70608208-e682-4b80-9ed5-723aed9546ec",
+          "367f7141-ac29-46ef-89b8-08db1d601ffa",
+          "67e3e2b3-65e6-4a15-9b1d-f6a1de3122ab",
+          "5a12c7cd-4976-46e0-989a-c6123ca0ed29"
+        ],
+        "description": "Reads the data table and writes a full snapshot to the tab."
+      }
+    ],
+    "authors": "Robert Lord (via MCP)",
+    "name": "Set ET timezone and group nodes",
+    "description": "Updated workflow",
+    "autosaved": false,
+    "createdAt": "2026-10-28T13:53:12.413Z",
+    "updatedAt": "2026-10-28T13:53:12.413Z"
+  },
+  "activeVersionId": "39ddb48f-917d-4ce3-96c3-554a80d2bc1f",
+  "connections": {
+    "Daily 6:41 AM": {
+      "main": [
+        [
+          {
+            "node": "Get Workbook Tabs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Workbook Tabs": {
+      "main": [
+        [
+          {
+            "node": "Tab Exists?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tab Exists?": {
+      "main": [
+        [
+          {
+            "node": "Read Email Cache",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Tab",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Email Cache": {
+      "main": [
+        [
+          {
+            "node": "Build Sheet Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Sheet Rows": {
+      "main": [
+        [
+          {
+            "node": "Clear Tab",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clear Tab": {
+      "main": [
+        [
+          {
+            "node": "Write Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Tab": {
+      "main": [
+        [
+          {
+            "node": "Read Email Cache",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-28T13:52:57.452Z",
+  "id": "72QOLoACenTUW1YW",
+  "isArchived": false,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "name": "Unified List | Email Cache → Sheet (Daily)",
+  "nodeGroups": [
+    {
+      "id": "63334ba0-a74a-4e78-a167-0d2d8a6e746e",
+      "name": "Mirror cache to sheet",
+      "nodeIds": [
+        "70608208-e682-4b80-9ed5-723aed9546ec",
+        "367f7141-ac29-46ef-89b8-08db1d601ffa",
+        "67e3e2b3-65e6-4a15-9b1d-f6a1de3122ab",
+        "5a12c7cd-4976-46e0-989a-c6123ca0ed29"
+      ],
+      "description": "Reads the data table and writes a full snapshot to the tab."
+    }
+  ],
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Email cache → Unified List sheet\nDaily at 6:41 AM ET.\n\n1. Creates the `email_verification_cache` tab if it's missing.\n2. Reads the **Unified List - email verification cache** data table.\n3. Clears the tab and writes a full snapshot (newest checks first).\n\nThe tab is a mirror — edits made there get overwritten on the next run.",
+        "height": 260,
+        "width": 520
+      },
+      "id": "d719ddc8-517c-4480-965a-5dea55e75786",
+      "name": "Sticky Note efea9248",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        16,
+        -400
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "41 6 * * *"
+            }
+          ]
+        }
+      },
+      "id": "4aa13244-c80f-4d9d-b575-57b040b24d56",
+      "name": "Daily 6:41 AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://sheets.googleapis.com/v4/spreadsheets/1lrJ_Fk63Gp_Q2ZVICO_MPsuJAB7vFMsykxJar95l36k?fields=sheets.properties(title,sheetId)",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "d26f97a2-14da-463d-bb95-79f7de3b125d",
+      "name": "Get Workbook Tabs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        224,
+        -128
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sKITsW661Itsg15I",
+          "name": "Google Sheets account - ASP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ ($json.sheets || []).some(s => s.properties.title === 'email_verification_cache') }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "e1026dcf-dca7-4057-b996-af338fc379e0",
+      "name": "Tab Exists?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "ulAtKXG2sMn0evss",
+          "cachedResultName": "Unified List - email verification cache"
+        },
+        "returnAll": true
+      },
+      "id": "70608208-e682-4b80-9ed5-723aed9546ec",
+      "name": "Read Email Cache",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        -208
+      ],
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const COLS = ['email','domain','status','bucket','is_catch_all','is_deliverable','mx_accepts_mail','purpose','source','index_row','business','checked_at','detail'];\n// Prefix values Sheets would treat as formulas\nconst safe = (v) => {\n  if (v === null || v === undefined) return '';\n  if (typeof v === 'boolean' || typeof v === 'number') return v;\n  const s = typeof v === 'object' ? JSON.stringify(v) : String(v);\n  return /^[=+@-]/.test(s) ? \"'\" + s : s;\n};\nconst fmt = (d) => {\n  if (!d) return '';\n  const js = new Date(d);\n  if (isNaN(js)) return String(d);\n  return DateTime.fromJSDate(js).setZone('America/New_York').toFormat('yyyy-MM-dd HH:mm:ss');\n};\nconst rows = $input.all().map(i => i.json).filter(x => x && x.email);\nrows.sort((a, b) => new Date(b.checked_at || 0) - new Date(a.checked_at || 0));\nconst values = [COLS, ...rows.map(r => COLS.map(c => c === 'checked_at' ? fmt(r[c]) : safe(r[c])))];\nreturn [{ json: { values, rowCount: rows.length } }];"
+      },
+      "id": "367f7141-ac29-46ef-89b8-08db1d601ffa",
+      "name": "Build Sheet Rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1184,
+        -208
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sheets.googleapis.com/v4/spreadsheets/1lrJ_Fk63Gp_Q2ZVICO_MPsuJAB7vFMsykxJar95l36k/values/email_verification_cache!A:Z:clear",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "67e3e2b3-65e6-4a15-9b1d-f6a1de3122ab",
+      "name": "Clear Tab",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1408,
+        -208
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sKITsW661Itsg15I",
+          "name": "Google Sheets account - ASP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "https://sheets.googleapis.com/v4/spreadsheets/1lrJ_Fk63Gp_Q2ZVICO_MPsuJAB7vFMsykxJar95l36k/values/email_verification_cache!A1?valueInputOption=USER_ENTERED",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ majorDimension: 'ROWS', values: $('Build Sheet Rows').first().json.values }) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "5a12c7cd-4976-46e0-989a-c6123ca0ed29",
+      "name": "Write Rows",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1632,
+        -208
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sKITsW661Itsg15I",
+          "name": "Google Sheets account - ASP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sheets.googleapis.com/v4/spreadsheets/1lrJ_Fk63Gp_Q2ZVICO_MPsuJAB7vFMsykxJar95l36k:batchUpdate",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"requests\":[{\"addSheet\":{\"properties\":{\"title\":\"email_verification_cache\",\"gridProperties\":{\"frozenRowCount\":1}}}}]}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "2c6cf246-95e0-4793-b1a7-5898e670f095",
+      "name": "Create Tab",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        672,
+        -64
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sKITsW661Itsg15I",
+          "name": "Google Sheets account - ASP"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "timezone": "America/New_York",
+    "saveManualExecutions": true,
+    "binaryMode": "separate"
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "72QOLoACenTUW1YW",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-10-28T13:52:57.455Z",
+      "updatedAt": "2026-10-28T13:52:57.455Z"
+    }
+  ],
+  "staticData": {
+    "node:Daily 6:41 AM": {
+      "recurrenceRules": [
+        null
+      ],
+      "recurrenceRuleSignatures": [
+        null
+      ]
+    }
+  },
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2026-10-28T13:55:54.168Z",
+  "versionId": "6ed5e395-4c95-49af-9b53-fdb08c7f5615"
+}
