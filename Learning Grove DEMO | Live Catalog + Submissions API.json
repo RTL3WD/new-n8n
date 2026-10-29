@@ -1,0 +1,354 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Demo catalog": {
+      "main": [
+        [
+          {
+            "node": "Read courses",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read courses": {
+      "main": [
+        [
+          {
+            "node": "Read resources",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read resources": {
+      "main": [
+        [
+          {
+            "node": "Search and assemble live records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search and assemble live records": {
+      "main": [
+        [
+          {
+            "node": "Return catalog and matches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Demo submission": {
+      "main": [
+        [
+          {
+            "node": "Validate demo submission",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate demo submission": {
+      "main": [
+        [
+          {
+            "node": "Persist pending submission",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Persist pending submission": {
+      "main": [
+        [
+          {
+            "node": "Return submission receipt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-29T15:22:48.644Z",
+  "id": "4UU9F1otB5Bk81ua",
+  "isArchived": false,
+  "meta": null,
+  "name": "Learning Grove DEMO | Live Catalog + Submissions API",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {
+        "path": "learning-grove-demo/catalog",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "https://learning-grove-cmp-demo.roblo.chatgpt.site,http://terminal.local:4173"
+        }
+      },
+      "id": "49aa5648-a766-4883-84bb-5823274cd781",
+      "name": "Demo catalog",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        368
+      ],
+      "webhookId": "4a9f5669-1c8c-447a-a69b-763693f8c5e3"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "nAhi67mTqF4LpT0Z"
+        },
+        "returnAll": true
+      },
+      "id": "2346f50f-38df-4da3-9160-1e7d777e160d",
+      "name": "Read courses",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        272,
+        368
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "O8dxmrhpwGPWkhte"
+        },
+        "returnAll": true
+      },
+      "id": "e4994135-f992-497b-8d94-6944aaa8beee",
+      "name": "Read resources",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        528,
+        368
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const courses = $('Read courses').all().filter(i=>i.json.status==='approved').map(i=>JSON.parse(i.json.payload));\nconst resources=$input.all().filter(i=>i.json.status==='approved').map(i=>JSON.parse(i.json.payload));\nconst aliases={robots:'robotics',robot:'robotics',programmable:'robotics',painting:'art',programming:'coding'};\nfunction interpret(query,filters={}) {\n const q=query.toLowerCase(); const ageMatch=q.match(/\\b(\\d{1,2})[ -]?(?:years?[ -]?old|yr|yo)\\b/)||q.match(/\\bage\\s*(\\d{1,2})\\b/);\n const terms=q.match(/[a-z]+/g)||[];\n const topics=[...new Set(terms.map(t=>aliases[t]||t).filter(t=>courses.some(c=>c.topics.includes(t))))];\n return {topics,age:filters.age?Number(filters.age):ageMatch?Number(ageMatch[1]):null,level:/beginner|intro|first/.test(q)?'Beginner':/advanced/.test(q)?'Advanced':null,location:filters.location||(/miami/.test(q)?'Miami':''),format:filters.format||(/online|virtual/.test(q)?'Online':''),subject:filters.subject||'',unknown:!!q.trim()&&topics.length===0};\n}\nfunction distanceMiles(a,b) { const r=Math.PI/180; const dLat=(b.lat-a.lat)*r,dLon=(b.lon-a.lon)*r; const x=Math.sin(dLat/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dLon/2)**2;return 3958.8*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x)); }\nfunction searchCourses(query='',filters={},catalog=courses) {\n const criteria=interpret(query,filters);\n const results=catalog.flatMap(c=>{\n if(criteria.age&&(criteria.age<c.minAge||criteria.age>c.maxAge))return [];\n if(criteria.format&&c.format!==criteria.format)return [];\n if(criteria.subject&&c.subject!==criteria.subject)return [];\n if(criteria.level&&c.level!==criteria.level)return [];\n if(criteria.location&&c.format==='Online')return [];\n const distance=criteria.location==='Miami'&&c.lat?distanceMiles({lat:25.7617,lon:-80.1918},c):null;\n if(distance!==null&&distance>25)return [];\n if(criteria.location&&criteria.location!=='Miami'&&c.city!==criteria.location)return [];\n const hits=criteria.topics.filter(t=>c.topics.includes(t));\n if(criteria.topics.length&&!hits.length)return [];\n if(criteria.unknown&&!`${c.title} ${c.subtitle} ${c.description}`.toLowerCase().includes(query.toLowerCase().trim()))return [];\n const score=hits.length*10+(criteria.age?5:0)+(criteria.level?5:0)-(distance||0)/10;\n const reasons=[hits.length?`Matches ${hits.join(', ')}`:null,criteria.age?`Suitable for age ${criteria.age}`:null,criteria.level?`${c.level} friendly`:null,distance!==null?(distance<1?'In Miami':`${Math.round(distance)} miles from Miami`):null].filter(Boolean);\n return [{...c,score,distance,reasons}];\n }).sort((a,b)=>b.score-a.score);\n return {criteria,results};\n}\n\nconst q=$('Demo catalog').first().json.query||{};\nconst query=String(q.q||'').slice(0,500);\nconst filters={age:q.age||'',location:q.location||'',format:q.format||'',subject:q.subject||''};\nconst result=searchCourses(query,filters,courses);\nconst resourceQuery=String(q.resourceQuery||'').toLowerCase().slice(0,500);\nconst matchedResources=resources.filter(r=>(!q.resourceType||r.type===q.resourceType)&&(!q.resourceLocation||r.city===q.resourceLocation)&&(!resourceQuery||(r.title+' '+r.type+' '+r.description).toLowerCase().includes(resourceQuery)));\nconst selected=courses.find(c=>c.id===q.courseId);\nconst resourceNeeds=selected?(selected.needs||[]).map(type=>({type,matches:resources.filter(r=>r.type===type&&r.city===selected.city&&r.direction==='offered')})):[];\nreturn [{json:{source:'n8n Data Tables',demo:true,matching:'deterministic',request_id:$execution.id,courses,resources:matchedResources,results:result.results,criteria:result.criteria,resourceNeeds,generatedAt:new Date().toISOString()}}];"
+      },
+      "id": "181083fd-58aa-4a8a-ae75-d3048e21619f",
+      "name": "Search and assemble live records",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        784,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Cache-Control",
+                "value": "no-store"
+              }
+            ]
+          }
+        }
+      },
+      "id": "9c691004-b82c-49d7-9379-303742527fe1",
+      "name": "Return catalog and matches",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1040,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "learning-grove-demo/submit",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "https://learning-grove-cmp-demo.roblo.chatgpt.site,http://terminal.local:4173"
+        }
+      },
+      "id": "70057a07-fe7a-45c6-9651-45765d67ca3c",
+      "name": "Demo submission",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        704
+      ],
+      "webhookId": "4420a27f-7e4e-45a8-83b3-8e620b83f202"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body=$json.body||{};\nconst get=(key,max=200)=>String(body[key]||'').trim().slice(0,max);\nconst kind=get('kind');if(!['Course','Resource'].includes(kind))throw new Error('Invalid submission type');\nconst title=get('title',120),description=get('description',2000),email=get('email');\nif(title.length<3||description.length<20)throw new Error('Please provide a title and description of at least 20 characters');\nif(!/^[^@\\s]+@example\\.(com|org|net)$/i.test(email))throw new Error('Use a fictional email at example.com, example.org, or example.net');\nconst request_key=get('request_key',100);if(!/^[a-zA-Z0-9_-]{8,100}$/.test(request_key))throw new Error('Invalid request key');\nconst allowed=['title','description','category','city','minAge','maxAge','name','email','format','schedule','readiness','needs','accommodations','transportation','direction','cost','availability'];\nconst data=Object.fromEntries(allowed.map(k=>[k,get(k,k==='description'?2000:500)]));\nif(!data.city||!data.category)throw new Error('Location and category are required');\nif(kind==='Course'&&(!Number.isInteger(Number(data.minAge))||!Number.isInteger(Number(data.maxAge))||!data.minAge||!data.maxAge||Number(data.minAge)>Number(data.maxAge)||Number(data.minAge)<5||Number(data.maxAge)>18))throw new Error('Invalid age range');\nreturn [{json:{request_key,kind,status:'pending_review',payload:JSON.stringify({...data,demo:true,submittedAt:new Date().toISOString()})}}];"
+      },
+      "id": "133dd60f-b016-4b37-9718-2758b0a71a6b",
+      "name": "Validate demo submission",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        272,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "dIWbo65elWBRaCSh"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "request_key",
+              "keyValue": "={{ $json.request_key }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "request_key": "={{ $json.request_key }}",
+            "kind": "={{ $json.kind }}",
+            "status": "={{ $json.status }}",
+            "payload": "={{ $json.payload }}"
+          },
+          "schema": [
+            {
+              "id": "request_key",
+              "displayName": "request_key",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "kind",
+              "displayName": "kind",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "payload",
+              "displayName": "payload",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "bb7d6246-21f2-4680-919c-7c299faf392f",
+      "name": "Persist pending submission",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        528,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true, demo: true, source: \"n8n Data Tables\", id: $json.id, request_key: $json.request_key, status: $json.status } }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Cache-Control",
+                "value": "no-store"
+              }
+            ]
+          }
+        }
+      },
+      "id": "30258520-3329-4448-b681-ea235a55ae6a",
+      "name": "Return submission receipt",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        784,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Learning Grove · Live Data Tables demo\nFictional records only.\nGET catalog: approved courses/resources + rules-based matching.\nPOST submit: validates fictional contacts and upserts pending submissions.\nNo AI, Airtable, enrollment, notifications, or public submission listing.\nDemo endpoints are public; do not use for real personal data.\nReview pending records directly in the n8n Submissions table.",
+        "height": 260,
+        "width": 520
+      },
+      "id": "aa837716-2ee6-4acb-afd9-5ff48e42a940",
+      "name": "About this demo",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "4UU9F1otB5Bk81ua",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-10-29T15:22:48.647Z",
+      "updatedAt": "2026-10-29T15:22:48.647Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-10-29T15:26:44.514Z",
+  "versionId": "84010ef8-d91b-4bf5-ac19-6996fd5a0ff0"
+}
