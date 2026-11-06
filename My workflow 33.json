@@ -1,0 +1,202 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {},
+  "createdAt": "2026-11-06T16:54:35.844Z",
+  "id": "vBzpTvWScmvglaA2",
+  "isArchived": false,
+  "meta": null,
+  "name": "My workflow 33",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "d5b25a6c-99e2-44f6-835d-1dea4c680e82",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        736
+      ],
+      "id": "4a6a9085-464a-4847-8a91-3b6ebd1737de",
+      "name": "Action from Chatwoot",
+      "webhookId": "d5b25a6c-99e2-44f6-835d-1dea4c680e82"
+    }
+  ],
+  "pinData": {
+    "Action from Chatwoot": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n727.aspworkplace.com",
+            "user-agent": "Ruby",
+            "content-length": "2078",
+            "accept": "application/json",
+            "accept-encoding": "gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
+            "content-type": "application/json",
+            "x-chatwoot-delivery": "d5a68750-23e4-42fd-8336-9d7240a0616e",
+            "x-chatwoot-signature": "sha256=628bd47a949b2790f1a7c5c83ead20106021cfe9841929a1aaa1b0db33b43350",
+            "x-chatwoot-timestamp": "1793984629",
+            "x-forwarded-for": "10.0.16.1",
+            "x-forwarded-host": "n8n727.aspworkplace.com",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "c66d98f28ac4",
+            "x-real-ip": "10.0.16.1"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "event": "conversation_typing_on",
+            "user": {
+              "id": 1,
+              "name": "Rob",
+              "email": "rob@advancedai.tech",
+              "type": "user"
+            },
+            "conversation": {
+              "additional_attributes": {
+                "chat_id": 5076593768,
+                "business_connection_id": null
+              },
+              "can_reply": true,
+              "channel": "Channel::Telegram",
+              "contact_inbox": {
+                "id": 1,
+                "contact_id": 1,
+                "inbox_id": 1,
+                "source_id": "5076593768",
+                "created_at": "2026-11-06T17:00:50.480Z",
+                "updated_at": "2026-11-06T17:00:50.480Z",
+                "hmac_verified": false,
+                "pubsub_token": "95Mk1EA3cFaUumUv7GzQ9hGg"
+              },
+              "id": 1,
+              "inbox_id": 1,
+              "messages": [
+                {
+                  "id": 3,
+                  "content": "Test",
+                  "account_id": 1,
+                  "inbox_id": 1,
+                  "conversation_id": 1,
+                  "message_type": 1,
+                  "created_at": 1793984497,
+                  "updated_at": "2026-11-06T17:01:37.822Z",
+                  "private": false,
+                  "status": "sent",
+                  "source_id": "2",
+                  "content_type": "text",
+                  "content_attributes": {},
+                  "sender_type": "User",
+                  "sender_id": 1,
+                  "external_source_ids": {},
+                  "additional_attributes": {},
+                  "processed_message_content": "Test",
+                  "sentiment": {},
+                  "conversation": {
+                    "assignee_id": 1,
+                    "unread_count": 0,
+                    "last_activity_at": 1793984497,
+                    "contact_inbox": {
+                      "source_id": "5076593768"
+                    }
+                  },
+                  "sender": {
+                    "id": 1,
+                    "name": "Rob",
+                    "available_name": "Rob",
+                    "avatar_url": "",
+                    "type": "user",
+                    "availability_status": null,
+                    "thumbnail": ""
+                  }
+                }
+              ],
+              "labels": [],
+              "meta": {
+                "sender": {
+                  "additional_attributes": {
+                    "username": "LordRob702",
+                    "language_code": "en",
+                    "social_telegram_user_id": 5076593768,
+                    "social_telegram_user_name": "LordRob702"
+                  },
+                  "custom_attributes": {},
+                  "email": null,
+                  "id": 1,
+                  "identifier": null,
+                  "name": "Rob ",
+                  "phone_number": null,
+                  "thumbnail": "",
+                  "blocked": false,
+                  "contact_type": "lead",
+                  "type": "contact",
+                  "company_id": null
+                },
+                "assignee": {
+                  "id": 1,
+                  "name": "Rob",
+                  "available_name": "Rob",
+                  "avatar_url": "",
+                  "type": "user",
+                  "availability_status": null,
+                  "thumbnail": ""
+                },
+                "assignee_type": "User",
+                "team": null,
+                "hmac_verified": false
+              },
+              "status": "open",
+              "custom_attributes": {},
+              "snoozed_until": null,
+              "unread_count": 0,
+              "first_reply_created_at": "2026-11-06T17:01:37.158Z",
+              "priority": null,
+              "waiting_since": 0,
+              "agent_last_seen_at": 1793984497,
+              "contact_last_seen_at": 0,
+              "last_activity_at": 1793984497,
+              "timestamp": 1793984497,
+              "created_at": 1793984451,
+              "updated_at": 1793984497.27391,
+              "account": {
+                "id": 1,
+                "name": "Advanced Ai Tech"
+              }
+            },
+            "is_private": false
+          },
+          "webhookUrl": "https://n8n727.aspworkplace.com/webhook-test/d5b25a6c-99e2-44f6-835d-1dea4c680e82",
+          "executionMode": "test"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "vBzpTvWScmvglaA2",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-11-06T16:54:35.847Z",
+      "updatedAt": "2026-11-06T16:54:35.847Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-11-06T17:04:04.430Z",
+  "versionId": "a4aa694b-1f6b-4e39-a3eb-7102bcaa05cc"
+}
