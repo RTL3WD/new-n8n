@@ -1,0 +1,1320 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "a8f20584-1972-4024-8897-0cb1433a6f2f",
+    "workflowId": "NvWTefRn0Kg3sSuY",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "chatwoot-agent-bot",
+          "authentication": "headerAuth",
+          "options": {
+            "noResponseBody": true
+          }
+        },
+        "id": "11b777a0-8f4f-4001-b898-c8e4081e515b",
+        "name": "Chatwoot Agent Bot Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.2,
+        "position": [
+          0,
+          352
+        ],
+        "webhookId": "31b256e2-0468-4182-a506-46ec3f01854b",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "MIcLT1hLaAc22sGU",
+            "name": "Chatwoot Header Auth"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "cw-url",
+                "name": "chatwoot_url",
+                "value": "https://chatwoot.aspworkplace.com",
+                "type": "string"
+              },
+              {
+                "id": "ev",
+                "name": "event",
+                "value": "={{ $json.body?.event ?? \"\" }}",
+                "type": "string"
+              },
+              {
+                "id": "mt",
+                "name": "message_type",
+                "value": "={{ String($json.body?.message_type ?? \"\") }}",
+                "type": "string"
+              },
+              {
+                "id": "pv",
+                "name": "is_private",
+                "value": "={{ String($json.body?.private ?? false) }}",
+                "type": "string"
+              },
+              {
+                "id": "ct",
+                "name": "content",
+                "value": "={{ $json.body?.content ?? \"\" }}",
+                "type": "string"
+              },
+              {
+                "id": "acc",
+                "name": "account_id",
+                "value": "={{ $json.body?.account?.id }}",
+                "type": "number"
+              },
+              {
+                "id": "conv",
+                "name": "conversation_id",
+                "value": "={{ $json.body?.conversation?.id }}",
+                "type": "number"
+              },
+              {
+                "id": "st",
+                "name": "conversation_status",
+                "value": "={{ $json.body?.conversation?.status ?? \"\" }}",
+                "type": "string"
+              },
+              {
+                "id": "ib",
+                "name": "inbox_name",
+                "value": "={{ $json.body?.inbox?.name ?? \"\" }}",
+                "type": "string"
+              },
+              {
+                "id": "cn",
+                "name": "contact_name",
+                "value": "={{ $json.body?.sender?.name ?? \"there\" }}",
+                "type": "string"
+              },
+              {
+                "id": "ce",
+                "name": "contact_email",
+                "value": "={{ $json.body?.sender?.email ?? \"\" }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "436107af-7483-40f5-83da-565a260acf0a",
+        "name": "Normalize Event",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          288,
+          352
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "combinator": "and",
+            "conditions": [
+              {
+                "leftValue": "={{ $json.event }}",
+                "rightValue": "message_created",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              },
+              {
+                "leftValue": "={{ $json.message_type }}",
+                "rightValue": "incoming",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              },
+              {
+                "leftValue": "={{ $json.is_private }}",
+                "rightValue": "false",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              },
+              {
+                "leftValue": "={{ $json.conversation_status }}",
+                "rightValue": "pending",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              },
+              {
+                "leftValue": "={{ $json.content }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "5fda6058-c922-428a-afad-105de16858dd",
+        "name": "Only New Customer Messages (Bot-Owned)",
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.3,
+        "position": [
+          512,
+          352
+        ]
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Customer: {{ $json.contact_name }} ({{ $json.contact_email || \"no email\" }})\nInbox: {{ $json.inbox_name }}\nTime: {{ $now.toFormat(\"ccc, LLL d yyyy h:mm a\") }}\n\nCustomer message:\n{{ $json.content }}",
+          "options": {
+            "systemMessage": "You are the first-line support assistant for Automate St Pete, an automation and AI agency for small businesses. You are talking to a customer inside a Chatwoot inbox.\n\nRules:\n1. The customer ONLY sees what you send with the reply_to_customer tool. Always reply with it. Keep replies short (1-3 sentences), warm, and plain.\n2. On the first message of a conversation, call set_labels with the best fit: sales, support, billing, urgent or spam.\n3. Hand off to a human when: the customer asks for a person, is upset, asks about pricing/contracts/billing specifics, or you are not confident. To hand off: (a) add_private_note with a 2-3 line summary, (b) reply_to_customer saying a team member will follow up shortly, (c) handoff_to_human.\n4. Never invent prices, policies, or availability. If unsure, hand off.\n5. Do not mention that you are using tools.",
+            "maxIterations": 8,
+            "enableStreaming": false
+          }
+        },
+        "id": "6c2f06da-d7d7-4aaa-b1cf-dd2edf5102c4",
+        "name": "Chatwoot Support Agent",
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 3.1,
+        "position": [
+          1088,
+          240
+        ]
+      },
+      {
+        "parameters": {
+          "sessionIdType": "customKey",
+          "sessionKey": "=chatwoot-{{ $(\"Normalize Event\").first().json.conversation_id }}",
+          "contextWindowLength": 10
+        },
+        "id": "edd65ac0-cb21-4acd-ad09-3d5108916225",
+        "name": "Conversation Memory",
+        "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+        "typeVersion": 1.4,
+        "position": [
+          976,
+          480
+        ]
+      },
+      {
+        "parameters": {
+          "toolDescription": "Send a public reply to the customer in this Chatwoot conversation. This is the ONLY way the customer sees your answer.",
+          "method": "POST",
+          "url": "={{ $(\"Normalize Event\").first().json.chatwoot_url }}/api/v1/accounts/{{ $(\"Normalize Event\").first().json.account_id }}/conversations/{{ $(\"Normalize Event\").first().json.conversation_id }}/messages",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "content",
+                "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', 'The reply text to send to the customer. Plain, friendly, concise.') }}"
+              },
+              {
+                "name": "message_type",
+                "value": "outgoing"
+              },
+              {
+                "name": "private",
+                "value": "false"
+              }
+            ]
+          },
+          "options": {
+            "allowUnauthorizedCerts": true
+          }
+        },
+        "id": "630c69a0-5aa2-4728-ace2-9a8fda47ee8e",
+        "name": "reply_to_customer",
+        "type": "n8n-nodes-base.httpRequestTool",
+        "typeVersion": 4.5,
+        "position": [
+          1104,
+          480
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "MIcLT1hLaAc22sGU",
+            "name": "Chatwoot Header Auth"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "toolDescription": "Add an internal private note to the conversation. Only human agents see it, never the customer. Use it to summarize context before a handoff.",
+          "method": "POST",
+          "url": "={{ $(\"Normalize Event\").first().json.chatwoot_url }}/api/v1/accounts/{{ $(\"Normalize Event\").first().json.account_id }}/conversations/{{ $(\"Normalize Event\").first().json.conversation_id }}/messages",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "content",
+                "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', 'Internal note for the human team: who the customer is, what they want, what was already tried.') }}"
+              },
+              {
+                "name": "message_type",
+                "value": "outgoing"
+              },
+              {
+                "name": "private",
+                "value": "true"
+              }
+            ]
+          },
+          "options": {
+            "allowUnauthorizedCerts": true
+          }
+        },
+        "id": "e6a7c485-0ae4-49f7-a652-f36d9293c191",
+        "name": "add_private_note",
+        "type": "n8n-nodes-base.httpRequestTool",
+        "typeVersion": 4.5,
+        "position": [
+          1232,
+          480
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "MIcLT1hLaAc22sGU",
+            "name": "Chatwoot Header Auth"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "toolDescription": "Set the labels on this conversation. This REPLACES existing labels. Allowed labels: sales, support, billing, urgent, spam. Labels must already exist in Chatwoot.",
+          "method": "POST",
+          "url": "={{ $(\"Normalize Event\").first().json.chatwoot_url }}/api/v1/accounts/{{ $(\"Normalize Event\").first().json.account_id }}/conversations/{{ $(\"Normalize Event\").first().json.conversation_id }}/labels",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({ labels: $fromAI(\"labels\", \"Comma-separated labels, e.g. sales,urgent\", \"string\").split(\",\").map(l => l.trim()).filter(Boolean) }) }}",
+          "options": {
+            "allowUnauthorizedCerts": true
+          }
+        },
+        "id": "64f29ea7-5b37-4589-9852-b391569fe2fa",
+        "name": "set_labels",
+        "type": "n8n-nodes-base.httpRequestTool",
+        "typeVersion": 4.5,
+        "position": [
+          1360,
+          480
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "MIcLT1hLaAc22sGU",
+            "name": "Chatwoot Header Auth"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "toolDescription": "Hand the conversation to a human agent by setting its status to open. After this the bot stops replying. Call add_private_note first, and tell the customer a person will follow up.",
+          "method": "POST",
+          "url": "={{ $(\"Normalize Event\").first().json.chatwoot_url }}/api/v1/accounts/{{ $(\"Normalize Event\").first().json.account_id }}/conversations/{{ $(\"Normalize Event\").first().json.conversation_id }}/toggle_status",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "status",
+                "value": "open"
+              }
+            ]
+          },
+          "options": {
+            "allowUnauthorizedCerts": true
+          }
+        },
+        "id": "a8f4728c-fe02-4aef-945e-174c316b52d9",
+        "name": "handoff_to_human",
+        "type": "n8n-nodes-base.httpRequestTool",
+        "typeVersion": 4.5,
+        "position": [
+          1488,
+          480
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "MIcLT1hLaAc22sGU",
+            "name": "Chatwoot Header Auth"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## Chatwoot AI Agent Bot — setup\n1. **Normalize Event** → set `chatwoot_url` to your Chatwoot base URL.\n2. Create credential **Chatwoot API Token** (Header Auth): name `api_access_token`, value = the Agent Bot token (or a user token). On Chatwoot ≥ 4.19 you can use `Authorization: Bearer <token>` instead.\n3. In Chatwoot create an **Agent Bot** whose Outgoing URL = this webhook's production URL, then attach it to an inbox (Settings → Inboxes → Bot Configuration).\n4. Activate the workflow.\n\nNew conversations in that inbox start as **pending** (bot-owned). The bot only answers while pending; once it calls `handoff_to_human` the status becomes **open** and humans take over.",
+          "height": 352,
+          "width": 656,
+          "color": 4
+        },
+        "id": "b4d1d8e6-a564-4c1d-a21e-78072c663bf1",
+        "name": "Sticky Note 98c5ee12",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -16,
+          -448
+        ]
+      },
+      {
+        "parameters": {
+          "content": "### Agent tools (Chatwoot Application API)\n- `reply_to_customer` → POST /messages (outgoing)\n- `add_private_note` → POST /messages (private: true)\n- `set_labels` → POST /labels (overwrites!)\n- `handoff_to_human` → POST /toggle_status {status: open}\nEdit the allowed labels in the set_labels description + system prompt to match your Chatwoot labels.",
+          "height": 224,
+          "width": 288,
+          "color": 5
+        },
+        "id": "5077e0fd-604d-4bd2-bde3-721019b312d0",
+        "name": "Sticky Note e4875351",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          784,
+          -336
+        ]
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "value": "gpt-5-mini",
+            "mode": "list",
+            "cachedResultName": "gpt-5-mini"
+          },
+          "builtInTools": {},
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.3,
+        "position": [
+          848,
+          480
+        ],
+        "id": "a0c0afff-1eab-4384-a0ac-27920a3374ca",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "sTmNKjvehSYtW09j",
+            "name": "OpenAi account - rtl3?"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Chatwoot Agent Bot Webhook": {
+        "main": [
+          [
+            {
+              "node": "Normalize Event",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Normalize Event": {
+        "main": [
+          [
+            {
+              "node": "Only New Customer Messages (Bot-Owned)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Only New Customer Messages (Bot-Owned)": {
+        "main": [
+          [
+            {
+              "node": "Chatwoot Support Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Conversation Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "Chatwoot Support Agent",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "reply_to_customer": {
+        "ai_tool": [
+          [
+            {
+              "node": "Chatwoot Support Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "add_private_note": {
+        "ai_tool": [
+          [
+            {
+              "node": "Chatwoot Support Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "set_labels": {
+        "ai_tool": [
+          [
+            {
+              "node": "Chatwoot Support Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "handoff_to_human": {
+        "ai_tool": [
+          [
+            {
+              "node": "Chatwoot Support Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Chatwoot Support Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [
+      {
+        "id": "3dbb8b7e-d362-4de5-8cd1-725b89604f88",
+        "name": "Intake & Filter",
+        "nodeIds": [
+          "436107af-7483-40f5-83da-565a260acf0a",
+          "5fda6058-c922-428a-afad-105de16858dd"
+        ],
+        "description": "Flattens the Chatwoot webhook payload and keeps only new public customer messages in bot-owned (pending) conversations"
+      },
+      {
+        "id": "371fb0ac-2e0f-47d6-9c7e-dcacdae11693",
+        "name": "AI Support Agent",
+        "nodeIds": [
+          "6c2f06da-d7d7-4aaa-b1cf-dd2edf5102c4",
+          "edd65ac0-cb21-4acd-ad09-3d5108916225",
+          "630c69a0-5aa2-4728-ace2-9a8fda47ee8e",
+          "e6a7c485-0ae4-49f7-a652-f36d9293c191",
+          "64f29ea7-5b37-4589-9852-b391569fe2fa",
+          "a8f4728c-fe02-4aef-945e-174c316b52d9",
+          "a0c0afff-1eab-4384-a0ac-27920a3374ca"
+        ],
+        "description": "Claude agent with per-conversation memory that replies, labels, adds notes and hands off to humans via the Chatwoot API"
+      }
+    ],
+    "authors": "Robert Lord (via MCP)",
+    "name": "Use Chatwoot Header Auth on all tools",
+    "description": "Updated nodes: reply_to_customer, add_private_note, set_labels, handoff_to_human",
+    "autosaved": false,
+    "createdAt": "2026-11-06T17:42:36.456Z",
+    "updatedAt": "2026-11-06T17:42:36.456Z"
+  },
+  "activeVersionId": "a8f20584-1972-4024-8897-0cb1433a6f2f",
+  "connections": {
+    "Chatwoot Agent Bot Webhook": {
+      "main": [
+        [
+          {
+            "node": "Normalize Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Event": {
+      "main": [
+        [
+          {
+            "node": "Only New Customer Messages (Bot-Owned)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Only New Customer Messages (Bot-Owned)": {
+      "main": [
+        [
+          {
+            "node": "Chatwoot Support Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conversation Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Chatwoot Support Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reply_to_customer": {
+      "ai_tool": [
+        [
+          {
+            "node": "Chatwoot Support Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "add_private_note": {
+      "ai_tool": [
+        [
+          {
+            "node": "Chatwoot Support Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set_labels": {
+      "ai_tool": [
+        [
+          {
+            "node": "Chatwoot Support Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "handoff_to_human": {
+      "ai_tool": [
+        [
+          {
+            "node": "Chatwoot Support Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Chatwoot Support Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-11-06T17:19:33.029Z",
+  "id": "NvWTefRn0Kg3sSuY",
+  "isArchived": false,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Chatwoot AI Agent Bot (Claude)",
+  "nodeGroups": [
+    {
+      "id": "3dbb8b7e-d362-4de5-8cd1-725b89604f88",
+      "name": "Intake & Filter",
+      "nodeIds": [
+        "436107af-7483-40f5-83da-565a260acf0a",
+        "5fda6058-c922-428a-afad-105de16858dd"
+      ],
+      "description": "Flattens the Chatwoot webhook payload and keeps only new public customer messages in bot-owned (pending) conversations"
+    },
+    {
+      "id": "371fb0ac-2e0f-47d6-9c7e-dcacdae11693",
+      "name": "AI Support Agent",
+      "nodeIds": [
+        "6c2f06da-d7d7-4aaa-b1cf-dd2edf5102c4",
+        "edd65ac0-cb21-4acd-ad09-3d5108916225",
+        "630c69a0-5aa2-4728-ace2-9a8fda47ee8e",
+        "e6a7c485-0ae4-49f7-a652-f36d9293c191",
+        "64f29ea7-5b37-4589-9852-b391569fe2fa",
+        "a8f4728c-fe02-4aef-945e-174c316b52d9",
+        "a0c0afff-1eab-4384-a0ac-27920a3374ca"
+      ],
+      "description": "Claude agent with per-conversation memory that replies, labels, adds notes and hands off to humans via the Chatwoot API"
+    }
+  ],
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "chatwoot-agent-bot",
+        "authentication": "headerAuth",
+        "options": {
+          "noResponseBody": true
+        }
+      },
+      "id": "11b777a0-8f4f-4001-b898-c8e4081e515b",
+      "name": "Chatwoot Agent Bot Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        352
+      ],
+      "webhookId": "31b256e2-0468-4182-a506-46ec3f01854b",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "MIcLT1hLaAc22sGU",
+          "name": "Chatwoot Header Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cw-url",
+              "name": "chatwoot_url",
+              "value": "https://chatwoot.aspworkplace.com",
+              "type": "string"
+            },
+            {
+              "id": "ev",
+              "name": "event",
+              "value": "={{ $json.body?.event ?? \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "mt",
+              "name": "message_type",
+              "value": "={{ String($json.body?.message_type ?? \"\") }}",
+              "type": "string"
+            },
+            {
+              "id": "pv",
+              "name": "is_private",
+              "value": "={{ String($json.body?.private ?? false) }}",
+              "type": "string"
+            },
+            {
+              "id": "ct",
+              "name": "content",
+              "value": "={{ $json.body?.content ?? \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "acc",
+              "name": "account_id",
+              "value": "={{ $json.body?.account?.id }}",
+              "type": "number"
+            },
+            {
+              "id": "conv",
+              "name": "conversation_id",
+              "value": "={{ $json.body?.conversation?.id }}",
+              "type": "number"
+            },
+            {
+              "id": "st",
+              "name": "conversation_status",
+              "value": "={{ $json.body?.conversation?.status ?? \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "ib",
+              "name": "inbox_name",
+              "value": "={{ $json.body?.inbox?.name ?? \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "cn",
+              "name": "contact_name",
+              "value": "={{ $json.body?.sender?.name ?? \"there\" }}",
+              "type": "string"
+            },
+            {
+              "id": "ce",
+              "name": "contact_email",
+              "value": "={{ $json.body?.sender?.email ?? \"\" }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "436107af-7483-40f5-83da-565a260acf0a",
+      "name": "Normalize Event",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        288,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.event }}",
+              "rightValue": "message_created",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "leftValue": "={{ $json.message_type }}",
+              "rightValue": "incoming",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "leftValue": "={{ $json.is_private }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "leftValue": "={{ $json.conversation_status }}",
+              "rightValue": "pending",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "leftValue": "={{ $json.content }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5fda6058-c922-428a-afad-105de16858dd",
+      "name": "Only New Customer Messages (Bot-Owned)",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        512,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Customer: {{ $json.contact_name }} ({{ $json.contact_email || \"no email\" }})\nInbox: {{ $json.inbox_name }}\nTime: {{ $now.toFormat(\"ccc, LLL d yyyy h:mm a\") }}\n\nCustomer message:\n{{ $json.content }}",
+        "options": {
+          "systemMessage": "You are the first-line support assistant for Automate St Pete, an automation and AI agency for small businesses. You are talking to a customer inside a Chatwoot inbox.\n\nRules:\n1. The customer ONLY sees what you send with the reply_to_customer tool. Always reply with it. Keep replies short (1-3 sentences), warm, and plain.\n2. On the first message of a conversation, call set_labels with the best fit: sales, support, billing, urgent or spam.\n3. Hand off to a human when: the customer asks for a person, is upset, asks about pricing/contracts/billing specifics, or you are not confident. To hand off: (a) add_private_note with a 2-3 line summary, (b) reply_to_customer saying a team member will follow up shortly, (c) handoff_to_human.\n4. Never invent prices, policies, or availability. If unsure, hand off.\n5. Do not mention that you are using tools.",
+          "maxIterations": 8,
+          "enableStreaming": false
+        }
+      },
+      "id": "6c2f06da-d7d7-4aaa-b1cf-dd2edf5102c4",
+      "name": "Chatwoot Support Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1088,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "=chatwoot-{{ $(\"Normalize Event\").first().json.conversation_id }}",
+        "contextWindowLength": 10
+      },
+      "id": "edd65ac0-cb21-4acd-ad09-3d5108916225",
+      "name": "Conversation Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        976,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "toolDescription": "Send a public reply to the customer in this Chatwoot conversation. This is the ONLY way the customer sees your answer.",
+        "method": "POST",
+        "url": "={{ $(\"Normalize Event\").first().json.chatwoot_url }}/api/v1/accounts/{{ $(\"Normalize Event\").first().json.account_id }}/conversations/{{ $(\"Normalize Event\").first().json.conversation_id }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "content",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', 'The reply text to send to the customer. Plain, friendly, concise.') }}"
+            },
+            {
+              "name": "message_type",
+              "value": "outgoing"
+            },
+            {
+              "name": "private",
+              "value": "false"
+            }
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "id": "630c69a0-5aa2-4728-ace2-9a8fda47ee8e",
+      "name": "reply_to_customer",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.5,
+      "position": [
+        1104,
+        480
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "MIcLT1hLaAc22sGU",
+          "name": "Chatwoot Header Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Add an internal private note to the conversation. Only human agents see it, never the customer. Use it to summarize context before a handoff.",
+        "method": "POST",
+        "url": "={{ $(\"Normalize Event\").first().json.chatwoot_url }}/api/v1/accounts/{{ $(\"Normalize Event\").first().json.account_id }}/conversations/{{ $(\"Normalize Event\").first().json.conversation_id }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "content",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', 'Internal note for the human team: who the customer is, what they want, what was already tried.') }}"
+            },
+            {
+              "name": "message_type",
+              "value": "outgoing"
+            },
+            {
+              "name": "private",
+              "value": "true"
+            }
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "id": "e6a7c485-0ae4-49f7-a652-f36d9293c191",
+      "name": "add_private_note",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.5,
+      "position": [
+        1232,
+        480
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "MIcLT1hLaAc22sGU",
+          "name": "Chatwoot Header Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Set the labels on this conversation. This REPLACES existing labels. Allowed labels: sales, support, billing, urgent, spam. Labels must already exist in Chatwoot.",
+        "method": "POST",
+        "url": "={{ $(\"Normalize Event\").first().json.chatwoot_url }}/api/v1/accounts/{{ $(\"Normalize Event\").first().json.account_id }}/conversations/{{ $(\"Normalize Event\").first().json.conversation_id }}/labels",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ labels: $fromAI(\"labels\", \"Comma-separated labels, e.g. sales,urgent\", \"string\").split(\",\").map(l => l.trim()).filter(Boolean) }) }}",
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "id": "64f29ea7-5b37-4589-9852-b391569fe2fa",
+      "name": "set_labels",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.5,
+      "position": [
+        1360,
+        480
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "MIcLT1hLaAc22sGU",
+          "name": "Chatwoot Header Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Hand the conversation to a human agent by setting its status to open. After this the bot stops replying. Call add_private_note first, and tell the customer a person will follow up.",
+        "method": "POST",
+        "url": "={{ $(\"Normalize Event\").first().json.chatwoot_url }}/api/v1/accounts/{{ $(\"Normalize Event\").first().json.account_id }}/conversations/{{ $(\"Normalize Event\").first().json.conversation_id }}/toggle_status",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "status",
+              "value": "open"
+            }
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "id": "a8f4728c-fe02-4aef-945e-174c316b52d9",
+      "name": "handoff_to_human",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.5,
+      "position": [
+        1488,
+        480
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "MIcLT1hLaAc22sGU",
+          "name": "Chatwoot Header Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Chatwoot AI Agent Bot — setup\n1. **Normalize Event** → set `chatwoot_url` to your Chatwoot base URL.\n2. Create credential **Chatwoot API Token** (Header Auth): name `api_access_token`, value = the Agent Bot token (or a user token). On Chatwoot ≥ 4.19 you can use `Authorization: Bearer <token>` instead.\n3. In Chatwoot create an **Agent Bot** whose Outgoing URL = this webhook's production URL, then attach it to an inbox (Settings → Inboxes → Bot Configuration).\n4. Activate the workflow.\n\nNew conversations in that inbox start as **pending** (bot-owned). The bot only answers while pending; once it calls `handoff_to_human` the status becomes **open** and humans take over.",
+        "height": 352,
+        "width": 656,
+        "color": 4
+      },
+      "id": "b4d1d8e6-a564-4c1d-a21e-78072c663bf1",
+      "name": "Sticky Note 98c5ee12",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        -448
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### Agent tools (Chatwoot Application API)\n- `reply_to_customer` → POST /messages (outgoing)\n- `add_private_note` → POST /messages (private: true)\n- `set_labels` → POST /labels (overwrites!)\n- `handoff_to_human` → POST /toggle_status {status: open}\nEdit the allowed labels in the set_labels description + system prompt to match your Chatwoot labels.",
+        "height": 224,
+        "width": 288,
+        "color": 5
+      },
+      "id": "5077e0fd-604d-4bd2-bde3-721019b312d0",
+      "name": "Sticky Note e4875351",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        784,
+        -336
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        848,
+        480
+      ],
+      "id": "a0c0afff-1eab-4384-a0ac-27920a3374ca",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sTmNKjvehSYtW09j",
+          "name": "OpenAi account - rtl3?"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Chatwoot Agent Bot Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n727.aspworkplace.com",
+            "user-agent": "Ruby",
+            "content-length": "2786",
+            "accept": "application/json",
+            "accept-encoding": "gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
+            "content-type": "application/json",
+            "x-chatwoot-delivery": "ae99ec7a-6ba2-4d4e-bbea-885c86d11a8d",
+            "x-chatwoot-signature": "sha256=756c16f7e4d4e37597cc336e001210d43eb9e928f0f85ec2645148f252fb6ee6",
+            "x-chatwoot-timestamp": "1793986374",
+            "x-forwarded-for": "10.0.16.1",
+            "x-forwarded-host": "n8n727.aspworkplace.com",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "c66d98f28ac4",
+            "x-real-ip": "10.0.16.1"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "account": {
+              "id": 1,
+              "name": "Advanced Ai Tech"
+            },
+            "additional_attributes": {},
+            "content_attributes": {},
+            "content_type": "text",
+            "content": "Hello",
+            "conversation": {
+              "additional_attributes": {
+                "chat_id": 5076593768,
+                "business_connection_id": null
+              },
+              "can_reply": true,
+              "channel": "Channel::Telegram",
+              "contact_inbox": {
+                "id": 2,
+                "contact_id": 2,
+                "inbox_id": 2,
+                "source_id": "5076593768",
+                "created_at": "2026-11-06T17:32:54.408Z",
+                "updated_at": "2026-11-06T17:32:54.408Z",
+                "hmac_verified": false,
+                "pubsub_token": "FdnvSKysLzmPL9Wh98yQg9D3"
+              },
+              "id": 3,
+              "inbox_id": 2,
+              "messages": [
+                {
+                  "id": 10,
+                  "content": "Hello",
+                  "account_id": 1,
+                  "inbox_id": 2,
+                  "conversation_id": 3,
+                  "message_type": 0,
+                  "created_at": 1793986374,
+                  "updated_at": "2026-11-06T17:32:54.810Z",
+                  "private": false,
+                  "status": "sent",
+                  "source_id": "7",
+                  "content_type": "text",
+                  "content_attributes": {},
+                  "sender_type": "Contact",
+                  "sender_id": 2,
+                  "external_source_ids": {},
+                  "additional_attributes": {},
+                  "processed_message_content": "Hello",
+                  "sentiment": {},
+                  "conversation": {
+                    "assignee_id": null,
+                    "unread_count": 1,
+                    "last_activity_at": 1793986374,
+                    "contact_inbox": {
+                      "source_id": "5076593768"
+                    }
+                  },
+                  "sender": {
+                    "additional_attributes": {
+                      "username": "LordRob702",
+                      "language_code": "en",
+                      "social_telegram_user_id": 5076593768,
+                      "social_telegram_user_name": "LordRob702"
+                    },
+                    "custom_attributes": {},
+                    "email": null,
+                    "id": 2,
+                    "identifier": null,
+                    "name": "Rob ",
+                    "phone_number": null,
+                    "thumbnail": "",
+                    "blocked": false,
+                    "contact_type": "lead",
+                    "type": "contact",
+                    "company_id": null
+                  }
+                }
+              ],
+              "labels": [],
+              "meta": {
+                "sender": {
+                  "additional_attributes": {
+                    "username": "LordRob702",
+                    "language_code": "en",
+                    "social_telegram_user_id": 5076593768,
+                    "social_telegram_user_name": "LordRob702"
+                  },
+                  "custom_attributes": {},
+                  "email": null,
+                  "id": 2,
+                  "identifier": null,
+                  "name": "Rob ",
+                  "phone_number": null,
+                  "thumbnail": "",
+                  "blocked": false,
+                  "contact_type": "lead",
+                  "type": "contact",
+                  "company_id": null
+                },
+                "assignee": {
+                  "id": 2,
+                  "name": "Telegram Bot",
+                  "avatar_url": "",
+                  "type": "agent_bot"
+                },
+                "assignee_type": "AgentBot",
+                "team": null,
+                "hmac_verified": false
+              },
+              "status": "pending",
+              "custom_attributes": {},
+              "snoozed_until": null,
+              "unread_count": 1,
+              "first_reply_created_at": null,
+              "priority": null,
+              "waiting_since": 1793986374,
+              "agent_last_seen_at": 0,
+              "contact_last_seen_at": 0,
+              "last_activity_at": 1793986374,
+              "timestamp": 1793986374,
+              "created_at": 1793986374,
+              "updated_at": 1793986374.8267326,
+              "account": {
+                "id": 1,
+                "name": "Advanced Ai Tech"
+              }
+            },
+            "created_at": "2026-11-06T17:32:54.810Z",
+            "id": 10,
+            "inbox": {
+              "id": 2,
+              "name": "NanoRob5bot"
+            },
+            "message_type": "incoming",
+            "private": false,
+            "sender": {
+              "account": {
+                "id": 1,
+                "name": "Advanced Ai Tech"
+              },
+              "additional_attributes": {
+                "username": "LordRob702",
+                "language_code": "en",
+                "social_telegram_user_id": 5076593768,
+                "social_telegram_user_name": "LordRob702"
+              },
+              "avatar": "",
+              "custom_attributes": {},
+              "email": null,
+              "id": 2,
+              "identifier": null,
+              "name": "Rob ",
+              "phone_number": null,
+              "thumbnail": "",
+              "blocked": false,
+              "contact_type": "lead"
+            },
+            "source_id": "7",
+            "event": "message_created"
+          },
+          "webhookUrl": "https://n8n727.aspworkplace.com/webhook/chatwoot-agent-bot",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "binaryMode": "separate"
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "NvWTefRn0Kg3sSuY",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-11-06T17:19:33.045Z",
+      "updatedAt": "2026-11-06T17:19:33.045Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2026-11-06T17:42:36.455Z",
+  "versionId": "a8f20584-1972-4024-8897-0cb1433a6f2f"
+}
