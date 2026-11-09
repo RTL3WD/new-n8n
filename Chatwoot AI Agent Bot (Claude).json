@@ -548,6 +548,17 @@
   },
   "activeVersionId": "08ad11e4-9a63-4ba4-acee-b9682e2d60d4",
   "connections": {
+    "Chatwoot Agent Bot Webhook": {
+      "main": [
+        [
+          {
+            "node": "Normalize Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "Normalize Event": {
       "main": [
         [
@@ -635,68 +646,6 @@
           }
         ]
       ]
-    },
-    "Chatwoot Agent Bot Webhook": {
-      "main": [
-        [
-          {
-            "node": "Prepare Signature Check",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Prepare Signature Check": {
-      "main": [
-        [
-          {
-            "node": "Compute HMAC",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Compute HMAC": {
-      "main": [
-        [
-          {
-            "node": "Signature Valid?",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Signature Valid?": {
-      "main": [
-        [
-          {
-            "node": "Respond 200 OK",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Respond 401 Unauthorized",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Respond 200 OK": {
-      "main": [
-        [
-          {
-            "node": "Normalize Event",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
     }
   },
   "createdAt": "2026-11-06T17:19:33.029Z",
@@ -731,46 +680,26 @@
         "a0c0afff-1eab-4384-a0ac-27920a3374ca"
       ],
       "description": "Claude agent with per-conversation memory that replies, labels, adds notes and hands off to humans via the Chatwoot API"
-    },
-    {
-      "id": "3ed6b1f0-61e7-411e-bf5f-96907b67c7db",
-      "name": "Verify Chatwoot Signature",
-      "nodeIds": [
-        "25303c0b-a72a-41f8-948c-b041149739de",
-        "7b3a4469-a3b8-4c9c-a9cf-73956fae5323",
-        "20538356-1049-4ad8-868d-d4d0a0326f85",
-        "6481312a-3265-4446-925d-e1c909e12fcf",
-        "13267995-7e16-4e7e-9827-e88382ffa612"
-      ],
-      "description": "Checks X-Chatwoot-Signature (HMAC-SHA256 of timestamp.raw_body) and a 5-min window; 401 and stop if invalid"
     }
   ],
   "nodes": [
     {
       "parameters": {
-        "authentication": "none",
         "httpMethod": "POST",
-        "options": {
-          "rawBody": true
-        },
         "path": "chatwoot-agent-bot",
-        "responseMode": "responseNode"
+        "options": {
+          "noResponseBody": true
+        }
       },
       "id": "11b777a0-8f4f-4001-b898-c8e4081e515b",
       "name": "Chatwoot Agent Bot Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.2,
       "position": [
-        -1150,
+        0,
         352
       ],
-      "webhookId": "31b256e2-0468-4182-a506-46ec3f01854b",
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "MIcLT1hLaAc22sGU",
-          "name": "Chatwoot Header Auth"
-        }
-      }
+      "webhookId": "31b256e2-0468-4182-a506-46ec3f01854b"
     },
     {
       "parameters": {
@@ -862,8 +791,9 @@
             "caseSensitive": true,
             "leftValue": "",
             "typeValidation": "strict",
-            "version": 3
+            "version": 2
           },
+          "combinator": "and",
           "conditions": [
             {
               "leftValue": "={{ $json.event }}",
@@ -871,8 +801,7 @@
               "operator": {
                 "type": "string",
                 "operation": "equals"
-              },
-              "id": "2eb6e5b5-87b6-4114-a473-0f82eaafd8d4"
+              }
             },
             {
               "leftValue": "={{ $json.message_type }}",
@@ -880,8 +809,7 @@
               "operator": {
                 "type": "string",
                 "operation": "equals"
-              },
-              "id": "730a2530-ce08-431d-9d5b-ea05839e593f"
+              }
             },
             {
               "leftValue": "={{ $json.is_private }}",
@@ -889,8 +817,7 @@
               "operator": {
                 "type": "string",
                 "operation": "equals"
-              },
-              "id": "a6a4e7ee-c152-4621-b4de-7977a8190299"
+              }
             },
             {
               "leftValue": "={{ $json.conversation_status }}",
@@ -898,8 +825,7 @@
               "operator": {
                 "type": "string",
                 "operation": "equals"
-              },
-              "id": "b0fa4bd5-428c-4838-8b14-b070c2ce74f7"
+              }
             },
             {
               "leftValue": "={{ $json.content }}",
@@ -908,11 +834,9 @@
                 "type": "string",
                 "operation": "notEmpty",
                 "singleValue": true
-              },
-              "id": "03dc1125-61d3-4153-9019-abb7a6ce6dc4"
+              }
             }
-          ],
-          "combinator": "and"
+          ]
         },
         "options": {}
       },
@@ -1166,105 +1090,6 @@
           "name": "OpenAi account - rtl3?"
         }
       }
-    },
-    {
-      "id": "25303c0b-a72a-41f8-948c-b041149739de",
-      "name": "Prepare Signature Check",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        -920,
-        352
-      ],
-      "parameters": {
-        "jsCode": "const item = $input.first();\nconst headers = item.json.headers || {};\nconst timestamp = String(headers['x-chatwoot-timestamp'] || '');\nconst signature = String(headers['x-chatwoot-signature'] || '');\n\n// Chatwoot signs the exact raw bytes, so read the raw body (Webhook > Raw Body must be on)\nlet rawBody = '';\ntry {\n  const buf = await this.helpers.getBinaryDataBuffer(0, 'data');\n  rawBody = buf.toString('utf8');\n} catch (e) {\n  rawBody = '';\n}\n\n// Reject anything signed more than 5 minutes ago (replay protection)\nconst now = Math.floor(Date.now() / 1000);\nconst timestampValid = /^\\d+$/.test(timestamp) && Math.abs(now - Number(timestamp)) <= 300;\n\nreturn [{\n  json: {\n    ...item.json,\n    signedPayload: `${timestamp}.${rawBody}`,\n    receivedSignature: signature,\n    timestampValid,\n    hasRawBody: rawBody.length > 0\n  }\n}];",
-        "language": "javaScript",
-        "mode": "runOnceForAllItems"
-      }
-    },
-    {
-      "id": "7b3a4469-a3b8-4c9c-a9cf-73956fae5323",
-      "name": "Compute HMAC",
-      "type": "n8n-nodes-base.crypto",
-      "typeVersion": 2,
-      "position": [
-        -700,
-        352
-      ],
-      "parameters": {
-        "action": "hmac",
-        "binaryData": false,
-        "dataPropertyName": "computedHmac",
-        "encoding": "hex",
-        "type": "SHA256",
-        "value": "={{ $json.signedPayload }}"
-      }
-    },
-    {
-      "id": "20538356-1049-4ad8-868d-d4d0a0326f85",
-      "name": "Signature Valid?",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
-      "position": [
-        -480,
-        352
-      ],
-      "parameters": {
-        "conditions": {
-          "combinator": "and",
-          "conditions": [
-            {
-              "id": "sig-ok",
-              "leftValue": "={{ $json.timestampValid === true && $json.hasRawBody === true && $json.receivedSignature === 'sha256=' + $json.computedHmac }}",
-              "operator": {
-                "operation": "true",
-                "singleValue": true,
-                "type": "boolean"
-              },
-              "rightValue": ""
-            }
-          ],
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          }
-        },
-        "options": {}
-      }
-    },
-    {
-      "id": "6481312a-3265-4446-925d-e1c909e12fcf",
-      "name": "Respond 200 OK",
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.5,
-      "position": [
-        -240,
-        256
-      ],
-      "parameters": {
-        "options": {
-          "responseCode": 200
-        },
-        "respondWith": "noData"
-      }
-    },
-    {
-      "id": "13267995-7e16-4e7e-9827-e88382ffa612",
-      "name": "Respond 401 Unauthorized",
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.5,
-      "position": [
-        -240,
-        464
-      ],
-      "parameters": {
-        "options": {
-          "responseCode": 401
-        },
-        "respondWith": "noData"
-      }
     }
   ],
   "pinData": {
@@ -1471,6 +1296,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2026-11-07T01:57:24.132Z",
-  "versionId": "4b961944-d956-405c-9f08-9397921fc923"
+  "updatedAt": "2026-11-09T00:29:49.289Z",
+  "versionId": "19607f52-4bef-421f-9553-d0621ec36249"
 }
