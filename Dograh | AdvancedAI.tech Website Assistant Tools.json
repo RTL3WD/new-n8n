@@ -1,0 +1,1648 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "60daec6f-b82a-4d14-b106-ef589b9fd9de",
+    "workflowId": "IWdwhSyHXXSq4dF7",
+    "nodes": [
+      {
+        "id": "30091377-2e14-432a-934b-5cce1fb6f2ec",
+        "name": "Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.2,
+        "position": [
+          0,
+          192
+        ],
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "f3a9c6d2-7b14-4e58-9c0a-5d2e8b1f4a76",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "webhookId": "a2650b1e-e0c4-4569-a2e8-09d5971af0d9"
+      },
+      {
+        "id": "f0ebe95d-ca38-4611-bcd6-7ef34f5ee0e0",
+        "name": "Normalize",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          224,
+          192
+        ],
+        "parameters": {
+          "jsCode": "const raw = $input.first().json;\nconst body = raw.body && typeof raw.body === 'object' ? raw.body : raw;\nconst clean = v => (v === undefined || v === null) ? '' : String(v).trim();\nconst action = clean(body.action).toLowerCase();\nconst out = { route: 'invalid', action, errors: [] };\n\nif (action === 'search_site') {\n  out.query = clean(body.query || body.question || body.q).slice(0, 300);\n  out.max_results = Math.min(Math.max(parseInt(body.max_results, 10) || 4, 1), 6);\n  out.route = 'search_site';\n} else if (action === 'capture_lead') {\n  const email = clean(body.email).toLowerCase().replace(/\\s+/g, '');\n  const phone = clean(body.phone).replace(/[^\\d+]/g, '');\n  const emailOk = /^[^@\\s]+@[^@\\s]+\\.[a-z]{2,}$/i.test(email);\n  if (!emailOk && phone.replace(/\\D/g, '').length < 10) out.errors.push('a valid email (or phone number) is required');\n  if (email && !emailOk) out.errors.push('email looks invalid; confirm it with the visitor');\n  const need = clean(body.need || body.topic || body.project);\n  if (!need) out.errors.push('need is required: one sentence describing what the visitor wants help with');\n  const now = DateTime.now().setZone('America/New_York');\n  out.lead = {\n    lead_id: 'WL-' + now.toFormat('yyMMdd') + '-' + Math.random().toString(36).slice(2, 7).toUpperCase(),\n    name: clean(body.name || body.visitor_name),\n    email: emailOk ? email : '',\n    phone,\n    company: clean(body.company || body.business),\n    need,\n    notes: clean(body.notes || body.summary).slice(0, 2000),\n    interest_level: ['hot', 'warm', 'cold'].includes(clean(body.interest_level).toLowerCase()) ? clean(body.interest_level).toLowerCase() : 'warm',\n    preferred_follow_up: clean(body.preferred_follow_up || body.follow_up) || (emailOk ? 'email' : 'phone'),\n    source: 'website_chat',\n    status: 'new',\n  };\n  out.received = now.toFormat(\"ccc LLL d, h:mm a 'ET'\");\n  out.route = out.errors.length ? 'invalid' : 'capture_lead';\n} else {\n  out.errors.push('unknown action; use search_site or capture_lead');\n}\nout.response = out.errors.length\n  ? { status: 'invalid_request', errors: out.errors, message: 'Missing or unclear details: ' + out.errors.join('; ') + '.' }\n  : { status: 'ok' };\nreturn [{ json: out }];"
+        },
+        "notes": "Validates the Dograh tool call. Actions: search_site, capture_lead."
+      },
+      {
+        "id": "2f9cb705-d8f6-48da-81f6-1c332753e206",
+        "name": "Route Action",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          448,
+          176
+        ],
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "outputKey": "search_site",
+                "renameOutput": true,
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict"
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.route }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "search_site"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "outputKey": "capture_lead",
+                "renameOutput": true,
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict"
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.route }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "capture_lead"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              }
+            ]
+          },
+          "options": {
+            "fallbackOutput": "extra",
+            "renameFallbackOutput": "invalid"
+          }
+        }
+      },
+      {
+        "id": "1f24ce44-dc48-4857-85f2-a665785361e5",
+        "name": "Get Site Content",
+        "type": "n8n-nodes-base.dataTable",
+        "typeVersion": 1.1,
+        "position": [
+          672,
+          0
+        ],
+        "parameters": {
+          "resource": "row",
+          "operation": "get",
+          "dataTableId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "Bfsa5kru3Hfh6cGc",
+            "cachedResultName": "AdvancedAI site - content index"
+          },
+          "returnAll": true
+        },
+        "executeOnce": true,
+        "alwaysOutputData": true
+      },
+      {
+        "id": "98627663-93aa-404a-a636-9a46615611a9",
+        "name": "Search Content",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          896,
+          0
+        ],
+        "parameters": {
+          "jsCode": "const n = $('Normalize').first().json;\nconst rows = $input.all().map(i => i.json).filter(r => r && r.url);\nconst SITE = 'https://www.advancedai.tech';\nconst CORE = [\n  { title: 'Solutions', url: SITE + '/solutions' },\n  { title: 'Demonstrations / In action', url: SITE + '/demonstrations' },\n  { title: 'Selected work (case studies)', url: SITE + '/work' },\n  { title: 'Guides (docs)', url: SITE + '/docs' },\n  { title: 'Free automation assessment', url: SITE + '/assessment' },\n];\nconst STOP = new Set('a an the and or of to in on for with is are be can do does did you your we our us i me my it this that what how who when where why which about at by from as any some have has get there their them they will would could should just like want need tell show find'.split(' '));\nconst SYN = {\n  price: ['pricing','cost','proposal','quote'], cost: ['pricing','price','proposal'], pricing: ['proposal','cost'],\n  book: ['discovery','call','schedule'], schedule: ['discovery','call','appointment'], meeting: ['discovery','call'], demo: ['demonstration','ada','example'],\n  phone: ['call','receptionist','ada'], receptionist: ['ada','phone','assistant'], chatbot: ['assistant','agent','chatbots'], bot: ['assistant','agent'],\n  automate: ['automation','workflow'], automation: ['workflow','automate'], integrate: ['connect','integration','tools'], crm: ['tools','connect','mydial'],\n  dialer: ['mydial','outbound','sales'], sales: ['mydial','lead','follow'], lead: ['follow','inquiry','sales'],\n  hvac: ['hvac'], plumber: ['plumbing'], electrician: ['electrical'], contractor: ['service','hvac','plumbing','electrical'],\n  support: ['launch','90','training'], process: ['working','discovery','proposal'], start: ['discovery','assessment','working'],\n  robert: ['about','founder'], owner: ['robert','founder','about'], who: ['about','robert'], missed: ['calls','calculator'],\n};\nconst stem = w => w.replace(/(ies)$/, 'y').replace(/(ing|ed|es|s)$/, '');\nconst tokenize = s => String(s || '').toLowerCase().replace(/[^a-z0-9\\s]/g, ' ').split(/\\s+/).filter(w => w.length > 1 && !STOP.has(w));\nconst qTokens = tokenize(n.query);\nif (!qTokens.length || !rows.length) {\n  return [{ json: { response: { status: rows.length ? 'no_query' : 'index_empty', results: [], core_pages: CORE,\n    message: rows.length ? 'No search terms given. Core pages are listed in core_pages.' : 'Site index is empty. Use core_pages.' } } }];\n}\nconst terms = new Map();\nfor (const t of qTokens) { terms.set(stem(t), 1); for (const s of (SYN[t] || SYN[stem(t)] || [])) if (!terms.has(stem(s))) terms.set(stem(s), 0.4); }\nconst phrase = String(n.query || '').toLowerCase().trim();\nconst countHits = (text, term) => { let c = 0; for (const w of tokenize(text)) if (stem(w) === term || (term.length > 3 && stem(w).startsWith(term))) c++; return c; };\nconst scored = rows.map(r => {\n  let score = 0, matched = 0;\n  for (const [term, wt] of terms) {\n    const t = countHits(r.title, term) * 5 + countHits(r.section, term) * 3 + countHits(r.summary, term) * 2 + Math.min(countHits(r.content, term), 4);\n    if (t > 0) { matched += wt; score += t * wt; }\n  }\n  if (phrase.length > 6 && String(r.content || '').toLowerCase().includes(phrase)) score += 6;\n  score *= (0.5 + matched / qTokens.length);\n  if (r.page_type === 'legal') score *= 0.3;\n  return { r, score };\n}).filter(x => x.score > 0).sort((a, b) => b.score - a.score);\nconst snippetFor = r => {\n  const text = String(r.content || '');\n  const lower = text.toLowerCase();\n  let pos = -1;\n  for (const term of terms.keys()) { const p = lower.indexOf(term); if (p >= 0 && (pos < 0 || p < pos)) pos = p; }\n  const start = Math.max(0, pos - 120);\n  return (start > 0 ? '…' : '') + text.slice(start, start + 420).trim() + (text.length > start + 420 ? '…' : '');\n};\nconst seen = new Set(); const results = [];\nfor (const { r, score } of scored) {\n  const key = r.url + '|' + r.section;\n  if (seen.has(key)) continue;\n  if (results.filter(x => x.url === r.url).length >= 2) continue;\n  seen.add(key);\n  results.push({ title: r.title, section: r.section, url: r.url, page_type: r.page_type, snippet: snippetFor(r), score: Math.round(score * 10) / 10 });\n  if (results.length >= n.max_results) break;\n}\nreturn [{ json: { response: results.length\n  ? { status: 'ok', query: n.query, results, message: 'Answer only from these snippets and link the url when pointing the visitor to a page.' }\n  : { status: 'no_results', query: n.query, results: [], core_pages: CORE, message: 'Nothing on the site matched. Do not guess; offer the closest core page or a call with Robert.' } } }];"
+        },
+        "notes": "Keyword search with light stemming + synonyms. Returns top pages with URL and snippet."
+      },
+      {
+        "id": "c6bd983d-99f4-4ce1-b05f-ce5532e28e26",
+        "name": "Respond Search",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          1120,
+          0
+        ],
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify($json.response) }}",
+          "options": {}
+        }
+      },
+      {
+        "id": "8b19cb4d-e70b-4f8e-8576-c3d30db1491f",
+        "name": "Save Lead",
+        "type": "n8n-nodes-base.dataTable",
+        "typeVersion": 1.1,
+        "position": [
+          672,
+          192
+        ],
+        "parameters": {
+          "resource": "row",
+          "operation": "insert",
+          "dataTableId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "DkiT2rfRXrgu4Xgz",
+            "cachedResultName": "AdvancedAI site - chat leads"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "lead_id": "={{ $json.lead.lead_id }}",
+              "name": "={{ $json.lead.name }}",
+              "email": "={{ $json.lead.email }}",
+              "phone": "={{ $json.lead.phone }}",
+              "company": "={{ $json.lead.company }}",
+              "need": "={{ $json.lead.need }}",
+              "notes": "={{ $json.lead.notes }}",
+              "interest_level": "={{ $json.lead.interest_level }}",
+              "preferred_follow_up": "={{ $json.lead.preferred_follow_up }}",
+              "source": "={{ $json.lead.source }}",
+              "status": "={{ $json.lead.status }}"
+            },
+            "schema": [
+              {
+                "id": "lead_id",
+                "displayName": "lead_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "name",
+                "displayName": "name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "email",
+                "displayName": "email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "phone",
+                "displayName": "phone",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "company",
+                "displayName": "company",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "need",
+                "displayName": "need",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "notes",
+                "displayName": "notes",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "interest_level",
+                "displayName": "interest_level",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "preferred_follow_up",
+                "displayName": "preferred_follow_up",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "source",
+                "displayName": "source",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "status",
+                "displayName": "status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "f5266ed0-2e88-472e-b2bb-c660d4f5e0b1",
+        "name": "Respond Lead Saved",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          896,
+          192
+        ],
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify({ status: \"saved\", lead_id: $(\"Normalize\").first().json.lead.lead_id, message: \"Details saved. Robert will follow up by \" + $(\"Normalize\").first().json.lead.preferred_follow_up + \" within one business day.\" }) }}",
+          "options": {}
+        }
+      },
+      {
+        "id": "57dea1a6-a79a-4c2c-a118-febf2a894a5b",
+        "name": "TG New Lead",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1120,
+          192
+        ],
+        "parameters": {
+          "chatId": "5076593768",
+          "text": "=💬 New website chat lead ({{ $('Normalize').first().json.lead.interest_level }})\n\nWho: {{ $('Normalize').first().json.lead.name || 'not given' }}{{ $('Normalize').first().json.lead.company ? ' – ' + $('Normalize').first().json.lead.company : '' }}\nEmail: {{ $('Normalize').first().json.lead.email || 'not given' }}\nPhone: {{ $('Normalize').first().json.lead.phone || 'not given' }}\nFollow up by: {{ $('Normalize').first().json.lead.preferred_follow_up }}\n\nNeed: {{ $('Normalize').first().json.lead.need }}\n{{ $('Normalize').first().json.lead.notes ? 'Notes: ' + $('Normalize').first().json.lead.notes : '' }}\n\n{{ $('Normalize').first().json.lead.lead_id }} · {{ $('Normalize').first().json.received }}",
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "credentials": {
+          "telegramApi": {
+            "id": "GrHxwuhk9SECQo8h",
+            "name": "NanoRob3"
+          }
+        },
+        "onError": "continueRegularOutput",
+        "webhookId": "9a11ff2c-4640-49c5-8378-29882dcbc8ca"
+      },
+      {
+        "id": "e6a0c2d7-4fe6-40f8-8620-ca651711adf1",
+        "name": "Respond Invalid",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          672,
+          384
+        ],
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify($json.response) }}",
+          "options": {}
+        }
+      },
+      {
+        "id": "d1fd7bf2-e600-4b40-a826-ab243c43b8a3",
+        "name": "Weekly Reindex",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.4,
+        "position": [
+          0,
+          608
+        ],
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "weeks",
+                "weeksInterval": 1,
+                "triggerAtDay": [
+                  1
+                ],
+                "triggerAtHour": 4,
+                "triggerAtMinute": 17
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "361e4e4f-1811-4cc7-a5c9-e391c5f9c1c5",
+        "name": "Get Sitemap",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          224,
+          704
+        ],
+        "parameters": {
+          "method": "GET",
+          "url": "https://www.advancedai.tech/sitemap.xml",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "text",
+                "outputPropertyName": "xml"
+              }
+            }
+          }
+        }
+      },
+      {
+        "id": "0000c25e-2c1f-4e1d-b378-f4d44c98a943",
+        "name": "Reindex Now",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          800
+        ],
+        "parameters": {}
+      },
+      {
+        "id": "ff63d957-71ea-4e87-ac06-da43700fa386",
+        "name": "Extract URLs",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          448,
+          704
+        ],
+        "parameters": {
+          "jsCode": "const xml = String($input.first().json.xml || '');\nconst urls = [...new Set([...xml.matchAll(/<loc>\\s*([^<\\s]+)\\s*<\\/loc>/g)].map(m => m[1].trim()))]\n  .filter(u => /^https:\\/\\/(www\\.)?advancedai\\.tech/.test(u) && !/\\.(xml|pdf|png|jpe?g|svg|webp)$/i.test(u));\nif (!urls.length) throw new Error('No URLs found in sitemap; index left untouched.');\nreturn urls.map(url => ({ json: { url } }));"
+        }
+      },
+      {
+        "id": "c4f03740-847a-4639-8bbf-3f418d5fe6d2",
+        "name": "Fetch Page",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          672,
+          704
+        ],
+        "parameters": {
+          "method": "GET",
+          "url": "={{ $json.url }}",
+          "options": {
+            "batching": {
+              "batch": {
+                "batchSize": 3,
+                "batchInterval": 500
+              }
+            },
+            "response": {
+              "response": {
+                "responseFormat": "text",
+                "outputPropertyName": "html",
+                "neverError": true
+              }
+            },
+            "timeout": 15000
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "id": "70ff3b6f-27d5-4f29-b819-e177c20e9f08",
+        "name": "Chunk Pages",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          896,
+          704
+        ],
+        "parameters": {
+          "jsCode": "const urls = $('Extract URLs').all().map(i => i.json.url);\nconst decode = s => String(s || '').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')\n  .replace(/&quot;/g, '\"').replace(/&#39;|&#x27;|&rsquo;|&lsquo;/g, \"'\").replace(/&ldquo;|&rdquo;/g, '\"').replace(/&mdash;/g, '—').replace(/&ndash;/g, '–')\n  .replace(/&#(\\d+);/g, (m, d) => String.fromCharCode(+d)).replace(/\\s+/g, ' ').trim();\nconst typeFor = u => {\n  const p = String(u).replace(/^https?:\\/\\/[^\\/]+/, '').split(/[?#]/)[0];\n  if (p === '/' || p === '') return 'home';\n  if (/privacy|terms/.test(p)) return 'legal';\n  return p.split('/')[1] || 'page';\n};\nconst chunks = [];\n$input.all().forEach((item, i) => {\n  const url = (urls[i] || '').replace(/\\/$/, '') || urls[i];\n  let html = String(item.json.html || '');\n  if (!url || html.length < 200) return;\n  const title = decode((html.match(/<title[^>]*>([\\s\\S]*?)<\\/title>/i) || [])[1]).replace(/\\s*\\|\\s*AdvancedAI\\.tech.*$/i, '');\n  const summary = decode((html.match(/<meta[^>]+name=[\"']description[\"'][^>]+content=[\"']([^\"']*)[\"']/i) || [])[1]);\n  html = html.replace(/<(script|style|noscript|svg|template|iframe)[\\s\\S]*?<\\/\\1>/gi, ' ').replace(/<(header|footer|nav)[\\s\\S]*?<\\/\\1>/gi, ' ');\n  const main = (html.match(/<main[\\s\\S]*?<\\/main>/i) || [html])[0];\n  const re = /<(h[1-3]|p|li|td|th|blockquote|dt|dd|summary|figcaption)\\b[^>]*>([\\s\\S]*?)<\\/\\1>/gi;\n  let m; let cur = { h: title, t: [] }; const secs = [cur]; const seen = new Set();\n  while ((m = re.exec(main))) {\n    const txt = decode(m[2]);\n    if (txt.length < 3) continue;\n    if (/^h[1-3]$/i.test(m[1])) { cur = { h: txt, t: [] }; secs.push(cur); }\n    else if (!seen.has(txt)) { seen.add(txt); cur.t.push(txt); }\n  }\n  let buf = { h: '', t: '' };\n  const flush = () => { if (buf.t.trim().length > 40) chunks.push({ url, title, section: buf.h.slice(0, 200), content: buf.t.trim().slice(0, 1500), summary, page_type: typeFor(url) }); buf = { h: '', t: '' }; };\n  for (const s of secs) {\n    const txt = s.t.join(' ');\n    if (!txt && !s.h) continue;\n    if (!buf.h) buf.h = s.h;\n    if (buf.t && (buf.t + ' ' + txt).length > 1200) { flush(); buf.h = s.h; }\n    buf.t += (buf.t ? ' ' : '') + (s.h !== buf.h ? s.h + '. ' : '') + txt;\n  }\n  flush();\n});\nif (chunks.length < 5) throw new Error('Only ' + chunks.length + ' chunks parsed; aborting so the existing index is not wiped.');\nreturn chunks.map(c => ({ json: c }));"
+        },
+        "notes": "Strips nav/header/footer, splits each page into heading-led chunks of about 1,200 characters."
+      },
+      {
+        "id": "630c57ad-425d-420f-84c5-06156578b581",
+        "name": "Clear Index",
+        "type": "n8n-nodes-base.dataTable",
+        "typeVersion": 1.1,
+        "position": [
+          1120,
+          704
+        ],
+        "parameters": {
+          "resource": "table",
+          "operation": "clear",
+          "dataTableId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "Bfsa5kru3Hfh6cGc",
+            "cachedResultName": "AdvancedAI site - content index"
+          }
+        },
+        "executeOnce": true
+      },
+      {
+        "id": "bd8d76fe-3827-4781-b480-cf2cb7e5050a",
+        "name": "Re-emit Chunks",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1344,
+          704
+        ],
+        "parameters": {
+          "jsCode": "return $('Chunk Pages').all().map(i => ({ json: i.json }));"
+        },
+        "notes": "Clear Index outputs one status item; re-emit the parsed chunks so Insert receives them."
+      },
+      {
+        "id": "b2ed1f90-a48b-40bf-a86c-30a82c048adb",
+        "name": "Insert Chunks",
+        "type": "n8n-nodes-base.dataTable",
+        "typeVersion": 1.1,
+        "position": [
+          1568,
+          704
+        ],
+        "parameters": {
+          "resource": "row",
+          "operation": "insert",
+          "dataTableId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "Bfsa5kru3Hfh6cGc",
+            "cachedResultName": "AdvancedAI site - content index"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "url": "={{ $json.url }}",
+              "title": "={{ $json.title }}",
+              "section": "={{ $json.section }}",
+              "content": "={{ $json.content }}",
+              "summary": "={{ $json.summary }}",
+              "page_type": "={{ $json.page_type }}"
+            },
+            "schema": [
+              {
+                "id": "url",
+                "displayName": "url",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "title",
+                "displayName": "title",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "section",
+                "displayName": "section",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "content",
+                "displayName": "content",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "summary",
+                "displayName": "summary",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "page_type",
+                "displayName": "page_type",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ]
+          },
+          "options": {
+            "optimizeBulk": true
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Normalize",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Normalize": {
+        "main": [
+          [
+            {
+              "node": "Route Action",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Route Action": {
+        "main": [
+          [
+            {
+              "node": "Get Site Content",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Save Lead",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Respond Invalid",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Site Content": {
+        "main": [
+          [
+            {
+              "node": "Search Content",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Search Content": {
+        "main": [
+          [
+            {
+              "node": "Respond Search",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Save Lead": {
+        "main": [
+          [
+            {
+              "node": "Respond Lead Saved",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Respond Lead Saved": {
+        "main": [
+          [
+            {
+              "node": "TG New Lead",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Weekly Reindex": {
+        "main": [
+          [
+            {
+              "node": "Get Sitemap",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Sitemap": {
+        "main": [
+          [
+            {
+              "node": "Extract URLs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Reindex Now": {
+        "main": [
+          [
+            {
+              "node": "Get Sitemap",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract URLs": {
+        "main": [
+          [
+            {
+              "node": "Fetch Page",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Page": {
+        "main": [
+          [
+            {
+              "node": "Chunk Pages",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Chunk Pages": {
+        "main": [
+          [
+            {
+              "node": "Clear Index",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Clear Index": {
+        "main": [
+          [
+            {
+              "node": "Re-emit Chunks",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Re-emit Chunks": {
+        "main": [
+          [
+            {
+              "node": "Insert Chunks",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [
+      {
+        "id": "135de23b-a4f6-40a3-ae89-fccc97a5ac44",
+        "name": "Site search",
+        "nodeIds": [
+          "1f24ce44-dc48-4857-85f2-a665785361e5",
+          "98627663-93aa-404a-a636-9a46615611a9",
+          "c6bd983d-99f4-4ce1-b05f-ce5532e28e26"
+        ],
+        "description": "search_site action"
+      },
+      {
+        "id": "30adc7ce-455f-4f78-b8f1-936d48cefc87",
+        "name": "Lead capture",
+        "nodeIds": [
+          "8b19cb4d-e70b-4f8e-8576-c3d30db1491f",
+          "f5266ed0-2e88-472e-b2bb-c660d4f5e0b1",
+          "57dea1a6-a79a-4c2c-a118-febf2a894a5b"
+        ],
+        "description": "capture_lead action"
+      },
+      {
+        "id": "e0aad624-cac6-49d5-ba6a-86c8866d604a",
+        "name": "Reindex site",
+        "nodeIds": [
+          "361e4e4f-1811-4cc7-a5c9-e391c5f9c1c5",
+          "ff63d957-71ea-4e87-ac06-da43700fa386",
+          "c4f03740-847a-4639-8bbf-3f418d5fe6d2",
+          "70ff3b6f-27d5-4f29-b819-e177c20e9f08",
+          "630c57ad-425d-420f-84c5-06156578b581",
+          "bd8d76fe-3827-4781-b480-cf2cb7e5050a",
+          "b2ed1f90-a48b-40bf-a86c-30a82c048adb"
+        ],
+        "description": "Crawl sitemap and rebuild content index"
+      }
+    ],
+    "authors": "Robert Lord (via MCP)",
+    "name": "Fix URL parsing in Chunk Pages",
+    "description": "Updated nodes: Chunk Pages",
+    "autosaved": false,
+    "createdAt": "2026-11-09T01:02:03.807Z",
+    "updatedAt": "2026-11-09T01:02:03.807Z"
+  },
+  "activeVersionId": "60daec6f-b82a-4d14-b106-ef589b9fd9de",
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Normalize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize": {
+      "main": [
+        [
+          {
+            "node": "Route Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Action": {
+      "main": [
+        [
+          {
+            "node": "Get Site Content",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Save Lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Invalid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Site Content": {
+      "main": [
+        [
+          {
+            "node": "Search Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Content": {
+      "main": [
+        [
+          {
+            "node": "Respond Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Lead": {
+      "main": [
+        [
+          {
+            "node": "Respond Lead Saved",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond Lead Saved": {
+      "main": [
+        [
+          {
+            "node": "TG New Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Weekly Reindex": {
+      "main": [
+        [
+          {
+            "node": "Get Sitemap",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Sitemap": {
+      "main": [
+        [
+          {
+            "node": "Extract URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reindex Now": {
+      "main": [
+        [
+          {
+            "node": "Get Sitemap",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract URLs": {
+      "main": [
+        [
+          {
+            "node": "Fetch Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Page": {
+      "main": [
+        [
+          {
+            "node": "Chunk Pages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chunk Pages": {
+      "main": [
+        [
+          {
+            "node": "Clear Index",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clear Index": {
+      "main": [
+        [
+          {
+            "node": "Re-emit Chunks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Re-emit Chunks": {
+      "main": [
+        [
+          {
+            "node": "Insert Chunks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-11-09T01:01:25.475Z",
+  "id": "IWdwhSyHXXSq4dF7",
+  "isArchived": false,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "name": "Dograh | AdvancedAI.tech Website Assistant Tools",
+  "nodeGroups": [
+    {
+      "id": "135de23b-a4f6-40a3-ae89-fccc97a5ac44",
+      "name": "Site search",
+      "nodeIds": [
+        "1f24ce44-dc48-4857-85f2-a665785361e5",
+        "98627663-93aa-404a-a636-9a46615611a9",
+        "c6bd983d-99f4-4ce1-b05f-ce5532e28e26"
+      ],
+      "description": "search_site action"
+    },
+    {
+      "id": "30adc7ce-455f-4f78-b8f1-936d48cefc87",
+      "name": "Lead capture",
+      "nodeIds": [
+        "8b19cb4d-e70b-4f8e-8576-c3d30db1491f",
+        "f5266ed0-2e88-472e-b2bb-c660d4f5e0b1",
+        "57dea1a6-a79a-4c2c-a118-febf2a894a5b"
+      ],
+      "description": "capture_lead action"
+    },
+    {
+      "id": "e0aad624-cac6-49d5-ba6a-86c8866d604a",
+      "name": "Reindex site",
+      "nodeIds": [
+        "361e4e4f-1811-4cc7-a5c9-e391c5f9c1c5",
+        "ff63d957-71ea-4e87-ac06-da43700fa386",
+        "c4f03740-847a-4639-8bbf-3f418d5fe6d2",
+        "70ff3b6f-27d5-4f29-b819-e177c20e9f08",
+        "630c57ad-425d-420f-84c5-06156578b581",
+        "bd8d76fe-3827-4781-b480-cf2cb7e5050a",
+        "b2ed1f90-a48b-40bf-a86c-30a82c048adb"
+      ],
+      "description": "Crawl sitemap and rebuild content index"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "30091377-2e14-432a-934b-5cce1fb6f2ec",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        192
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "f3a9c6d2-7b14-4e58-9c0a-5d2e8b1f4a76",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "a2650b1e-e0c4-4569-a2e8-09d5971af0d9"
+    },
+    {
+      "id": "f0ebe95d-ca38-4611-bcd6-7ef34f5ee0e0",
+      "name": "Normalize",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        192
+      ],
+      "parameters": {
+        "jsCode": "const raw = $input.first().json;\nconst body = raw.body && typeof raw.body === 'object' ? raw.body : raw;\nconst clean = v => (v === undefined || v === null) ? '' : String(v).trim();\nconst action = clean(body.action).toLowerCase();\nconst out = { route: 'invalid', action, errors: [] };\n\nif (action === 'search_site') {\n  out.query = clean(body.query || body.question || body.q).slice(0, 300);\n  out.max_results = Math.min(Math.max(parseInt(body.max_results, 10) || 4, 1), 6);\n  out.route = 'search_site';\n} else if (action === 'capture_lead') {\n  const email = clean(body.email).toLowerCase().replace(/\\s+/g, '');\n  const phone = clean(body.phone).replace(/[^\\d+]/g, '');\n  const emailOk = /^[^@\\s]+@[^@\\s]+\\.[a-z]{2,}$/i.test(email);\n  if (!emailOk && phone.replace(/\\D/g, '').length < 10) out.errors.push('a valid email (or phone number) is required');\n  if (email && !emailOk) out.errors.push('email looks invalid; confirm it with the visitor');\n  const need = clean(body.need || body.topic || body.project);\n  if (!need) out.errors.push('need is required: one sentence describing what the visitor wants help with');\n  const now = DateTime.now().setZone('America/New_York');\n  out.lead = {\n    lead_id: 'WL-' + now.toFormat('yyMMdd') + '-' + Math.random().toString(36).slice(2, 7).toUpperCase(),\n    name: clean(body.name || body.visitor_name),\n    email: emailOk ? email : '',\n    phone,\n    company: clean(body.company || body.business),\n    need,\n    notes: clean(body.notes || body.summary).slice(0, 2000),\n    interest_level: ['hot', 'warm', 'cold'].includes(clean(body.interest_level).toLowerCase()) ? clean(body.interest_level).toLowerCase() : 'warm',\n    preferred_follow_up: clean(body.preferred_follow_up || body.follow_up) || (emailOk ? 'email' : 'phone'),\n    source: 'website_chat',\n    status: 'new',\n  };\n  out.received = now.toFormat(\"ccc LLL d, h:mm a 'ET'\");\n  out.route = out.errors.length ? 'invalid' : 'capture_lead';\n} else {\n  out.errors.push('unknown action; use search_site or capture_lead');\n}\nout.response = out.errors.length\n  ? { status: 'invalid_request', errors: out.errors, message: 'Missing or unclear details: ' + out.errors.join('; ') + '.' }\n  : { status: 'ok' };\nreturn [{ json: out }];"
+      },
+      "notes": "Validates the Dograh tool call. Actions: search_site, capture_lead."
+    },
+    {
+      "id": "2f9cb705-d8f6-48da-81f6-1c332753e206",
+      "name": "Route Action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        448,
+        176
+      ],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "outputKey": "search_site",
+              "renameOutput": true,
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.route }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "search_site"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "capture_lead",
+              "renameOutput": true,
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.route }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "capture_lead"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "invalid"
+        }
+      }
+    },
+    {
+      "id": "1f24ce44-dc48-4857-85f2-a665785361e5",
+      "name": "Get Site Content",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        0
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "Bfsa5kru3Hfh6cGc",
+          "cachedResultName": "AdvancedAI site - content index"
+        },
+        "returnAll": true
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true
+    },
+    {
+      "id": "98627663-93aa-404a-a636-9a46615611a9",
+      "name": "Search Content",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const n = $('Normalize').first().json;\nconst rows = $input.all().map(i => i.json).filter(r => r && r.url);\nconst SITE = 'https://www.advancedai.tech';\nconst CORE = [\n  { title: 'Solutions', url: SITE + '/solutions' },\n  { title: 'Demonstrations / In action', url: SITE + '/demonstrations' },\n  { title: 'Selected work (case studies)', url: SITE + '/work' },\n  { title: 'Guides (docs)', url: SITE + '/docs' },\n  { title: 'Free automation assessment', url: SITE + '/assessment' },\n];\nconst STOP = new Set('a an the and or of to in on for with is are be can do does did you your we our us i me my it this that what how who when where why which about at by from as any some have has get there their them they will would could should just like want need tell show find'.split(' '));\nconst SYN = {\n  price: ['pricing','cost','proposal','quote'], cost: ['pricing','price','proposal'], pricing: ['proposal','cost'],\n  book: ['discovery','call','schedule'], schedule: ['discovery','call','appointment'], meeting: ['discovery','call'], demo: ['demonstration','ada','example'],\n  phone: ['call','receptionist','ada'], receptionist: ['ada','phone','assistant'], chatbot: ['assistant','agent','chatbots'], bot: ['assistant','agent'],\n  automate: ['automation','workflow'], automation: ['workflow','automate'], integrate: ['connect','integration','tools'], crm: ['tools','connect','mydial'],\n  dialer: ['mydial','outbound','sales'], sales: ['mydial','lead','follow'], lead: ['follow','inquiry','sales'],\n  hvac: ['hvac'], plumber: ['plumbing'], electrician: ['electrical'], contractor: ['service','hvac','plumbing','electrical'],\n  support: ['launch','90','training'], process: ['working','discovery','proposal'], start: ['discovery','assessment','working'],\n  robert: ['about','founder'], owner: ['robert','founder','about'], who: ['about','robert'], missed: ['calls','calculator'],\n};\nconst stem = w => w.replace(/(ies)$/, 'y').replace(/(ing|ed|es|s)$/, '');\nconst tokenize = s => String(s || '').toLowerCase().replace(/[^a-z0-9\\s]/g, ' ').split(/\\s+/).filter(w => w.length > 1 && !STOP.has(w));\nconst qTokens = tokenize(n.query);\nif (!qTokens.length || !rows.length) {\n  return [{ json: { response: { status: rows.length ? 'no_query' : 'index_empty', results: [], core_pages: CORE,\n    message: rows.length ? 'No search terms given. Core pages are listed in core_pages.' : 'Site index is empty. Use core_pages.' } } }];\n}\nconst terms = new Map();\nfor (const t of qTokens) { terms.set(stem(t), 1); for (const s of (SYN[t] || SYN[stem(t)] || [])) if (!terms.has(stem(s))) terms.set(stem(s), 0.4); }\nconst phrase = String(n.query || '').toLowerCase().trim();\nconst countHits = (text, term) => { let c = 0; for (const w of tokenize(text)) if (stem(w) === term || (term.length > 3 && stem(w).startsWith(term))) c++; return c; };\nconst scored = rows.map(r => {\n  let score = 0, matched = 0;\n  for (const [term, wt] of terms) {\n    const t = countHits(r.title, term) * 5 + countHits(r.section, term) * 3 + countHits(r.summary, term) * 2 + Math.min(countHits(r.content, term), 4);\n    if (t > 0) { matched += wt; score += t * wt; }\n  }\n  if (phrase.length > 6 && String(r.content || '').toLowerCase().includes(phrase)) score += 6;\n  score *= (0.5 + matched / qTokens.length);\n  if (r.page_type === 'legal') score *= 0.3;\n  return { r, score };\n}).filter(x => x.score > 0).sort((a, b) => b.score - a.score);\nconst snippetFor = r => {\n  const text = String(r.content || '');\n  const lower = text.toLowerCase();\n  let pos = -1;\n  for (const term of terms.keys()) { const p = lower.indexOf(term); if (p >= 0 && (pos < 0 || p < pos)) pos = p; }\n  const start = Math.max(0, pos - 120);\n  return (start > 0 ? '…' : '') + text.slice(start, start + 420).trim() + (text.length > start + 420 ? '…' : '');\n};\nconst seen = new Set(); const results = [];\nfor (const { r, score } of scored) {\n  const key = r.url + '|' + r.section;\n  if (seen.has(key)) continue;\n  if (results.filter(x => x.url === r.url).length >= 2) continue;\n  seen.add(key);\n  results.push({ title: r.title, section: r.section, url: r.url, page_type: r.page_type, snippet: snippetFor(r), score: Math.round(score * 10) / 10 });\n  if (results.length >= n.max_results) break;\n}\nreturn [{ json: { response: results.length\n  ? { status: 'ok', query: n.query, results, message: 'Answer only from these snippets and link the url when pointing the visitor to a page.' }\n  : { status: 'no_results', query: n.query, results: [], core_pages: CORE, message: 'Nothing on the site matched. Do not guess; offer the closest core page or a call with Robert.' } } }];"
+      },
+      "notes": "Keyword search with light stemming + synonyms. Returns top pages with URL and snippet."
+    },
+    {
+      "id": "c6bd983d-99f4-4ce1-b05f-ce5532e28e26",
+      "name": "Respond Search",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1120,
+        0
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json.response) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "8b19cb4d-e70b-4f8e-8576-c3d30db1491f",
+      "name": "Save Lead",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        192
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "DkiT2rfRXrgu4Xgz",
+          "cachedResultName": "AdvancedAI site - chat leads"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "lead_id": "={{ $json.lead.lead_id }}",
+            "name": "={{ $json.lead.name }}",
+            "email": "={{ $json.lead.email }}",
+            "phone": "={{ $json.lead.phone }}",
+            "company": "={{ $json.lead.company }}",
+            "need": "={{ $json.lead.need }}",
+            "notes": "={{ $json.lead.notes }}",
+            "interest_level": "={{ $json.lead.interest_level }}",
+            "preferred_follow_up": "={{ $json.lead.preferred_follow_up }}",
+            "source": "={{ $json.lead.source }}",
+            "status": "={{ $json.lead.status }}"
+          },
+          "schema": [
+            {
+              "id": "lead_id",
+              "displayName": "lead_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "need",
+              "displayName": "need",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "interest_level",
+              "displayName": "interest_level",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "preferred_follow_up",
+              "displayName": "preferred_follow_up",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "f5266ed0-2e88-472e-b2bb-c660d4f5e0b1",
+      "name": "Respond Lead Saved",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        896,
+        192
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ status: \"saved\", lead_id: $(\"Normalize\").first().json.lead.lead_id, message: \"Details saved. Robert will follow up by \" + $(\"Normalize\").first().json.lead.preferred_follow_up + \" within one business day.\" }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "57dea1a6-a79a-4c2c-a118-febf2a894a5b",
+      "name": "TG New Lead",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        192
+      ],
+      "parameters": {
+        "chatId": "5076593768",
+        "text": "=💬 New website chat lead ({{ $('Normalize').first().json.lead.interest_level }})\n\nWho: {{ $('Normalize').first().json.lead.name || 'not given' }}{{ $('Normalize').first().json.lead.company ? ' – ' + $('Normalize').first().json.lead.company : '' }}\nEmail: {{ $('Normalize').first().json.lead.email || 'not given' }}\nPhone: {{ $('Normalize').first().json.lead.phone || 'not given' }}\nFollow up by: {{ $('Normalize').first().json.lead.preferred_follow_up }}\n\nNeed: {{ $('Normalize').first().json.lead.need }}\n{{ $('Normalize').first().json.lead.notes ? 'Notes: ' + $('Normalize').first().json.lead.notes : '' }}\n\n{{ $('Normalize').first().json.lead.lead_id }} · {{ $('Normalize').first().json.received }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "GrHxwuhk9SECQo8h",
+          "name": "NanoRob3"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "webhookId": "9a11ff2c-4640-49c5-8378-29882dcbc8ca"
+    },
+    {
+      "id": "e6a0c2d7-4fe6-40f8-8620-ca651711adf1",
+      "name": "Respond Invalid",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        672,
+        384
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json.response) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "d1fd7bf2-e600-4b40-a826-ab243c43b8a3",
+      "name": "Weekly Reindex",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        608
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "weeksInterval": 1,
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 4,
+              "triggerAtMinute": 17
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "361e4e4f-1811-4cc7-a5c9-e391c5f9c1c5",
+      "name": "Get Sitemap",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        224,
+        704
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://www.advancedai.tech/sitemap.xml",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text",
+              "outputPropertyName": "xml"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "0000c25e-2c1f-4e1d-b378-f4d44c98a943",
+      "name": "Reindex Now",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        800
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "ff63d957-71ea-4e87-ac06-da43700fa386",
+      "name": "Extract URLs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        704
+      ],
+      "parameters": {
+        "jsCode": "const xml = String($input.first().json.xml || '');\nconst urls = [...new Set([...xml.matchAll(/<loc>\\s*([^<\\s]+)\\s*<\\/loc>/g)].map(m => m[1].trim()))]\n  .filter(u => /^https:\\/\\/(www\\.)?advancedai\\.tech/.test(u) && !/\\.(xml|pdf|png|jpe?g|svg|webp)$/i.test(u));\nif (!urls.length) throw new Error('No URLs found in sitemap; index left untouched.');\nreturn urls.map(url => ({ json: { url } }));"
+      }
+    },
+    {
+      "id": "c4f03740-847a-4639-8bbf-3f418d5fe6d2",
+      "name": "Fetch Page",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        672,
+        704
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $json.url }}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 3,
+              "batchInterval": 500
+            }
+          },
+          "response": {
+            "response": {
+              "responseFormat": "text",
+              "outputPropertyName": "html",
+              "neverError": true
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "70ff3b6f-27d5-4f29-b819-e177c20e9f08",
+      "name": "Chunk Pages",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        704
+      ],
+      "parameters": {
+        "jsCode": "const urls = $('Extract URLs').all().map(i => i.json.url);\nconst decode = s => String(s || '').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')\n  .replace(/&quot;/g, '\"').replace(/&#39;|&#x27;|&rsquo;|&lsquo;/g, \"'\").replace(/&ldquo;|&rdquo;/g, '\"').replace(/&mdash;/g, '—').replace(/&ndash;/g, '–')\n  .replace(/&#(\\d+);/g, (m, d) => String.fromCharCode(+d)).replace(/\\s+/g, ' ').trim();\nconst typeFor = u => {\n  const p = String(u).replace(/^https?:\\/\\/[^\\/]+/, '').split(/[?#]/)[0];\n  if (p === '/' || p === '') return 'home';\n  if (/privacy|terms/.test(p)) return 'legal';\n  return p.split('/')[1] || 'page';\n};\nconst chunks = [];\n$input.all().forEach((item, i) => {\n  const url = (urls[i] || '').replace(/\\/$/, '') || urls[i];\n  let html = String(item.json.html || '');\n  if (!url || html.length < 200) return;\n  const title = decode((html.match(/<title[^>]*>([\\s\\S]*?)<\\/title>/i) || [])[1]).replace(/\\s*\\|\\s*AdvancedAI\\.tech.*$/i, '');\n  const summary = decode((html.match(/<meta[^>]+name=[\"']description[\"'][^>]+content=[\"']([^\"']*)[\"']/i) || [])[1]);\n  html = html.replace(/<(script|style|noscript|svg|template|iframe)[\\s\\S]*?<\\/\\1>/gi, ' ').replace(/<(header|footer|nav)[\\s\\S]*?<\\/\\1>/gi, ' ');\n  const main = (html.match(/<main[\\s\\S]*?<\\/main>/i) || [html])[0];\n  const re = /<(h[1-3]|p|li|td|th|blockquote|dt|dd|summary|figcaption)\\b[^>]*>([\\s\\S]*?)<\\/\\1>/gi;\n  let m; let cur = { h: title, t: [] }; const secs = [cur]; const seen = new Set();\n  while ((m = re.exec(main))) {\n    const txt = decode(m[2]);\n    if (txt.length < 3) continue;\n    if (/^h[1-3]$/i.test(m[1])) { cur = { h: txt, t: [] }; secs.push(cur); }\n    else if (!seen.has(txt)) { seen.add(txt); cur.t.push(txt); }\n  }\n  let buf = { h: '', t: '' };\n  const flush = () => { if (buf.t.trim().length > 40) chunks.push({ url, title, section: buf.h.slice(0, 200), content: buf.t.trim().slice(0, 1500), summary, page_type: typeFor(url) }); buf = { h: '', t: '' }; };\n  for (const s of secs) {\n    const txt = s.t.join(' ');\n    if (!txt && !s.h) continue;\n    if (!buf.h) buf.h = s.h;\n    if (buf.t && (buf.t + ' ' + txt).length > 1200) { flush(); buf.h = s.h; }\n    buf.t += (buf.t ? ' ' : '') + (s.h !== buf.h ? s.h + '. ' : '') + txt;\n  }\n  flush();\n});\nif (chunks.length < 5) throw new Error('Only ' + chunks.length + ' chunks parsed; aborting so the existing index is not wiped.');\nreturn chunks.map(c => ({ json: c }));"
+      },
+      "notes": "Strips nav/header/footer, splits each page into heading-led chunks of about 1,200 characters."
+    },
+    {
+      "id": "630c57ad-425d-420f-84c5-06156578b581",
+      "name": "Clear Index",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1120,
+        704
+      ],
+      "parameters": {
+        "resource": "table",
+        "operation": "clear",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "Bfsa5kru3Hfh6cGc",
+          "cachedResultName": "AdvancedAI site - content index"
+        }
+      },
+      "executeOnce": true
+    },
+    {
+      "id": "bd8d76fe-3827-4781-b480-cf2cb7e5050a",
+      "name": "Re-emit Chunks",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1344,
+        704
+      ],
+      "parameters": {
+        "jsCode": "return $('Chunk Pages').all().map(i => ({ json: i.json }));"
+      },
+      "notes": "Clear Index outputs one status item; re-emit the parsed chunks so Insert receives them."
+    },
+    {
+      "id": "b2ed1f90-a48b-40bf-a86c-30a82c048adb",
+      "name": "Insert Chunks",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1568,
+        704
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "Bfsa5kru3Hfh6cGc",
+          "cachedResultName": "AdvancedAI site - content index"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "url": "={{ $json.url }}",
+            "title": "={{ $json.title }}",
+            "section": "={{ $json.section }}",
+            "content": "={{ $json.content }}",
+            "summary": "={{ $json.summary }}",
+            "page_type": "={{ $json.page_type }}"
+          },
+          "schema": [
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "section",
+              "displayName": "section",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "content",
+              "displayName": "content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "page_type",
+              "displayName": "page_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {
+          "optimizeBulk": true
+        }
+      }
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "IWdwhSyHXXSq4dF7",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-11-09T01:01:25.479Z",
+      "updatedAt": "2026-11-09T01:01:25.479Z"
+    }
+  ],
+  "staticData": {
+    "node:Weekly Reindex": {
+      "recurrenceRules": [
+        null
+      ],
+      "recurrenceRuleSignatures": [
+        null
+      ]
+    }
+  },
+  "tags": [],
+  "triggerCount": 2,
+  "updatedAt": "2026-11-09T01:02:03.806Z",
+  "versionId": "60daec6f-b82a-4d14-b106-ef589b9fd9de"
+}
