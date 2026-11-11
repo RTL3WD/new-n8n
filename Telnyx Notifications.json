@@ -1,0 +1,49 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {},
+  "createdAt": "2026-11-11T09:40:21.644Z",
+  "id": "hHA27s7LBpBmVy2g",
+  "isArchived": false,
+  "meta": null,
+  "name": "Telnyx Notifications",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {
+        "path": "485b370b-3385-485b-b05d-435da4863291",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "306f29b1-18d0-4857-a0b5-a6407b1dba38",
+      "name": "Webhook",
+      "webhookId": "485b370b-3385-485b-b05d-435da4863291"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "hHA27s7LBpBmVy2g",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-11-11T09:40:21.648Z",
+      "updatedAt": "2026-11-11T09:40:21.648Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-11-11T09:40:24.272Z",
+  "versionId": "fae25a14-0fe0-4996-8a45-44e2772e05da"
+}
