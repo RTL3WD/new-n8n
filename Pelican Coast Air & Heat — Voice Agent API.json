@@ -1,0 +1,2175 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "7e21b19a-2d81-4473-b38b-f751e1837444",
+    "workflowId": "Y4pV02IvePnJg6BD",
+    "nodes": [
+      {
+        "id": "30a860eb-d768-47b3-aee5-43b5ca8a5dff",
+        "name": "Voice Agent Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          0,
+          176
+        ],
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "hvac-demo",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "webhookId": "af5dc1b1-3b4c-4a5c-a0e0-4ece5fea4e85"
+      },
+      {
+        "id": "7c0cd058-1502-4241-b615-5fd7c5bb8bd4",
+        "name": "Normalize Request",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          272,
+          320
+        ],
+        "parameters": {
+          "jsCode": "const raw = $input.first().json;\nconst b = (raw.body && typeof raw.body === 'object' && Object.keys(raw.body).length) ? raw.body : raw;\nconst tz = 'America/New_York';\nconst now = DateTime.now().setZone(tz);\nconst str = function (v) { return (v === undefined || v === null) ? '' : String(v).trim(); };\nconst pick = function (keys) {\n  for (const k of keys) {\n    const v = str(b[k]);\n    const l = v.toLowerCase();\n    if (v && l !== 'null' && l !== 'undefined' && l !== 'none' && l !== 'n/a') return v;\n  }\n  return '';\n};\nconst dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];\nconst parseDate = function (v) {\n  const s = str(v).toLowerCase().replace(/,/g, ' ').replace(/([0-9])(st|nd|rd|th)/g, '$1').replace(/ +/g, ' ').trim();\n  if (!s) return null;\n  if (s === 'today' || s === 'now' || s === 'asap' || s.indexOf('this morning') === 0 || s.indexOf('this afternoon') === 0) return now.startOf('day');\n  if (s.indexOf('tomorrow') === 0) return now.plus({ days: 1 }).startOf('day');\n  let d = DateTime.fromISO(s.slice(0, 10), { zone: tz });\n  if (s.length >= 10 && d.isValid) return d.startOf('day');\n  const fmts = ['M/d/yyyy', 'M/d/yy', 'M/d', 'MMMM d yyyy', 'MMMM d', 'MMM d yyyy', 'MMM d', 'EEEE MMMM d', 'EEEE MMM d'];\n  for (const f of fmts) {\n    d = DateTime.fromFormat(s, f, { zone: tz, locale: 'en-US' });\n    if (d.isValid) {\n      if (f.indexOf('y') === -1 && d < now.startOf('day')) d = d.plus({ years: 1 });\n      return d.startOf('day');\n    }\n  }\n  const wd = dayNames.findIndex(function (x) { return s.indexOf(x) !== -1; });\n  if (wd >= 0) {\n    let diff = (wd + 1) - now.weekday;\n    if (diff < 0) diff += 7;\n    if (diff === 0 && s.indexOf('next') !== -1) diff = 7;\n    return now.plus({ days: diff }).startOf('day');\n  }\n  return 'invalid';\n};\nconst parseTime = function (v) {\n  let s = str(v).toLowerCase().replace(/[.]/g, '').replace(/ +/g, ' ').trim();\n  if (!s) return '';\n  if (/^[0-9]{4}-[0-9]{2}-[0-9]{2}t/.test(s)) s = s.slice(11);\n  if (s.indexOf('noon') !== -1) return '12:00';\n  const m = s.match(/([0-9]{1,2})(?::([0-9]{2}))? ?(am|pm)?/);\n  if (!m) return '';\n  let h = parseInt(m[1], 10);\n  const mi = m[2] ? parseInt(m[2], 10) : 0;\n  const ap = m[3] || '';\n  if (ap === 'pm' && h < 12) h += 12;\n  if (ap === 'am' && h === 12) h = 0;\n  if (!ap && h >= 1 && h <= 6) h += 12;\n  if (h > 23 || mi > 59) return '';\n  return String(h).padStart(2, '0') + ':' + String(mi).padStart(2, '0');\n};\nconst daypartOf = function (t) {\n  if (!t) return '';\n  if (t.indexOf('morning') !== -1) return 'morning';\n  if (t.indexOf('afternoon') !== -1 || t.indexOf('evening') !== -1) return 'afternoon';\n  if (t.indexOf('first') !== -1 || t.indexOf('earliest') !== -1 || t.indexOf('any') !== -1 || t.indexOf('soon') !== -1) return 'any';\n  return '';\n};\nconst phoneDigits = function (v) { let d = str(v).replace(/[^0-9]/g, ''); if (d.length === 11 && d.charAt(0) === '1') d = d.slice(1); return d; };\nconst aliases = { info: 'get_info', faq: 'get_info', availability: 'check_availability', book: 'book_appointment', schedule_appointment: 'book_appointment', find: 'find_appointment', lookup_appointment: 'find_appointment', reschedule: 'reschedule_appointment', cancel: 'cancel_appointment', emergency: 'report_emergency', lead: 'capture_lead', call_summary: 'log_call', take_message: 'log_call' };\nconst groups = { get_info: 'info', check_availability: 'schedule', book_appointment: 'schedule', find_appointment: 'schedule', reschedule_appointment: 'schedule', cancel_appointment: 'schedule', report_emergency: 'ticket', capture_lead: 'ticket', log_call: 'ticket' };\nconst o = {};\nlet action = pick(['action', 'tool', 'intent']).toLowerCase().replace(/[ -]+/g, '_');\nif (aliases[action]) action = aliases[action];\no.action = action;\no.group = groups[action] || 'unknown';\no.topic = pick(['topic', 'question', 'query']);\no.name = pick(['name', 'customer_name', 'caller_name']);\no.phone_raw = pick(['phone', 'phone_number', 'caller_phone', 'callback_number']);\no.phone = phoneDigits(o.phone_raw);\no.address = pick(['address', 'service_address', 'location']);\no.email = pick(['email']).toLowerCase().replace(/ +/g, '');\no.issue = pick(['issue', 'problem', 'description', 'notes']);\no.appointment_id = pick(['appointment_id', 'confirmation', 'confirmation_number']);\nconst svcRaw = pick(['service_type', 'service', 'appointment_type']).toLowerCase();\no.service_type = '';\nif (svcRaw) {\n  if (/maint|tune|clean|check|inspect/.test(svcRaw)) o.service_type = 'maintenance';\n  else if (/estimat|quote|install|replac|new system/.test(svcRaw)) o.service_type = 'estimate';\n  else o.service_type = 'repair';\n}\no.emergency_type = pick(['emergency_type', 'emergency']);\no.summary = pick(['summary', 'call_summary']);\no.outcome = pick(['outcome', 'result']);\no.details = pick(['details', 'system_details']);\no.system_age = pick(['system_age', 'age']);\no.timeframe = pick(['timeframe', 'timeline']);\no.property_type = pick(['property_type']);\nconst setDate = function (v, prefix) {\n  const d = parseDate(v);\n  if (d === null) { o[prefix + 'date'] = ''; o[prefix + 'date_status'] = 'missing'; return; }\n  if (d === 'invalid') { o[prefix + 'date'] = ''; o[prefix + 'date_status'] = 'invalid'; return; }\n  o[prefix + 'date'] = d.toISODate(); o[prefix + 'date_spoken'] = d.toFormat('cccc, LLLL d'); o[prefix + 'date_status'] = 'ok';\n};\nsetDate(pick(['date', 'appt_date', 'day']), '');\nsetDate(pick(['new_date']), 'new_');\nconst setTime = function (v, prefix) {\n  const t = str(v).toLowerCase();\n  const dp = daypartOf(t);\n  o[prefix + 'daypart'] = dp;\n  o[prefix + 'time'] = dp ? '' : parseTime(t);\n};\nsetTime(pick(['window', 'arrival_window', 'time', 'preferred_time']), '');\nsetTime(pick(['new_window', 'new_time']), 'new_');\no.today = now.toISODate();\no.today_spoken = now.toFormat('cccc, LLLL d');\no.now_time = now.toFormat('HH:mm');\nif (o.group === 'unknown') o.response = { success: false, message: 'Unknown action. Use get_info, check_availability, book_appointment, find_appointment, reschedule_appointment, cancel_appointment, report_emergency, capture_lead, or log_call.' };\nreturn [{ json: o }];"
+        }
+      },
+      {
+        "id": "60a0d0df-6399-41b7-8c07-d5104c506711",
+        "name": "Route by Action Group",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          496,
+          288
+        ],
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "outputKey": "info",
+                "renameOutput": true,
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict"
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.group }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "info"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "outputKey": "schedule",
+                "renameOutput": true,
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict"
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.group }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "schedule"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "outputKey": "ticket",
+                "renameOutput": true,
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict"
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.group }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "ticket"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              }
+            ]
+          },
+          "options": {
+            "fallbackOutput": "extra",
+            "renameFallbackOutput": "unknown_action"
+          }
+        }
+      },
+      {
+        "id": "c1c8a81d-9d54-4b39-96d6-de02346e116f",
+        "name": "Get FAQ and Pricing",
+        "type": "n8n-nodes-base.dataTable",
+        "typeVersion": 1.1,
+        "position": [
+          800,
+          192
+        ],
+        "parameters": {
+          "operation": "get",
+          "dataTableId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "uYi49nJiJEm7ajx4",
+            "cachedResultName": "hvac demo - info"
+          },
+          "returnAll": true
+        },
+        "alwaysOutputData": true
+      },
+      {
+        "id": "a88e4a5d-673e-44c3-af2a-ba34783f2019",
+        "name": "Answer Question",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1024,
+          192
+        ],
+        "parameters": {
+          "jsCode": "const r = $('Normalize Request').first().json;\nconst rows = $input.all().map(function (i) { return i.json; }).filter(function (x) { return x && x.topic; });\nconst reply = function (resp) { return [{ json: { response: resp } }]; };\nconst q = (r.topic || '').toLowerCase();\nconst topics = rows.map(function (x) { return x.topic; });\nif (!q) {\n  const about = rows.find(function (x) { return x.topic === 'about'; });\n  return reply({ success: true, topics: topics, message: (about ? about.answer + ' ' : '') + 'I can help with pricing, hours, service area, maintenance plans, financing, and scheduling.' });\n}\nconst stop = ['the', 'and', 'you', 'your', 'how', 'much', 'what', 'does', 'for', 'are', 'can', 'have', 'with', 'that', 'this', 'there', 'any', 'get', 'need', 'want', 'about', 'guys', 'offer'];\nconst ws = q.replace(/[^a-z0-9 ]/g, ' ').split(' ').filter(function (w) { return w.length > 2 && stop.indexOf(w) === -1; });\nconst scored = rows.map(function (x) {\n  const hay = (x.topic.replace(/_/g, ' ') + ' ' + x.keywords).toLowerCase().split(' ');\n  let s = x.topic === q.trim().replace(/ +/g, '_') ? 10 : 0;\n  ws.forEach(function (w) { if (hay.some(function (k) { return k === w || (w.length > 3 && k.indexOf(w) === 0) || (k.length > 3 && w.indexOf(k) === 0); })) s += 1; });\n  return { x: x, s: s };\n}).filter(function (o) { return o.s > 0; }).sort(function (a, b) { return b.s - a.s; });\nif (!scored.length) return reply({ success: false, topics: topics, message: 'I do not have that detail on hand. I can take a message and have the office call you back.' });\nconst best = scored.filter(function (o, i) { return i === 0 || (i === 1 && o.s === scored[0].s); });\nreturn reply({ success: true, topic: best[0].x.topic, message: best.map(function (o) { return o.x.answer; }).join(' ') });"
+        }
+      },
+      {
+        "id": "008d121a-7ce6-4f07-a5e0-28347fefddf4",
+        "name": "Respond",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          1280,
+          0
+        ],
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify($json.response) }}",
+          "options": {}
+        }
+      },
+      {
+        "id": "96e61d96-11c4-4a2b-a223-aecb232a093f",
+        "name": "Get Schedule Windows",
+        "type": "n8n-nodes-base.dataTable",
+        "typeVersion": 1.1,
+        "position": [
+          800,
+          576
+        ],
+        "parameters": {
+          "operation": "get",
+          "dataTableId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "1FQghxe1xdcrmmV9",
+            "cachedResultName": "hvac demo - schedule windows"
+          },
+          "returnAll": true
+        },
+        "alwaysOutputData": true
+      },
+      {
+        "id": "01429876-b163-4948-8776-c4b5340cdae8",
+        "name": "Get Appointments",
+        "type": "n8n-nodes-base.dataTable",
+        "typeVersion": 1.1,
+        "position": [
+          1024,
+          576
+        ],
+        "parameters": {
+          "operation": "get",
+          "dataTableId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "uFaINIifekej60r9",
+            "cachedResultName": "hvac demo - appointments"
+          },
+          "returnAll": true
+        },
+        "executeOnce": true,
+        "alwaysOutputData": true
+      },
+      {
+        "id": "b613122a-9e59-4bfd-82c5-de4309fc9969",
+        "name": "Decide Schedule",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1248,
+          576
+        ],
+        "parameters": {
+          "jsCode": "const r = $('Normalize Request').first().json;\nconst out = function (resp, extra) { const o = { response: resp, op: 'none' }; if (extra) { Object.keys(extra).forEach(function (k) { o[k] = extra[k]; }); } return [{ json: o }]; };\nconst sp = function (t) { const p = String(t).split(':'); let h = parseInt(p[0], 10); const ap = h >= 12 ? 'PM' : 'AM'; h = h % 12; if (h === 0) h = 12; return h + (p[1] === '00' ? '' : ':' + p[1]) + ' ' + ap; };\nconst toMin = function (t) { const p = String(t).split(':'); return parseInt(p[0], 10) * 60 + parseInt(p[1], 10); };\nconst joinOr = function (a) { if (a.length <= 1) return a.join(''); return a.slice(0, -1).join(', ') + (a.length > 2 ? ',' : '') + ' or ' + a[a.length - 1]; };\nconst spokenDate = function (iso) { return DateTime.fromISO(iso).toFormat('cccc, LLLL d'); };\nconst rowsOf = function (items, key) { return items.map(function (i) { return i.json; }).filter(function (x) { return x && x[key] !== undefined && x[key] !== null && x[key] !== ''; }); };\nconst label = function (w) { return sp(w.window_start) + ' to ' + sp(w.window_end); };\nconst clean = function (s) { return String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); };\nconst windows = rowsOf($('Get Schedule Windows').all(), 'window_start');\nconst appts = rowsOf($input.all(), 'appointment_id');\nconst nowMin = toMin(r.now_time);\nconst maxDate = DateTime.fromISO(r.today).plus({ days: 30 }).toISODate();\nconst dayWindows = function (dateIso, excludeId) {\n  const wd = DateTime.fromISO(dateIso).weekday;\n  return windows.filter(function (w) { return Number(w.day_index) === wd; }).sort(function (a, b) { return toMin(a.window_start) - toMin(b.window_start); }).map(function (w) {\n    const booked = appts.filter(function (a) { return a.status === 'confirmed' && a.appt_date === dateIso && a.window_start === w.window_start && a.id !== excludeId; }).length;\n    const past = dateIso === r.today && toMin(w.window_start) < nowMin + 60;\n    const left = Number(w.capacity) - booked;\n    return { window_start: w.window_start, window_end: w.window_end, left: left, open: !past && left > 0 };\n  });\n};\nconst openOn = function (dateIso, excludeId) { return dayWindows(dateIso, excludeId).filter(function (w) { return w.open; }); };\nconst nextOpenings = function (fromIso, maxDays, excludeId) {\n  const res = [];\n  for (let i = 0; i < 10 && res.length < maxDays; i++) {\n    const d = DateTime.fromISO(fromIso).plus({ days: i }).toISODate();\n    if (d < r.today || d > maxDate) continue;\n    const o = openOn(d, excludeId);\n    if (o.length) res.push({ date: d, spoken: spokenDate(d), windows: o.map(label) });\n  }\n  return res;\n};\nconst openingsText = function (list) { return list.map(function (x) { return x.spoken + ', ' + joinOr(x.windows); }).join('; '); };\nconst dateIssue = function (iso, status) {\n  if (status === 'invalid') return \"Sorry, I didn't catch the date. Could you say it like this Friday, or November 20th?\";\n  if (!iso) return 'What day works best for you?';\n  if (iso < r.today) return 'That date has already passed. What upcoming day works for you?';\n  if (iso > maxDate) return 'We schedule up to 30 days out. Is there an earlier day that works?';\n  return '';\n};\nconst pickWindow = function (open, time, daypart) {\n  if (time) { const t = toMin(time); return open.find(function (w) { return t >= toMin(w.window_start) && t < toMin(w.window_end); }) || null; }\n  if (daypart === 'morning') return open.find(function (w) { return toMin(w.window_start) < 720; }) || null;\n  if (daypart === 'afternoon') return open.find(function (w) { return toMin(w.window_start) >= 720; }) || null;\n  if (daypart === 'any') return open[0] || null;\n  return null;\n};\nconst resolveSlot = function (dateIso, time, daypart, excludeId) {\n  const all = dayWindows(dateIso, excludeId);\n  const open = all.filter(function (w) { return w.open; });\n  const ds = spokenDate(dateIso);\n  const after = DateTime.fromISO(dateIso).plus({ days: 1 }).toISODate();\n  if (!all.length) { const nx = nextOpenings(after, 2, excludeId); return { ok: false, need: 'date', open: [], message: 'We do not schedule routine visits on ' + DateTime.fromISO(dateIso).toFormat('cccc') + 's.' + (nx.length ? ' The next openings are ' + openingsText(nx) + '.' : '') }; }\n  if (!open.length) { const nx2 = nextOpenings(after, 2, excludeId); return { ok: false, need: 'date', open: [], message: 'We have no openings left on ' + ds + '.' + (nx2.length ? ' The next openings are ' + openingsText(nx2) + '.' : '') }; }\n  if (!time && !daypart) return { ok: false, need: 'window', open: open, message: 'On ' + ds + ' we have arrival windows of ' + joinOr(open.map(label)) + '. Which works best?' };\n  const w = pickWindow(open, time, daypart);\n  if (w) return { ok: true, window: w };\n  return { ok: false, need: 'window', open: open, message: 'That time is not available on ' + ds + '. I can offer ' + joinOr(open.map(label)) + '. Would one of those work?' };\n};\nconst describe = function (a) { return a.service_type + ' visit on ' + spokenDate(a.appt_date) + ' between ' + sp(a.window_start) + ' and ' + sp(a.window_end); };\nconst upcomingFor = function () { return appts.filter(function (a) { return a.status === 'confirmed' && a.phone === r.phone && a.appt_date >= r.today; }).sort(function (a, b) { return (a.appt_date + a.window_start) < (b.appt_date + b.window_start) ? -1 : 1; }); };\nconst pickTarget = function () {\n  if (r.phone.length !== 10) return { need: 'phone', message: 'What phone number is the appointment under?' };\n  const up = upcomingFor();\n  if (!up.length) return { need: 'not_found', message: \"I don't see an upcoming appointment under that phone number. Could it be under a different number?\" };\n  if (r.appointment_id) { const t = up.find(function (a) { return clean(a.appointment_id) === clean(r.appointment_id); }); if (t) return { target: t }; }\n  if (up.length === 1) return { target: up[0] };\n  return { need: 'which', message: 'I see ' + up.length + ' upcoming appointments: ' + up.map(function (a) { return a.appointment_id + ', a ' + describe(a); }).join('; ') + '. Which one do you mean?' };\n};\n\nif (r.action === 'check_availability') {\n  if (r.date_status === 'missing') {\n    const nx = nextOpenings(r.today, 3, null);\n    return out({ success: true, openings: nx, message: nx.length ? 'Our next openings are ' + openingsText(nx) + '. What works best for you?' : 'I do not see any openings in the next week. I can take your details and have the office call you.' });\n  }\n  const di = dateIssue(r.date, r.date_status);\n  if (di) return out({ success: false, need: 'date', message: di });\n  const s = resolveSlot(r.date, r.time, r.daypart, null);\n  if (s.ok) return out({ success: true, available: true, date: r.date, window_start: s.window.window_start, window_end: s.window.window_end, message: 'Yes, we have ' + label(s.window) + ' open on ' + r.date_spoken + '. Would you like me to book it?' });\n  return out({ success: s.need === 'window', available: false, date: r.date, open_windows: s.open.map(label), message: s.message });\n}\n\nif (r.action === 'book_appointment') {\n  if (r.service_type === 'estimate') return out({ success: false, need: 'use_capture_lead', message: 'New system estimates are scheduled by a comfort advisor. Collect the caller details and use capture_lead instead.' });\n  const di = dateIssue(r.date, r.date_status);\n  if (di) return out({ success: false, need: 'date', message: di });\n  const s = resolveSlot(r.date, r.time, r.daypart, null);\n  if (!s.ok) return out({ success: false, need: s.need, open_windows: s.open.map(label), message: s.message });\n  if (!r.name) return out({ success: false, need: 'name', message: 'What name should I put the appointment under?' });\n  if (r.phone.length !== 10) return out({ success: false, need: 'phone', message: 'What is the best phone number to reach you, area code first?' });\n  if (!r.address) return out({ success: false, need: 'address', message: 'What is the service address?' });\n  if (!r.issue && r.service_type !== 'maintenance') return out({ success: false, need: 'issue', message: 'Can you briefly describe what the system is doing?' });\n  const dup = appts.find(function (a) { return a.status === 'confirmed' && a.phone === r.phone && a.appt_date === r.date; });\n  if (dup) return out({ success: false, existing_appointment_id: dup.appointment_id, message: 'You already have a ' + describe(dup) + ', confirmation ' + dup.appointment_id + '. Would you like to change that one instead?' });\n  const id = 'PC-' + Math.floor(2000 + Math.random() * 8000);\n  const svc = r.service_type || 'repair';\n  const first = r.name.split(' ')[0];\n  const row = { appointment_id: id, customer_name: r.name, phone: r.phone, address: r.address, service_type: svc, issue: r.issue || 'Routine maintenance', appt_date: r.date, window_start: s.window.window_start, window_end: s.window.window_end, status: 'confirmed', source: 'voice agent' };\n  return out({ success: true, appointment_id: id, service_type: svc, date: r.date, window_start: row.window_start, window_end: row.window_end, message: \"You're all set, \" + first + '. A technician will arrive on ' + r.date_spoken + ' between ' + sp(row.window_start) + ' and ' + sp(row.window_end) + '. Your confirmation number is ' + id + '. You will get a text about 30 minutes before arrival.' }, { op: 'insert', row: row });\n}\n\nif (r.action === 'find_appointment') {\n  if (r.phone.length !== 10) return out({ success: false, need: 'phone', message: 'What phone number is the appointment under?' });\n  const up = upcomingFor();\n  if (!up.length) return out({ success: false, found: false, message: \"I don't see an upcoming appointment under that phone number. Could it be under a different number?\" });\n  return out({ success: true, found: true, appointments: up.map(function (a) { return { appointment_id: a.appointment_id, customer_name: a.customer_name, service_type: a.service_type, date: a.appt_date, window_start: a.window_start, window_end: a.window_end, address: a.address }; }), message: 'I found ' + (up.length > 1 ? up.length + ' appointments: a ' : 'a ') + up.map(function (a) { return describe(a) + ' under ' + a.customer_name + ', confirmation ' + a.appointment_id; }).join('; and a ') + '.' });\n}\n\nif (r.action === 'reschedule_appointment') {\n  const p = pickTarget();\n  if (!p.target) return out({ success: false, need: p.need, message: p.message });\n  const t = p.target;\n  const dStatus = r.new_date_status !== 'missing' ? r.new_date_status : r.date_status;\n  const dIso = r.new_date_status !== 'missing' ? r.new_date : r.date;\n  const time = r.new_time || r.time;\n  const daypart = r.new_daypart || r.daypart;\n  if (dStatus === 'missing' && !time && !daypart) return out({ success: false, need: 'change', appointment_id: t.appointment_id, message: 'I found your ' + describe(t) + '. What day and time would you like instead?' });\n  const eff = dStatus === 'missing' ? t.appt_date : dIso;\n  const di = dateIssue(eff, dStatus === 'missing' ? 'ok' : dStatus);\n  if (di) return out({ success: false, need: 'date', message: di });\n  const s = resolveSlot(eff, time, daypart, t.id);\n  if (!s.ok) return out({ success: false, need: s.need, open_windows: s.open.map(label), message: s.message });\n  if (eff === t.appt_date && s.window.window_start === t.window_start) return out({ success: false, need: 'change', message: 'That is the window you already have. What other day or time would you like?' });\n  return out({ success: true, appointment_id: t.appointment_id, date: eff, window_start: s.window.window_start, window_end: s.window.window_end, message: 'Done. Your visit is now on ' + spokenDate(eff) + ' between ' + sp(s.window.window_start) + ' and ' + sp(s.window.window_end) + '. Your confirmation number stays ' + t.appointment_id + '.' }, { op: 'update', row_id: t.id, update: { appt_date: eff, window_start: s.window.window_start, window_end: s.window.window_end, status: 'confirmed' } });\n}\n\nif (r.action === 'cancel_appointment') {\n  const p = pickTarget();\n  if (!p.target) return out({ success: false, need: p.need, message: p.message });\n  const t = p.target;\n  return out({ success: true, appointment_id: t.appointment_id, message: 'Your ' + describe(t) + ' is cancelled. There is no charge. Call us any time to rebook.' }, { op: 'update', row_id: t.id, update: { appt_date: t.appt_date, window_start: t.window_start, window_end: t.window_end, status: 'cancelled' } });\n}\n\nreturn out({ success: false, message: 'Unsupported scheduling action.' });"
+        }
+      },
+      {
+        "id": "f5bd268e-9bd9-4790-ad2b-4da45bef480c",
+        "name": "Write Needed?",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          1472,
+          560
+        ],
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "outputKey": "insert",
+                "renameOutput": true,
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict"
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.op }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "insert"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "outputKey": "update",
+                "renameOutput": true,
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict"
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.op }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "update"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              }
+            ]
+          },
+          "options": {
+            "fallbackOutput": "extra",
+            "renameFallbackOutput": "no_write"
+          }
+        }
+      },
+      {
+        "id": "73c411b0-4db6-4290-9c17-35ff33a177c4",
+        "name": "Save Appointment",
+        "type": "n8n-nodes-base.dataTable",
+        "typeVersion": 1.1,
+        "position": [
+          1696,
+          384
+        ],
+        "parameters": {
+          "dataTableId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "uFaINIifekej60r9",
+            "cachedResultName": "hvac demo - appointments"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "appointment_id": "={{ $json.row.appointment_id }}",
+              "customer_name": "={{ $json.row.customer_name }}",
+              "phone": "={{ $json.row.phone }}",
+              "address": "={{ $json.row.address }}",
+              "service_type": "={{ $json.row.service_type }}",
+              "issue": "={{ $json.row.issue }}",
+              "appt_date": "={{ $json.row.appt_date }}",
+              "window_start": "={{ $json.row.window_start }}",
+              "window_end": "={{ $json.row.window_end }}",
+              "status": "confirmed",
+              "source": "voice agent"
+            },
+            "schema": [
+              {
+                "id": "appointment_id",
+                "displayName": "appointment_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "customer_name",
+                "displayName": "customer_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "phone",
+                "displayName": "phone",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "address",
+                "displayName": "address",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "service_type",
+                "displayName": "service_type",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "issue",
+                "displayName": "issue",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "appt_date",
+                "displayName": "appt_date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "window_start",
+                "displayName": "window_start",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "window_end",
+                "displayName": "window_end",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "status",
+                "displayName": "status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "source",
+                "displayName": "source",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ]
+          },
+          "options": {}
+        }
+      },
+      {
+        "id": "0c49d8fa-7bbc-4a17-bac3-06096ece9fad",
+        "name": "Respond Schedule",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          1920,
+          576
+        ],
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify($('Decide Schedule').first().json.response) }}",
+          "options": {}
+        }
+      },
+      {
+        "id": "731f1dae-3a38-41c0-aed7-dac52dc36695",
+        "name": "Update Appointment",
+        "type": "n8n-nodes-base.dataTable",
+        "typeVersion": 1.1,
+        "position": [
+          1696,
+          576
+        ],
+        "parameters": {
+          "operation": "update",
+          "dataTableId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "uFaINIifekej60r9",
+            "cachedResultName": "hvac demo - appointments"
+          },
+          "matchType": "allConditions",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "id",
+                "keyValue": "={{ $json.row_id }}"
+              }
+            ]
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "appt_date": "={{ $json.update.appt_date }}",
+              "window_start": "={{ $json.update.window_start }}",
+              "window_end": "={{ $json.update.window_end }}",
+              "status": "={{ $json.update.status }}"
+            },
+            "schema": [
+              {
+                "id": "appt_date",
+                "displayName": "appt_date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "window_start",
+                "displayName": "window_start",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "window_end",
+                "displayName": "window_end",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "status",
+                "displayName": "status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ]
+          },
+          "options": {}
+        }
+      },
+      {
+        "id": "ed1d7674-187d-4f49-b452-0c0652706344",
+        "name": "Get Settings",
+        "type": "n8n-nodes-base.dataTable",
+        "typeVersion": 1.1,
+        "position": [
+          800,
+          768
+        ],
+        "parameters": {
+          "operation": "get",
+          "dataTableId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "YC5rDvZRTeUxkViy",
+            "cachedResultName": "hvac demo - settings"
+          },
+          "returnAll": true
+        },
+        "alwaysOutputData": true
+      },
+      {
+        "id": "cb4a28c0-e52e-4382-b8c7-81a308481822",
+        "name": "Build Ticket",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1024,
+          768
+        ],
+        "parameters": {
+          "jsCode": "const r = $('Normalize Request').first().json;\nconst settings = {};\n$input.all().forEach(function (i) { if (i.json && i.json.key) settings[i.json.key] = String(i.json.value === null || i.json.value === undefined ? '' : i.json.value).trim(); });\nconst esc = function (v) { return String(v || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); };\nconst nl = String.fromCharCode(10);\nconst company = settings.company_name || 'HVAC demo';\nconst fail = function (need, message, extra) { const resp = { success: false, need: need, message: message }; if (extra) { Object.keys(extra).forEach(function (k) { resp[k] = extra[k]; }); } return [{ json: { write: false, response: resp } }]; };\nconst phonePretty = r.phone.length === 10 ? r.phone.slice(0, 3) + '-' + r.phone.slice(3, 6) + '-' + r.phone.slice(6) : (r.phone_raw || 'not given');\nconst first = r.name ? r.name.split(' ')[0] : '';\nconst newId = function (p) { return p + '-' + Math.floor(1000 + Math.random() * 9000); };\nlet ticket = null;\nlet response = null;\nlet title = '';\nlet lines = [];\n\nif (r.action === 'report_emergency') {\n  const t = (r.emergency_type + ' ' + r.issue).toLowerCase();\n  let kind = 'other';\n  if (/gas|rotten egg/.test(t)) kind = 'gas_smell';\n  else if (/carbon|monoxide/.test(t)) kind = 'carbon_monoxide';\n  else if (/smoke|burn|spark|fire|electrical/.test(t)) kind = 'burning_or_electrical';\n  else if (/leak|water|flood/.test(t)) kind = 'water_leak';\n  else if (/heat|furnace/.test(t) && !/cool/.test(t)) kind = 'no_heat';\n  else if (/cool|air|ac|hot|warm/.test(t)) kind = 'no_cooling';\n  const safetyMap = {\n    gas_smell: 'Leave the home right now. Do not use light switches or anything electrical. Call 911 or your gas utility from outside.',\n    carbon_monoxide: 'Get everyone outside into fresh air right now and call 911.',\n    burning_or_electrical: 'Turn the system off at the thermostat, and at the breaker if it is safe to reach. If you see smoke or flames, get out and call 911.',\n    water_leak: 'Turn the system off at the thermostat so it stops making more water.'\n  };\n  const safety = safetyMap[kind] || '';\n  if (r.phone.length !== 10) return fail('phone', 'What is the best callback number, area code first?', { safety_message: safety });\n  if (!r.address) return fail('address', 'What is the address where the technician is needed?', { safety_message: safety });\n  const live = settings.live_transfer_enabled === 'true' && !!settings.transfer_number;\n  const mins = settings.emergency_callback_minutes || '15';\n  const id = newId('EM');\n  ticket = { ticket_id: id, kind: 'emergency', priority: 'emergency', customer_name: r.name || 'Not given', phone: r.phone, address: r.address, email: r.email, summary: kind.replace(/_/g, ' ') + (r.issue ? ': ' + r.issue : ''), details: 'Dispatch mode: ' + (live ? 'live transfer to ' + settings.transfer_number : 'simulated page, callback promised in ' + mins + ' minutes'), status: 'open' };\n  response = { success: true, ticket_id: id, priority: 'emergency', emergency_type: kind, live_transfer: live, transfer_number: live ? settings.transfer_number : '', safety_message: safety, message: live ? 'I have logged this as an emergency. I am connecting you to our on-call technician now.' : 'I have logged this as an emergency and paged our on-call technician. They will call you back at ' + phonePretty + ' within ' + mins + ' minutes.' };\n  title = 'EMERGENCY call - ' + company;\n  lines = ['Ticket: ' + id, 'Type: ' + kind.replace(/_/g, ' '), 'Caller: ' + (r.name || 'Not given'), 'Phone: ' + phonePretty, 'Address: ' + r.address, 'Issue: ' + (r.issue || 'Not given'), 'Dispatch: ' + (live ? 'Live transfer to ' + settings.transfer_number : 'Simulated page (live transfer is off)')];\n} else if (r.action === 'capture_lead') {\n  if (!r.name) return fail('name', 'Who should the comfort advisor ask for?');\n  if (r.phone.length !== 10) return fail('phone', 'What is the best phone number for the advisor to call, area code first?');\n  const id = newId('LD');\n  const parts = [];\n  if (r.property_type) parts.push('Property: ' + r.property_type);\n  if (r.system_age) parts.push('Current system age: ' + r.system_age);\n  if (r.timeframe) parts.push('Timeframe: ' + r.timeframe);\n  if (r.details) parts.push(r.details);\n  ticket = { ticket_id: id, kind: 'install_lead', priority: 'high', customer_name: r.name, phone: r.phone, address: r.address, email: r.email, summary: r.issue || r.summary || 'New system estimate request', details: parts.join(' | '), status: 'open' };\n  response = { success: true, ticket_id: id, message: 'Thanks, ' + first + '. A comfort advisor will call you at ' + phonePretty + ' within one business day to set up your free in-home estimate.' };\n  title = 'New install lead - ' + company;\n  lines = ['Ticket: ' + id, 'Name: ' + r.name, 'Phone: ' + phonePretty, 'Email: ' + (r.email || 'Not given'), 'Address: ' + (r.address || 'Not given'), 'Request: ' + ticket.summary, 'Details: ' + (ticket.details || 'None')];\n} else {\n  const id = newId('CL');\n  ticket = { ticket_id: id, kind: 'call_summary', priority: 'normal', customer_name: r.name || 'Unknown caller', phone: r.phone, address: r.address, email: r.email, summary: r.summary || r.issue || 'No summary provided', details: r.outcome ? 'Outcome: ' + r.outcome : '', status: 'logged' };\n  response = { success: true, ticket_id: id, message: 'Call logged.' };\n  title = 'Call summary - ' + company;\n  lines = ['Ticket: ' + id, 'Caller: ' + ticket.customer_name, 'Phone: ' + phonePretty, 'Outcome: ' + (r.outcome || 'Not given'), 'Summary: ' + ticket.summary];\n}\nconst safeLines = lines.map(esc);\nreturn [{ json: { write: true, response: response, ticket: ticket, chat_id: settings.telegram_chat_id || '', notify_email: settings.notify_email || '', tg_text: '<b>' + esc(title) + '</b>' + nl + safeLines.join(nl), email_subject: title + ' (' + ticket.ticket_id + ')', email_html: '<h3>' + esc(title) + '</h3><p>' + safeLines.join('<br>') + '</p><p style=\"color:#888\">Sent by the HVAC voice agent demo.</p>' } }];"
+        }
+      },
+      {
+        "id": "c2f3e145-a007-4f16-ac39-71ce30ef63d6",
+        "name": "Ticket Complete?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1248,
+          768
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose"
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ $json.write === true }}",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                },
+                "rightValue": ""
+              }
+            ],
+            "combinator": "and"
+          }
+        }
+      },
+      {
+        "id": "cf1c21fd-5c9d-4956-8550-610eda869203",
+        "name": "Save Ticket",
+        "type": "n8n-nodes-base.dataTable",
+        "typeVersion": 1.1,
+        "position": [
+          1472,
+          672
+        ],
+        "parameters": {
+          "dataTableId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "lBVV7UDah6VWr5Tq",
+            "cachedResultName": "hvac demo - tickets"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "ticket_id": "={{ $json.ticket.ticket_id }}",
+              "kind": "={{ $json.ticket.kind }}",
+              "priority": "={{ $json.ticket.priority }}",
+              "customer_name": "={{ $json.ticket.customer_name }}",
+              "phone": "={{ $json.ticket.phone }}",
+              "address": "={{ $json.ticket.address }}",
+              "email": "={{ $json.ticket.email }}",
+              "summary": "={{ $json.ticket.summary }}",
+              "details": "={{ $json.ticket.details }}",
+              "status": "={{ $json.ticket.status }}"
+            },
+            "schema": [
+              {
+                "id": "ticket_id",
+                "displayName": "ticket_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "kind",
+                "displayName": "kind",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "priority",
+                "displayName": "priority",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "customer_name",
+                "displayName": "customer_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "phone",
+                "displayName": "phone",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "address",
+                "displayName": "address",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "email",
+                "displayName": "email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "summary",
+                "displayName": "summary",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "details",
+                "displayName": "details",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "status",
+                "displayName": "status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ]
+          },
+          "options": {}
+        }
+      },
+      {
+        "id": "c0211b12-1daf-4016-9daa-165da4fc5cae",
+        "name": "Respond Ticket",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          1696,
+          672
+        ],
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify($('Build Ticket').first().json.response) }}",
+          "options": {}
+        }
+      },
+      {
+        "id": "090cb20a-6cba-4d80-8264-8511498bf826",
+        "name": "Send Telegram Alert",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1920,
+          576
+        ],
+        "parameters": {
+          "resource": "message",
+          "operation": "sendMessage",
+          "chatId": "={{ $('Build Ticket').first().json.chat_id }}",
+          "text": "={{ $('Build Ticket').first().json.tg_text }}",
+          "additionalFields": {
+            "appendAttribution": false,
+            "parse_mode": "HTML"
+          }
+        },
+        "credentials": {
+          "telegramApi": {
+            "id": "GrHxwuhk9SECQo8h",
+            "name": "NanoRob3"
+          }
+        },
+        "onError": "continueRegularOutput",
+        "webhookId": "0e15215e-8a92-41c5-ab49-50bf143701a6"
+      },
+      {
+        "id": "102ef509-6e65-402f-ad43-b2ab480258a5",
+        "name": "Respond Ticket Incomplete",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          1472,
+          864
+        ],
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify($json.response) }}",
+          "options": {}
+        }
+      },
+      {
+        "id": "56ffac5e-ab71-4f14-9106-c4d21d2a8802",
+        "name": "Send Email Alert",
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.2,
+        "position": [
+          1920,
+          768
+        ],
+        "parameters": {
+          "resource": "message",
+          "operation": "send",
+          "sendTo": "={{ $('Build Ticket').first().json.notify_email }}",
+          "subject": "={{ $('Build Ticket').first().json.email_subject }}",
+          "emailType": "html",
+          "message": "={{ $('Build Ticket').first().json.email_html }}",
+          "options": {
+            "appendAttribution": false,
+            "senderName": "HVAC Voice Agent Demo"
+          }
+        },
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "E777VIw7zyxrVJ7s",
+            "name": "Rob Gmail account"
+          }
+        },
+        "onError": "continueRegularOutput",
+        "webhookId": "ede7bb7c-38db-4aa9-814a-2d6d8d56e6e8"
+      }
+    ],
+    "connections": {
+      "Voice Agent Webhook": {
+        "main": [
+          [
+            {
+              "node": "Normalize Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Normalize Request": {
+        "main": [
+          [
+            {
+              "node": "Route by Action Group",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Route by Action Group": {
+        "main": [
+          [
+            {
+              "node": "Get FAQ and Pricing",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Get Schedule Windows",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Get Settings",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Respond",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get FAQ and Pricing": {
+        "main": [
+          [
+            {
+              "node": "Answer Question",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Answer Question": {
+        "main": [
+          [
+            {
+              "node": "Respond",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Schedule Windows": {
+        "main": [
+          [
+            {
+              "node": "Get Appointments",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Appointments": {
+        "main": [
+          [
+            {
+              "node": "Decide Schedule",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Decide Schedule": {
+        "main": [
+          [
+            {
+              "node": "Write Needed?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Write Needed?": {
+        "main": [
+          [
+            {
+              "node": "Save Appointment",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Update Appointment",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Respond Schedule",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Save Appointment": {
+        "main": [
+          [
+            {
+              "node": "Respond Schedule",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Appointment": {
+        "main": [
+          [
+            {
+              "node": "Respond Schedule",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Settings": {
+        "main": [
+          [
+            {
+              "node": "Build Ticket",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Build Ticket": {
+        "main": [
+          [
+            {
+              "node": "Ticket Complete?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Ticket Complete?": {
+        "main": [
+          [
+            {
+              "node": "Save Ticket",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Respond Ticket Incomplete",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Save Ticket": {
+        "main": [
+          [
+            {
+              "node": "Respond Ticket",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Respond Ticket": {
+        "main": [
+          [
+            {
+              "node": "Send Telegram Alert",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Send Email Alert",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [
+      {
+        "id": "66d18acd-cc00-4181-afbb-b834c6d0143b",
+        "name": "Intake and routing",
+        "nodeIds": [
+          "7c0cd058-1502-4241-b615-5fd7c5bb8bd4",
+          "60a0d0df-6399-41b7-8c07-d5104c506711"
+        ],
+        "description": "Cleans the Dograh tool call (dates, times, phone) and routes by action group"
+      },
+      {
+        "id": "90187bf2-5496-4633-888b-f3bbc671c702",
+        "name": "FAQ and pricing",
+        "nodeIds": [
+          "c1c8a81d-9d54-4b39-96d6-de02346e116f",
+          "a88e4a5d-673e-44c3-af2a-ba34783f2019"
+        ],
+        "description": "get_info: keyword match against the hvac demo - info table"
+      },
+      {
+        "id": "8eb6afa4-a3af-47bd-8ad6-b1cfab1116cd",
+        "name": "Scheduling",
+        "nodeIds": [
+          "96e61d96-11c4-4a2b-a223-aecb232a093f",
+          "01429876-b163-4948-8776-c4b5340cdae8",
+          "b613122a-9e59-4bfd-82c5-de4309fc9969",
+          "f5bd268e-9bd9-4790-ad2b-4da45bef480c",
+          "73c411b0-4db6-4290-9c17-35ff33a177c4",
+          "731f1dae-3a38-41c0-aed7-dac52dc36695",
+          "0c49d8fa-7bbc-4a17-bac3-06096ece9fad"
+        ],
+        "description": "check_availability, book, find, reschedule, cancel against 2-hour arrival windows"
+      },
+      {
+        "id": "1875ee0b-fc88-47cf-a083-3cc54c6732ba",
+        "name": "Tickets and alerts",
+        "nodeIds": [
+          "ed1d7674-187d-4f49-b452-0c0652706344",
+          "cb4a28c0-e52e-4382-b8c7-81a308481822",
+          "c2f3e145-a007-4f16-ac39-71ce30ef63d6",
+          "cf1c21fd-5c9d-4956-8550-610eda869203",
+          "c0211b12-1daf-4016-9daa-165da4fc5cae",
+          "102ef509-6e65-402f-ad43-b2ab480258a5",
+          "090cb20a-6cba-4d80-8264-8511498bf826",
+          "56ffac5e-ab71-4f14-9106-c4d21d2a8802"
+        ],
+        "description": "Emergency, install lead, call summary: saved, answered, then sent to Telegram and email"
+      }
+    ],
+    "authors": "Robert Lord (via MCP)",
+    "name": "Initial HVAC voice agent API",
+    "description": "One POST webhook (hvac-demo) with an action field: get_info, check_availability, book_appointment, find_appointment, reschedule_appointment, cancel_appointment, report_emergency, capture_lead, log_call. Tickets alert Telegram and email.",
+    "autosaved": false,
+    "createdAt": "2026-11-12T18:11:54.162Z",
+    "updatedAt": "2026-11-12T18:11:54.162Z"
+  },
+  "activeVersionId": "7e21b19a-2d81-4473-b38b-f751e1837444",
+  "connections": {
+    "Voice Agent Webhook": {
+      "main": [
+        [
+          {
+            "node": "Normalize Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Request": {
+      "main": [
+        [
+          {
+            "node": "Route by Action Group",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Action Group": {
+      "main": [
+        [
+          {
+            "node": "Get FAQ and Pricing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Schedule Windows",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Settings",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get FAQ and Pricing": {
+      "main": [
+        [
+          {
+            "node": "Answer Question",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer Question": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Schedule Windows": {
+      "main": [
+        [
+          {
+            "node": "Get Appointments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Appointments": {
+      "main": [
+        [
+          {
+            "node": "Decide Schedule",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decide Schedule": {
+      "main": [
+        [
+          {
+            "node": "Write Needed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Needed?": {
+      "main": [
+        [
+          {
+            "node": "Save Appointment",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Appointment",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Schedule",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Appointment": {
+      "main": [
+        [
+          {
+            "node": "Respond Schedule",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Appointment": {
+      "main": [
+        [
+          {
+            "node": "Respond Schedule",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Settings": {
+      "main": [
+        [
+          {
+            "node": "Build Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Ticket": {
+      "main": [
+        [
+          {
+            "node": "Ticket Complete?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ticket Complete?": {
+      "main": [
+        [
+          {
+            "node": "Save Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Ticket Incomplete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Ticket": {
+      "main": [
+        [
+          {
+            "node": "Respond Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond Ticket": {
+      "main": [
+        [
+          {
+            "node": "Send Telegram Alert",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send Email Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-11-12T18:11:54.153Z",
+  "id": "Y4pV02IvePnJg6BD",
+  "isArchived": false,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "name": "Pelican Coast Air & Heat — Voice Agent API",
+  "nodeGroups": [
+    {
+      "id": "66d18acd-cc00-4181-afbb-b834c6d0143b",
+      "name": "Intake and routing",
+      "nodeIds": [
+        "7c0cd058-1502-4241-b615-5fd7c5bb8bd4",
+        "60a0d0df-6399-41b7-8c07-d5104c506711"
+      ],
+      "description": "Cleans the Dograh tool call (dates, times, phone) and routes by action group"
+    },
+    {
+      "id": "90187bf2-5496-4633-888b-f3bbc671c702",
+      "name": "FAQ and pricing",
+      "nodeIds": [
+        "c1c8a81d-9d54-4b39-96d6-de02346e116f",
+        "a88e4a5d-673e-44c3-af2a-ba34783f2019"
+      ],
+      "description": "get_info: keyword match against the hvac demo - info table"
+    },
+    {
+      "id": "8eb6afa4-a3af-47bd-8ad6-b1cfab1116cd",
+      "name": "Scheduling",
+      "nodeIds": [
+        "96e61d96-11c4-4a2b-a223-aecb232a093f",
+        "01429876-b163-4948-8776-c4b5340cdae8",
+        "b613122a-9e59-4bfd-82c5-de4309fc9969",
+        "f5bd268e-9bd9-4790-ad2b-4da45bef480c",
+        "73c411b0-4db6-4290-9c17-35ff33a177c4",
+        "731f1dae-3a38-41c0-aed7-dac52dc36695",
+        "0c49d8fa-7bbc-4a17-bac3-06096ece9fad"
+      ],
+      "description": "check_availability, book, find, reschedule, cancel against 2-hour arrival windows"
+    },
+    {
+      "id": "1875ee0b-fc88-47cf-a083-3cc54c6732ba",
+      "name": "Tickets and alerts",
+      "nodeIds": [
+        "ed1d7674-187d-4f49-b452-0c0652706344",
+        "cb4a28c0-e52e-4382-b8c7-81a308481822",
+        "c2f3e145-a007-4f16-ac39-71ce30ef63d6",
+        "cf1c21fd-5c9d-4956-8550-610eda869203",
+        "c0211b12-1daf-4016-9daa-165da4fc5cae",
+        "102ef509-6e65-402f-ad43-b2ab480258a5",
+        "090cb20a-6cba-4d80-8264-8511498bf826",
+        "56ffac5e-ab71-4f14-9106-c4d21d2a8802"
+      ],
+      "description": "Emergency, install lead, call summary: saved, answered, then sent to Telegram and email"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "30a860eb-d768-47b3-aee5-43b5ca8a5dff",
+      "name": "Voice Agent Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        176
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "hvac-demo",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "af5dc1b1-3b4c-4a5c-a0e0-4ece5fea4e85"
+    },
+    {
+      "id": "7c0cd058-1502-4241-b615-5fd7c5bb8bd4",
+      "name": "Normalize Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        272,
+        320
+      ],
+      "parameters": {
+        "jsCode": "const raw = $input.first().json;\nconst b = (raw.body && typeof raw.body === 'object' && Object.keys(raw.body).length) ? raw.body : raw;\nconst tz = 'America/New_York';\nconst now = DateTime.now().setZone(tz);\nconst str = function (v) { return (v === undefined || v === null) ? '' : String(v).trim(); };\nconst pick = function (keys) {\n  for (const k of keys) {\n    const v = str(b[k]);\n    const l = v.toLowerCase();\n    if (v && l !== 'null' && l !== 'undefined' && l !== 'none' && l !== 'n/a') return v;\n  }\n  return '';\n};\nconst dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];\nconst parseDate = function (v) {\n  const s = str(v).toLowerCase().replace(/,/g, ' ').replace(/([0-9])(st|nd|rd|th)/g, '$1').replace(/ +/g, ' ').trim();\n  if (!s) return null;\n  if (s === 'today' || s === 'now' || s === 'asap' || s.indexOf('this morning') === 0 || s.indexOf('this afternoon') === 0) return now.startOf('day');\n  if (s.indexOf('tomorrow') === 0) return now.plus({ days: 1 }).startOf('day');\n  let d = DateTime.fromISO(s.slice(0, 10), { zone: tz });\n  if (s.length >= 10 && d.isValid) return d.startOf('day');\n  const fmts = ['M/d/yyyy', 'M/d/yy', 'M/d', 'MMMM d yyyy', 'MMMM d', 'MMM d yyyy', 'MMM d', 'EEEE MMMM d', 'EEEE MMM d'];\n  for (const f of fmts) {\n    d = DateTime.fromFormat(s, f, { zone: tz, locale: 'en-US' });\n    if (d.isValid) {\n      if (f.indexOf('y') === -1 && d < now.startOf('day')) d = d.plus({ years: 1 });\n      return d.startOf('day');\n    }\n  }\n  const wd = dayNames.findIndex(function (x) { return s.indexOf(x) !== -1; });\n  if (wd >= 0) {\n    let diff = (wd + 1) - now.weekday;\n    if (diff < 0) diff += 7;\n    if (diff === 0 && s.indexOf('next') !== -1) diff = 7;\n    return now.plus({ days: diff }).startOf('day');\n  }\n  return 'invalid';\n};\nconst parseTime = function (v) {\n  let s = str(v).toLowerCase().replace(/[.]/g, '').replace(/ +/g, ' ').trim();\n  if (!s) return '';\n  if (/^[0-9]{4}-[0-9]{2}-[0-9]{2}t/.test(s)) s = s.slice(11);\n  if (s.indexOf('noon') !== -1) return '12:00';\n  const m = s.match(/([0-9]{1,2})(?::([0-9]{2}))? ?(am|pm)?/);\n  if (!m) return '';\n  let h = parseInt(m[1], 10);\n  const mi = m[2] ? parseInt(m[2], 10) : 0;\n  const ap = m[3] || '';\n  if (ap === 'pm' && h < 12) h += 12;\n  if (ap === 'am' && h === 12) h = 0;\n  if (!ap && h >= 1 && h <= 6) h += 12;\n  if (h > 23 || mi > 59) return '';\n  return String(h).padStart(2, '0') + ':' + String(mi).padStart(2, '0');\n};\nconst daypartOf = function (t) {\n  if (!t) return '';\n  if (t.indexOf('morning') !== -1) return 'morning';\n  if (t.indexOf('afternoon') !== -1 || t.indexOf('evening') !== -1) return 'afternoon';\n  if (t.indexOf('first') !== -1 || t.indexOf('earliest') !== -1 || t.indexOf('any') !== -1 || t.indexOf('soon') !== -1) return 'any';\n  return '';\n};\nconst phoneDigits = function (v) { let d = str(v).replace(/[^0-9]/g, ''); if (d.length === 11 && d.charAt(0) === '1') d = d.slice(1); return d; };\nconst aliases = { info: 'get_info', faq: 'get_info', availability: 'check_availability', book: 'book_appointment', schedule_appointment: 'book_appointment', find: 'find_appointment', lookup_appointment: 'find_appointment', reschedule: 'reschedule_appointment', cancel: 'cancel_appointment', emergency: 'report_emergency', lead: 'capture_lead', call_summary: 'log_call', take_message: 'log_call' };\nconst groups = { get_info: 'info', check_availability: 'schedule', book_appointment: 'schedule', find_appointment: 'schedule', reschedule_appointment: 'schedule', cancel_appointment: 'schedule', report_emergency: 'ticket', capture_lead: 'ticket', log_call: 'ticket' };\nconst o = {};\nlet action = pick(['action', 'tool', 'intent']).toLowerCase().replace(/[ -]+/g, '_');\nif (aliases[action]) action = aliases[action];\no.action = action;\no.group = groups[action] || 'unknown';\no.topic = pick(['topic', 'question', 'query']);\no.name = pick(['name', 'customer_name', 'caller_name']);\no.phone_raw = pick(['phone', 'phone_number', 'caller_phone', 'callback_number']);\no.phone = phoneDigits(o.phone_raw);\no.address = pick(['address', 'service_address', 'location']);\no.email = pick(['email']).toLowerCase().replace(/ +/g, '');\no.issue = pick(['issue', 'problem', 'description', 'notes']);\no.appointment_id = pick(['appointment_id', 'confirmation', 'confirmation_number']);\nconst svcRaw = pick(['service_type', 'service', 'appointment_type']).toLowerCase();\no.service_type = '';\nif (svcRaw) {\n  if (/maint|tune|clean|check|inspect/.test(svcRaw)) o.service_type = 'maintenance';\n  else if (/estimat|quote|install|replac|new system/.test(svcRaw)) o.service_type = 'estimate';\n  else o.service_type = 'repair';\n}\no.emergency_type = pick(['emergency_type', 'emergency']);\no.summary = pick(['summary', 'call_summary']);\no.outcome = pick(['outcome', 'result']);\no.details = pick(['details', 'system_details']);\no.system_age = pick(['system_age', 'age']);\no.timeframe = pick(['timeframe', 'timeline']);\no.property_type = pick(['property_type']);\nconst setDate = function (v, prefix) {\n  const d = parseDate(v);\n  if (d === null) { o[prefix + 'date'] = ''; o[prefix + 'date_status'] = 'missing'; return; }\n  if (d === 'invalid') { o[prefix + 'date'] = ''; o[prefix + 'date_status'] = 'invalid'; return; }\n  o[prefix + 'date'] = d.toISODate(); o[prefix + 'date_spoken'] = d.toFormat('cccc, LLLL d'); o[prefix + 'date_status'] = 'ok';\n};\nsetDate(pick(['date', 'appt_date', 'day']), '');\nsetDate(pick(['new_date']), 'new_');\nconst setTime = function (v, prefix) {\n  const t = str(v).toLowerCase();\n  const dp = daypartOf(t);\n  o[prefix + 'daypart'] = dp;\n  o[prefix + 'time'] = dp ? '' : parseTime(t);\n};\nsetTime(pick(['window', 'arrival_window', 'time', 'preferred_time']), '');\nsetTime(pick(['new_window', 'new_time']), 'new_');\no.today = now.toISODate();\no.today_spoken = now.toFormat('cccc, LLLL d');\no.now_time = now.toFormat('HH:mm');\nif (o.group === 'unknown') o.response = { success: false, message: 'Unknown action. Use get_info, check_availability, book_appointment, find_appointment, reschedule_appointment, cancel_appointment, report_emergency, capture_lead, or log_call.' };\nreturn [{ json: o }];"
+      }
+    },
+    {
+      "id": "60a0d0df-6399-41b7-8c07-d5104c506711",
+      "name": "Route by Action Group",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        496,
+        288
+      ],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "outputKey": "info",
+              "renameOutput": true,
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.group }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "info"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "schedule",
+              "renameOutput": true,
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.group }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "schedule"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "ticket",
+              "renameOutput": true,
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.group }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "ticket"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "unknown_action"
+        }
+      }
+    },
+    {
+      "id": "c1c8a81d-9d54-4b39-96d6-de02346e116f",
+      "name": "Get FAQ and Pricing",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        800,
+        192
+      ],
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "uYi49nJiJEm7ajx4",
+          "cachedResultName": "hvac demo - info"
+        },
+        "returnAll": true
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "a88e4a5d-673e-44c3-af2a-ba34783f2019",
+      "name": "Answer Question",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1024,
+        192
+      ],
+      "parameters": {
+        "jsCode": "const r = $('Normalize Request').first().json;\nconst rows = $input.all().map(function (i) { return i.json; }).filter(function (x) { return x && x.topic; });\nconst reply = function (resp) { return [{ json: { response: resp } }]; };\nconst q = (r.topic || '').toLowerCase();\nconst topics = rows.map(function (x) { return x.topic; });\nif (!q) {\n  const about = rows.find(function (x) { return x.topic === 'about'; });\n  return reply({ success: true, topics: topics, message: (about ? about.answer + ' ' : '') + 'I can help with pricing, hours, service area, maintenance plans, financing, and scheduling.' });\n}\nconst stop = ['the', 'and', 'you', 'your', 'how', 'much', 'what', 'does', 'for', 'are', 'can', 'have', 'with', 'that', 'this', 'there', 'any', 'get', 'need', 'want', 'about', 'guys', 'offer'];\nconst ws = q.replace(/[^a-z0-9 ]/g, ' ').split(' ').filter(function (w) { return w.length > 2 && stop.indexOf(w) === -1; });\nconst scored = rows.map(function (x) {\n  const hay = (x.topic.replace(/_/g, ' ') + ' ' + x.keywords).toLowerCase().split(' ');\n  let s = x.topic === q.trim().replace(/ +/g, '_') ? 10 : 0;\n  ws.forEach(function (w) { if (hay.some(function (k) { return k === w || (w.length > 3 && k.indexOf(w) === 0) || (k.length > 3 && w.indexOf(k) === 0); })) s += 1; });\n  return { x: x, s: s };\n}).filter(function (o) { return o.s > 0; }).sort(function (a, b) { return b.s - a.s; });\nif (!scored.length) return reply({ success: false, topics: topics, message: 'I do not have that detail on hand. I can take a message and have the office call you back.' });\nconst best = scored.filter(function (o, i) { return i === 0 || (i === 1 && o.s === scored[0].s); });\nreturn reply({ success: true, topic: best[0].x.topic, message: best.map(function (o) { return o.x.answer; }).join(' ') });"
+      }
+    },
+    {
+      "id": "008d121a-7ce6-4f07-a5e0-28347fefddf4",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1280,
+        0
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json.response) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "96e61d96-11c4-4a2b-a223-aecb232a093f",
+      "name": "Get Schedule Windows",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        800,
+        576
+      ],
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1FQghxe1xdcrmmV9",
+          "cachedResultName": "hvac demo - schedule windows"
+        },
+        "returnAll": true
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "01429876-b163-4948-8776-c4b5340cdae8",
+      "name": "Get Appointments",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1024,
+        576
+      ],
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "uFaINIifekej60r9",
+          "cachedResultName": "hvac demo - appointments"
+        },
+        "returnAll": true
+      },
+      "executeOnce": true,
+      "alwaysOutputData": true
+    },
+    {
+      "id": "b613122a-9e59-4bfd-82c5-de4309fc9969",
+      "name": "Decide Schedule",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        576
+      ],
+      "parameters": {
+        "jsCode": "const r = $('Normalize Request').first().json;\nconst out = function (resp, extra) { const o = { response: resp, op: 'none' }; if (extra) { Object.keys(extra).forEach(function (k) { o[k] = extra[k]; }); } return [{ json: o }]; };\nconst sp = function (t) { const p = String(t).split(':'); let h = parseInt(p[0], 10); const ap = h >= 12 ? 'PM' : 'AM'; h = h % 12; if (h === 0) h = 12; return h + (p[1] === '00' ? '' : ':' + p[1]) + ' ' + ap; };\nconst toMin = function (t) { const p = String(t).split(':'); return parseInt(p[0], 10) * 60 + parseInt(p[1], 10); };\nconst joinOr = function (a) { if (a.length <= 1) return a.join(''); return a.slice(0, -1).join(', ') + (a.length > 2 ? ',' : '') + ' or ' + a[a.length - 1]; };\nconst spokenDate = function (iso) { return DateTime.fromISO(iso).toFormat('cccc, LLLL d'); };\nconst rowsOf = function (items, key) { return items.map(function (i) { return i.json; }).filter(function (x) { return x && x[key] !== undefined && x[key] !== null && x[key] !== ''; }); };\nconst label = function (w) { return sp(w.window_start) + ' to ' + sp(w.window_end); };\nconst clean = function (s) { return String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); };\nconst windows = rowsOf($('Get Schedule Windows').all(), 'window_start');\nconst appts = rowsOf($input.all(), 'appointment_id');\nconst nowMin = toMin(r.now_time);\nconst maxDate = DateTime.fromISO(r.today).plus({ days: 30 }).toISODate();\nconst dayWindows = function (dateIso, excludeId) {\n  const wd = DateTime.fromISO(dateIso).weekday;\n  return windows.filter(function (w) { return Number(w.day_index) === wd; }).sort(function (a, b) { return toMin(a.window_start) - toMin(b.window_start); }).map(function (w) {\n    const booked = appts.filter(function (a) { return a.status === 'confirmed' && a.appt_date === dateIso && a.window_start === w.window_start && a.id !== excludeId; }).length;\n    const past = dateIso === r.today && toMin(w.window_start) < nowMin + 60;\n    const left = Number(w.capacity) - booked;\n    return { window_start: w.window_start, window_end: w.window_end, left: left, open: !past && left > 0 };\n  });\n};\nconst openOn = function (dateIso, excludeId) { return dayWindows(dateIso, excludeId).filter(function (w) { return w.open; }); };\nconst nextOpenings = function (fromIso, maxDays, excludeId) {\n  const res = [];\n  for (let i = 0; i < 10 && res.length < maxDays; i++) {\n    const d = DateTime.fromISO(fromIso).plus({ days: i }).toISODate();\n    if (d < r.today || d > maxDate) continue;\n    const o = openOn(d, excludeId);\n    if (o.length) res.push({ date: d, spoken: spokenDate(d), windows: o.map(label) });\n  }\n  return res;\n};\nconst openingsText = function (list) { return list.map(function (x) { return x.spoken + ', ' + joinOr(x.windows); }).join('; '); };\nconst dateIssue = function (iso, status) {\n  if (status === 'invalid') return \"Sorry, I didn't catch the date. Could you say it like this Friday, or November 20th?\";\n  if (!iso) return 'What day works best for you?';\n  if (iso < r.today) return 'That date has already passed. What upcoming day works for you?';\n  if (iso > maxDate) return 'We schedule up to 30 days out. Is there an earlier day that works?';\n  return '';\n};\nconst pickWindow = function (open, time, daypart) {\n  if (time) { const t = toMin(time); return open.find(function (w) { return t >= toMin(w.window_start) && t < toMin(w.window_end); }) || null; }\n  if (daypart === 'morning') return open.find(function (w) { return toMin(w.window_start) < 720; }) || null;\n  if (daypart === 'afternoon') return open.find(function (w) { return toMin(w.window_start) >= 720; }) || null;\n  if (daypart === 'any') return open[0] || null;\n  return null;\n};\nconst resolveSlot = function (dateIso, time, daypart, excludeId) {\n  const all = dayWindows(dateIso, excludeId);\n  const open = all.filter(function (w) { return w.open; });\n  const ds = spokenDate(dateIso);\n  const after = DateTime.fromISO(dateIso).plus({ days: 1 }).toISODate();\n  if (!all.length) { const nx = nextOpenings(after, 2, excludeId); return { ok: false, need: 'date', open: [], message: 'We do not schedule routine visits on ' + DateTime.fromISO(dateIso).toFormat('cccc') + 's.' + (nx.length ? ' The next openings are ' + openingsText(nx) + '.' : '') }; }\n  if (!open.length) { const nx2 = nextOpenings(after, 2, excludeId); return { ok: false, need: 'date', open: [], message: 'We have no openings left on ' + ds + '.' + (nx2.length ? ' The next openings are ' + openingsText(nx2) + '.' : '') }; }\n  if (!time && !daypart) return { ok: false, need: 'window', open: open, message: 'On ' + ds + ' we have arrival windows of ' + joinOr(open.map(label)) + '. Which works best?' };\n  const w = pickWindow(open, time, daypart);\n  if (w) return { ok: true, window: w };\n  return { ok: false, need: 'window', open: open, message: 'That time is not available on ' + ds + '. I can offer ' + joinOr(open.map(label)) + '. Would one of those work?' };\n};\nconst describe = function (a) { return a.service_type + ' visit on ' + spokenDate(a.appt_date) + ' between ' + sp(a.window_start) + ' and ' + sp(a.window_end); };\nconst upcomingFor = function () { return appts.filter(function (a) { return a.status === 'confirmed' && a.phone === r.phone && a.appt_date >= r.today; }).sort(function (a, b) { return (a.appt_date + a.window_start) < (b.appt_date + b.window_start) ? -1 : 1; }); };\nconst pickTarget = function () {\n  if (r.phone.length !== 10) return { need: 'phone', message: 'What phone number is the appointment under?' };\n  const up = upcomingFor();\n  if (!up.length) return { need: 'not_found', message: \"I don't see an upcoming appointment under that phone number. Could it be under a different number?\" };\n  if (r.appointment_id) { const t = up.find(function (a) { return clean(a.appointment_id) === clean(r.appointment_id); }); if (t) return { target: t }; }\n  if (up.length === 1) return { target: up[0] };\n  return { need: 'which', message: 'I see ' + up.length + ' upcoming appointments: ' + up.map(function (a) { return a.appointment_id + ', a ' + describe(a); }).join('; ') + '. Which one do you mean?' };\n};\n\nif (r.action === 'check_availability') {\n  if (r.date_status === 'missing') {\n    const nx = nextOpenings(r.today, 3, null);\n    return out({ success: true, openings: nx, message: nx.length ? 'Our next openings are ' + openingsText(nx) + '. What works best for you?' : 'I do not see any openings in the next week. I can take your details and have the office call you.' });\n  }\n  const di = dateIssue(r.date, r.date_status);\n  if (di) return out({ success: false, need: 'date', message: di });\n  const s = resolveSlot(r.date, r.time, r.daypart, null);\n  if (s.ok) return out({ success: true, available: true, date: r.date, window_start: s.window.window_start, window_end: s.window.window_end, message: 'Yes, we have ' + label(s.window) + ' open on ' + r.date_spoken + '. Would you like me to book it?' });\n  return out({ success: s.need === 'window', available: false, date: r.date, open_windows: s.open.map(label), message: s.message });\n}\n\nif (r.action === 'book_appointment') {\n  if (r.service_type === 'estimate') return out({ success: false, need: 'use_capture_lead', message: 'New system estimates are scheduled by a comfort advisor. Collect the caller details and use capture_lead instead.' });\n  const di = dateIssue(r.date, r.date_status);\n  if (di) return out({ success: false, need: 'date', message: di });\n  const s = resolveSlot(r.date, r.time, r.daypart, null);\n  if (!s.ok) return out({ success: false, need: s.need, open_windows: s.open.map(label), message: s.message });\n  if (!r.name) return out({ success: false, need: 'name', message: 'What name should I put the appointment under?' });\n  if (r.phone.length !== 10) return out({ success: false, need: 'phone', message: 'What is the best phone number to reach you, area code first?' });\n  if (!r.address) return out({ success: false, need: 'address', message: 'What is the service address?' });\n  if (!r.issue && r.service_type !== 'maintenance') return out({ success: false, need: 'issue', message: 'Can you briefly describe what the system is doing?' });\n  const dup = appts.find(function (a) { return a.status === 'confirmed' && a.phone === r.phone && a.appt_date === r.date; });\n  if (dup) return out({ success: false, existing_appointment_id: dup.appointment_id, message: 'You already have a ' + describe(dup) + ', confirmation ' + dup.appointment_id + '. Would you like to change that one instead?' });\n  const id = 'PC-' + Math.floor(2000 + Math.random() * 8000);\n  const svc = r.service_type || 'repair';\n  const first = r.name.split(' ')[0];\n  const row = { appointment_id: id, customer_name: r.name, phone: r.phone, address: r.address, service_type: svc, issue: r.issue || 'Routine maintenance', appt_date: r.date, window_start: s.window.window_start, window_end: s.window.window_end, status: 'confirmed', source: 'voice agent' };\n  return out({ success: true, appointment_id: id, service_type: svc, date: r.date, window_start: row.window_start, window_end: row.window_end, message: \"You're all set, \" + first + '. A technician will arrive on ' + r.date_spoken + ' between ' + sp(row.window_start) + ' and ' + sp(row.window_end) + '. Your confirmation number is ' + id + '. You will get a text about 30 minutes before arrival.' }, { op: 'insert', row: row });\n}\n\nif (r.action === 'find_appointment') {\n  if (r.phone.length !== 10) return out({ success: false, need: 'phone', message: 'What phone number is the appointment under?' });\n  const up = upcomingFor();\n  if (!up.length) return out({ success: false, found: false, message: \"I don't see an upcoming appointment under that phone number. Could it be under a different number?\" });\n  return out({ success: true, found: true, appointments: up.map(function (a) { return { appointment_id: a.appointment_id, customer_name: a.customer_name, service_type: a.service_type, date: a.appt_date, window_start: a.window_start, window_end: a.window_end, address: a.address }; }), message: 'I found ' + (up.length > 1 ? up.length + ' appointments: a ' : 'a ') + up.map(function (a) { return describe(a) + ' under ' + a.customer_name + ', confirmation ' + a.appointment_id; }).join('; and a ') + '.' });\n}\n\nif (r.action === 'reschedule_appointment') {\n  const p = pickTarget();\n  if (!p.target) return out({ success: false, need: p.need, message: p.message });\n  const t = p.target;\n  const dStatus = r.new_date_status !== 'missing' ? r.new_date_status : r.date_status;\n  const dIso = r.new_date_status !== 'missing' ? r.new_date : r.date;\n  const time = r.new_time || r.time;\n  const daypart = r.new_daypart || r.daypart;\n  if (dStatus === 'missing' && !time && !daypart) return out({ success: false, need: 'change', appointment_id: t.appointment_id, message: 'I found your ' + describe(t) + '. What day and time would you like instead?' });\n  const eff = dStatus === 'missing' ? t.appt_date : dIso;\n  const di = dateIssue(eff, dStatus === 'missing' ? 'ok' : dStatus);\n  if (di) return out({ success: false, need: 'date', message: di });\n  const s = resolveSlot(eff, time, daypart, t.id);\n  if (!s.ok) return out({ success: false, need: s.need, open_windows: s.open.map(label), message: s.message });\n  if (eff === t.appt_date && s.window.window_start === t.window_start) return out({ success: false, need: 'change', message: 'That is the window you already have. What other day or time would you like?' });\n  return out({ success: true, appointment_id: t.appointment_id, date: eff, window_start: s.window.window_start, window_end: s.window.window_end, message: 'Done. Your visit is now on ' + spokenDate(eff) + ' between ' + sp(s.window.window_start) + ' and ' + sp(s.window.window_end) + '. Your confirmation number stays ' + t.appointment_id + '.' }, { op: 'update', row_id: t.id, update: { appt_date: eff, window_start: s.window.window_start, window_end: s.window.window_end, status: 'confirmed' } });\n}\n\nif (r.action === 'cancel_appointment') {\n  const p = pickTarget();\n  if (!p.target) return out({ success: false, need: p.need, message: p.message });\n  const t = p.target;\n  return out({ success: true, appointment_id: t.appointment_id, message: 'Your ' + describe(t) + ' is cancelled. There is no charge. Call us any time to rebook.' }, { op: 'update', row_id: t.id, update: { appt_date: t.appt_date, window_start: t.window_start, window_end: t.window_end, status: 'cancelled' } });\n}\n\nreturn out({ success: false, message: 'Unsupported scheduling action.' });"
+      }
+    },
+    {
+      "id": "f5bd268e-9bd9-4790-ad2b-4da45bef480c",
+      "name": "Write Needed?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1472,
+        560
+      ],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "outputKey": "insert",
+              "renameOutput": true,
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.op }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "insert"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "update",
+              "renameOutput": true,
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.op }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "update"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "no_write"
+        }
+      }
+    },
+    {
+      "id": "73c411b0-4db6-4290-9c17-35ff33a177c4",
+      "name": "Save Appointment",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1696,
+        384
+      ],
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "uFaINIifekej60r9",
+          "cachedResultName": "hvac demo - appointments"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "appointment_id": "={{ $json.row.appointment_id }}",
+            "customer_name": "={{ $json.row.customer_name }}",
+            "phone": "={{ $json.row.phone }}",
+            "address": "={{ $json.row.address }}",
+            "service_type": "={{ $json.row.service_type }}",
+            "issue": "={{ $json.row.issue }}",
+            "appt_date": "={{ $json.row.appt_date }}",
+            "window_start": "={{ $json.row.window_start }}",
+            "window_end": "={{ $json.row.window_end }}",
+            "status": "confirmed",
+            "source": "voice agent"
+          },
+          "schema": [
+            {
+              "id": "appointment_id",
+              "displayName": "appointment_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "customer_name",
+              "displayName": "customer_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "address",
+              "displayName": "address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "service_type",
+              "displayName": "service_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "issue",
+              "displayName": "issue",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "appt_date",
+              "displayName": "appt_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "window_start",
+              "displayName": "window_start",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "window_end",
+              "displayName": "window_end",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "0c49d8fa-7bbc-4a17-bac3-06096ece9fad",
+      "name": "Respond Schedule",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1920,
+        576
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($('Decide Schedule').first().json.response) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "731f1dae-3a38-41c0-aed7-dac52dc36695",
+      "name": "Update Appointment",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1696,
+        576
+      ],
+      "parameters": {
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "uFaINIifekej60r9",
+          "cachedResultName": "hvac demo - appointments"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $json.row_id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "appt_date": "={{ $json.update.appt_date }}",
+            "window_start": "={{ $json.update.window_start }}",
+            "window_end": "={{ $json.update.window_end }}",
+            "status": "={{ $json.update.status }}"
+          },
+          "schema": [
+            {
+              "id": "appt_date",
+              "displayName": "appt_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "window_start",
+              "displayName": "window_start",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "window_end",
+              "displayName": "window_end",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "ed1d7674-187d-4f49-b452-0c0652706344",
+      "name": "Get Settings",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        800,
+        768
+      ],
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YC5rDvZRTeUxkViy",
+          "cachedResultName": "hvac demo - settings"
+        },
+        "returnAll": true
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "cb4a28c0-e52e-4382-b8c7-81a308481822",
+      "name": "Build Ticket",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1024,
+        768
+      ],
+      "parameters": {
+        "jsCode": "const r = $('Normalize Request').first().json;\nconst settings = {};\n$input.all().forEach(function (i) { if (i.json && i.json.key) settings[i.json.key] = String(i.json.value === null || i.json.value === undefined ? '' : i.json.value).trim(); });\nconst esc = function (v) { return String(v || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); };\nconst nl = String.fromCharCode(10);\nconst company = settings.company_name || 'HVAC demo';\nconst fail = function (need, message, extra) { const resp = { success: false, need: need, message: message }; if (extra) { Object.keys(extra).forEach(function (k) { resp[k] = extra[k]; }); } return [{ json: { write: false, response: resp } }]; };\nconst phonePretty = r.phone.length === 10 ? r.phone.slice(0, 3) + '-' + r.phone.slice(3, 6) + '-' + r.phone.slice(6) : (r.phone_raw || 'not given');\nconst first = r.name ? r.name.split(' ')[0] : '';\nconst newId = function (p) { return p + '-' + Math.floor(1000 + Math.random() * 9000); };\nlet ticket = null;\nlet response = null;\nlet title = '';\nlet lines = [];\n\nif (r.action === 'report_emergency') {\n  const t = (r.emergency_type + ' ' + r.issue).toLowerCase();\n  let kind = 'other';\n  if (/gas|rotten egg/.test(t)) kind = 'gas_smell';\n  else if (/carbon|monoxide/.test(t)) kind = 'carbon_monoxide';\n  else if (/smoke|burn|spark|fire|electrical/.test(t)) kind = 'burning_or_electrical';\n  else if (/leak|water|flood/.test(t)) kind = 'water_leak';\n  else if (/heat|furnace/.test(t) && !/cool/.test(t)) kind = 'no_heat';\n  else if (/cool|air|ac|hot|warm/.test(t)) kind = 'no_cooling';\n  const safetyMap = {\n    gas_smell: 'Leave the home right now. Do not use light switches or anything electrical. Call 911 or your gas utility from outside.',\n    carbon_monoxide: 'Get everyone outside into fresh air right now and call 911.',\n    burning_or_electrical: 'Turn the system off at the thermostat, and at the breaker if it is safe to reach. If you see smoke or flames, get out and call 911.',\n    water_leak: 'Turn the system off at the thermostat so it stops making more water.'\n  };\n  const safety = safetyMap[kind] || '';\n  if (r.phone.length !== 10) return fail('phone', 'What is the best callback number, area code first?', { safety_message: safety });\n  if (!r.address) return fail('address', 'What is the address where the technician is needed?', { safety_message: safety });\n  const live = settings.live_transfer_enabled === 'true' && !!settings.transfer_number;\n  const mins = settings.emergency_callback_minutes || '15';\n  const id = newId('EM');\n  ticket = { ticket_id: id, kind: 'emergency', priority: 'emergency', customer_name: r.name || 'Not given', phone: r.phone, address: r.address, email: r.email, summary: kind.replace(/_/g, ' ') + (r.issue ? ': ' + r.issue : ''), details: 'Dispatch mode: ' + (live ? 'live transfer to ' + settings.transfer_number : 'simulated page, callback promised in ' + mins + ' minutes'), status: 'open' };\n  response = { success: true, ticket_id: id, priority: 'emergency', emergency_type: kind, live_transfer: live, transfer_number: live ? settings.transfer_number : '', safety_message: safety, message: live ? 'I have logged this as an emergency. I am connecting you to our on-call technician now.' : 'I have logged this as an emergency and paged our on-call technician. They will call you back at ' + phonePretty + ' within ' + mins + ' minutes.' };\n  title = 'EMERGENCY call - ' + company;\n  lines = ['Ticket: ' + id, 'Type: ' + kind.replace(/_/g, ' '), 'Caller: ' + (r.name || 'Not given'), 'Phone: ' + phonePretty, 'Address: ' + r.address, 'Issue: ' + (r.issue || 'Not given'), 'Dispatch: ' + (live ? 'Live transfer to ' + settings.transfer_number : 'Simulated page (live transfer is off)')];\n} else if (r.action === 'capture_lead') {\n  if (!r.name) return fail('name', 'Who should the comfort advisor ask for?');\n  if (r.phone.length !== 10) return fail('phone', 'What is the best phone number for the advisor to call, area code first?');\n  const id = newId('LD');\n  const parts = [];\n  if (r.property_type) parts.push('Property: ' + r.property_type);\n  if (r.system_age) parts.push('Current system age: ' + r.system_age);\n  if (r.timeframe) parts.push('Timeframe: ' + r.timeframe);\n  if (r.details) parts.push(r.details);\n  ticket = { ticket_id: id, kind: 'install_lead', priority: 'high', customer_name: r.name, phone: r.phone, address: r.address, email: r.email, summary: r.issue || r.summary || 'New system estimate request', details: parts.join(' | '), status: 'open' };\n  response = { success: true, ticket_id: id, message: 'Thanks, ' + first + '. A comfort advisor will call you at ' + phonePretty + ' within one business day to set up your free in-home estimate.' };\n  title = 'New install lead - ' + company;\n  lines = ['Ticket: ' + id, 'Name: ' + r.name, 'Phone: ' + phonePretty, 'Email: ' + (r.email || 'Not given'), 'Address: ' + (r.address || 'Not given'), 'Request: ' + ticket.summary, 'Details: ' + (ticket.details || 'None')];\n} else {\n  const id = newId('CL');\n  ticket = { ticket_id: id, kind: 'call_summary', priority: 'normal', customer_name: r.name || 'Unknown caller', phone: r.phone, address: r.address, email: r.email, summary: r.summary || r.issue || 'No summary provided', details: r.outcome ? 'Outcome: ' + r.outcome : '', status: 'logged' };\n  response = { success: true, ticket_id: id, message: 'Call logged.' };\n  title = 'Call summary - ' + company;\n  lines = ['Ticket: ' + id, 'Caller: ' + ticket.customer_name, 'Phone: ' + phonePretty, 'Outcome: ' + (r.outcome || 'Not given'), 'Summary: ' + ticket.summary];\n}\nconst safeLines = lines.map(esc);\nreturn [{ json: { write: true, response: response, ticket: ticket, chat_id: settings.telegram_chat_id || '', notify_email: settings.notify_email || '', tg_text: '<b>' + esc(title) + '</b>' + nl + safeLines.join(nl), email_subject: title + ' (' + ticket.ticket_id + ')', email_html: '<h3>' + esc(title) + '</h3><p>' + safeLines.join('<br>') + '</p><p style=\"color:#888\">Sent by the HVAC voice agent demo.</p>' } }];"
+      }
+    },
+    {
+      "id": "c2f3e145-a007-4f16-ac39-71ce30ef63d6",
+      "name": "Ticket Complete?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1248,
+        768
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.write === true }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "cf1c21fd-5c9d-4956-8550-610eda869203",
+      "name": "Save Ticket",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1472,
+        672
+      ],
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "lBVV7UDah6VWr5Tq",
+          "cachedResultName": "hvac demo - tickets"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ticket_id": "={{ $json.ticket.ticket_id }}",
+            "kind": "={{ $json.ticket.kind }}",
+            "priority": "={{ $json.ticket.priority }}",
+            "customer_name": "={{ $json.ticket.customer_name }}",
+            "phone": "={{ $json.ticket.phone }}",
+            "address": "={{ $json.ticket.address }}",
+            "email": "={{ $json.ticket.email }}",
+            "summary": "={{ $json.ticket.summary }}",
+            "details": "={{ $json.ticket.details }}",
+            "status": "={{ $json.ticket.status }}"
+          },
+          "schema": [
+            {
+              "id": "ticket_id",
+              "displayName": "ticket_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "kind",
+              "displayName": "kind",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "priority",
+              "displayName": "priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "customer_name",
+              "displayName": "customer_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "address",
+              "displayName": "address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "details",
+              "displayName": "details",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "c0211b12-1daf-4016-9daa-165da4fc5cae",
+      "name": "Respond Ticket",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1696,
+        672
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($('Build Ticket').first().json.response) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "090cb20a-6cba-4d80-8264-8511498bf826",
+      "name": "Send Telegram Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1920,
+        576
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "sendMessage",
+        "chatId": "={{ $('Build Ticket').first().json.chat_id }}",
+        "text": "={{ $('Build Ticket').first().json.tg_text }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "GrHxwuhk9SECQo8h",
+          "name": "NanoRob3"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "webhookId": "0e15215e-8a92-41c5-ab49-50bf143701a6"
+    },
+    {
+      "id": "102ef509-6e65-402f-ad43-b2ab480258a5",
+      "name": "Respond Ticket Incomplete",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1472,
+        864
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json.response) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "56ffac5e-ab71-4f14-9106-c4d21d2a8802",
+      "name": "Send Email Alert",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1920,
+        768
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Build Ticket').first().json.notify_email }}",
+        "subject": "={{ $('Build Ticket').first().json.email_subject }}",
+        "emailType": "html",
+        "message": "={{ $('Build Ticket').first().json.email_html }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "HVAC Voice Agent Demo"
+        }
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Rob Gmail account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "webhookId": "ede7bb7c-38db-4aa9-814a-2d6d8d56e6e8"
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "Y4pV02IvePnJg6BD",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-11-12T18:11:54.159Z",
+      "updatedAt": "2026-11-12T18:11:54.159Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2026-11-12T18:11:54.153Z",
+  "versionId": "7e21b19a-2d81-4473-b38b-f751e1837444"
+}
