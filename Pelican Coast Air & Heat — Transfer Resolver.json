@@ -1,0 +1,136 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Transfer Resolver Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get Demo Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Demo Settings": {
+      "main": [
+        [
+          {
+            "node": "Resolve Transfer Destination",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resolve Transfer Destination": {
+      "main": [
+        [
+          {
+            "node": "Respond With Destination",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-11-13T01:24:11.780Z",
+  "id": "w4qs1gdzoDY0WXrb",
+  "isArchived": false,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "name": "Pelican Coast Air & Heat — Transfer Resolver",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "bae65ca5-9124-446b-92ee-851332052b52",
+      "name": "Transfer Resolver Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "hvac-demo-transfer-7c41e9d2b6a84f0e",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "4ab06dde-fa0f-4066-91bb-c841b882e67d"
+    },
+    {
+      "id": "47ecea51-b657-4643-a017-852e7a66ddcc",
+      "name": "Get Demo Settings",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YC5rDvZRTeUxkViy",
+          "cachedResultName": "hvac demo - settings"
+        },
+        "returnAll": true
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "57d4b6ed-4810-4dd1-961d-477517c0e919",
+      "name": "Resolve Transfer Destination",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const s = {};\n$input.all().forEach(function (i) { if (i.json && i.json.key) s[i.json.key] = String(i.json.value === null || i.json.value === undefined ? '' : i.json.value).trim(); });\nconst on = s.live_transfer_enabled === 'true';\nconst num = (s.transfer_number || '').replace(/[ ()-]/g, '');\nconst valid = /^[+][1-9][0-9]{7,14}$/.test(num);\nif (on && valid) {\n  return [{ json: { response: { transfer_context: { destination: num, custom_message: 'Connecting you to our on-call technician now. Please stay on the line.' } } } }];\n}\nreturn [{ json: { response: { transfer_context: {}, live_transfer: false, reason: on ? 'transfer_number is missing or not in E.164 format' : 'live_transfer_enabled is false', message: 'Live transfer is not available right now. Tell the caller the on-call technician will call them back shortly.' } } }];"
+      }
+    },
+    {
+      "id": "2dda92cc-82b5-4240-9c09-db104f4584f8",
+      "name": "Respond With Destination",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        720,
+        0
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json.response) }}",
+        "options": {}
+      }
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "w4qs1gdzoDY0WXrb",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-11-13T01:24:11.783Z",
+      "updatedAt": "2026-11-13T01:24:11.783Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-11-13T01:24:11.780Z",
+  "versionId": "b0caa7e6-95e8-4f0c-a52d-cd3a907e3c35"
+}
