@@ -1,0 +1,2035 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "New Inbox Email": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Normalize Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Email": {
+      "main": [
+        [
+          {
+            "node": "Rules Router (No AI)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rules Router (No AI)": {
+      "main": [
+        [
+          {
+            "node": "Tag: Urgent (Rules)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Tag: Marketing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Tag: Billing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Tag: Notification",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Triage + Draft Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag: Urgent (Rules)": {
+      "main": [
+        [
+          {
+            "node": "Triage Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Triage Result": {
+      "main": [
+        [
+          {
+            "node": "Apply Labels",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Mark Read?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send Reply?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create Draft?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Escalate to Rob?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Log to Data Table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag: Marketing": {
+      "main": [
+        [
+          {
+            "node": "Triage Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag: Billing": {
+      "main": [
+        [
+          {
+            "node": "Triage Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag: Notification": {
+      "main": [
+        [
+          {
+            "node": "Triage Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Triage + Draft Reply": {
+      "main": [
+        [
+          {
+            "node": "Attach AI Result",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Restore Email Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude Haiku": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Triage + Draft Reply",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Attach AI Result": {
+      "main": [
+        [
+          {
+            "node": "Route AI Decision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route AI Decision": {
+      "main": [
+        [
+          {
+            "node": "Tag: Filed (AI)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Tag: Escalate (AI)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Tag: Auto-Reply (AI)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Tag: Draft for Review (AI)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag: Filed (AI)": {
+      "main": [
+        [
+          {
+            "node": "Triage Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag: Escalate (AI)": {
+      "main": [
+        [
+          {
+            "node": "Triage Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag: Auto-Reply (AI)": {
+      "main": [
+        [
+          {
+            "node": "Triage Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag: Draft for Review (AI)": {
+      "main": [
+        [
+          {
+            "node": "Triage Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Restore Email Data": {
+      "main": [
+        [
+          {
+            "node": "Tag: AI Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag: AI Failed": {
+      "main": [
+        [
+          {
+            "node": "Triage Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Read?": {
+      "main": [
+        [
+          {
+            "node": "Mark as Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Reply?": {
+      "main": [
+        [
+          {
+            "node": "Send Auto-Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Draft?": {
+      "main": [
+        [
+          {
+            "node": "Save Reply Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Escalate to Rob?": {
+      "main": [
+        [
+          {
+            "node": "Telegram Escalation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-11-17T16:31:54.585Z",
+  "id": "9Fsfw9v3RkbcS0jM",
+  "isArchived": false,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "name": "Email Receptionist (Rules-First + AI)",
+  "nodeGroups": [
+    {
+      "id": "c2370e84-8157-4837-acfe-945add316791",
+      "name": "Rules engine (no AI)",
+      "nodeIds": [
+        "34587696-a940-4700-a4dd-f14b642cc93c",
+        "35824f80-00d7-4297-b052-74cf67de7cdf"
+      ],
+      "description": "Header, sender, and keyword rules. Marketing, billing, notifications, and urgent mail never touch AI."
+    },
+    {
+      "id": "2dcbc8b6-729a-4ea7-94a5-6569465aced4",
+      "name": "AI triage (leftovers only)",
+      "nodeIds": [
+        "71c3d333-f97b-407f-bf0b-67dae39f5bc3",
+        "57971367-7382-4f54-b3c9-74c94f7ad93b"
+      ],
+      "description": "Claude Haiku classifies only unmatched mail, decides if a human is needed, and drafts a reply."
+    },
+    {
+      "id": "40ad875b-4081-4a18-9e75-a40b8e70c5d2",
+      "name": "Actions",
+      "nodeIds": [
+        "f6ab611e-2b3f-4db1-9576-359e987e6419"
+      ],
+      "description": "Fan-out: Gmail labels, read state, auto-reply or draft, Telegram escalation, and log row."
+    }
+  ],
+  "nodes": [
+    {
+      "id": "b0679901-0f41-4911-81db-f10f1f577c24",
+      "name": "New Inbox Email",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        400
+      ],
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "maxResults": 15,
+        "filters": {
+          "q": "in:inbox -label:receptionist-processed -from:me newer_than:2d",
+          "readStatus": "unread"
+        },
+        "options": {
+          "downloadAttachments": false
+        }
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Rob Gmail account"
+        }
+      }
+    },
+    {
+      "id": "09f9feb4-c0f8-4cae-bcb2-8200efdf1975",
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        400
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": true,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c1",
+              "name": "cfg_autoSendReplies",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "c2",
+              "name": "cfg_minConfidence",
+              "value": 0.8,
+              "type": "number"
+            },
+            {
+              "id": "c3",
+              "name": "cfg_telegramChatId",
+              "value": "5076593768",
+              "type": "string"
+            },
+            {
+              "id": "c4",
+              "name": "cfg_bookingLink",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "c5",
+              "name": "cfg_signature",
+              "value": "Rob Lord\nAutomate St Pete",
+              "type": "string"
+            },
+            {
+              "id": "c6",
+              "name": "cfg_urgentRegex",
+              "value": "\\b(urgent|asap|emergency|outage|is down|went down|not working|stopped working|broken|refund|chargeback|cancel|cancellation|lawyer|attorney|legal action|complaint)\\b",
+              "type": "string"
+            },
+            {
+              "id": "c7",
+              "name": "cfg_billingRegex",
+              "value": "\\b(invoice|receipt|payment|billing|statement|order confirmation|your order|paid|past due|subscription renew)",
+              "type": "string"
+            },
+            {
+              "id": "c8",
+              "name": "cfg_automatedSenderRegex",
+              "value": "(no-?reply|do-?not-?reply|mailer-daemon|postmaster|notifications?@|alerts?@|bounce|updates@|news@|newsletter@|marketing@|info@mail\\.)",
+              "type": "string"
+            },
+            {
+              "id": "c9",
+              "name": "cfg_vipSenders",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "34587696-a940-4700-a4dd-f14b642cc93c",
+      "name": "Normalize Email",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        496,
+        576
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "n1",
+              "name": "messageId",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "n2",
+              "name": "threadId",
+              "value": "={{ $json.threadId }}",
+              "type": "string"
+            },
+            {
+              "id": "n3",
+              "name": "fromEmail",
+              "value": "={{ ($json.from?.value?.[0]?.address || \"\").toLowerCase() }}",
+              "type": "string"
+            },
+            {
+              "id": "n4",
+              "name": "fromName",
+              "value": "={{ $json.from?.value?.[0]?.name || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "n5",
+              "name": "fromDomain",
+              "value": "={{ ($json.from?.value?.[0]?.address || \"\").toLowerCase().split(\"@\")[1] || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "n6",
+              "name": "subject",
+              "value": "={{ $json.subject || \"(no subject)\" }}",
+              "type": "string"
+            },
+            {
+              "id": "n7",
+              "name": "body",
+              "value": "={{ ($json.text || \"\").replace(/\\n{3,}/g, \"\\n\\n\").slice(0, 4000) }}",
+              "type": "string"
+            },
+            {
+              "id": "n8",
+              "name": "receivedAt",
+              "value": "={{ $json.date || $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "n9",
+              "name": "isBulk",
+              "value": "={{ (() => { const h = JSON.stringify($json.headers || {}).toLowerCase(); const l = $json.labelIds || []; return h.includes(\"list-unsubscribe\") || /precedence: ?(bulk|list|junk)/.test(h) || l.includes(\"CATEGORY_PROMOTIONS\"); })() }}",
+              "type": "boolean"
+            },
+            {
+              "id": "n10",
+              "name": "isAutomated",
+              "value": "={{ (() => { const h = JSON.stringify($json.headers || {}).toLowerCase(); const l = $json.labelIds || []; const sender = ($json.from?.value?.[0]?.address || \"\").toLowerCase(); return new RegExp($json.cfg_automatedSenderRegex, \"i\").test(sender) || /auto-submitted: ?auto-(generated|replied)/.test(h) || l.some(x => [\"CATEGORY_UPDATES\",\"CATEGORY_SOCIAL\",\"CATEGORY_FORUMS\"].includes(x)); })() }}",
+              "type": "boolean"
+            },
+            {
+              "id": "n11",
+              "name": "isBilling",
+              "value": "={{ new RegExp($json.cfg_billingRegex, \"i\").test($json.subject || \"\") }}",
+              "type": "boolean"
+            },
+            {
+              "id": "n12",
+              "name": "isUrgent",
+              "value": "={{ new RegExp($json.cfg_urgentRegex, \"i\").test(($json.subject || \"\") + \" \" + ($json.text || \"\").slice(0, 1500)) }}",
+              "type": "boolean"
+            },
+            {
+              "id": "n13",
+              "name": "isVip",
+              "value": "={{ (() => { const list = ($json.cfg_vipSenders || \"\").toLowerCase().split(\",\").map(s => s.trim()).filter(Boolean); const sender = ($json.from?.value?.[0]?.address || \"\").toLowerCase(); return list.some(v => sender === v || sender.endsWith(\"@\" + v)); })() }}",
+              "type": "boolean"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "35824f80-00d7-4297-b052-74cf67de7cdf",
+      "name": "Rules Router (No AI)",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        720,
+        528
+      ],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "outputKey": "Urgent / VIP",
+              "renameOutput": true,
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ ($json.isUrgent || $json.isVip) && !$json.isBulk && !$json.isAutomated }}",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "Marketing",
+              "renameOutput": true,
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.isBulk }}",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "Billing",
+              "renameOutput": true,
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.isBilling }}",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "Automated",
+              "renameOutput": true,
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.isAutomated }}",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "Needs AI"
+        }
+      }
+    },
+    {
+      "id": "dbea8fe9-eaa9-4816-9851-9ca09d93e132",
+      "name": "Tag: Urgent (Rules)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1952,
+        0
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": true,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "u1",
+              "name": "category",
+              "value": "urgent",
+              "type": "string"
+            },
+            {
+              "id": "u2",
+              "name": "priority",
+              "value": "high",
+              "type": "string"
+            },
+            {
+              "id": "u3",
+              "name": "handledBy",
+              "value": "rules",
+              "type": "string"
+            },
+            {
+              "id": "u4",
+              "name": "action",
+              "value": "escalated",
+              "type": "string"
+            },
+            {
+              "id": "u5",
+              "name": "labelsToAdd",
+              "value": "={{ [\"Label_13\", \"STARRED\", \"IMPORTANT\", \"Label_16\"] }}",
+              "type": "array"
+            },
+            {
+              "id": "u6",
+              "name": "markRead",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "u7",
+              "name": "notify",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "u8",
+              "name": "createDraft",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "u9",
+              "name": "sendReply",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "u10",
+              "name": "replyText",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "u11",
+              "name": "aiReasoning",
+              "value": "={{ $json.isVip ? \"VIP sender\" : \"Matched urgent keyword rule\" }}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "f6ab611e-2b3f-4db1-9576-359e987e6419",
+      "name": "Triage Result",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2224,
+        896
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "259e6c7f-3206-41d2-afe5-6acca9748520",
+      "name": "Tag: Marketing",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1952,
+        192
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": true,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "m1",
+              "name": "category",
+              "value": "marketing",
+              "type": "string"
+            },
+            {
+              "id": "m2",
+              "name": "priority",
+              "value": "low",
+              "type": "string"
+            },
+            {
+              "id": "m3",
+              "name": "handledBy",
+              "value": "rules",
+              "type": "string"
+            },
+            {
+              "id": "m4",
+              "name": "action",
+              "value": "labeled+read",
+              "type": "string"
+            },
+            {
+              "id": "m5",
+              "name": "labelsToAdd",
+              "value": "={{ [\"Label_10\", \"Label_16\"] }}",
+              "type": "array"
+            },
+            {
+              "id": "m6",
+              "name": "markRead",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "m7",
+              "name": "notify",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "m8",
+              "name": "createDraft",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "m9",
+              "name": "sendReply",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "m10",
+              "name": "replyText",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "m11",
+              "name": "aiReasoning",
+              "value": "Bulk headers / Promotions tab",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "faf3c529-8582-48bb-b239-d4b2f418cb5f",
+      "name": "Tag: Billing",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1952,
+        384
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": true,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b1",
+              "name": "category",
+              "value": "billing",
+              "type": "string"
+            },
+            {
+              "id": "b2",
+              "name": "priority",
+              "value": "normal",
+              "type": "string"
+            },
+            {
+              "id": "b3",
+              "name": "handledBy",
+              "value": "rules",
+              "type": "string"
+            },
+            {
+              "id": "b4",
+              "name": "action",
+              "value": "labeled",
+              "type": "string"
+            },
+            {
+              "id": "b5",
+              "name": "labelsToAdd",
+              "value": "={{ [\"Label_12\", \"Label_16\"] }}",
+              "type": "array"
+            },
+            {
+              "id": "b6",
+              "name": "markRead",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "b7",
+              "name": "notify",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "b8",
+              "name": "createDraft",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "b9",
+              "name": "sendReply",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "b10",
+              "name": "replyText",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "b11",
+              "name": "aiReasoning",
+              "value": "Billing keyword in subject",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "8eb7f5cf-1eac-47c5-8015-dd4c48ebe3a9",
+      "name": "Tag: Notification",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1952,
+        576
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": true,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1",
+              "name": "category",
+              "value": "notification",
+              "type": "string"
+            },
+            {
+              "id": "a2",
+              "name": "priority",
+              "value": "low",
+              "type": "string"
+            },
+            {
+              "id": "a3",
+              "name": "handledBy",
+              "value": "rules",
+              "type": "string"
+            },
+            {
+              "id": "a4",
+              "name": "action",
+              "value": "labeled+read",
+              "type": "string"
+            },
+            {
+              "id": "a5",
+              "name": "labelsToAdd",
+              "value": "={{ [\"Label_11\", \"Label_16\"] }}",
+              "type": "array"
+            },
+            {
+              "id": "a6",
+              "name": "markRead",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "a7",
+              "name": "notify",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "a8",
+              "name": "createDraft",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "a9",
+              "name": "sendReply",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "a10",
+              "name": "replyText",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "a11",
+              "name": "aiReasoning",
+              "value": "Automated sender / Updates tab",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "71c3d333-f97b-407f-bf0b-67dae39f5bc3",
+      "name": "AI Triage + Draft Reply",
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        1024,
+        1392
+      ],
+      "parameters": {
+        "text": "=From: {{ $json.fromName }} <{{ $json.fromEmail }}>\nSubject: {{ $json.subject }}\n\n{{ $json.body }}\n\n---\nSignature to use: {{ $(\"Config\").item.json.cfg_signature }}\nBooking link (only include if non-empty): {{ $(\"Config\").item.json.cfg_bookingLink }}",
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"isCustomerInquiry\": {\n      \"type\": \"boolean\",\n      \"description\": \"True only if a real person (prospect, client, or partner) is writing to the business and expects a response.\"\n    },\n    \"category\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"sales_inquiry\",\n        \"support\",\n        \"scheduling\",\n        \"partnership\",\n        \"personal\",\n        \"spam\",\n        \"other\"\n      ]\n    },\n    \"priority\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"high\",\n        \"normal\",\n        \"low\"\n      ]\n    },\n    \"needsHuman\": {\n      \"type\": \"boolean\",\n      \"description\": \"True if the reply needs pricing, commitments, account-specific facts, a complaint/dispute, legal/financial matters, or anything you are unsure about.\"\n    },\n    \"confidence\": {\n      \"type\": \"number\",\n      \"description\": \"0 to 1. How confident you are that replyDraft can be sent as-is with no human edits.\"\n    },\n    \"summary\": {\n      \"type\": \"string\",\n      \"description\": \"One sentence: what the sender wants.\"\n    },\n    \"reasoning\": {\n      \"type\": \"string\",\n      \"description\": \"One short sentence explaining category, priority and needsHuman.\"\n    },\n    \"replyDraft\": {\n      \"type\": \"string\",\n      \"description\": \"Plain-text reply body, no subject line, signed with the provided signature. Empty string if isCustomerInquiry is false.\"\n    }\n  },\n  \"required\": [\n    \"isCustomerInquiry\",\n    \"category\",\n    \"priority\",\n    \"needsHuman\",\n    \"confidence\",\n    \"summary\",\n    \"reasoning\",\n    \"replyDraft\"\n  ]\n}",
+        "options": {
+          "systemPromptTemplate": "You are the email receptionist for Automate St Pete, a small consultancy run by Rob Lord that builds AI agents, n8n automations, and self-hosted tools for small and mid-sized businesses.\n\nThis email already passed rule filters (it is not marketing, billing, or an automated notification). Decide whether a real person needs a reply, classify it, and write a short reply.\n\nReply rules:\n- 3 to 6 sentences, warm, plain, no hype, no emojis.\n- Acknowledge the specific request. Never quote prices, timelines, or guarantees. Never invent facts about past work.\n- For sales inquiries, invite a short discovery call (include the booking link only if one is provided).\n- For support from an existing client, confirm receipt and say Rob will follow up personally.\n- Sign with the provided signature exactly.\n\nSet needsHuman = true for: pricing or contract questions that need numbers, complaints, refunds, legal, anything involving money owed, existing-client technical issues, or when you are unsure. Priority high = time-sensitive or revenue at risk; low = no reply needed or FYI.\n\nExamples:\n1) \"Can you build a chatbot for my dental office? What do you charge?\" -> sales_inquiry, normal, needsHuman=false, confidence 0.85 (reply invites a call, no price).\n2) \"Our n8n workflow you built stopped sending invoices since Monday\" -> support, high, needsHuman=true.\n3) \"Hey, quick question about your podcast episode\" -> other, low, isCustomerInquiry=true, needsHuman=true, confidence 0.5.\n4) A cold pitch selling SEO services -> spam, low, isCustomerInquiry=false, replyDraft=\"\"."
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "57971367-7382-4f54-b3c9-74c94f7ad93b",
+      "name": "Claude Haiku",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.6,
+      "position": [
+        1104,
+        1616
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "claude-haiku-5-5"
+        },
+        "options": {
+          "maxTokensToSample": 1200,
+          "temperature": 0.1
+        }
+      },
+      "credentials": {
+        "anthropicApi": {
+          "id": "tFBsH2tS7LeHHy6G",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "id": "5dd0f4dc-db29-408f-a94a-88d09d12e3c6",
+      "name": "Attach AI Result",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1504,
+        1072
+      ],
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ JSON.stringify({ ...$(\"Normalize Email\").item.json, ai: $json.output }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "d5bfdbf3-fa52-45d6-8156-65e96e155172",
+      "name": "Route AI Decision",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1728,
+        1040
+      ],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "outputKey": "Not for us",
+              "renameOutput": true,
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.ai.isCustomerInquiry }}",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "false",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "Escalate",
+              "renameOutput": true,
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.ai.needsHuman || $json.ai.priority === \"high\" }}",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "Auto-reply",
+              "renameOutput": true,
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $(\"Config\").item.json.cfg_autoSendReplies && Number($json.ai.confidence) >= Number($(\"Config\").item.json.cfg_minConfidence) && !!$json.ai.replyDraft }}",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "Draft for review"
+        }
+      }
+    },
+    {
+      "id": "4b01acd9-8452-40a4-9db8-3b0e5c65c75b",
+      "name": "Tag: Filed (AI)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1952,
+        768
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": true,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "o1",
+              "name": "category",
+              "value": "={{ $json.ai.category }}",
+              "type": "string"
+            },
+            {
+              "id": "o2",
+              "name": "priority",
+              "value": "low",
+              "type": "string"
+            },
+            {
+              "id": "o3",
+              "name": "handledBy",
+              "value": "ai",
+              "type": "string"
+            },
+            {
+              "id": "o4",
+              "name": "action",
+              "value": "filed",
+              "type": "string"
+            },
+            {
+              "id": "o5",
+              "name": "labelsToAdd",
+              "value": "={{ $json.ai.category === \"spam\" ? [\"Label_10\", \"Label_16\"] : [\"Label_16\"] }}",
+              "type": "array"
+            },
+            {
+              "id": "o6",
+              "name": "markRead",
+              "value": "={{ $json.ai.category === \"spam\" }}",
+              "type": "boolean"
+            },
+            {
+              "id": "o7",
+              "name": "notify",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "o8",
+              "name": "createDraft",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "o9",
+              "name": "sendReply",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "o10",
+              "name": "replyText",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "o11",
+              "name": "aiReasoning",
+              "value": "={{ $json.ai.reasoning }}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "4b0b3721-f319-444f-9e16-53559e1f9cb7",
+      "name": "Tag: Escalate (AI)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1952,
+        960
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": true,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e1",
+              "name": "category",
+              "value": "={{ $json.ai.category }}",
+              "type": "string"
+            },
+            {
+              "id": "e2",
+              "name": "priority",
+              "value": "={{ $json.ai.priority }}",
+              "type": "string"
+            },
+            {
+              "id": "e3",
+              "name": "handledBy",
+              "value": "ai",
+              "type": "string"
+            },
+            {
+              "id": "e4",
+              "name": "action",
+              "value": "escalated+draft",
+              "type": "string"
+            },
+            {
+              "id": "e5",
+              "name": "labelsToAdd",
+              "value": "={{ [\"Label_13\", \"Label_14\", \"Label_16\"].concat($json.ai.priority === \"high\" ? [\"STARRED\", \"IMPORTANT\"] : []) }}",
+              "type": "array"
+            },
+            {
+              "id": "e6",
+              "name": "markRead",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "e7",
+              "name": "notify",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "e8",
+              "name": "createDraft",
+              "value": "={{ !!$json.ai.replyDraft }}",
+              "type": "boolean"
+            },
+            {
+              "id": "e9",
+              "name": "sendReply",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "e10",
+              "name": "replyText",
+              "value": "={{ $json.ai.replyDraft }}",
+              "type": "string"
+            },
+            {
+              "id": "e11",
+              "name": "aiReasoning",
+              "value": "={{ $json.ai.summary }} | {{ $json.ai.reasoning }}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "a496749d-e7ce-4001-aee5-1c463fc6c8c1",
+      "name": "Tag: Auto-Reply (AI)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1952,
+        1152
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": true,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "r1",
+              "name": "category",
+              "value": "={{ $json.ai.category }}",
+              "type": "string"
+            },
+            {
+              "id": "r2",
+              "name": "priority",
+              "value": "={{ $json.ai.priority }}",
+              "type": "string"
+            },
+            {
+              "id": "r3",
+              "name": "handledBy",
+              "value": "ai",
+              "type": "string"
+            },
+            {
+              "id": "r4",
+              "name": "action",
+              "value": "auto-replied",
+              "type": "string"
+            },
+            {
+              "id": "r5",
+              "name": "labelsToAdd",
+              "value": "={{ [\"Label_14\", \"Label_15\", \"Label_16\"] }}",
+              "type": "array"
+            },
+            {
+              "id": "r6",
+              "name": "markRead",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "r7",
+              "name": "notify",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "r8",
+              "name": "createDraft",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "r9",
+              "name": "sendReply",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "r10",
+              "name": "replyText",
+              "value": "={{ $json.ai.replyDraft }}",
+              "type": "string"
+            },
+            {
+              "id": "r11",
+              "name": "aiReasoning",
+              "value": "={{ $json.ai.summary }} | {{ $json.ai.reasoning }}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ca31e9c6-937a-4869-8088-a99a1a9964e3",
+      "name": "Tag: Draft for Review (AI)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1952,
+        1344
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": true,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d1",
+              "name": "category",
+              "value": "={{ $json.ai.category }}",
+              "type": "string"
+            },
+            {
+              "id": "d2",
+              "name": "priority",
+              "value": "={{ $json.ai.priority }}",
+              "type": "string"
+            },
+            {
+              "id": "d3",
+              "name": "handledBy",
+              "value": "ai",
+              "type": "string"
+            },
+            {
+              "id": "d4",
+              "name": "action",
+              "value": "draft",
+              "type": "string"
+            },
+            {
+              "id": "d5",
+              "name": "labelsToAdd",
+              "value": "={{ [\"Label_14\", \"Label_16\"] }}",
+              "type": "array"
+            },
+            {
+              "id": "d6",
+              "name": "markRead",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "d7",
+              "name": "notify",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "d8",
+              "name": "createDraft",
+              "value": "={{ !!$json.ai.replyDraft }}",
+              "type": "boolean"
+            },
+            {
+              "id": "d9",
+              "name": "sendReply",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "d10",
+              "name": "replyText",
+              "value": "={{ $json.ai.replyDraft }}",
+              "type": "string"
+            },
+            {
+              "id": "d11",
+              "name": "aiReasoning",
+              "value": "={{ $json.ai.summary }} | {{ $json.ai.reasoning }}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ff787ac0-0f54-4f6c-8cfc-33a9d94cfb52",
+      "name": "Restore Email Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1728,
+        1552
+      ],
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ JSON.stringify($(\"Normalize Email\").item.json) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "db4bbff4-7973-4338-9fa3-1623c0fca388",
+      "name": "Tag: AI Failed",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1952,
+        1552
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": true,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "x1",
+              "name": "category",
+              "value": "unclassified",
+              "type": "string"
+            },
+            {
+              "id": "x2",
+              "name": "priority",
+              "value": "normal",
+              "type": "string"
+            },
+            {
+              "id": "x3",
+              "name": "handledBy",
+              "value": "fallback",
+              "type": "string"
+            },
+            {
+              "id": "x4",
+              "name": "action",
+              "value": "escalated (AI error)",
+              "type": "string"
+            },
+            {
+              "id": "x5",
+              "name": "labelsToAdd",
+              "value": "={{ [\"Label_13\", \"Label_16\"] }}",
+              "type": "array"
+            },
+            {
+              "id": "x6",
+              "name": "markRead",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "x7",
+              "name": "notify",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "x8",
+              "name": "createDraft",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "x9",
+              "name": "sendReply",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "x10",
+              "name": "replyText",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "x11",
+              "name": "aiReasoning",
+              "value": "AI step failed; routed to human",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "9856e61a-9e88-4c11-bfe2-f290e00b31cd",
+      "name": "Apply Labels",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2704,
+        304
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "addLabels",
+        "messageId": "={{ $json.messageId }}",
+        "labelIds": "={{ $json.labelsToAdd }}"
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Rob Gmail account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "webhookId": "5d6ac820-54e7-4278-92ff-efdd0f5a0938"
+    },
+    {
+      "id": "726f09cd-0c79-4c61-a2c3-605e8e1bb5c0",
+      "name": "Mark Read?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2704,
+        496
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.markRead }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "0b2da33b-c820-463d-b0bd-e5dcaf65a8e9",
+      "name": "Mark as Read",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2928,
+        496
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "markAsRead",
+        "messageId": "={{ $json.messageId }}"
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Rob Gmail account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "webhookId": "6fb467f8-b846-4edb-baeb-f0a121a9e374"
+    },
+    {
+      "id": "a82ee99f-a7ea-4871-b8cf-8a44005b6e94",
+      "name": "Send Reply?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2704,
+        688
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.sendReply }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "82b5d402-571b-4d3f-be17-635be98fffbf",
+      "name": "Send Auto-Reply",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2928,
+        688
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "reply",
+        "messageId": "={{ $json.messageId }}",
+        "emailType": "text",
+        "message": "={{ $json.replyText }}",
+        "options": {
+          "appendAttribution": false,
+          "replyToSenderOnly": true
+        }
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Rob Gmail account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "webhookId": "b6441df4-281b-402d-9eb9-ef3112bec5b4"
+    },
+    {
+      "id": "4b1b1d42-826d-4193-9380-d8c92d1919b3",
+      "name": "Create Draft?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2704,
+        880
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.createDraft }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "2128760c-fc0f-4e07-b2e1-6c62165928c2",
+      "name": "Save Reply Draft",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2928,
+        880
+      ],
+      "parameters": {
+        "resource": "draft",
+        "operation": "create",
+        "subject": "={{ $json.subject.startsWith(\"Re:\") ? $json.subject : \"Re: \" + $json.subject }}",
+        "emailType": "text",
+        "message": "={{ $json.replyText }}",
+        "options": {
+          "threadId": "={{ $json.threadId }}",
+          "sendTo": "={{ $json.fromEmail }}"
+        }
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Rob Gmail account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "webhookId": "b48cda19-5b04-4458-9c35-f703ae9b1b8e"
+    },
+    {
+      "id": "6fb5d353-23e8-4203-aa20-7372a563ad62",
+      "name": "Escalate to Rob?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2704,
+        1072
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.notify }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "97f71c76-f8a5-4532-a1ef-6b0174aba7cb",
+      "name": "Telegram Escalation",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2928,
+        1072
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "sendMessage",
+        "chatId": "={{ $(\"Config\").first().json.cfg_telegramChatId }}",
+        "text": "={{ $json.priority === \"high\" ? \"🔴\" : \"🟠\" }} <b>Email needs you</b> ({{ $json.category }} · {{ $json.priority }})\n\n<b>From:</b> {{ ($json.fromName + \" <\" + $json.fromEmail + \">\").replace(/[<>&]/g, m => ({\"<\":\"&lt;\",\">\":\"&gt;\",\"&\":\"&amp;\"})[m]) }}\n<b>Subject:</b> {{ $json.subject.replace(/[<>&]/g, m => ({\"<\":\"&lt;\",\">\":\"&gt;\",\"&\":\"&amp;\"})[m]) }}\n<b>Why:</b> {{ ($json.aiReasoning || \"\").replace(/[<>&]/g, m => ({\"<\":\"&lt;\",\">\":\"&gt;\",\"&\":\"&amp;\"})[m]) }}\n{{ $json.createDraft ? \"\\n📝 Draft reply saved in Gmail.\" : \"\" }}\n<a href=\"https://mail.google.com/mail/u/0/#all/{{ $json.threadId }}\">Open in Gmail</a>",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML",
+          "disable_web_page_preview": true
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "GrHxwuhk9SECQo8h",
+          "name": "NanoRob3"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "webhookId": "e1aa2227-c592-40df-8c63-7a1ecb65a6e5"
+    },
+    {
+      "id": "2abee046-3b92-4dde-9a2f-2e5c21933b41",
+      "name": "Log to Data Table",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2704,
+        1264
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "NgFLisqZ8x60Gu2R",
+          "cachedResultName": "email_receptionist_log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "messageId": "={{ $json.messageId }}",
+            "threadId": "={{ $json.threadId }}",
+            "fromEmail": "={{ $json.fromEmail }}",
+            "subject": "={{ $json.subject }}",
+            "category": "={{ $json.category }}",
+            "priority": "={{ $json.priority }}",
+            "handledBy": "={{ $json.handledBy }}",
+            "action": "={{ $json.action }}",
+            "aiReasoning": "={{ $json.aiReasoning }}",
+            "receivedAt": "={{ $json.receivedAt }}"
+          },
+          "schema": [
+            {
+              "id": "messageId",
+              "displayName": "messageId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "threadId",
+              "displayName": "threadId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "fromEmail",
+              "displayName": "fromEmail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "subject",
+              "displayName": "subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "priority",
+              "displayName": "priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "handledBy",
+              "displayName": "handledBy",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "action",
+              "displayName": "action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "aiReasoning",
+              "displayName": "aiReasoning",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "receivedAt",
+              "displayName": "receivedAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            }
+          ]
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "59462525-aca5-46ba-8842-789ac6a7d936",
+      "name": "Sticky Note b6bce1fa",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        304
+      ],
+      "parameters": {
+        "content": "## 📥 Email Receptionist\n**Rules first, AI last.**\n1. Gmail polls every minute (unread, inbox, not yet processed).\n2. Rules Router sorts urgent/VIP, marketing (red label), billing and automated mail with zero AI.\n3. Only what is left goes to Claude Haiku for classify + reply draft.\n4. Every email ends at **Triage Result** → labels, read state, reply/draft, Telegram, log.\n\nTune everything in **Config** (keywords, VIP list, auto-send on/off, confidence threshold).",
+        "color": 4,
+        "width": 384,
+        "height": 224
+      }
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "9Fsfw9v3RkbcS0jM",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-11-17T16:31:54.590Z",
+      "updatedAt": "2026-11-17T16:31:54.590Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-11-17T16:31:54.585Z",
+  "versionId": "89e7566e-6795-4dd3-b72c-35e2e2e602a5"
+}
