@@ -1,0 +1,317 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "3a0a7619-a54f-42dd-ab3b-ec0b6eca7ba1",
+    "workflowId": "rFlajoHpe4L5B3jk",
+    "nodes": [
+      {
+        "id": "f54201d9-60ef-4984-992f-bdff9e1bf654",
+        "name": "POST Intake",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          0,
+          0
+        ],
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "data-intake",
+          "responseMode": "onReceived",
+          "options": {}
+        },
+        "webhookId": "31662225-c144-41a7-8e3a-18b9fc9211dc"
+      },
+      {
+        "id": "b11d8dd1-8ca1-4a1c-ba42-67c047db8a8c",
+        "name": "Split Rows",
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1.1,
+        "position": [
+          224,
+          0
+        ],
+        "parameters": {
+          "fieldToSplitOut": "body.rows",
+          "include": "noOtherFields",
+          "options": {}
+        }
+      },
+      {
+        "id": "d43e2288-2e67-4847-ab53-e5bea498a025",
+        "name": "Add Row Key",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          448,
+          0
+        ],
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "row-key",
+                "name": "row_key",
+                "type": "string",
+                "value": "={{ $json.post_id }}__{{ $json.comment_key || 'post' }}"
+              },
+              {
+                "id": "source",
+                "name": "source",
+                "type": "string",
+                "value": "={{ $('POST Intake').item.json.body.source || 'unknown' }}"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "mode": "manual",
+          "options": {}
+        }
+      },
+      {
+        "id": "821f856f-3dd5-4f0b-9abb-f76d869f4dcc",
+        "name": "Upsert Lead Row",
+        "type": "n8n-nodes-base.dataTable",
+        "typeVersion": 1.1,
+        "position": [
+          672,
+          0
+        ],
+        "parameters": {
+          "columns": {
+            "mappingMode": "autoMapInputData",
+            "matchingColumns": [],
+            "schema": [],
+            "value": {}
+          },
+          "dataTableId": {
+            "__rl": true,
+            "cachedResultName": "fb_group_leads",
+            "mode": "list",
+            "value": "y3mhvldYaUocIMmL"
+          },
+          "filters": {
+            "conditions": [
+              {
+                "condition": "eq",
+                "keyName": "row_key",
+                "keyValue": "={{ $json.row_key }}"
+              }
+            ]
+          },
+          "matchType": "allConditions",
+          "operation": "upsert",
+          "options": {},
+          "resource": "row"
+        }
+      }
+    ],
+    "connections": {
+      "POST Intake": {
+        "main": [
+          [
+            {
+              "node": "Split Rows",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split Rows": {
+        "main": [
+          [
+            {
+              "node": "Add Row Key",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Add Row Key": {
+        "main": [
+          [
+            {
+              "node": "Upsert Lead Row",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Robert Lord (via MCP)",
+    "name": "Store FB scraper rows in fb_group_leads",
+    "description": "Split body.rows into items, add a dedupe row_key (post_id__comment_key) and source, upsert into the fb_group_leads data table.",
+    "autosaved": false,
+    "createdAt": "2026-11-23T14:06:29.916Z",
+    "updatedAt": "2026-11-23T14:06:29.916Z"
+  },
+  "activeVersionId": "3a0a7619-a54f-42dd-ab3b-ec0b6eca7ba1",
+  "connections": {
+    "POST Intake": {
+      "main": [
+        [
+          {
+            "node": "Split Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Rows": {
+      "main": [
+        [
+          {
+            "node": "Add Row Key",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Row Key": {
+      "main": [
+        [
+          {
+            "node": "Upsert Lead Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-11-23T13:49:28.330Z",
+  "id": "rFlajoHpe4L5B3jk",
+  "isArchived": false,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "name": "Webhook → Data Tables Intake",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "f54201d9-60ef-4984-992f-bdff9e1bf654",
+      "name": "POST Intake",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "data-intake",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "webhookId": "31662225-c144-41a7-8e3a-18b9fc9211dc"
+    },
+    {
+      "id": "b11d8dd1-8ca1-4a1c-ba42-67c047db8a8c",
+      "name": "Split Rows",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        0
+      ],
+      "parameters": {
+        "fieldToSplitOut": "body.rows",
+        "include": "noOtherFields",
+        "options": {}
+      }
+    },
+    {
+      "id": "d43e2288-2e67-4847-ab53-e5bea498a025",
+      "name": "Add Row Key",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        0
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "row-key",
+              "name": "row_key",
+              "type": "string",
+              "value": "={{ $json.post_id }}__{{ $json.comment_key || 'post' }}"
+            },
+            {
+              "id": "source",
+              "name": "source",
+              "type": "string",
+              "value": "={{ $('POST Intake').item.json.body.source || 'unknown' }}"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "mode": "manual",
+        "options": {}
+      }
+    },
+    {
+      "id": "821f856f-3dd5-4f0b-9abb-f76d869f4dcc",
+      "name": "Upsert Lead Row",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        0
+      ],
+      "parameters": {
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "matchingColumns": [],
+          "schema": [],
+          "value": {}
+        },
+        "dataTableId": {
+          "__rl": true,
+          "cachedResultName": "fb_group_leads",
+          "mode": "list",
+          "value": "y3mhvldYaUocIMmL"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "condition": "eq",
+              "keyName": "row_key",
+              "keyValue": "={{ $json.row_key }}"
+            }
+          ]
+        },
+        "matchType": "allConditions",
+        "operation": "upsert",
+        "options": {},
+        "resource": "row"
+      }
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "rFlajoHpe4L5B3jk",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-11-23T13:49:28.335Z",
+      "updatedAt": "2026-11-23T13:49:28.335Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2026-11-23T14:06:29.915Z",
+  "versionId": "3a0a7619-a54f-42dd-ab3b-ec0b6eca7ba1"
+}
