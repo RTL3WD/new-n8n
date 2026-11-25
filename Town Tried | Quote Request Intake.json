@@ -1,0 +1,1549 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "06c4d1c8-0eb4-42a0-8dfc-c5f29c9042ba",
+    "workflowId": "Ov8cz31IyuxoUrTr",
+    "nodes": [
+      {
+        "id": "0a573f2d-4483-4d43-97bf-bd90085b4940",
+        "name": "Quote Request Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.2,
+        "position": [
+          0,
+          96
+        ],
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "towntried-quote",
+          "responseMode": "responseNode",
+          "options": {
+            "allowedOrigins": "https://towntried.com,https://www.towntried.com",
+            "ignoreBots": true
+          }
+        },
+        "webhookId": "2bc6a997-224d-4610-9579-4fe618140c0c"
+      },
+      {
+        "id": "ab17db32-2d02-4453-b070-fc51a3b3a901",
+        "name": "Normalize Request",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          272,
+          224
+        ],
+        "parameters": {
+          "mode": "manual",
+          "includeOtherFields": false,
+          "assignments": {
+            "assignments": [
+              {
+                "id": "service",
+                "name": "service",
+                "value": "={{ String($json.body.service || \"\").trim().slice(0, 100) }}",
+                "type": "string"
+              },
+              {
+                "id": "zip",
+                "name": "zip",
+                "value": "={{ String($json.body.zip || \"\").replace(/\\D/g, \"\").slice(0, 5) }}",
+                "type": "string"
+              },
+              {
+                "id": "timeframe",
+                "name": "timeframe",
+                "value": "={{ String($json.body.timeframe || \"Not specified\").trim().slice(0, 50) }}",
+                "type": "string"
+              },
+              {
+                "id": "name",
+                "name": "name",
+                "value": "={{ String($json.body.name || \"\").trim().slice(0, 100) }}",
+                "type": "string"
+              },
+              {
+                "id": "phone",
+                "name": "phone",
+                "value": "={{ String($json.body.phone || \"\").replace(/[^\\d+]/g, \"\").slice(0, 15) }}",
+                "type": "string"
+              },
+              {
+                "id": "email",
+                "name": "email",
+                "value": "={{ String($json.body.email || \"\").trim().toLowerCase().slice(0, 150) }}",
+                "type": "string"
+              },
+              {
+                "id": "details",
+                "name": "details",
+                "value": "={{ String($json.body.details || \"\").trim().slice(0, 1000) }}",
+                "type": "string"
+              },
+              {
+                "id": "source",
+                "name": "source",
+                "value": "={{ $json.body.source || \"unknown\" }}",
+                "type": "string"
+              },
+              {
+                "id": "page",
+                "name": "page",
+                "value": "={{ String($json.body.page || \"\").slice(0, 300) }}",
+                "type": "string"
+              },
+              {
+                "id": "submitted_at",
+                "name": "submitted_at",
+                "value": "={{ $now.toISO() }}",
+                "type": "string"
+              },
+              {
+                "id": "is_valid",
+                "name": "is_valid",
+                "value": "={{ !$json.body.company_website && String($json.body.service || \"\").trim().length > 0 && /^\\d{5}$/.test(String($json.body.zip || \"\").trim()) && String($json.body.name || \"\").trim().length > 1 && String($json.body.phone || \"\").replace(/\\D/g, \"\").length >= 10 && /^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(String($json.body.email || \"\").trim()) }}",
+                "type": "boolean"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "d772490f-2b3d-4361-a8ca-1483cab1f8e1",
+        "name": "Valid Request?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          496,
+          224
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict"
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ $json.is_valid }}",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                },
+                "rightValue": ""
+              }
+            ],
+            "combinator": "and"
+          }
+        }
+      },
+      {
+        "id": "8342d42d-5422-42c9-8536-376e7eb81564",
+        "name": "Save Quote Request",
+        "type": "n8n-nodes-base.dataTable",
+        "typeVersion": 1.1,
+        "position": [
+          800,
+          320
+        ],
+        "parameters": {
+          "resource": "row",
+          "operation": "insert",
+          "dataTableId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "itNgMU49t8XQHY4i",
+            "cachedResultName": "towntried_quote_requests"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "service": "={{ $json.service }}",
+              "zip": "={{ $json.zip }}",
+              "timeframe": "={{ $json.timeframe }}",
+              "name": "={{ $json.name }}",
+              "phone": "={{ $json.phone }}",
+              "email": "={{ $json.email }}",
+              "details": "={{ $json.details }}",
+              "source": "={{ $json.source }}",
+              "page": "={{ $json.page }}",
+              "submitted_at": "={{ $json.submitted_at }}",
+              "status": "new",
+              "matched_providers": ""
+            },
+            "schema": [
+              {
+                "id": "service",
+                "displayName": "service",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "zip",
+                "displayName": "zip",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "timeframe",
+                "displayName": "timeframe",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "name",
+                "displayName": "name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "phone",
+                "displayName": "phone",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "email",
+                "displayName": "email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "details",
+                "displayName": "details",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "source",
+                "displayName": "source",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "page",
+                "displayName": "page",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "submitted_at",
+                "displayName": "submitted_at",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "status",
+                "displayName": "status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "matched_providers",
+                "displayName": "matched_providers",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "f2964d4b-e7e8-4a8a-8ccf-6176bb5fcd69",
+        "name": "Respond Success",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          1024,
+          320
+        ],
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ { ok: true, id: $json.id } }}",
+          "options": {
+            "responseCode": 200
+          }
+        }
+      },
+      {
+        "id": "6afd9f23-057f-4e9e-9bcd-0a83f26660af",
+        "name": "Email New Lead Alert",
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.2,
+        "position": [
+          2368,
+          320
+        ],
+        "parameters": {
+          "resource": "message",
+          "operation": "send",
+          "sendTo": "automatestpete@gmail.com",
+          "subject": "={{ ($('Rank Providers').item.json.match_count > 0 && $('Create BD Lead').item.json.status === 'success' ? '✅ Matched to ' + $('Rank Providers').item.json.match_count : '⚠️ Needs review') + ' · Town Tried quote: ' + $('Normalize Request').item.json.service + ' in ' + $('Normalize Request').item.json.zip + ' (' + $('Normalize Request').item.json.timeframe + ')' }}",
+          "emailType": "html",
+          "message": "=<h2>Quote request #{{ $(\"Save Quote Request\").item.json.id }}</h2><table cellpadding=\"6\" style=\"border-collapse:collapse;font-family:Arial,sans-serif\"><tr><td><b>Service</b></td><td>{{ $(\"Normalize Request\").item.json.service }}</td></tr><tr><td><b>ZIP</b></td><td>{{ $(\"Normalize Request\").item.json.zip }}</td></tr><tr><td><b>When</b></td><td>{{ $(\"Normalize Request\").item.json.timeframe }}</td></tr><tr><td><b>Name</b></td><td>{{ $(\"Normalize Request\").item.json.name }}</td></tr><tr><td><b>Phone</b></td><td><a href=\"tel:{{ $(\"Normalize Request\").item.json.phone }}\">{{ $(\"Normalize Request\").item.json.phone }}</a></td></tr><tr><td><b>Email</b></td><td><a href=\"mailto:{{ $(\"Normalize Request\").item.json.email }}\">{{ $(\"Normalize Request\").item.json.email }}</a></td></tr><tr><td><b>Details</b></td><td>{{ $(\"Normalize Request\").item.json.details || \"—\" }}</td></tr></table><h3>Matching</h3><table cellpadding=\"6\" style=\"border-collapse:collapse;font-family:Arial,sans-serif\"><tr><td><b>Status</b></td><td>{{ $(\"Rank Providers\").item.json.match_count > 0 && $(\"Create BD Lead\").item.json.status === \"success\" ? \"matched\" : \"needs_review\" }}</td></tr><tr><td><b>Sent to</b></td><td>{{ $(\"Rank Providers\").item.json.matched_summary || \"Nobody yet — match it manually in Brilliant Directories\" }}</td></tr><tr><td><b>Paid matches</b></td><td>{{ $(\"Rank Providers\").item.json.paid_matches }} of {{ $(\"Rank Providers\").item.json.match_count }}</td></tr><tr><td><b>Candidates found</b></td><td>{{ $(\"Rank Providers\").item.json.candidates }} ({{ $(\"Rank Providers\").item.json.eligible }} eligible)</td></tr><tr><td><b>BD lead ID</b></td><td>{{ ($(\"Create BD Lead\").item.json.message || {}).lead_id || \"not created\" }}</td></tr>{{ $(\"Rank Providers\").item.json.search_error ? '<tr><td><b>Error</b></td><td>' + $(\"Rank Providers\").item.json.search_error + '</td></tr>' : '' }}</table>",
+          "options": {
+            "appendAttribution": false,
+            "senderName": "Town Tried Leads"
+          }
+        },
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "E777VIw7zyxrVJ7s",
+            "name": "Rob Gmail account"
+          }
+        },
+        "webhookId": "eead9d3f-fb9c-47be-9975-dac7c6063e73"
+      },
+      {
+        "id": "1ad1def2-500a-4b30-84e7-a383b2d70b20",
+        "name": "Respond Invalid",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          912,
+          0
+        ],
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "{ \"ok\": false, \"error\": \"Please check your details and try again.\" }",
+          "options": {
+            "responseCode": 400
+          }
+        }
+      },
+      {
+        "id": "49eb1d09-189c-4e80-938d-9a2696d7e697",
+        "name": "Matching Settings",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1248,
+          320
+        ],
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "sub_id",
+                "name": "sub_id",
+                "type": "number",
+                "value": "={{ ({\"Appliance Repair\":16,\"Automotive\":30,\"Cleaning Services\":9,\"Electrical\":7,\"Fencing\":23,\"Flooring\":17,\"Garage Doors\":18,\"General Contractor\":24,\"Handyman\":14,\"Hurricane Shutters\":27,\"HVAC\":10,\"Impact Windows & Doors\":26,\"Junk Removal\":29,\"Kitchen & Bath Remodeling\":25,\"Landscaping\":8,\"Locksmith\":19,\"Moving\":20,\"Painting\":12,\"Pest Control\":13,\"Plumbing\":6,\"Pool Service\":15,\"Pressure Washing\":21,\"Roofing\":11,\"Tree Service\":22,\"Water Damage & Mold Remediation\":28})[$('Normalize Request').item.json.service] || 0 }}"
+              },
+              {
+                "id": "max_matches",
+                "name": "max_matches",
+                "type": "number",
+                "value": 3
+              },
+              {
+                "id": "fill_with_free",
+                "name": "fill_with_free",
+                "type": "boolean",
+                "value": true
+              },
+              {
+                "id": "paid_plan_ids",
+                "name": "paid_plan_ids",
+                "type": "array",
+                "value": "[\"2\",\"3\"]"
+              },
+              {
+                "id": "tier_rank",
+                "name": "tier_rank",
+                "type": "object",
+                "value": "{\"3\":3,\"2\":2,\"1\":1}"
+              },
+              {
+                "id": "plan_names",
+                "name": "plan_names",
+                "type": "object",
+                "value": "{\"1\":\"Free\",\"2\":\"Featured\",\"3\":\"Premium\"}"
+              },
+              {
+                "id": "bd_api_base",
+                "name": "bd_api_base",
+                "type": "string",
+                "value": "https://towntried.com/api/v2"
+              }
+            ]
+          },
+          "includeOtherFields": false,
+          "mode": "manual"
+        },
+        "notes": "Edit here: plan IDs, how many providers get each lead, and whether free listings fill empty slots."
+      },
+      {
+        "id": "b2d56fd9-a9c7-4878-8d43-00638c2f5516",
+        "name": "Find Providers",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1472,
+          320
+        ],
+        "parameters": {
+          "authentication": "genericCredentialType",
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "tid",
+                "value": "={{ $json.sub_id }}"
+              },
+              {
+                "name": "address",
+                "value": "={{ $('Normalize Request').item.json.zip }}, FL"
+              },
+              {
+                "name": "limit",
+                "value": "25"
+              },
+              {
+                "name": "output_type",
+                "value": "array"
+              }
+            ]
+          },
+          "contentType": "form-urlencoded",
+          "genericAuthType": "httpHeaderAuth",
+          "method": "POST",
+          "options": {
+            "timeout": 15000
+          },
+          "sendBody": true,
+          "url": "={{ $json.bd_api_base }}/user/search"
+        },
+        "notes": "Needs the 'Town Tried BD API' Header Auth credential (Name: X-Api-Key).",
+        "onError": "continueRegularOutput",
+        "retryOnFail": true,
+        "maxTries": 2,
+        "waitBetweenTries": 1500
+      },
+      {
+        "id": "3aff91a1-12e2-465a-8807-61a1aa7f2b7e",
+        "name": "Rank Providers",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1696,
+          320
+        ],
+        "parameters": {
+          "jsCode": "// Picks who gets the lead: active members with an email, paid plans first,\n// then (optionally) free listings, keeping the directory's proximity order inside each tier.\nconst cfg = $('Matching Settings').first().json;\nconst res = $input.first().json || {};\nconst raw = res.message;\nlet members = [];\nif (Array.isArray(raw)) members = raw;\nelse if (raw && typeof raw === 'object') members = Object.values(raw).filter(m => m && typeof m === 'object' && m.user_id);\nif (!Number(cfg.sub_id)) members = []; // unknown service: never blast every category\n\nconst paid = (cfg.paid_plan_ids || []).map(String);\nconst tierRank = cfg.tier_rank || {};\nconst planNames = cfg.plan_names || {};\nconst seen = new Set();\nconst eligible = members.filter(m => {\n  const id = String(m.user_id);\n  const ok = String(m.active) === '2' && /@/.test(String(m.email || '')) && !seen.has(id);\n  if (ok) seen.add(id);\n  return ok;\n});\n\nconst ranked = eligible\n  .map((m, i) => ({ m, i, rank: Number(tierRank[String(m.subscription_id)] || 0) }))\n  .sort((a, b) => b.rank - a.rank || a.i - b.i);\n\nconst isPaid = x => paid.includes(String(x.m.subscription_id));\nlet picked = ranked.filter(isPaid);\nif (cfg.fill_with_free) picked = picked.concat(ranked.filter(x => !isPaid(x)));\npicked = picked.slice(0, Number(cfg.max_matches) || 3);\n\nconst label = m => (m.company || [m.first_name, m.last_name].filter(Boolean).join(' ') || 'Member') +\n  ' (#' + m.user_id + ', ' + (planNames[String(m.subscription_id)] || 'plan ' + m.subscription_id) + ')';\n\nconst searchOk = res.status === 'success';\nreturn [{ json: {\n  search_ok: searchOk,\n  search_error: searchOk ? '' : String((res.error && (res.error.message || res.error)) || res.message || 'search failed').slice(0, 300),\n  candidates: members.length,\n  eligible: eligible.length,\n  match_count: picked.length,\n  paid_matches: picked.filter(isPaid).length,\n  users_to_match: picked.map(x => x.m.user_id).join(','),\n  matched_summary: picked.map(x => label(x.m)).join('; ')\n} }];",
+          "language": "javaScript",
+          "mode": "runOnceForAllItems"
+        }
+      },
+      {
+        "id": "a884ac8e-dd74-4f3c-9f3d-334aa82fd4ee",
+        "name": "Create BD Lead",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1920,
+          320
+        ],
+        "parameters": {
+          "authentication": "genericCredentialType",
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "lead_name",
+                "value": "={{ $('Normalize Request').item.json.name }}"
+              },
+              {
+                "name": "lead_email",
+                "value": "={{ $('Normalize Request').item.json.email }}"
+              },
+              {
+                "name": "lead_phone",
+                "value": "={{ $('Normalize Request').item.json.phone }}"
+              },
+              {
+                "name": "lead_message",
+                "value": "={{ $('Normalize Request').item.json.service }} request — timeframe: {{ $('Normalize Request').item.json.timeframe }}. {{ $('Normalize Request').item.json.details || 'No extra details given.' }}"
+              },
+              {
+                "name": "lead_location",
+                "value": "={{ $('Normalize Request').item.json.zip }}, FL"
+              },
+              {
+                "name": "sub_id",
+                "value": "={{ $('Matching Settings').item.json.sub_id }}"
+              },
+              {
+                "name": "url_from",
+                "value": "={{ $('Normalize Request').item.json.page }}"
+              },
+              {
+                "name": "formname",
+                "value": "n8n_homepage_quote"
+              },
+              {
+                "name": "users_to_match",
+                "value": "={{ $json.users_to_match }}"
+              }
+            ]
+          },
+          "contentType": "form-urlencoded",
+          "genericAuthType": "httpHeaderAuth",
+          "method": "POST",
+          "options": {
+            "timeout": 15000
+          },
+          "sendBody": true,
+          "url": "={{ $('Matching Settings').item.json.bd_api_base }}/leads/create"
+        },
+        "notes": "users_to_match makes Brilliant Directories email each matched member and add the lead to their dashboard.",
+        "onError": "continueRegularOutput",
+        "retryOnFail": true,
+        "maxTries": 2,
+        "waitBetweenTries": 1500
+      },
+      {
+        "id": "c97e5f75-1d65-4f32-8666-0c98bb2e85f8",
+        "name": "Update Quote Status",
+        "type": "n8n-nodes-base.dataTable",
+        "typeVersion": 1.1,
+        "position": [
+          2144,
+          320
+        ],
+        "parameters": {
+          "columns": {
+            "mappingMode": "defineBelow",
+            "schema": [
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "status",
+                "id": "status",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "matched_providers",
+                "id": "matched_providers",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "bd_lead_id",
+                "id": "bd_lead_id",
+                "required": false,
+                "type": "string"
+              }
+            ],
+            "value": {
+              "bd_lead_id": "={{ String(($('Create BD Lead').item.json.message || {}).lead_id || '') }}",
+              "matched_providers": "={{ $('Rank Providers').item.json.matched_summary || ($('Rank Providers').item.json.search_error ? 'Search error: ' + $('Rank Providers').item.json.search_error : 'No eligible providers found') }}",
+              "status": "={{ $('Rank Providers').item.json.match_count > 0 && $('Create BD Lead').item.json.status === 'success' ? 'matched' : 'needs_review' }}"
+            }
+          },
+          "dataTableId": {
+            "__rl": true,
+            "cachedResultName": "towntried_quote_requests",
+            "mode": "id",
+            "value": "itNgMU49t8XQHY4i"
+          },
+          "filters": {
+            "conditions": [
+              {
+                "condition": "eq",
+                "keyName": "id",
+                "keyValue": "={{ $('Save Quote Request').item.json.id }}"
+              }
+            ]
+          },
+          "matchType": "allConditions",
+          "operation": "update",
+          "resource": "row"
+        }
+      }
+    ],
+    "connections": {
+      "Quote Request Webhook": {
+        "main": [
+          [
+            {
+              "node": "Normalize Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Normalize Request": {
+        "main": [
+          [
+            {
+              "node": "Valid Request?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Valid Request?": {
+        "main": [
+          [
+            {
+              "node": "Save Quote Request",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Respond Invalid",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Save Quote Request": {
+        "main": [
+          [
+            {
+              "node": "Respond Success",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Respond Success": {
+        "main": [
+          [
+            {
+              "node": "Matching Settings",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Matching Settings": {
+        "main": [
+          [
+            {
+              "node": "Find Providers",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Find Providers": {
+        "main": [
+          [
+            {
+              "node": "Rank Providers",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Rank Providers": {
+        "main": [
+          [
+            {
+              "node": "Create BD Lead",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create BD Lead": {
+        "main": [
+          [
+            {
+              "node": "Update Quote Status",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Quote Status": {
+        "main": [
+          [
+            {
+              "node": "Email New Lead Alert",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [
+      {
+        "id": "d37da938-d04e-4255-91ac-dfc8e6004a07",
+        "name": "Validate",
+        "nodeIds": [
+          "ab17db32-2d02-4453-b070-fc51a3b3a901",
+          "d772490f-2b3d-4361-a8ca-1483cab1f8e1"
+        ],
+        "description": "Cleans form fields, checks the spam trap, ZIP, phone and email"
+      },
+      {
+        "id": "c7ad53ab-28ae-4f6c-8a4d-d9b6f5cace11",
+        "name": "Save and confirm",
+        "nodeIds": [
+          "8342d42d-5422-42c9-8536-376e7eb81564",
+          "f2964d4b-e7e8-4a8a-8ccf-6176bb5fcd69"
+        ],
+        "description": "Stores the lead and replies OK to the site form right away"
+      },
+      {
+        "id": "164978c5-ce88-44ba-a340-53e8751067d9",
+        "name": "Match providers and alert",
+        "nodeIds": [
+          "49eb1d09-189c-4e80-938d-9a2696d7e697",
+          "b2d56fd9-a9c7-4878-8d43-00638c2f5516",
+          "3aff91a1-12e2-465a-8807-61a1aa7f2b7e",
+          "a884ac8e-dd74-4f3c-9f3d-334aa82fd4ee",
+          "c97e5f75-1d65-4f32-8666-0c98bb2e85f8",
+          "6afd9f23-057f-4e9e-9bcd-0a83f26660af"
+        ],
+        "description": "Finds members by category + ZIP, paid first, creates the BD lead matched to the top 3, logs status, emails Rob"
+      }
+    ],
+    "authors": "Robert Lord (via MCP)",
+    "name": "Auto-match providers via Brilliant Directories API",
+    "description": "After saving the request: look up the category, search BD members by category + ZIP, rank paid tiers first (fill with free listings), create the BD lead matched to the top 3 (BD emails them), update the row status, and email Rob the result. BD steps continue on error so Rob still gets a needs_review alert.",
+    "autosaved": false,
+    "createdAt": "2026-11-25T17:08:05.197Z",
+    "updatedAt": "2026-11-25T17:08:05.197Z"
+  },
+  "activeVersionId": "06c4d1c8-0eb4-42a0-8dfc-c5f29c9042ba",
+  "connections": {
+    "Quote Request Webhook": {
+      "main": [
+        [
+          {
+            "node": "Normalize Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Request": {
+      "main": [
+        [
+          {
+            "node": "Valid Request?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid Request?": {
+      "main": [
+        [
+          {
+            "node": "Save Quote Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Invalid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Quote Request": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond Success": {
+      "main": [
+        [
+          {
+            "node": "Matching Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Matching Settings": {
+      "main": [
+        [
+          {
+            "node": "Find Providers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Providers": {
+      "main": [
+        [
+          {
+            "node": "Rank Providers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rank Providers": {
+      "main": [
+        [
+          {
+            "node": "Create BD Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create BD Lead": {
+      "main": [
+        [
+          {
+            "node": "Update Quote Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Quote Status": {
+      "main": [
+        [
+          {
+            "node": "Email New Lead Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-11-25T16:50:35.938Z",
+  "id": "Ov8cz31IyuxoUrTr",
+  "isArchived": false,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "name": "Town Tried | Quote Request Intake",
+  "nodeGroups": [
+    {
+      "id": "d37da938-d04e-4255-91ac-dfc8e6004a07",
+      "name": "Validate",
+      "nodeIds": [
+        "ab17db32-2d02-4453-b070-fc51a3b3a901",
+        "d772490f-2b3d-4361-a8ca-1483cab1f8e1"
+      ],
+      "description": "Cleans form fields, checks the spam trap, ZIP, phone and email"
+    },
+    {
+      "id": "c7ad53ab-28ae-4f6c-8a4d-d9b6f5cace11",
+      "name": "Save and confirm",
+      "nodeIds": [
+        "8342d42d-5422-42c9-8536-376e7eb81564",
+        "f2964d4b-e7e8-4a8a-8ccf-6176bb5fcd69"
+      ],
+      "description": "Stores the lead and replies OK to the site form right away"
+    },
+    {
+      "id": "164978c5-ce88-44ba-a340-53e8751067d9",
+      "name": "Match providers and alert",
+      "nodeIds": [
+        "49eb1d09-189c-4e80-938d-9a2696d7e697",
+        "b2d56fd9-a9c7-4878-8d43-00638c2f5516",
+        "3aff91a1-12e2-465a-8807-61a1aa7f2b7e",
+        "a884ac8e-dd74-4f3c-9f3d-334aa82fd4ee",
+        "c97e5f75-1d65-4f32-8666-0c98bb2e85f8",
+        "6afd9f23-057f-4e9e-9bcd-0a83f26660af"
+      ],
+      "description": "Finds members by category + ZIP, paid first, creates the BD lead matched to the top 3, logs status, emails Rob"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "0a573f2d-4483-4d43-97bf-bd90085b4940",
+      "name": "Quote Request Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        96
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "towntried-quote",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "https://towntried.com,https://www.towntried.com",
+          "ignoreBots": true
+        }
+      },
+      "webhookId": "2bc6a997-224d-4610-9579-4fe618140c0c"
+    },
+    {
+      "id": "ab17db32-2d02-4453-b070-fc51a3b3a901",
+      "name": "Normalize Request",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        272,
+        224
+      ],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "service",
+              "name": "service",
+              "value": "={{ String($json.body.service || \"\").trim().slice(0, 100) }}",
+              "type": "string"
+            },
+            {
+              "id": "zip",
+              "name": "zip",
+              "value": "={{ String($json.body.zip || \"\").replace(/\\D/g, \"\").slice(0, 5) }}",
+              "type": "string"
+            },
+            {
+              "id": "timeframe",
+              "name": "timeframe",
+              "value": "={{ String($json.body.timeframe || \"Not specified\").trim().slice(0, 50) }}",
+              "type": "string"
+            },
+            {
+              "id": "name",
+              "name": "name",
+              "value": "={{ String($json.body.name || \"\").trim().slice(0, 100) }}",
+              "type": "string"
+            },
+            {
+              "id": "phone",
+              "name": "phone",
+              "value": "={{ String($json.body.phone || \"\").replace(/[^\\d+]/g, \"\").slice(0, 15) }}",
+              "type": "string"
+            },
+            {
+              "id": "email",
+              "name": "email",
+              "value": "={{ String($json.body.email || \"\").trim().toLowerCase().slice(0, 150) }}",
+              "type": "string"
+            },
+            {
+              "id": "details",
+              "name": "details",
+              "value": "={{ String($json.body.details || \"\").trim().slice(0, 1000) }}",
+              "type": "string"
+            },
+            {
+              "id": "source",
+              "name": "source",
+              "value": "={{ $json.body.source || \"unknown\" }}",
+              "type": "string"
+            },
+            {
+              "id": "page",
+              "name": "page",
+              "value": "={{ String($json.body.page || \"\").slice(0, 300) }}",
+              "type": "string"
+            },
+            {
+              "id": "submitted_at",
+              "name": "submitted_at",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "is_valid",
+              "name": "is_valid",
+              "value": "={{ !$json.body.company_website && String($json.body.service || \"\").trim().length > 0 && /^\\d{5}$/.test(String($json.body.zip || \"\").trim()) && String($json.body.name || \"\").trim().length > 1 && String($json.body.phone || \"\").replace(/\\D/g, \"\").length >= 10 && /^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(String($json.body.email || \"\").trim()) }}",
+              "type": "boolean"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "d772490f-2b3d-4361-a8ca-1483cab1f8e1",
+      "name": "Valid Request?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        496,
+        224
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.is_valid }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "8342d42d-5422-42c9-8536-376e7eb81564",
+      "name": "Save Quote Request",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        800,
+        320
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "itNgMU49t8XQHY4i",
+          "cachedResultName": "towntried_quote_requests"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "service": "={{ $json.service }}",
+            "zip": "={{ $json.zip }}",
+            "timeframe": "={{ $json.timeframe }}",
+            "name": "={{ $json.name }}",
+            "phone": "={{ $json.phone }}",
+            "email": "={{ $json.email }}",
+            "details": "={{ $json.details }}",
+            "source": "={{ $json.source }}",
+            "page": "={{ $json.page }}",
+            "submitted_at": "={{ $json.submitted_at }}",
+            "status": "new",
+            "matched_providers": ""
+          },
+          "schema": [
+            {
+              "id": "service",
+              "displayName": "service",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "zip",
+              "displayName": "zip",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timeframe",
+              "displayName": "timeframe",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "details",
+              "displayName": "details",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "page",
+              "displayName": "page",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "submitted_at",
+              "displayName": "submitted_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "matched_providers",
+              "displayName": "matched_providers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "f2964d4b-e7e8-4a8a-8ccf-6176bb5fcd69",
+      "name": "Respond Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1024,
+        320
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true, id: $json.id } }}",
+        "options": {
+          "responseCode": 200
+        }
+      }
+    },
+    {
+      "id": "6afd9f23-057f-4e9e-9bcd-0a83f26660af",
+      "name": "Email New Lead Alert",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2368,
+        320
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "automatestpete@gmail.com",
+        "subject": "={{ ($('Rank Providers').item.json.match_count > 0 && $('Create BD Lead').item.json.status === 'success' ? '✅ Matched to ' + $('Rank Providers').item.json.match_count : '⚠️ Needs review') + ' · Town Tried quote: ' + $('Normalize Request').item.json.service + ' in ' + $('Normalize Request').item.json.zip + ' (' + $('Normalize Request').item.json.timeframe + ')' }}",
+        "emailType": "html",
+        "message": "=<h2>Quote request #{{ $(\"Save Quote Request\").item.json.id }}</h2><table cellpadding=\"6\" style=\"border-collapse:collapse;font-family:Arial,sans-serif\"><tr><td><b>Service</b></td><td>{{ $(\"Normalize Request\").item.json.service }}</td></tr><tr><td><b>ZIP</b></td><td>{{ $(\"Normalize Request\").item.json.zip }}</td></tr><tr><td><b>When</b></td><td>{{ $(\"Normalize Request\").item.json.timeframe }}</td></tr><tr><td><b>Name</b></td><td>{{ $(\"Normalize Request\").item.json.name }}</td></tr><tr><td><b>Phone</b></td><td><a href=\"tel:{{ $(\"Normalize Request\").item.json.phone }}\">{{ $(\"Normalize Request\").item.json.phone }}</a></td></tr><tr><td><b>Email</b></td><td><a href=\"mailto:{{ $(\"Normalize Request\").item.json.email }}\">{{ $(\"Normalize Request\").item.json.email }}</a></td></tr><tr><td><b>Details</b></td><td>{{ $(\"Normalize Request\").item.json.details || \"—\" }}</td></tr></table><h3>Matching</h3><table cellpadding=\"6\" style=\"border-collapse:collapse;font-family:Arial,sans-serif\"><tr><td><b>Status</b></td><td>{{ $(\"Rank Providers\").item.json.match_count > 0 && $(\"Create BD Lead\").item.json.status === \"success\" ? \"matched\" : \"needs_review\" }}</td></tr><tr><td><b>Sent to</b></td><td>{{ $(\"Rank Providers\").item.json.matched_summary || \"Nobody yet — match it manually in Brilliant Directories\" }}</td></tr><tr><td><b>Paid matches</b></td><td>{{ $(\"Rank Providers\").item.json.paid_matches }} of {{ $(\"Rank Providers\").item.json.match_count }}</td></tr><tr><td><b>Candidates found</b></td><td>{{ $(\"Rank Providers\").item.json.candidates }} ({{ $(\"Rank Providers\").item.json.eligible }} eligible)</td></tr><tr><td><b>BD lead ID</b></td><td>{{ ($(\"Create BD Lead\").item.json.message || {}).lead_id || \"not created\" }}</td></tr>{{ $(\"Rank Providers\").item.json.search_error ? '<tr><td><b>Error</b></td><td>' + $(\"Rank Providers\").item.json.search_error + '</td></tr>' : '' }}</table>",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "Town Tried Leads"
+        }
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "E777VIw7zyxrVJ7s",
+          "name": "Rob Gmail account"
+        }
+      },
+      "webhookId": "eead9d3f-fb9c-47be-9975-dac7c6063e73"
+    },
+    {
+      "id": "1ad1def2-500a-4b30-84e7-a383b2d70b20",
+      "name": "Respond Invalid",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        912,
+        0
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"ok\": false, \"error\": \"Please check your details and try again.\" }",
+        "options": {
+          "responseCode": 400
+        }
+      }
+    },
+    {
+      "id": "49eb1d09-189c-4e80-938d-9a2696d7e697",
+      "name": "Matching Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1248,
+        320
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "sub_id",
+              "name": "sub_id",
+              "type": "number",
+              "value": "={{ ({\"Appliance Repair\":16,\"Automotive\":30,\"Cleaning Services\":9,\"Electrical\":7,\"Fencing\":23,\"Flooring\":17,\"Garage Doors\":18,\"General Contractor\":24,\"Handyman\":14,\"Hurricane Shutters\":27,\"HVAC\":10,\"Impact Windows & Doors\":26,\"Junk Removal\":29,\"Kitchen & Bath Remodeling\":25,\"Landscaping\":8,\"Locksmith\":19,\"Moving\":20,\"Painting\":12,\"Pest Control\":13,\"Plumbing\":6,\"Pool Service\":15,\"Pressure Washing\":21,\"Roofing\":11,\"Tree Service\":22,\"Water Damage & Mold Remediation\":28})[$('Normalize Request').item.json.service] || 0 }}"
+            },
+            {
+              "id": "max_matches",
+              "name": "max_matches",
+              "type": "number",
+              "value": 3
+            },
+            {
+              "id": "fill_with_free",
+              "name": "fill_with_free",
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "id": "paid_plan_ids",
+              "name": "paid_plan_ids",
+              "type": "array",
+              "value": "[\"2\",\"3\"]"
+            },
+            {
+              "id": "tier_rank",
+              "name": "tier_rank",
+              "type": "object",
+              "value": "{\"3\":3,\"2\":2,\"1\":1}"
+            },
+            {
+              "id": "plan_names",
+              "name": "plan_names",
+              "type": "object",
+              "value": "{\"1\":\"Free\",\"2\":\"Featured\",\"3\":\"Premium\"}"
+            },
+            {
+              "id": "bd_api_base",
+              "name": "bd_api_base",
+              "type": "string",
+              "value": "https://towntried.com/api/v2"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "mode": "manual"
+      },
+      "notes": "Edit here: plan IDs, how many providers get each lead, and whether free listings fill empty slots."
+    },
+    {
+      "id": "b2d56fd9-a9c7-4878-8d43-00638c2f5516",
+      "name": "Find Providers",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1472,
+        320
+      ],
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "tid",
+              "value": "={{ $json.sub_id }}"
+            },
+            {
+              "name": "address",
+              "value": "={{ $('Normalize Request').item.json.zip }}, FL"
+            },
+            {
+              "name": "limit",
+              "value": "25"
+            },
+            {
+              "name": "output_type",
+              "value": "array"
+            }
+          ]
+        },
+        "contentType": "form-urlencoded",
+        "genericAuthType": "httpHeaderAuth",
+        "method": "POST",
+        "options": {
+          "timeout": 15000
+        },
+        "sendBody": true,
+        "url": "={{ $json.bd_api_base }}/user/search"
+      },
+      "notes": "Needs the 'Town Tried BD API' Header Auth credential (Name: X-Api-Key).",
+      "onError": "continueRegularOutput",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 1500
+    },
+    {
+      "id": "3aff91a1-12e2-465a-8807-61a1aa7f2b7e",
+      "name": "Rank Providers",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1696,
+        320
+      ],
+      "parameters": {
+        "jsCode": "// Picks who gets the lead: active members with an email, paid plans first,\n// then (optionally) free listings, keeping the directory's proximity order inside each tier.\nconst cfg = $('Matching Settings').first().json;\nconst res = $input.first().json || {};\nconst raw = res.message;\nlet members = [];\nif (Array.isArray(raw)) members = raw;\nelse if (raw && typeof raw === 'object') members = Object.values(raw).filter(m => m && typeof m === 'object' && m.user_id);\nif (!Number(cfg.sub_id)) members = []; // unknown service: never blast every category\n\nconst paid = (cfg.paid_plan_ids || []).map(String);\nconst tierRank = cfg.tier_rank || {};\nconst planNames = cfg.plan_names || {};\nconst seen = new Set();\nconst eligible = members.filter(m => {\n  const id = String(m.user_id);\n  const ok = String(m.active) === '2' && /@/.test(String(m.email || '')) && !seen.has(id);\n  if (ok) seen.add(id);\n  return ok;\n});\n\nconst ranked = eligible\n  .map((m, i) => ({ m, i, rank: Number(tierRank[String(m.subscription_id)] || 0) }))\n  .sort((a, b) => b.rank - a.rank || a.i - b.i);\n\nconst isPaid = x => paid.includes(String(x.m.subscription_id));\nlet picked = ranked.filter(isPaid);\nif (cfg.fill_with_free) picked = picked.concat(ranked.filter(x => !isPaid(x)));\npicked = picked.slice(0, Number(cfg.max_matches) || 3);\n\nconst label = m => (m.company || [m.first_name, m.last_name].filter(Boolean).join(' ') || 'Member') +\n  ' (#' + m.user_id + ', ' + (planNames[String(m.subscription_id)] || 'plan ' + m.subscription_id) + ')';\n\nconst searchOk = res.status === 'success';\nreturn [{ json: {\n  search_ok: searchOk,\n  search_error: searchOk ? '' : String((res.error && (res.error.message || res.error)) || res.message || 'search failed').slice(0, 300),\n  candidates: members.length,\n  eligible: eligible.length,\n  match_count: picked.length,\n  paid_matches: picked.filter(isPaid).length,\n  users_to_match: picked.map(x => x.m.user_id).join(','),\n  matched_summary: picked.map(x => label(x.m)).join('; ')\n} }];",
+        "language": "javaScript",
+        "mode": "runOnceForAllItems"
+      }
+    },
+    {
+      "id": "a884ac8e-dd74-4f3c-9f3d-334aa82fd4ee",
+      "name": "Create BD Lead",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1920,
+        320
+      ],
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "lead_name",
+              "value": "={{ $('Normalize Request').item.json.name }}"
+            },
+            {
+              "name": "lead_email",
+              "value": "={{ $('Normalize Request').item.json.email }}"
+            },
+            {
+              "name": "lead_phone",
+              "value": "={{ $('Normalize Request').item.json.phone }}"
+            },
+            {
+              "name": "lead_message",
+              "value": "={{ $('Normalize Request').item.json.service }} request — timeframe: {{ $('Normalize Request').item.json.timeframe }}. {{ $('Normalize Request').item.json.details || 'No extra details given.' }}"
+            },
+            {
+              "name": "lead_location",
+              "value": "={{ $('Normalize Request').item.json.zip }}, FL"
+            },
+            {
+              "name": "sub_id",
+              "value": "={{ $('Matching Settings').item.json.sub_id }}"
+            },
+            {
+              "name": "url_from",
+              "value": "={{ $('Normalize Request').item.json.page }}"
+            },
+            {
+              "name": "formname",
+              "value": "n8n_homepage_quote"
+            },
+            {
+              "name": "users_to_match",
+              "value": "={{ $json.users_to_match }}"
+            }
+          ]
+        },
+        "contentType": "form-urlencoded",
+        "genericAuthType": "httpHeaderAuth",
+        "method": "POST",
+        "options": {
+          "timeout": 15000
+        },
+        "sendBody": true,
+        "url": "={{ $('Matching Settings').item.json.bd_api_base }}/leads/create"
+      },
+      "notes": "users_to_match makes Brilliant Directories email each matched member and add the lead to their dashboard.",
+      "onError": "continueRegularOutput",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 1500
+    },
+    {
+      "id": "c97e5f75-1d65-4f32-8666-0c98bb2e85f8",
+      "name": "Update Quote Status",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2144,
+        320
+      ],
+      "parameters": {
+        "columns": {
+          "mappingMode": "defineBelow",
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "status",
+              "id": "status",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "matched_providers",
+              "id": "matched_providers",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "bd_lead_id",
+              "id": "bd_lead_id",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {
+            "bd_lead_id": "={{ String(($('Create BD Lead').item.json.message || {}).lead_id || '') }}",
+            "matched_providers": "={{ $('Rank Providers').item.json.matched_summary || ($('Rank Providers').item.json.search_error ? 'Search error: ' + $('Rank Providers').item.json.search_error : 'No eligible providers found') }}",
+            "status": "={{ $('Rank Providers').item.json.match_count > 0 && $('Create BD Lead').item.json.status === 'success' ? 'matched' : 'needs_review' }}"
+          }
+        },
+        "dataTableId": {
+          "__rl": true,
+          "cachedResultName": "towntried_quote_requests",
+          "mode": "id",
+          "value": "itNgMU49t8XQHY4i"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "condition": "eq",
+              "keyName": "id",
+              "keyValue": "={{ $('Save Quote Request').item.json.id }}"
+            }
+          ]
+        },
+        "matchType": "allConditions",
+        "operation": "update",
+        "resource": "row"
+      }
+    }
+  ],
+  "pinData": null,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "Ov8cz31IyuxoUrTr",
+      "projectId": "WCIiaWERZpaZ5IaT",
+      "createdAt": "2026-11-25T16:50:35.941Z",
+      "updatedAt": "2026-11-25T16:50:35.941Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2026-11-25T17:08:05.195Z",
+  "versionId": "06c4d1c8-0eb4-42a0-8dfc-c5f29c9042ba"
+}
