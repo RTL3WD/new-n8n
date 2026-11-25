@@ -39,7 +39,30 @@
       "main": [
         [
           {
+            "node": "Loop Client Messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Client Messages": {
+      "main": [
+        null,
+        [
+          {
             "node": "Send Client Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Client Message": {
+      "main": [
+        [
+          {
+            "node": "Loop Client Messages",
             "type": "main",
             "index": 0
           }
@@ -61,6 +84,7 @@
       "name": "Client messages",
       "nodeIds": [
         "f638403a-e57a-4c43-838f-10115fbb1dde",
+        "0604f10b-26ba-42a4-8404-755931e15c65",
         "2b9aad95-8cd1-40d4-aa4c-97409da8380c"
       ],
       "description": "Sends still-waiting, expiry and reminder messages through the reply adapter, one per client."
@@ -129,11 +153,11 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.4,
       "position": [
-        720,
-        512
+        944,
+        592
       ],
       "parameters": {
-        "mode": "each",
+        "mode": "once",
         "source": "database",
         "workflowId": {
           "__rl": true,
@@ -307,6 +331,20 @@
         "width": 160,
         "height": 224
       }
+    },
+    {
+      "id": "0604f10b-26ba-42a4-8404-755931e15c65",
+      "name": "Loop Client Messages",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        720,
+        512
+      ],
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      }
     }
   ],
   "pinData": null,
@@ -338,6 +376,6 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2026-10-14T17:56:53.174Z",
-  "versionId": "9f512f37-fd6d-4fc9-91be-e973964aac54"
+  "updatedAt": "2026-11-25T17:41:23.924Z",
+  "versionId": "4dfe4533-884e-4375-ac8c-b873d0f3ec59"
 }
